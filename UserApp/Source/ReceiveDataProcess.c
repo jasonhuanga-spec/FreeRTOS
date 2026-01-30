@@ -157,14 +157,6 @@ void vParseReceivedDataPacket(void)
         return;
     }
 
-    // 拆分校验和 (索引 63)
-    parsedDataPacket.Checksum = dataPacket.data[63];
-
-    // TODO: 检查CRC8校验位
-    if (1)
-    {
-        /* code */
-    }
     
     // 拆分命令字 (索引 2-3)
     parsedDataPacket.Command[0] = dataPacket.data[2];
@@ -172,10 +164,19 @@ void vParseReceivedDataPacket(void)
     // 将两个字节按大端拼成一个整型值并赋值给 commandValue
     uint16_t commandValue = parsedDataPacket.Command[0] + parsedDataPacket.Command[1];
 
-    // 拆分有效载荷 (索引 4-62，共59字节)
+    // 拆分校验和 (索引 4)
+    parsedDataPacket.Checksum = dataPacket.data[4];
+
+    // TODO: 检查CRC8校验位
+    if (1)
+    {
+        /* code */
+    }
+
+    // 拆分有效载荷 (索引 5-63，共59字节)
     for (uint8_t i = 0; i < 59; i++)
     {
-        parsedDataPacket.Payload[i] = dataPacket.data[4 + i];
+        parsedDataPacket.Payload[i] = dataPacket.data[5 + i];
     }
 
     

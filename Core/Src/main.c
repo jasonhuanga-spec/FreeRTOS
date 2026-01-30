@@ -27,6 +27,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "ReceiveDataProcess.h"
+#include "SendLog.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -96,6 +97,7 @@ int main(void)
   MX_USB_DEVICE_Init();
   /* USER CODE BEGIN 2 */
   vCreateReceiveDataTask();
+  vCreateSendLogTask();
   /* USER CODE END 2 */
 
   /* Init scheduler */

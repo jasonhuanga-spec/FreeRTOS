@@ -1,11 +1,22 @@
 #include "ReceiveDataProcess.h"
 
 
+// 全局变量定义
+BaseType_t xCreateReceiveDataTaskReturned;
+TaskHandle_t xCreateReceiveDataTaskHandle = NULL;
 /* 队列句柄，用于接收数据的存储和传递。 */
 QueueHandle_t xReceiveDataQueue = NULL;
 // 创建数据结构包含数据和长度信息
 ReceiveDataPacket_t dataPacket;
 BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+// 拆开接收到的数据包
+ParsedDataPacket_t parsedDataPacket =
+{
+    .Header = {0},                  /* 数据包头 */
+    .Command = {0},                 /* 命令字 */
+    .Payload = {0},                 /* 有效载荷 */
+    .Checksum = 0                   /* 校验和CRC8 */
+};
 
 
 
@@ -16,19 +27,16 @@ BaseType_t xHigherPriorityTaskWoken = pdFALSE;
  */
 void vCreateReceiveDataTask(void)
 {
-    BaseType_t xCreateReceiveDataTaskReturned;
-    TaskHandle_t xCreateReceiveDataTaskHandle = NULL;
-
-    vCreateReceiveDataQueueTask( NULL );
+    vCreateReceiveDataQueueTask(NULL);
 
     /* Create the task, storing the handle. */
     xCreateReceiveDataTaskReturned = xTaskCreate(
-                   vReceiveDataProcessTask,                 /* Function that implements the task. */
-                    "NAME",                                 /* Text name for the task. */
-                    256,                                    /* Stack size in words, not bytes. */
-                    ( void * ) 1,                           /* Parameter passed into the task. */
-                    tskIDLE_PRIORITY,                       /* Priority at which the task is created. */
-                    &xCreateReceiveDataTaskHandle );        /* Used to pass out the created task's handle. */
+                   vReceiveDataProcessTask,                      /* Function that implements the task. */
+                    "vReceiveDataProcessTask",                   /* Text name for the task. */
+                    256,                                         /* Stack size in words, not bytes. */
+                    ( void * ) 1,                                /* Parameter passed into the task. */
+                    tskIDLE_PRIORITY,                            /* Highest possible priority */
+                    &xCreateReceiveDataTaskHandle );             /* Used to pass out the created task's handle. */
 
     if( xCreateReceiveDataTaskReturned == pdPASS )
     {
@@ -47,28 +55,40 @@ void vReceiveDataProcessTask( void * pvParameters )
 {
     /* 该参数值期望为 1，因为在下面对 xTaskCreate() 的调用中将 1 作为 pvParameters 传入。 */
     configASSERT( ( ( uint32_t ) pvParameters ) == 1 );
-
-    uint8_t xReceiveDataQueueRx[ MAX_RECEIVE_DATA_SIZE ];
     
     for (;;)
     {
         if( xReceiveDataQueue != NULL )
         {
             /* 从已创建的队列接收一条消息 */
-            if( xQueueReceive( xReceiveDataQueue, &( xReceiveDataQueueRx ),( TickType_t ) 10 ) == pdPASS )
+            if( xQueueReceive( xReceiveDataQueue, &(dataPacket),(TickType_t) 0 ) == pdPASS )
             {
                 /* xReceiveDataQueueRx now contains a copy of xMessage. */
-                printf("接收到数据: ");
-                for (int i = 0; i < MAX_RECEIVE_DATA_SIZE; i++)
+                
+                /* 打印接收到的原始数据（用于调试） 
+                char hexStr[256]; // 足够容纳所有数据的十六进制表示
+                int offset = 0;
+                
+                offset += sprintf(hexStr + offset, "接收到数据[%d字节]: ", dataPacket.length);
+                
+                // 打印所有接收到的字节
+                for (uint16_t i = 0; i < dataPacket.length && i < MAX_RECEIVE_DATA_SIZE; i++)
                 {
-                    printf("%02X ", xReceiveDataQueueRx[i]);
+                    offset += sprintf(hexStr + offset, "%02X ", dataPacket.data[i]);
                 }
-                printf("\r\n");
+                
+                offset += sprintf(hexStr + offset, "\r\n");
+                
+                // 一次性发送完整的字符串到日志队列 
+                QueueSendfmt(xReceiveLogQueue, 0, "%s", hexStr);
+                */
+                
+                /* 解析数据包 */
+                vParseReceivedDataPacket();
             }
         } 
     }
 }
-
 
 
 
@@ -81,7 +101,7 @@ void vReceiveDataProcessTask( void * pvParameters )
 void vCreateReceiveDataQueueTask( void *pvParameters )
 {
     /* 创建一个用于保存接收数据包（ReceiveDataPacket_t）的队列，最多可容纳 10 个元素。 */
-    xReceiveDataQueue = xQueueCreate( 10, sizeof(dataPacket.data) );
+    xReceiveDataQueue = xQueueCreate( 10, sizeof(ReceiveDataPacket_t) );
 
     if( xReceiveDataQueue == NULL )
     {
@@ -101,14 +121,14 @@ uint8_t vReceiveDataQueueSendISRTask(uint8_t* Buf, uint32_t *Len)
     if (*Len <= MAX_RECEIVE_DATA_SIZE && xReceiveDataQueue != NULL)
     {
         // 先清零接收缓冲区
-        memset(&dataPacket, 0, sizeof(ReceiveDataPacket_t));
+        memset(&dataPacket, 0, sizeof(dataPacket));
 
         // 拷贝数据到数据包结构中,数据持久化
         memcpy(dataPacket.data, Buf, *Len);
         dataPacket.length = *Len;
 
-        // 将数据包发送到接收队列;本质是「尝试发送，通过结果判断是否有空间」，无需额外的空间检查步骤
-        if (xQueueSendFromISR(xReceiveDataQueue, &dataPacket.data, &xHigherPriorityTaskWoken) == errQUEUE_FULL) 
+        // 将整个数据包结构发送到接收队列（不只是 data 数组，还包括 length）
+        if (xQueueSendFromISR(xReceiveDataQueue, &dataPacket, &xHigherPriorityTaskWoken) == errQUEUE_FULL) 
             return (USBD_OK);
 
         portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
@@ -117,3 +137,53 @@ uint8_t vReceiveDataQueueSendISRTask(uint8_t* Buf, uint32_t *Len)
     return 0;
 }
 
+
+
+/**
+ * @brief 解析接收到的数据包
+ *
+ */
+void vParseReceivedDataPacket(void)
+{
+    // 检查数据包长度（至少需要 Header[2] + Command[2] + Payload[59] + Checksum[1] = 64 字节）
+    if (dataPacket.length < 64)
+        return;
+
+    // 拆分数据包头 (索引 0-1)
+    parsedDataPacket.Header[0] = dataPacket.data[0];
+    parsedDataPacket.Header[1] = dataPacket.data[1];
+
+    // 判断数据包头是否正确（例如：FE EF）
+    if (parsedDataPacket.Header[0] != 0xFE || parsedDataPacket.Header[1] != 0xEF)
+    {
+        QueueSendfmt(xReceiveLogQueue, 0, "数据包头错误: %02X %02X\r\n", 
+                    parsedDataPacket.Header[0], parsedDataPacket.Header[1]);
+        return;
+    }
+
+    // 拆分校验和 (索引 63)
+    parsedDataPacket.Checksum = dataPacket.data[63];
+
+    // TODO: 检查CRC8校验位
+    if (1)
+    {
+        /* code */
+    }
+    
+    // 拆分命令字 (索引 2-3)
+    parsedDataPacket.Command[0] = dataPacket.data[2];
+    parsedDataPacket.Command[1] = dataPacket.data[3];
+    // 将两个字节按大端拼成一个整型值并赋值给 commandValue
+    uint16_t commandValue = parsedDataPacket.Command[0] + parsedDataPacket.Command[1];
+
+    // 拆分有效载荷 (索引 4-62，共59字节)
+    for (uint8_t i = 0; i < 59; i++)
+    {
+        parsedDataPacket.Payload[i] = dataPacket.data[4 + i];
+    }
+
+    
+    
+    // 发送解析成功的日志
+    QueueSendfmt(xReceiveLogQueue, 0, "数据包解析成功，执行任务: %d \r\n", commandValue);
+}

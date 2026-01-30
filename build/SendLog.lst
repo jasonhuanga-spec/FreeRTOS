@@ -1,0 +1,761 @@
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s 			page 1
+
+
+   1              		.cpu cortex-m3
+   2              		.arch armv7-m
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"SendLog.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.file 1 "UserAPP/Source/SendLog.c"
+  18              		.section	.text.vSendLogProcessTask,"ax",%progbits
+  19              		.align	1
+  20              		.global	vSendLogProcessTask
+  21              		.syntax unified
+  22              		.thumb
+  23              		.thumb_func
+  25              	vSendLogProcessTask:
+  26              	.LVL0:
+  27              	.LFB80:
+   1:UserAPP/Source/SendLog.c **** #include "SendLog.h"
+   2:UserAPP/Source/SendLog.c **** 
+   3:UserAPP/Source/SendLog.c **** 
+   4:UserAPP/Source/SendLog.c **** 
+   5:UserAPP/Source/SendLog.c **** // 全局变量定义
+   6:UserAPP/Source/SendLog.c **** BaseType_t xCreateSendLogTaskReturned;
+   7:UserAPP/Source/SendLog.c **** TaskHandle_t xCreateSendLogTaskHandle = NULL;
+   8:UserAPP/Source/SendLog.c **** /* 队列句柄，用于接收数据的存储和传递。 */
+   9:UserAPP/Source/SendLog.c **** QueueHandle_t xReceiveLogQueue = NULL;
+  10:UserAPP/Source/SendLog.c **** 
+  11:UserAPP/Source/SendLog.c **** /**
+  12:UserAPP/Source/SendLog.c ****  * @brief 创建并启动发送日志任务。
+  13:UserAPP/Source/SendLog.c ****  *
+  14:UserAPP/Source/SendLog.c ****  * 创建任务并检查返回值；任务实现应为无限循环并在阻塞点等待数据。
+  15:UserAPP/Source/SendLog.c ****  */
+  16:UserAPP/Source/SendLog.c **** void vCreateSendLogTask(void)
+  17:UserAPP/Source/SendLog.c **** {
+  18:UserAPP/Source/SendLog.c ****     vCreateReceiveLogQueueTask(NULL);
+  19:UserAPP/Source/SendLog.c **** 
+  20:UserAPP/Source/SendLog.c ****     /* Create the task, storing the handle. */
+  21:UserAPP/Source/SendLog.c ****     xCreateSendLogTaskReturned = xTaskCreate(
+  22:UserAPP/Source/SendLog.c ****                    vSendLogProcessTask,                 /* Function that implements the task. */
+  23:UserAPP/Source/SendLog.c ****                     "vSendLogProcessTask",              /* Text name for the task. */
+  24:UserAPP/Source/SendLog.c ****                     512,                                    /* Stack size in words, not bytes. */
+  25:UserAPP/Source/SendLog.c ****                     ( void * ) 1,                           /* Parameter passed into the task. */
+  26:UserAPP/Source/SendLog.c ****                     tskIDLE_PRIORITY + 2,                   /* Priority at which the task is create
+  27:UserAPP/Source/SendLog.c ****                     &xCreateSendLogTaskHandle );        /* Used to pass out the created task's hand
+  28:UserAPP/Source/SendLog.c **** 
+  29:UserAPP/Source/SendLog.c ****     if( xCreateSendLogTaskReturned == pdPASS )
+  30:UserAPP/Source/SendLog.c ****     {
+  31:UserAPP/Source/SendLog.c ****         
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s 			page 2
+
+
+  32:UserAPP/Source/SendLog.c ****     }
+  33:UserAPP/Source/SendLog.c **** }
+  34:UserAPP/Source/SendLog.c **** 
+  35:UserAPP/Source/SendLog.c **** 
+  36:UserAPP/Source/SendLog.c **** /**
+  37:UserAPP/Source/SendLog.c ****  * @brief 接收数据处理任务
+  38:UserAPP/Source/SendLog.c ****  *
+  39:UserAPP/Source/SendLog.c ****  * 该任务负责从系统的接收通道（例如 UART、SPI、USB 等）获取原始数据，
+  40:UserAPP/Source/SendLog.c ****  * 对数据进行必要的解析与校验，并将处理后的消息/事件分发到应用层。
+  41:UserAPP/Source/SendLog.c ****  */
+  42:UserAPP/Source/SendLog.c **** void vSendLogProcessTask( void * pvParameters )
+  43:UserAPP/Source/SendLog.c **** {
+  28              		.loc 1 43 1 view -0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 128
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  44:UserAPP/Source/SendLog.c ****     /* 该参数值期望为 1，因为在下面对 xTaskCreate() 的调用中将 1 作为 pvParame
+  45:UserAPP/Source/SendLog.c ****     configASSERT( ( ( uint32_t ) pvParameters ) == 1 );
+  32              		.loc 1 45 5 view .LVU1
+  33 0000 0128     		cmp	r0, #1
+  34 0002 08D0     		beq	.L6
+  35              		.loc 1 45 5 discriminator 1 view .LVU2
+  36              	.LBB6:
+  37              	.LBI6:
+  38              		.file 2 "Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h"
+   1:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /*
+   2:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * FreeRTOS Kernel V10.3.1
+   3:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * Copyright (C) 2020 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
+   4:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  *
+   5:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * Permission is hereby granted, free of charge, to any person obtaining a copy of
+   6:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * this software and associated documentation files (the "Software"), to deal in
+   7:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * the Software without restriction, including without limitation the rights to
+   8:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+   9:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * the Software, and to permit persons to whom the Software is furnished to do so,
+  10:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * subject to the following conditions:
+  11:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  *
+  12:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * The above copyright notice and this permission notice shall be included in all
+  13:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * copies or substantial portions of the Software.
+  14:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  *
+  15:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  16:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+  17:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+  18:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+  19:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+  20:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+  21:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  *
+  22:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * http://www.FreeRTOS.org
+  23:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * http://aws.amazon.com/freertos
+  24:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  *
+  25:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * 1 tab == 4 spaces!
+  26:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  */
+  27:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+  28:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+  29:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #ifndef PORTMACRO_H
+  30:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define PORTMACRO_H
+  31:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+  32:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #ifdef __cplusplus
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s 			page 3
+
+
+  33:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** extern "C" {
+  34:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #endif
+  35:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+  36:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /*-----------------------------------------------------------
+  37:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * Port specific definitions.
+  38:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  *
+  39:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * The settings in this file configure FreeRTOS correctly for the
+  40:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * given hardware and compiler.
+  41:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  *
+  42:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * These settings should not be altered.
+  43:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  *-----------------------------------------------------------
+  44:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  */
+  45:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+  46:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /* Type definitions. */
+  47:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define portCHAR		char
+  48:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define portFLOAT		float
+  49:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define portDOUBLE		double
+  50:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define portLONG		long
+  51:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define portSHORT		short
+  52:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define portSTACK_TYPE	uint32_t
+  53:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define portBASE_TYPE	long
+  54:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+  55:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** typedef portSTACK_TYPE StackType_t;
+  56:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** typedef long BaseType_t;
+  57:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** typedef unsigned long UBaseType_t;
+  58:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+  59:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #if( configUSE_16_BIT_TICKS == 1 )
+  60:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	typedef uint16_t TickType_t;
+  61:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	#define portMAX_DELAY ( TickType_t ) 0xffff
+  62:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #else
+  63:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	typedef uint32_t TickType_t;
+  64:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	#define portMAX_DELAY ( TickType_t ) 0xffffffffUL
+  65:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+  66:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	/* 32-bit tick type on a 32-bit architecture, so reads of the tick count do
+  67:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	not need to be guarded with a critical section. */
+  68:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	#define portTICK_TYPE_IS_ATOMIC 1
+  69:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #endif
+  70:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /*-----------------------------------------------------------*/
+  71:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+  72:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /* Architecture specifics. */
+  73:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define portSTACK_GROWTH			( -1 )
+  74:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define portTICK_PERIOD_MS			( ( TickType_t ) 1000 / configTICK_RATE_HZ )
+  75:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define portBYTE_ALIGNMENT			8
+  76:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /*-----------------------------------------------------------*/
+  77:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+  78:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /* Scheduler utilities. */
+  79:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define portYIELD() 															\
+  80:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** {																				\
+  81:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	/* Set a PendSV to request a context switch. */								\
+  82:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	portNVIC_INT_CTRL_REG = portNVIC_PENDSVSET_BIT;								\
+  83:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 																				\
+  84:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	/* Barriers are normally not required but do ensure the code is completely	\
+  85:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	within the specified behaviour for the architecture. */						\
+  86:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	__asm volatile( "dsb" ::: "memory" );										\
+  87:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	__asm volatile( "isb" );													\
+  88:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** }
+  89:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s 			page 4
+
+
+  90:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define portNVIC_INT_CTRL_REG		( * ( ( volatile uint32_t * ) 0xe000ed04 ) )
+  91:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define portNVIC_PENDSVSET_BIT		( 1UL << 28UL )
+  92:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define portEND_SWITCHING_ISR( xSwitchRequired ) if( xSwitchRequired != pdFALSE ) portYIELD()
+  93:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define portYIELD_FROM_ISR( x ) portEND_SWITCHING_ISR( x )
+  94:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /*-----------------------------------------------------------*/
+  95:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+  96:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /* Critical section management. */
+  97:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** extern void vPortEnterCritical( void );
+  98:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** extern void vPortExitCritical( void );
+  99:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define portSET_INTERRUPT_MASK_FROM_ISR()		ulPortRaiseBASEPRI()
+ 100:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define portCLEAR_INTERRUPT_MASK_FROM_ISR(x)	vPortSetBASEPRI(x)
+ 101:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define portDISABLE_INTERRUPTS()				vPortRaiseBASEPRI()
+ 102:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define portENABLE_INTERRUPTS()					vPortSetBASEPRI(0)
+ 103:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define portENTER_CRITICAL()					vPortEnterCritical()
+ 104:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define portEXIT_CRITICAL()						vPortExitCritical()
+ 105:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 106:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /*-----------------------------------------------------------*/
+ 107:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 108:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /* Task function macros as described on the FreeRTOS.org WEB site.  These are
+ 109:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** not necessary for to use this port.  They are defined so the common demo files
+ 110:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** (which build with all the ports) will build. */
+ 111:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define portTASK_FUNCTION_PROTO( vFunction, pvParameters ) void vFunction( void *pvParameters )
+ 112:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define portTASK_FUNCTION( vFunction, pvParameters ) void vFunction( void *pvParameters )
+ 113:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /*-----------------------------------------------------------*/
+ 114:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 115:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /* Tickless idle/low power functionality. */
+ 116:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #ifndef portSUPPRESS_TICKS_AND_SLEEP
+ 117:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	extern void vPortSuppressTicksAndSleep( TickType_t xExpectedIdleTime );
+ 118:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	#define portSUPPRESS_TICKS_AND_SLEEP( xExpectedIdleTime ) vPortSuppressTicksAndSleep( xExpectedIdl
+ 119:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #endif
+ 120:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /*-----------------------------------------------------------*/
+ 121:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 122:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /* Architecture specific optimisations. */
+ 123:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #ifndef configUSE_PORT_OPTIMISED_TASK_SELECTION
+ 124:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	#define configUSE_PORT_OPTIMISED_TASK_SELECTION 1
+ 125:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #endif
+ 126:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 127:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #if configUSE_PORT_OPTIMISED_TASK_SELECTION == 1
+ 128:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 129:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	/* Generic helper function. */
+ 130:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	__attribute__( ( always_inline ) ) static inline uint8_t ucPortCountLeadingZeros( uint32_t ulBitma
+ 131:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	{
+ 132:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	uint8_t ucReturn;
+ 133:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 134:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 		__asm volatile ( "clz %0, %1" : "=r" ( ucReturn ) : "r" ( ulBitmap ) : "memory" );
+ 135:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 		return ucReturn;
+ 136:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	}
+ 137:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 138:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	/* Check the configuration. */
+ 139:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	#if( configMAX_PRIORITIES > 32 )
+ 140:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 		#error configUSE_PORT_OPTIMISED_TASK_SELECTION can only be set to 1 when configMAX_PRIORITIES is 
+ 141:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	#endif
+ 142:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 143:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	/* Store/clear the ready priorities in a bit map. */
+ 144:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	#define portRECORD_READY_PRIORITY( uxPriority, uxReadyPriorities ) ( uxReadyPriorities ) |= ( 1UL 
+ 145:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	#define portRESET_READY_PRIORITY( uxPriority, uxReadyPriorities ) ( uxReadyPriorities ) &= ~( 1UL 
+ 146:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s 			page 5
+
+
+ 147:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	/*-----------------------------------------------------------*/
+ 148:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 149:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	#define portGET_HIGHEST_PRIORITY( uxTopPriority, uxReadyPriorities ) uxTopPriority = ( 31UL - ( ui
+ 150:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 151:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #endif /* configUSE_PORT_OPTIMISED_TASK_SELECTION */
+ 152:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 153:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /*-----------------------------------------------------------*/
+ 154:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 155:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #ifdef configASSERT
+ 156:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	void vPortValidateInterruptPriority( void );
+ 157:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	#define portASSERT_IF_INTERRUPT_PRIORITY_INVALID() 	vPortValidateInterruptPriority()
+ 158:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #endif
+ 159:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 160:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /* portNOP() is not required by this port. */
+ 161:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define portNOP()
+ 162:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 163:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define portINLINE	__inline
+ 164:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 165:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #ifndef portFORCE_INLINE
+ 166:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	#define portFORCE_INLINE inline __attribute__(( always_inline))
+ 167:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #endif
+ 168:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 169:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /*-----------------------------------------------------------*/
+ 170:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 171:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** portFORCE_INLINE static BaseType_t xPortIsInsideInterrupt( void )
+ 172:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** {
+ 173:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** uint32_t ulCurrentInterrupt;
+ 174:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** BaseType_t xReturn;
+ 175:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 176:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	/* Obtain the number of the currently executing interrupt. */
+ 177:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	__asm volatile( "mrs %0, ipsr" : "=r"( ulCurrentInterrupt ) :: "memory" );
+ 178:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 179:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	if( ulCurrentInterrupt == 0 )
+ 180:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	{
+ 181:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 		xReturn = pdFALSE;
+ 182:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	}
+ 183:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	else
+ 184:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	{
+ 185:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 		xReturn = pdTRUE;
+ 186:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	}
+ 187:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 188:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	return xReturn;
+ 189:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** }
+ 190:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 191:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /*-----------------------------------------------------------*/
+ 192:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 193:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** portFORCE_INLINE static void vPortRaiseBASEPRI( void )
+  39              		.loc 2 193 30 view .LVU3
+  40              	.LBB7:
+ 194:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** {
+ 195:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** uint32_t ulNewBASEPRI;
+  41              		.loc 2 195 1 view .LVU4
+ 196:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 197:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	__asm volatile
+  42              		.loc 2 197 2 view .LVU5
+  43              		.syntax unified
+  44              	@ 197 "Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h" 1
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s 			page 6
+
+
+  45 0004 4FF05003 			mov r3, #80												
+  46 0008 83F31188 		msr basepri, r3											
+  47 000c BFF36F8F 		isb														
+  48 0010 BFF34F8F 		dsb														
+  49              	
+  50              	@ 0 "" 2
+  51              		.thumb
+  52              		.syntax unified
+  53              	.L3:
+  54              	.LBE7:
+  55              	.LBE6:
+  56              		.loc 1 45 5 view .LVU6
+  57              		.loc 1 45 5 view .LVU7
+  58 0014 FEE7     		b	.L3
+  59              	.L6:
+  43:UserAPP/Source/SendLog.c ****     /* 该参数值期望为 1，因为在下面对 xTaskCreate() 的调用中将 1 作为 pvParame
+  60              		.loc 1 43 1 is_stmt 0 view .LVU8
+  61 0016 00B5     		push	{lr}
+  62              	.LCFI0:
+  63              		.cfi_def_cfa_offset 4
+  64              		.cfi_offset 14, -4
+  65 0018 A1B0     		sub	sp, sp, #132
+  66              	.LCFI1:
+  67              		.cfi_def_cfa_offset 136
+  68              	.LVL1:
+  69              	.L2:
+  70              		.loc 1 45 55 is_stmt 1 view .LVU9
+  46:UserAPP/Source/SendLog.c **** 
+  47:UserAPP/Source/SendLog.c ****     for (;;)
+  71              		.loc 1 47 5 view .LVU10
+  72              	.LBB8:
+  48:UserAPP/Source/SendLog.c ****     {
+  49:UserAPP/Source/SendLog.c ****         //放到循环中，不停更新这个数组
+  50:UserAPP/Source/SendLog.c ****         char xReceiveLogQueueBuf[PRINT_QUEUE_ITEM_SIZE];
+  73              		.loc 1 50 9 view .LVU11
+  51:UserAPP/Source/SendLog.c **** 
+  52:UserAPP/Source/SendLog.c ****         if( xReceiveLogQueue != NULL )
+  74              		.loc 1 52 9 view .LVU12
+  75              		.loc 1 52 30 is_stmt 0 view .LVU13
+  76 001a 0A4B     		ldr	r3, .L7
+  77 001c 1868     		ldr	r0, [r3]
+  78              		.loc 1 52 11 view .LVU14
+  79 001e 0028     		cmp	r0, #0
+  80 0020 FBD0     		beq	.L2
+  53:UserAPP/Source/SendLog.c ****             {
+  54:UserAPP/Source/SendLog.c ****                 /* 从已创建的队列接收一条消息，阻塞等待最多 portMAX_DELAY */
+  55:UserAPP/Source/SendLog.c ****                 if( xQueueReceive( xReceiveLogQueue, xReceiveLogQueueBuf, portMAX_DELAY ) == pdPASS
+  81              		.loc 1 55 17 is_stmt 1 view .LVU15
+  82              		.loc 1 55 21 is_stmt 0 view .LVU16
+  83 0022 4FF0FF32 		mov	r2, #-1
+  84 0026 6946     		mov	r1, sp
+  85 0028 FFF7FEFF 		bl	xQueueReceive
+  86              	.LVL2:
+  87              		.loc 1 55 19 discriminator 1 view .LVU17
+  88 002c 0128     		cmp	r0, #1
+  89 002e F4D1     		bne	.L2
+  90              	.LBB9:
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s 			page 7
+
+
+  56:UserAPP/Source/SendLog.c ****                 {
+  57:UserAPP/Source/SendLog.c ****                     /* 计算实际字符串长度（不包括结尾的 \0 和垃圾数据） */
+  58:UserAPP/Source/SendLog.c ****                     int actual_len = strlen(xReceiveLogQueueBuf);
+  91              		.loc 1 58 21 is_stmt 1 view .LVU18
+  92              		.loc 1 58 38 is_stmt 0 view .LVU19
+  93 0030 6846     		mov	r0, sp
+  94 0032 FFF7FEFF 		bl	strlen
+  95              	.LVL3:
+  59:UserAPP/Source/SendLog.c ****                     
+  60:UserAPP/Source/SendLog.c ****                     /* 只发送实际的字符串内容，而不是整个缓冲区 */
+  61:UserAPP/Source/SendLog.c ****                     if( actual_len > 0 )    CDC_Transmit_FS((uint8_t*)xReceiveLogQueueBuf, actual_l
+  96              		.loc 1 61 21 is_stmt 1 view .LVU20
+  97              		.loc 1 61 23 is_stmt 0 view .LVU21
+  98 0036 0028     		cmp	r0, #0
+  99              		.loc 1 61 23 view .LVU22
+ 100 0038 EFDD     		ble	.L2
+ 101              		.loc 1 61 45 is_stmt 1 discriminator 1 view .LVU23
+ 102 003a 81B2     		uxth	r1, r0
+ 103 003c 6846     		mov	r0, sp
+ 104              	.LVL4:
+ 105              		.loc 1 61 45 is_stmt 0 discriminator 1 view .LVU24
+ 106 003e FFF7FEFF 		bl	CDC_Transmit_FS
+ 107              	.LVL5:
+ 108              	.LBE9:
+ 109              	.LBE8:
+  47:UserAPP/Source/SendLog.c ****     {
+ 110              		.loc 1 47 5 is_stmt 1 view .LVU25
+  48:UserAPP/Source/SendLog.c ****         //放到循环中，不停更新这个数组
+ 111              		.loc 1 48 5 is_stmt 0 view .LVU26
+ 112 0042 EAE7     		b	.L2
+ 113              	.L8:
+ 114              		.align	2
+ 115              	.L7:
+ 116 0044 00000000 		.word	xReceiveLogQueue
+ 117              		.cfi_endproc
+ 118              	.LFE80:
+ 120              		.section	.text.vCreateReceiveLogQueueTask,"ax",%progbits
+ 121              		.align	1
+ 122              		.global	vCreateReceiveLogQueueTask
+ 123              		.syntax unified
+ 124              		.thumb
+ 125              		.thumb_func
+ 127              	vCreateReceiveLogQueueTask:
+ 128              	.LVL6:
+ 129              	.LFB81:
+  62:UserAPP/Source/SendLog.c **** 
+  63:UserAPP/Source/SendLog.c ****                 }
+  64:UserAPP/Source/SendLog.c ****             }
+  65:UserAPP/Source/SendLog.c ****     }
+  66:UserAPP/Source/SendLog.c **** }   
+  67:UserAPP/Source/SendLog.c **** 
+  68:UserAPP/Source/SendLog.c **** 
+  69:UserAPP/Source/SendLog.c **** /**
+  70:UserAPP/Source/SendLog.c ****  * @brief 示例任务：创建一个队列用于接收数据
+  71:UserAPP/Source/SendLog.c ****  *
+  72:UserAPP/Source/SendLog.c ****  * 该任务创建一个队列以存储接收到的数据。实际应用中，
+  73:UserAPP/Source/SendLog.c ****  * 任务应包含从外设接收数据并将其发送到队列的逻辑。
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s 			page 8
+
+
+  74:UserAPP/Source/SendLog.c ****  */
+  75:UserAPP/Source/SendLog.c **** void vCreateReceiveLogQueueTask( void *pvParameters )
+  76:UserAPP/Source/SendLog.c **** {
+ 130              		.loc 1 76 1 is_stmt 1 view -0
+ 131              		.cfi_startproc
+ 132              		@ args = 0, pretend = 0, frame = 0
+ 133              		@ frame_needed = 0, uses_anonymous_args = 0
+ 134              		.loc 1 76 1 is_stmt 0 view .LVU28
+ 135 0000 08B5     		push	{r3, lr}
+ 136              	.LCFI2:
+ 137              		.cfi_def_cfa_offset 8
+ 138              		.cfi_offset 3, -8
+ 139              		.cfi_offset 14, -4
+  77:UserAPP/Source/SendLog.c ****     /* 创建一个用于保存接收数据包（ReceiveDataPacket_t）的队列，最多可容纳 
+  78:UserAPP/Source/SendLog.c ****     /* 使用 PRINT_QUEUE_ITEM_SIZE 以确保队列项大小与发送/接收缓冲区一致，避�
+  79:UserAPP/Source/SendLog.c ****     xReceiveLogQueue = xQueueCreate(10, PRINT_QUEUE_ITEM_SIZE);
+ 140              		.loc 1 79 5 is_stmt 1 view .LVU29
+ 141              		.loc 1 79 24 is_stmt 0 view .LVU30
+ 142 0002 0022     		movs	r2, #0
+ 143 0004 8021     		movs	r1, #128
+ 144 0006 0A20     		movs	r0, #10
+ 145              	.LVL7:
+ 146              		.loc 1 79 24 view .LVU31
+ 147 0008 FFF7FEFF 		bl	xQueueGenericCreate
+ 148              	.LVL8:
+ 149              		.loc 1 79 22 discriminator 1 view .LVU32
+ 150 000c 014B     		ldr	r3, .L11
+ 151 000e 1860     		str	r0, [r3]
+  80:UserAPP/Source/SendLog.c **** 
+  81:UserAPP/Source/SendLog.c ****     if( xReceiveLogQueue == NULL )
+ 152              		.loc 1 81 5 is_stmt 1 view .LVU33
+  82:UserAPP/Source/SendLog.c ****     {
+  83:UserAPP/Source/SendLog.c ****         /* Queue was not created and must not be used. */
+  84:UserAPP/Source/SendLog.c ****         
+  85:UserAPP/Source/SendLog.c ****     }
+ 153              		.loc 1 85 5 view .LVU34
+  86:UserAPP/Source/SendLog.c **** }
+ 154              		.loc 1 86 1 is_stmt 0 view .LVU35
+ 155 0010 08BD     		pop	{r3, pc}
+ 156              	.L12:
+ 157 0012 00BF     		.align	2
+ 158              	.L11:
+ 159 0014 00000000 		.word	xReceiveLogQueue
+ 160              		.cfi_endproc
+ 161              	.LFE81:
+ 163              		.section	.rodata.vCreateSendLogTask.str1.4,"aMS",%progbits,1
+ 164              		.align	2
+ 165              	.LC0:
+ 166 0000 7653656E 		.ascii	"vSendLogProcessTask\000"
+ 166      644C6F67 
+ 166      50726F63 
+ 166      65737354 
+ 166      61736B00 
+ 167              		.section	.text.vCreateSendLogTask,"ax",%progbits
+ 168              		.align	1
+ 169              		.global	vCreateSendLogTask
+ 170              		.syntax unified
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s 			page 9
+
+
+ 171              		.thumb
+ 172              		.thumb_func
+ 174              	vCreateSendLogTask:
+ 175              	.LFB79:
+  17:UserAPP/Source/SendLog.c ****     vCreateReceiveLogQueueTask(NULL);
+ 176              		.loc 1 17 1 is_stmt 1 view -0
+ 177              		.cfi_startproc
+ 178              		@ args = 0, pretend = 0, frame = 0
+ 179              		@ frame_needed = 0, uses_anonymous_args = 0
+ 180 0000 00B5     		push	{lr}
+ 181              	.LCFI3:
+ 182              		.cfi_def_cfa_offset 4
+ 183              		.cfi_offset 14, -4
+ 184 0002 83B0     		sub	sp, sp, #12
+ 185              	.LCFI4:
+ 186              		.cfi_def_cfa_offset 16
+  18:UserAPP/Source/SendLog.c **** 
+ 187              		.loc 1 18 5 view .LVU37
+ 188 0004 0020     		movs	r0, #0
+ 189 0006 FFF7FEFF 		bl	vCreateReceiveLogQueueTask
+ 190              	.LVL9:
+  21:UserAPP/Source/SendLog.c ****                    vSendLogProcessTask,                 /* Function that implements the task. */
+ 191              		.loc 1 21 5 view .LVU38
+  21:UserAPP/Source/SendLog.c ****                    vSendLogProcessTask,                 /* Function that implements the task. */
+ 192              		.loc 1 21 34 is_stmt 0 view .LVU39
+ 193 000a 084B     		ldr	r3, .L15
+ 194 000c 0193     		str	r3, [sp, #4]
+ 195 000e 0223     		movs	r3, #2
+ 196 0010 0093     		str	r3, [sp]
+ 197 0012 0123     		movs	r3, #1
+ 198 0014 4FF40072 		mov	r2, #512
+ 199 0018 0549     		ldr	r1, .L15+4
+ 200 001a 0648     		ldr	r0, .L15+8
+ 201 001c FFF7FEFF 		bl	xTaskCreate
+ 202              	.LVL10:
+  21:UserAPP/Source/SendLog.c ****                    vSendLogProcessTask,                 /* Function that implements the task. */
+ 203              		.loc 1 21 32 discriminator 1 view .LVU40
+ 204 0020 054B     		ldr	r3, .L15+12
+ 205 0022 1860     		str	r0, [r3]
+  29:UserAPP/Source/SendLog.c ****     {
+ 206              		.loc 1 29 5 is_stmt 1 view .LVU41
+  32:UserAPP/Source/SendLog.c **** }
+ 207              		.loc 1 32 5 view .LVU42
+  33:UserAPP/Source/SendLog.c **** 
+ 208              		.loc 1 33 1 is_stmt 0 view .LVU43
+ 209 0024 03B0     		add	sp, sp, #12
+ 210              	.LCFI5:
+ 211              		.cfi_def_cfa_offset 4
+ 212              		@ sp needed
+ 213 0026 5DF804FB 		ldr	pc, [sp], #4
+ 214              	.L16:
+ 215 002a 00BF     		.align	2
+ 216              	.L15:
+ 217 002c 00000000 		.word	xCreateSendLogTaskHandle
+ 218 0030 00000000 		.word	.LC0
+ 219 0034 00000000 		.word	vSendLogProcessTask
+ 220 0038 00000000 		.word	xCreateSendLogTaskReturned
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s 			page 10
+
+
+ 221              		.cfi_endproc
+ 222              	.LFE79:
+ 224              		.section	.text.QueueSendfmt,"ax",%progbits
+ 225              		.align	1
+ 226              		.global	QueueSendfmt
+ 227              		.syntax unified
+ 228              		.thumb
+ 229              		.thumb_func
+ 231              	QueueSendfmt:
+ 232              	.LVL11:
+ 233              	.LFB82:
+  87:UserAPP/Source/SendLog.c **** 
+  88:UserAPP/Source/SendLog.c **** 
+  89:UserAPP/Source/SendLog.c **** 
+  90:UserAPP/Source/SendLog.c ****  /** * @brief 格式化字符串并发送到队列
+  91:UserAPP/Source/SendLog.c ****  *  * 
+  92:UserAPP/Source/SendLog.c ****   * @param xQueue 队列句柄
+  93:UserAPP/Source/SendLog.c ****   * @param xTicksToWait 等待时间
+  94:UserAPP/Source/SendLog.c ****   * @param fmt 格式化字符串
+  95:UserAPP/Source/SendLog.c ****   * @param ... 可变参数
+  96:UserAPP/Source/SendLog.c ****   * @return BaseType_t 发送结果
+  97:UserAPP/Source/SendLog.c ****   * 
+  98:UserAPP/Source/SendLog.c ****   * // 无等待（不允许阻塞）
+  99:UserAPP/Source/SendLog.c ****     QueueSendfmt(xPrintQueue, 0, "接收到数据: %02X", parsedDataPacket.Payload[0]);
+ 100:UserAPP/Source/SendLog.c ****   */                    
+ 101:UserAPP/Source/SendLog.c **** BaseType_t QueueSendfmt(QueueHandle_t xQueue, TickType_t xTicksToWait, const char *fmt, ...)
+ 102:UserAPP/Source/SendLog.c **** {
+ 234              		.loc 1 102 1 is_stmt 1 view -0
+ 235              		.cfi_startproc
+ 236              		@ args = 4, pretend = 8, frame = 136
+ 237              		@ frame_needed = 0, uses_anonymous_args = 1
+ 238              		.loc 1 102 1 is_stmt 0 view .LVU45
+ 239 0000 0CB4     		push	{r2, r3}
+ 240              	.LCFI6:
+ 241              		.cfi_def_cfa_offset 8
+ 242              		.cfi_offset 2, -8
+ 243              		.cfi_offset 3, -4
+ 244 0002 2DE9F041 		push	{r4, r5, r6, r7, r8, lr}
+ 245              	.LCFI7:
+ 246              		.cfi_def_cfa_offset 32
+ 247              		.cfi_offset 4, -32
+ 248              		.cfi_offset 5, -28
+ 249              		.cfi_offset 6, -24
+ 250              		.cfi_offset 7, -20
+ 251              		.cfi_offset 8, -16
+ 252              		.cfi_offset 14, -12
+ 253 0006 A2B0     		sub	sp, sp, #136
+ 254              	.LCFI8:
+ 255              		.cfi_def_cfa_offset 168
+ 256 0008 289D     		ldr	r5, [sp, #160]
+ 103:UserAPP/Source/SendLog.c ****     if (xQueue == NULL || fmt == NULL) {
+ 257              		.loc 1 103 5 is_stmt 1 view .LVU46
+ 258              		.loc 1 103 8 is_stmt 0 view .LVU47
+ 259 000a D8B1     		cbz	r0, .L19
+ 260 000c 0C46     		mov	r4, r1
+ 261 000e 8046     		mov	r8, r0
+ 262              		.loc 1 103 24 discriminator 1 view .LVU48
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s 			page 11
+
+
+ 263 0010 D5B1     		cbz	r5, .L20
+ 104:UserAPP/Source/SendLog.c ****         return pdFAIL;
+ 105:UserAPP/Source/SendLog.c ****     }
+ 106:UserAPP/Source/SendLog.c **** 
+ 107:UserAPP/Source/SendLog.c ****     char buf[PRINT_QUEUE_ITEM_SIZE];
+ 264              		.loc 1 107 5 is_stmt 1 view .LVU49
+ 108:UserAPP/Source/SendLog.c ****     memset(buf, 0, sizeof(buf));
+ 265              		.loc 1 108 5 view .LVU50
+ 266 0012 02AE     		add	r6, sp, #8
+ 267 0014 8027     		movs	r7, #128
+ 268 0016 3A46     		mov	r2, r7
+ 269 0018 0021     		movs	r1, #0
+ 270              	.LVL12:
+ 271              		.loc 1 108 5 is_stmt 0 view .LVU51
+ 272 001a 3046     		mov	r0, r6
+ 273              	.LVL13:
+ 274              		.loc 1 108 5 view .LVU52
+ 275 001c FFF7FEFF 		bl	memset
+ 276              	.LVL14:
+ 109:UserAPP/Source/SendLog.c **** 
+ 110:UserAPP/Source/SendLog.c ****     va_list ap;
+ 277              		.loc 1 110 5 is_stmt 1 view .LVU53
+ 111:UserAPP/Source/SendLog.c ****     va_start(ap, fmt);
+ 278              		.loc 1 111 5 view .LVU54
+ 279 0020 29AB     		add	r3, sp, #164
+ 280 0022 0193     		str	r3, [sp, #4]
+ 112:UserAPP/Source/SendLog.c ****     vsnprintf(buf, sizeof(buf), fmt, ap);
+ 281              		.loc 1 112 5 view .LVU55
+ 282 0024 2A46     		mov	r2, r5
+ 283 0026 3946     		mov	r1, r7
+ 284 0028 3046     		mov	r0, r6
+ 285 002a FFF7FEFF 		bl	vsnprintf
+ 286              	.LVL15:
+ 113:UserAPP/Source/SendLog.c ****     va_end(ap);
+ 287              		.loc 1 113 5 view .LVU56
+ 114:UserAPP/Source/SendLog.c **** 
+ 115:UserAPP/Source/SendLog.c ****     return xQueueSend(xQueue, buf, xTicksToWait);
+ 288              		.loc 1 115 5 view .LVU57
+ 289              		.loc 1 115 12 is_stmt 0 view .LVU58
+ 290 002e 0023     		movs	r3, #0
+ 291 0030 2246     		mov	r2, r4
+ 292 0032 3146     		mov	r1, r6
+ 293 0034 4046     		mov	r0, r8
+ 294 0036 FFF7FEFF 		bl	xQueueGenericSend
+ 295              	.LVL16:
+ 296              	.L17:
+ 116:UserAPP/Source/SendLog.c **** }...
+ 297              		.loc 1 116 1 view .LVU59
+ 298 003a 22B0     		add	sp, sp, #136
+ 299              	.LCFI9:
+ 300              		.cfi_remember_state
+ 301              		.cfi_def_cfa_offset 32
+ 302              		@ sp needed
+ 303 003c BDE8F041 		pop	{r4, r5, r6, r7, r8, lr}
+ 304              	.LCFI10:
+ 305              		.cfi_restore 14
+ 306              		.cfi_restore 8
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s 			page 12
+
+
+ 307              		.cfi_restore 7
+ 308              		.cfi_restore 6
+ 309              		.cfi_restore 5
+ 310              		.cfi_restore 4
+ 311              		.cfi_def_cfa_offset 8
+ 312 0040 02B0     		add	sp, sp, #8
+ 313              	.LCFI11:
+ 314              		.cfi_restore 3
+ 315              		.cfi_restore 2
+ 316              		.cfi_def_cfa_offset 0
+ 317 0042 7047     		bx	lr
+ 318              	.LVL17:
+ 319              	.L19:
+ 320              	.LCFI12:
+ 321              		.cfi_restore_state
+ 104:UserAPP/Source/SendLog.c ****         return pdFAIL;
+ 322              		.loc 1 104 16 view .LVU60
+ 323 0044 0020     		movs	r0, #0
+ 324              	.LVL18:
+ 104:UserAPP/Source/SendLog.c ****         return pdFAIL;
+ 325              		.loc 1 104 16 view .LVU61
+ 326 0046 F8E7     		b	.L17
+ 327              	.LVL19:
+ 328              	.L20:
+ 104:UserAPP/Source/SendLog.c ****         return pdFAIL;
+ 329              		.loc 1 104 16 view .LVU62
+ 330 0048 0020     		movs	r0, #0
+ 331              	.LVL20:
+ 104:UserAPP/Source/SendLog.c ****         return pdFAIL;
+ 332              		.loc 1 104 16 view .LVU63
+ 333 004a F6E7     		b	.L17
+ 334              		.cfi_endproc
+ 335              	.LFE82:
+ 337              		.global	xReceiveLogQueue
+ 338              		.section	.bss.xReceiveLogQueue,"aw",%nobits
+ 339              		.align	2
+ 342              	xReceiveLogQueue:
+ 343 0000 00000000 		.space	4
+ 344              		.global	xCreateSendLogTaskHandle
+ 345              		.section	.bss.xCreateSendLogTaskHandle,"aw",%nobits
+ 346              		.align	2
+ 349              	xCreateSendLogTaskHandle:
+ 350 0000 00000000 		.space	4
+ 351              		.global	xCreateSendLogTaskReturned
+ 352              		.section	.bss.xCreateSendLogTaskReturned,"aw",%nobits
+ 353              		.align	2
+ 356              	xCreateSendLogTaskReturned:
+ 357 0000 00000000 		.space	4
+ 358              		.text
+ 359              	.Letext0:
+ 360              		.file 3 "D:/gcc-arm/14.3 rel1/arm-none-eabi/include/machine/_default_types.h"
+ 361              		.file 4 "D:/gcc-arm/14.3 rel1/arm-none-eabi/include/sys/_stdint.h"
+ 362              		.file 5 "D:/gcc-arm/14.3 rel1/lib/gcc/arm-none-eabi/14.3.1/include/stddef.h"
+ 363              		.file 6 "D:/gcc-arm/14.3 rel1/lib/gcc/arm-none-eabi/14.3.1/include/stdarg.h"
+ 364              		.file 7 "D:/gcc-arm/14.3 rel1/arm-none-eabi/include/stdio.h"
+ 365              		.file 8 "Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h"
+ 366              		.file 9 "Middlewares/Third_Party/FreeRTOS/Source/include/task.h"
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s 			page 13
+
+
+ 367              		.file 10 "Middlewares/Third_Party/FreeRTOS/Source/include/queue.h"
+ 368              		.file 11 "UserAPP/Include/SendLog.h"
+ 369              		.file 12 "D:/gcc-arm/14.3 rel1/arm-none-eabi/include/string.h"
+ 370              		.file 13 "USB_DEVICE/App/usbd_cdc_if.h"
+ 371              		.file 14 "<built-in>"
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s 			page 14
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 SendLog.c
+C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s:19     .text.vSendLogProcessTask:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s:25     .text.vSendLogProcessTask:00000000 vSendLogProcessTask
+C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s:116    .text.vSendLogProcessTask:00000044 $d
+C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s:342    .bss.xReceiveLogQueue:00000000 xReceiveLogQueue
+C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s:121    .text.vCreateReceiveLogQueueTask:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s:127    .text.vCreateReceiveLogQueueTask:00000000 vCreateReceiveLogQueueTask
+C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s:159    .text.vCreateReceiveLogQueueTask:00000014 $d
+C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s:164    .rodata.vCreateSendLogTask.str1.4:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s:168    .text.vCreateSendLogTask:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s:174    .text.vCreateSendLogTask:00000000 vCreateSendLogTask
+C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s:217    .text.vCreateSendLogTask:0000002c $d
+C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s:349    .bss.xCreateSendLogTaskHandle:00000000 xCreateSendLogTaskHandle
+C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s:356    .bss.xCreateSendLogTaskReturned:00000000 xCreateSendLogTaskReturned
+C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s:225    .text.QueueSendfmt:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s:231    .text.QueueSendfmt:00000000 QueueSendfmt
+C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s:339    .bss.xReceiveLogQueue:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s:346    .bss.xCreateSendLogTaskHandle:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s:353    .bss.xCreateSendLogTaskReturned:00000000 $d
+
+UNDEFINED SYMBOLS
+xQueueReceive
+strlen
+CDC_Transmit_FS
+xQueueGenericCreate
+xTaskCreate
+memset
+vsnprintf
+xQueueGenericSend

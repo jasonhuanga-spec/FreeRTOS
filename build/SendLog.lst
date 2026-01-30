@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s 			page 1
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc1dYk8h.s 			page 1
 
 
    1              		.cpu cortex-m3
@@ -58,7 +58,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s 			page 1
   29:UserAPP/Source/SendLog.c ****     if( xCreateSendLogTaskReturned == pdPASS )
   30:UserAPP/Source/SendLog.c ****     {
   31:UserAPP/Source/SendLog.c ****         
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s 			page 2
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc1dYk8h.s 			page 2
 
 
   32:UserAPP/Source/SendLog.c ****     }
@@ -118,7 +118,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s 			page 1
   30:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define PORTMACRO_H
   31:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
   32:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #ifdef __cplusplus
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s 			page 3
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc1dYk8h.s 			page 3
 
 
   33:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** extern "C" {
@@ -178,7 +178,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s 			page 1
   87:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	__asm volatile( "isb" );													\
   88:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** }
   89:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s 			page 4
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc1dYk8h.s 			page 4
 
 
   90:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define portNVIC_INT_CTRL_REG		( * ( ( volatile uint32_t * ) 0xe000ed04 ) )
@@ -238,7 +238,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s 			page 1
  144:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	#define portRECORD_READY_PRIORITY( uxPriority, uxReadyPriorities ) ( uxReadyPriorities ) |= ( 1UL 
  145:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	#define portRESET_READY_PRIORITY( uxPriority, uxReadyPriorities ) ( uxReadyPriorities ) &= ~( 1UL 
  146:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s 			page 5
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc1dYk8h.s 			page 5
 
 
  147:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	/*-----------------------------------------------------------*/
@@ -298,7 +298,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s 			page 1
   42              		.loc 2 197 2 view .LVU5
   43              		.syntax unified
   44              	@ 197 "Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h" 1
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s 			page 6
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc1dYk8h.s 			page 6
 
 
   45 0004 4FF05003 			mov r3, #80												
@@ -358,7 +358,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s 			page 1
   88 002c 0128     		cmp	r0, #1
   89 002e F4D1     		bne	.L2
   90              	.LBB9:
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s 			page 7
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc1dYk8h.s 			page 7
 
 
   56:UserAPP/Source/SendLog.c ****                 {
@@ -418,7 +418,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s 			page 1
   71:UserAPP/Source/SendLog.c ****  *
   72:UserAPP/Source/SendLog.c ****  * 该任务创建一个队列以存储接收到的数据。实际应用中，
   73:UserAPP/Source/SendLog.c ****  * 任务应包含从外设接收数据并将其发送到队列的逻辑。
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s 			page 8
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc1dYk8h.s 			page 8
 
 
   74:UserAPP/Source/SendLog.c ****  */
@@ -478,7 +478,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s 			page 1
  168              		.align	1
  169              		.global	vCreateSendLogTask
  170              		.syntax unified
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s 			page 9
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc1dYk8h.s 			page 9
 
 
  171              		.thumb
@@ -538,7 +538,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s 			page 1
  218 0030 00000000 		.word	.LC0
  219 0034 00000000 		.word	vSendLogProcessTask
  220 0038 00000000 		.word	xCreateSendLogTaskReturned
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s 			page 10
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc1dYk8h.s 			page 10
 
 
  221              		.cfi_endproc
@@ -598,7 +598,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s 			page 1
  260 000c 0C46     		mov	r4, r1
  261 000e 8046     		mov	r8, r0
  262              		.loc 1 103 24 discriminator 1 view .LVU48
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s 			page 11
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc1dYk8h.s 			page 11
 
 
  263 0010 D5B1     		cbz	r5, .L20
@@ -658,7 +658,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s 			page 1
  304              	.LCFI10:
  305              		.cfi_restore 14
  306              		.cfi_restore 8
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s 			page 12
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc1dYk8h.s 			page 12
 
 
  307              		.cfi_restore 7
@@ -718,7 +718,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s 			page 1
  364              		.file 7 "D:/gcc-arm/14.3 rel1/arm-none-eabi/include/stdio.h"
  365              		.file 8 "Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h"
  366              		.file 9 "Middlewares/Third_Party/FreeRTOS/Source/include/task.h"
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s 			page 13
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc1dYk8h.s 			page 13
 
 
  367              		.file 10 "Middlewares/Third_Party/FreeRTOS/Source/include/queue.h"
@@ -726,29 +726,29 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s 			page 1
  369              		.file 12 "D:/gcc-arm/14.3 rel1/arm-none-eabi/include/string.h"
  370              		.file 13 "USB_DEVICE/App/usbd_cdc_if.h"
  371              		.file 14 "<built-in>"
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s 			page 14
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc1dYk8h.s 			page 14
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 SendLog.c
-C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s:19     .text.vSendLogProcessTask:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s:25     .text.vSendLogProcessTask:00000000 vSendLogProcessTask
-C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s:116    .text.vSendLogProcessTask:00000044 $d
-C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s:342    .bss.xReceiveLogQueue:00000000 xReceiveLogQueue
-C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s:121    .text.vCreateReceiveLogQueueTask:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s:127    .text.vCreateReceiveLogQueueTask:00000000 vCreateReceiveLogQueueTask
-C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s:159    .text.vCreateReceiveLogQueueTask:00000014 $d
-C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s:164    .rodata.vCreateSendLogTask.str1.4:00000000 $d
-C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s:168    .text.vCreateSendLogTask:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s:174    .text.vCreateSendLogTask:00000000 vCreateSendLogTask
-C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s:217    .text.vCreateSendLogTask:0000002c $d
-C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s:349    .bss.xCreateSendLogTaskHandle:00000000 xCreateSendLogTaskHandle
-C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s:356    .bss.xCreateSendLogTaskReturned:00000000 xCreateSendLogTaskReturned
-C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s:225    .text.QueueSendfmt:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s:231    .text.QueueSendfmt:00000000 QueueSendfmt
-C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s:339    .bss.xReceiveLogQueue:00000000 $d
-C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s:346    .bss.xCreateSendLogTaskHandle:00000000 $d
-C:\Users\Administrator\AppData\Local\Temp\ccmqFmeI.s:353    .bss.xCreateSendLogTaskReturned:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\cc1dYk8h.s:19     .text.vSendLogProcessTask:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\cc1dYk8h.s:25     .text.vSendLogProcessTask:00000000 vSendLogProcessTask
+C:\Users\Administrator\AppData\Local\Temp\cc1dYk8h.s:116    .text.vSendLogProcessTask:00000044 $d
+C:\Users\Administrator\AppData\Local\Temp\cc1dYk8h.s:342    .bss.xReceiveLogQueue:00000000 xReceiveLogQueue
+C:\Users\Administrator\AppData\Local\Temp\cc1dYk8h.s:121    .text.vCreateReceiveLogQueueTask:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\cc1dYk8h.s:127    .text.vCreateReceiveLogQueueTask:00000000 vCreateReceiveLogQueueTask
+C:\Users\Administrator\AppData\Local\Temp\cc1dYk8h.s:159    .text.vCreateReceiveLogQueueTask:00000014 $d
+C:\Users\Administrator\AppData\Local\Temp\cc1dYk8h.s:164    .rodata.vCreateSendLogTask.str1.4:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\cc1dYk8h.s:168    .text.vCreateSendLogTask:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\cc1dYk8h.s:174    .text.vCreateSendLogTask:00000000 vCreateSendLogTask
+C:\Users\Administrator\AppData\Local\Temp\cc1dYk8h.s:217    .text.vCreateSendLogTask:0000002c $d
+C:\Users\Administrator\AppData\Local\Temp\cc1dYk8h.s:349    .bss.xCreateSendLogTaskHandle:00000000 xCreateSendLogTaskHandle
+C:\Users\Administrator\AppData\Local\Temp\cc1dYk8h.s:356    .bss.xCreateSendLogTaskReturned:00000000 xCreateSendLogTaskReturned
+C:\Users\Administrator\AppData\Local\Temp\cc1dYk8h.s:225    .text.QueueSendfmt:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\cc1dYk8h.s:231    .text.QueueSendfmt:00000000 QueueSendfmt
+C:\Users\Administrator\AppData\Local\Temp\cc1dYk8h.s:339    .bss.xReceiveLogQueue:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\cc1dYk8h.s:346    .bss.xCreateSendLogTaskHandle:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\cc1dYk8h.s:353    .bss.xCreateSendLogTaskReturned:00000000 $d
 
 UNDEFINED SYMBOLS
 xQueueReceive

@@ -59,7 +59,8 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 
 /* USER CODE BEGIN Private defines */
-
+// 定义宏：1=启用调试，0=关闭调试
+#define TEST_MODE 0
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

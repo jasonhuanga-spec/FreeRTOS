@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccD5OO4x.s 			page 1
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccxen3Wb.s 			page 1
 
 
    1              		.cpu cortex-m3
@@ -58,7 +58,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccD5OO4x.s 			page 1
   30:Core/Src/adc.c **** /* ADC1 init function */
   31:Core/Src/adc.c **** void MX_ADC1_Init(void)
   32:Core/Src/adc.c **** {
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccD5OO4x.s 			page 2
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccxen3Wb.s 			page 2
 
 
   27              		.loc 1 32 1 view -0
@@ -118,7 +118,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccD5OO4x.s 			page 1
   51:Core/Src/adc.c ****   hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
   63              		.loc 1 51 3 is_stmt 1 view .LVU13
   64              		.loc 1 51 24 is_stmt 0 view .LVU14
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccD5OO4x.s 			page 3
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccxen3Wb.s 			page 3
 
 
   65 0022 4360     		str	r3, [r0, #4]
@@ -178,7 +178,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccD5OO4x.s 			page 1
  100              		.loc 1 70 19 is_stmt 0 view .LVU30
  101 0046 0223     		movs	r3, #2
  102 0048 0193     		str	r3, [sp, #4]
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccD5OO4x.s 			page 4
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccxen3Wb.s 			page 4
 
 
   71:Core/Src/adc.c ****   sConfig.Rank = ADC_REGULAR_RANK_2;
@@ -238,7 +238,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccD5OO4x.s 			page 1
  138              		.loc 1 89 16 is_stmt 0 view .LVU46
  139 006e 0293     		str	r3, [sp, #8]
   90:Core/Src/adc.c ****   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccD5OO4x.s 			page 5
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccxen3Wb.s 			page 5
 
 
  140              		.loc 1 90 3 is_stmt 1 view .LVU47
@@ -298,7 +298,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccD5OO4x.s 			page 1
  176 0096 01A9     		add	r1, sp, #4
  177 0098 2B48     		ldr	r0, .L27
  178 009a FFF7FEFF 		bl	HAL_ADC_ConfigChannel
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccD5OO4x.s 			page 6
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccxen3Wb.s 			page 6
 
 
  179              	.LVL6:
@@ -358,7 +358,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccD5OO4x.s 			page 1
  215 00c2 0028     		cmp	r0, #0
  216 00c4 34D1     		bne	.L23
  217              	.L10:
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccD5OO4x.s 			page 7
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccxen3Wb.s 			page 7
 
 
  127:Core/Src/adc.c ****   {
@@ -418,7 +418,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccD5OO4x.s 			page 1
  148:Core/Src/adc.c **** 
  149:Core/Src/adc.c ****   /** Configure Regular Channel
  150:Core/Src/adc.c ****   */
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccD5OO4x.s 			page 8
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccxen3Wb.s 			page 8
 
 
  151:Core/Src/adc.c ****   sConfig.Channel = ADC_CHANNEL_15;
@@ -478,7 +478,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccD5OO4x.s 			page 1
  291 0110 A2E7     		b	.L4
  292              	.L18:
   83:Core/Src/adc.c ****   }
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccD5OO4x.s 			page 9
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccxen3Wb.s 			page 9
 
 
  293              		.loc 1 83 5 view .LVU103
@@ -538,7 +538,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccD5OO4x.s 			page 1
  339              		.align	2
  340              	.L27:
  341 0148 00000000 		.word	hadc1
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccD5OO4x.s 			page 10
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccxen3Wb.s 			page 10
 
 
  342 014c 00240140 		.word	1073816576
@@ -598,7 +598,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccD5OO4x.s 			page 1
  173:Core/Src/adc.c ****     __HAL_RCC_ADC1_CLK_ENABLE();
  174:Core/Src/adc.c **** 
  175:Core/Src/adc.c ****     __HAL_RCC_GPIOA_CLK_ENABLE();
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccD5OO4x.s 			page 11
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccxen3Wb.s 			page 11
 
 
  176:Core/Src/adc.c ****     __HAL_RCC_GPIOC_CLK_ENABLE();
@@ -658,7 +658,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccD5OO4x.s 			page 1
  391              		.cfi_def_cfa_offset 16
  392              		@ sp needed
  393 0018 70BD     		pop	{r4, r5, r6, pc}
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccD5OO4x.s 			page 12
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccxen3Wb.s 			page 12
 
 
  394              	.LVL26:
@@ -718,7 +718,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccD5OO4x.s 			page 1
  176:Core/Src/adc.c ****     __HAL_RCC_GPIOB_CLK_ENABLE();
  434              		.loc 1 176 5 view .LVU136
  435 0044 9A69     		ldr	r2, [r3, #24]
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccD5OO4x.s 			page 13
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccxen3Wb.s 			page 13
 
 
  436 0046 42F01002 		orr	r2, r2, #16
@@ -778,7 +778,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccD5OO4x.s 			page 1
  475 0076 FFF7FEFF 		bl	HAL_GPIO_Init
  476              	.LVL28:
  196:Core/Src/adc.c ****     GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccD5OO4x.s 			page 14
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccxen3Wb.s 			page 14
 
 
  477              		.loc 1 196 5 is_stmt 1 view .LVU152
@@ -838,7 +838,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccD5OO4x.s 			page 1
  514 00a0 8022     		movs	r2, #128
  515 00a2 C260     		str	r2, [r0, #12]
  210:Core/Src/adc.c ****     hdma_adc1.Init.MemDataAlignment = DMA_MDATAALIGN_WORD;
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccD5OO4x.s 			page 15
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccxen3Wb.s 			page 15
 
 
  516              		.loc 1 210 5 is_stmt 1 view .LVU170
@@ -898,7 +898,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccD5OO4x.s 			page 1
  555 00cc 00240140 		.word	1073816576
  556 00d0 00080140 		.word	1073809408
  557 00d4 00100140 		.word	1073811456
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccD5OO4x.s 			page 16
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccxen3Wb.s 			page 16
 
 
  558 00d8 000C0140 		.word	1073810432
@@ -958,7 +958,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccD5OO4x.s 			page 1
  240:Core/Src/adc.c ****     PA2     ------> ADC1_IN2
  241:Core/Src/adc.c ****     PA3     ------> ADC1_IN3
  242:Core/Src/adc.c ****     PA4     ------> ADC1_IN4
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccD5OO4x.s 			page 17
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccxen3Wb.s 			page 17
 
 
  243:Core/Src/adc.c ****     PA5     ------> ADC1_IN5
@@ -1018,7 +1018,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccD5OO4x.s 			page 1
  631 0048 000C0140 		.word	1073810432
  632              		.cfi_endproc
  633              	.LFE77:
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccD5OO4x.s 			page 18
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccxen3Wb.s 			page 18
 
 
  635              		.global	hdma_adc1
@@ -1051,24 +1051,24 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccD5OO4x.s 			page 1
  658              		.file 9 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_adc.h"
  659              		.file 10 "Core/Inc/adc.h"
  660              		.file 11 "Core/Inc/main.h"
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccD5OO4x.s 			page 19
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccxen3Wb.s 			page 19
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 adc.c
-C:\Users\Administrator\AppData\Local\Temp\ccD5OO4x.s:19     .text.MX_ADC1_Init:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\ccD5OO4x.s:25     .text.MX_ADC1_Init:00000000 MX_ADC1_Init
-C:\Users\Administrator\AppData\Local\Temp\ccD5OO4x.s:341    .text.MX_ADC1_Init:00000148 $d
-C:\Users\Administrator\AppData\Local\Temp\ccD5OO4x.s:647    .bss.hadc1:00000000 hadc1
-C:\Users\Administrator\AppData\Local\Temp\ccD5OO4x.s:347    .text.HAL_ADC_MspInit:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\ccD5OO4x.s:353    .text.HAL_ADC_MspInit:00000000 HAL_ADC_MspInit
-C:\Users\Administrator\AppData\Local\Temp\ccD5OO4x.s:555    .text.HAL_ADC_MspInit:000000cc $d
-C:\Users\Administrator\AppData\Local\Temp\ccD5OO4x.s:640    .bss.hdma_adc1:00000000 hdma_adc1
-C:\Users\Administrator\AppData\Local\Temp\ccD5OO4x.s:565    .text.HAL_ADC_MspDeInit:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\ccD5OO4x.s:571    .text.HAL_ADC_MspDeInit:00000000 HAL_ADC_MspDeInit
-C:\Users\Administrator\AppData\Local\Temp\ccD5OO4x.s:627    .text.HAL_ADC_MspDeInit:00000038 $d
-C:\Users\Administrator\AppData\Local\Temp\ccD5OO4x.s:637    .bss.hdma_adc1:00000000 $d
-C:\Users\Administrator\AppData\Local\Temp\ccD5OO4x.s:644    .bss.hadc1:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\ccxen3Wb.s:19     .text.MX_ADC1_Init:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\ccxen3Wb.s:25     .text.MX_ADC1_Init:00000000 MX_ADC1_Init
+C:\Users\Administrator\AppData\Local\Temp\ccxen3Wb.s:341    .text.MX_ADC1_Init:00000148 $d
+C:\Users\Administrator\AppData\Local\Temp\ccxen3Wb.s:647    .bss.hadc1:00000000 hadc1
+C:\Users\Administrator\AppData\Local\Temp\ccxen3Wb.s:347    .text.HAL_ADC_MspInit:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\ccxen3Wb.s:353    .text.HAL_ADC_MspInit:00000000 HAL_ADC_MspInit
+C:\Users\Administrator\AppData\Local\Temp\ccxen3Wb.s:555    .text.HAL_ADC_MspInit:000000cc $d
+C:\Users\Administrator\AppData\Local\Temp\ccxen3Wb.s:640    .bss.hdma_adc1:00000000 hdma_adc1
+C:\Users\Administrator\AppData\Local\Temp\ccxen3Wb.s:565    .text.HAL_ADC_MspDeInit:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\ccxen3Wb.s:571    .text.HAL_ADC_MspDeInit:00000000 HAL_ADC_MspDeInit
+C:\Users\Administrator\AppData\Local\Temp\ccxen3Wb.s:627    .text.HAL_ADC_MspDeInit:00000038 $d
+C:\Users\Administrator\AppData\Local\Temp\ccxen3Wb.s:637    .bss.hdma_adc1:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\ccxen3Wb.s:644    .bss.hadc1:00000000 $d
 
 UNDEFINED SYMBOLS
 HAL_ADC_Init

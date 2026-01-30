@@ -65,23 +65,25 @@ void vReceiveDataProcessTask( void * pvParameters )
             {
                 /* xReceiveDataQueueRx now contains a copy of xMessage. */
                 
-                /* 打印接收到的原始数据（用于调试） 
-                char hexStr[256]; // 足够容纳所有数据的十六进制表示
-                int offset = 0;
+                //打印接收到的原始数据（用于调试）
+                #if TEST_MODE 
+                    char hexStr[256]; // 足够容纳所有数据的十六进制表示
+                    int offset = 0;
+                    
+                    offset += sprintf(hexStr + offset, "接收到数据[%d字节]: ", dataPacket.length);
+                    
+                    // 打印所有接收到的字节
+                    for (uint16_t i = 0; i < dataPacket.length && i < MAX_RECEIVE_DATA_SIZE; i++)
+                    {
+                        offset += sprintf(hexStr + offset, "%02X ", dataPacket.data[i]);
+                    }
+                    
+                    offset += sprintf(hexStr + offset, "\r\n");
+                    
+                    // 一次性发送完整的字符串到日志队列 
+                    QueueSendfmt(xReceiveLogQueue, 0, "%s", hexStr);
+                #endif
                 
-                offset += sprintf(hexStr + offset, "接收到数据[%d字节]: ", dataPacket.length);
-                
-                // 打印所有接收到的字节
-                for (uint16_t i = 0; i < dataPacket.length && i < MAX_RECEIVE_DATA_SIZE; i++)
-                {
-                    offset += sprintf(hexStr + offset, "%02X ", dataPacket.data[i]);
-                }
-                
-                offset += sprintf(hexStr + offset, "\r\n");
-                
-                // 一次性发送完整的字符串到日志队列 
-                QueueSendfmt(xReceiveLogQueue, 0, "%s", hexStr);
-                */
                 
                 /* 解析数据包 */
                 vParseReceivedDataPacket();

@@ -22,7 +22,7 @@
 #include "usbd_cdc_if.h"
 
 /* USER CODE BEGIN INCLUDE */
-#include "Tasklist.h"
+#include "ReceiveDataProcess.h"
 /* USER CODE END INCLUDE */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -259,13 +259,9 @@ static int8_t CDC_Control_FS(uint8_t cmd, uint8_t* pbuf, uint16_t length)
 static int8_t CDC_Receive_FS(uint8_t* Buf, uint32_t *Len)
 {
   /* USER CODE BEGIN 6 */
-
-  //如果数据没有处理完，直接返回
-  // if (GetCDCDate.GetCDCDateFlag)  return(USBD_OK);
   
-  // memcpy(GetCDCDate.GetCDCDateBuffer, Buf, *Len);     //搬运数据
-  // GetCDCDate.GetCDCDateLen = *Len;                    //记录有效长度
-  // GetCDCDate.GetCDCDateFlag = 1;                      //置1：数据未处理
+  //将接收到的数据发送到接收队列
+  vReceiveDataQueueSendISRTask(Buf, Len);
 
   //准备下一次接收数据包
   USBD_CDC_SetRxBuffer(&hUsbDeviceFS, &Buf[0]);

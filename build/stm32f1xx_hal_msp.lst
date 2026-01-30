@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc73GKai.s 			page 1
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccVqxzjr.s 			page 1
 
 
    1              		.cpu cortex-m3
@@ -58,7 +58,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc73GKai.s 			page 1
   30:Core/Src/stm32f1xx_hal_msp.c **** /* USER CODE END TD */
   31:Core/Src/stm32f1xx_hal_msp.c **** 
   32:Core/Src/stm32f1xx_hal_msp.c **** /* Private define ------------------------------------------------------------*/
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc73GKai.s 			page 2
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccVqxzjr.s 			page 2
 
 
   33:Core/Src/stm32f1xx_hal_msp.c **** /* USER CODE BEGIN Define */
@@ -97,106 +97,119 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc73GKai.s 			page 1
   28              		.cfi_startproc
   29              		@ args = 0, pretend = 0, frame = 8
   30              		@ frame_needed = 0, uses_anonymous_args = 0
-  31              		@ link register save eliminated.
-  32 0000 82B0     		sub	sp, sp, #8
-  33              	.LCFI0:
-  34              		.cfi_def_cfa_offset 8
+  31 0000 00B5     		push	{lr}
+  32              	.LCFI0:
+  33              		.cfi_def_cfa_offset 4
+  34              		.cfi_offset 14, -4
+  35 0002 83B0     		sub	sp, sp, #12
+  36              	.LCFI1:
+  37              		.cfi_def_cfa_offset 16
   65:Core/Src/stm32f1xx_hal_msp.c **** 
   66:Core/Src/stm32f1xx_hal_msp.c ****   /* USER CODE BEGIN MspInit 0 */
   67:Core/Src/stm32f1xx_hal_msp.c **** 
   68:Core/Src/stm32f1xx_hal_msp.c ****   /* USER CODE END MspInit 0 */
   69:Core/Src/stm32f1xx_hal_msp.c **** 
   70:Core/Src/stm32f1xx_hal_msp.c ****   __HAL_RCC_AFIO_CLK_ENABLE();
-  35              		.loc 1 70 3 view .LVU1
-  36              	.LBB2:
-  37              		.loc 1 70 3 view .LVU2
-  38              		.loc 1 70 3 view .LVU3
-  39 0002 0E4B     		ldr	r3, .L3
-  40 0004 9A69     		ldr	r2, [r3, #24]
-  41 0006 42F00102 		orr	r2, r2, #1
-  42 000a 9A61     		str	r2, [r3, #24]
-  43              		.loc 1 70 3 view .LVU4
-  44 000c 9A69     		ldr	r2, [r3, #24]
-  45 000e 02F00102 		and	r2, r2, #1
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc73GKai.s 			page 3
+  38              		.loc 1 70 3 view .LVU1
+  39              	.LBB2:
+  40              		.loc 1 70 3 view .LVU2
+  41              		.loc 1 70 3 view .LVU3
+  42 0004 114B     		ldr	r3, .L3
+  43 0006 9A69     		ldr	r2, [r3, #24]
+  44 0008 42F00102 		orr	r2, r2, #1
+  45 000c 9A61     		str	r2, [r3, #24]
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccVqxzjr.s 			page 3
 
 
-  46 0012 0092     		str	r2, [sp]
-  47              		.loc 1 70 3 view .LVU5
-  48 0014 009A     		ldr	r2, [sp]
-  49              	.LBE2:
-  50              		.loc 1 70 3 view .LVU6
+  46              		.loc 1 70 3 view .LVU4
+  47 000e 9A69     		ldr	r2, [r3, #24]
+  48 0010 02F00102 		and	r2, r2, #1
+  49 0014 0092     		str	r2, [sp]
+  50              		.loc 1 70 3 view .LVU5
+  51 0016 009A     		ldr	r2, [sp]
+  52              	.LBE2:
+  53              		.loc 1 70 3 view .LVU6
   71:Core/Src/stm32f1xx_hal_msp.c ****   __HAL_RCC_PWR_CLK_ENABLE();
-  51              		.loc 1 71 3 view .LVU7
-  52              	.LBB3:
-  53              		.loc 1 71 3 view .LVU8
-  54              		.loc 1 71 3 view .LVU9
-  55 0016 DA69     		ldr	r2, [r3, #28]
-  56 0018 42F08052 		orr	r2, r2, #268435456
-  57 001c DA61     		str	r2, [r3, #28]
-  58              		.loc 1 71 3 view .LVU10
-  59 001e DB69     		ldr	r3, [r3, #28]
-  60 0020 03F08053 		and	r3, r3, #268435456
-  61 0024 0193     		str	r3, [sp, #4]
-  62              		.loc 1 71 3 view .LVU11
-  63 0026 019B     		ldr	r3, [sp, #4]
-  64              	.LBE3:
-  65              		.loc 1 71 3 view .LVU12
+  54              		.loc 1 71 3 view .LVU7
+  55              	.LBB3:
+  56              		.loc 1 71 3 view .LVU8
+  57              		.loc 1 71 3 view .LVU9
+  58 0018 DA69     		ldr	r2, [r3, #28]
+  59 001a 42F08052 		orr	r2, r2, #268435456
+  60 001e DA61     		str	r2, [r3, #28]
+  61              		.loc 1 71 3 view .LVU10
+  62 0020 DB69     		ldr	r3, [r3, #28]
+  63 0022 03F08053 		and	r3, r3, #268435456
+  64 0026 0193     		str	r3, [sp, #4]
+  65              		.loc 1 71 3 view .LVU11
+  66 0028 019B     		ldr	r3, [sp, #4]
+  67              	.LBE3:
+  68              		.loc 1 71 3 view .LVU12
   72:Core/Src/stm32f1xx_hal_msp.c **** 
   73:Core/Src/stm32f1xx_hal_msp.c ****   /* System interrupt init*/
-  74:Core/Src/stm32f1xx_hal_msp.c **** 
-  75:Core/Src/stm32f1xx_hal_msp.c ****   /** DISABLE: JTAG-DP Disabled and SW-DP Disabled
-  76:Core/Src/stm32f1xx_hal_msp.c ****   */
-  77:Core/Src/stm32f1xx_hal_msp.c ****   __HAL_AFIO_REMAP_SWJ_DISABLE();
-  66              		.loc 1 77 3 view .LVU13
-  67              	.LBB4:
-  68              		.loc 1 77 3 view .LVU14
-  69 0028 054A     		ldr	r2, .L3+4
-  70 002a 5368     		ldr	r3, [r2, #4]
-  71              	.LVL0:
-  72              		.loc 1 77 3 view .LVU15
-  73 002c 23F0E063 		bic	r3, r3, #117440512
-  74              	.LVL1:
-  75              		.loc 1 77 3 view .LVU16
-  76 0030 43F08063 		orr	r3, r3, #67108864
-  77              	.LVL2:
-  78              		.loc 1 77 3 view .LVU17
-  79 0034 5360     		str	r3, [r2, #4]
-  80              	.LBE4:
-  81              		.loc 1 77 3 view .LVU18
-  78:Core/Src/stm32f1xx_hal_msp.c **** 
-  79:Core/Src/stm32f1xx_hal_msp.c ****   /* USER CODE BEGIN MspInit 1 */
+  74:Core/Src/stm32f1xx_hal_msp.c ****   /* PendSV_IRQn interrupt configuration */
+  75:Core/Src/stm32f1xx_hal_msp.c ****   HAL_NVIC_SetPriority(PendSV_IRQn, 15, 0);
+  69              		.loc 1 75 3 view .LVU13
+  70 002a 0022     		movs	r2, #0
+  71 002c 0F21     		movs	r1, #15
+  72 002e 6FF00100 		mvn	r0, #1
+  73 0032 FFF7FEFF 		bl	HAL_NVIC_SetPriority
+  74              	.LVL0:
+  76:Core/Src/stm32f1xx_hal_msp.c **** 
+  77:Core/Src/stm32f1xx_hal_msp.c ****   /** DISABLE: JTAG-DP Disabled and SW-DP Disabled
+  78:Core/Src/stm32f1xx_hal_msp.c ****   */
+  79:Core/Src/stm32f1xx_hal_msp.c ****   __HAL_AFIO_REMAP_SWJ_DISABLE();
+  75              		.loc 1 79 3 view .LVU14
+  76              	.LBB4:
+  77              		.loc 1 79 3 view .LVU15
+  78 0036 064A     		ldr	r2, .L3+4
+  79 0038 5368     		ldr	r3, [r2, #4]
+  80              	.LVL1:
+  81              		.loc 1 79 3 view .LVU16
+  82 003a 23F0E063 		bic	r3, r3, #117440512
+  83              	.LVL2:
+  84              		.loc 1 79 3 view .LVU17
+  85 003e 43F08063 		orr	r3, r3, #67108864
+  86              	.LVL3:
+  87              		.loc 1 79 3 view .LVU18
+  88 0042 5360     		str	r3, [r2, #4]
+  89              	.LBE4:
+  90              		.loc 1 79 3 view .LVU19
   80:Core/Src/stm32f1xx_hal_msp.c **** 
-  81:Core/Src/stm32f1xx_hal_msp.c ****   /* USER CODE END MspInit 1 */
-  82:Core/Src/stm32f1xx_hal_msp.c **** }
-  82              		.loc 1 82 1 is_stmt 0 view .LVU19
-  83 0036 02B0     		add	sp, sp, #8
-  84              	.LCFI1:
-  85              		.cfi_def_cfa_offset 0
-  86              		@ sp needed
-  87 0038 7047     		bx	lr
-  88              	.L4:
-  89 003a 00BF     		.align	2
-  90              	.L3:
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc73GKai.s 			page 4
+  81:Core/Src/stm32f1xx_hal_msp.c ****   /* USER CODE BEGIN MspInit 1 */
+  82:Core/Src/stm32f1xx_hal_msp.c **** 
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccVqxzjr.s 			page 4
 
 
-  91 003c 00100240 		.word	1073876992
-  92 0040 00000140 		.word	1073807360
-  93              		.cfi_endproc
-  94              	.LFE75:
-  96              		.text
-  97              	.Letext0:
-  98              		.file 2 "D:/gcc-arm/14.3 rel1/arm-none-eabi/include/machine/_default_types.h"
-  99              		.file 3 "D:/gcc-arm/14.3 rel1/arm-none-eabi/include/sys/_stdint.h"
- 100              		.file 4 "Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f103xg.h"
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc73GKai.s 			page 5
+  83:Core/Src/stm32f1xx_hal_msp.c ****   /* USER CODE END MspInit 1 */
+  84:Core/Src/stm32f1xx_hal_msp.c **** }
+  91              		.loc 1 84 1 is_stmt 0 view .LVU20
+  92 0044 03B0     		add	sp, sp, #12
+  93              	.LCFI2:
+  94              		.cfi_def_cfa_offset 4
+  95              		@ sp needed
+  96 0046 5DF804FB 		ldr	pc, [sp], #4
+  97              	.L4:
+  98 004a 00BF     		.align	2
+  99              	.L3:
+ 100 004c 00100240 		.word	1073876992
+ 101 0050 00000140 		.word	1073807360
+ 102              		.cfi_endproc
+ 103              	.LFE75:
+ 105              		.text
+ 106              	.Letext0:
+ 107              		.file 2 "Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f103xg.h"
+ 108              		.file 3 "D:/gcc-arm/14.3 rel1/arm-none-eabi/include/machine/_default_types.h"
+ 109              		.file 4 "D:/gcc-arm/14.3 rel1/arm-none-eabi/include/sys/_stdint.h"
+ 110              		.file 5 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_cortex.h"
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccVqxzjr.s 			page 5
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 stm32f1xx_hal_msp.c
-C:\Users\Administrator\AppData\Local\Temp\cc73GKai.s:19     .text.HAL_MspInit:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\cc73GKai.s:25     .text.HAL_MspInit:00000000 HAL_MspInit
-C:\Users\Administrator\AppData\Local\Temp\cc73GKai.s:91     .text.HAL_MspInit:0000003c $d
+C:\Users\Administrator\AppData\Local\Temp\ccVqxzjr.s:19     .text.HAL_MspInit:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\ccVqxzjr.s:25     .text.HAL_MspInit:00000000 HAL_MspInit
+C:\Users\Administrator\AppData\Local\Temp\ccVqxzjr.s:100    .text.HAL_MspInit:0000004c $d
 
-NO UNDEFINED SYMBOLS
+UNDEFINED SYMBOLS
+HAL_NVIC_SetPriority

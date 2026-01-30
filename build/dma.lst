@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccxPfPLf.s 			page 1
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccyNQAj0.s 			page 1
 
 
    1              		.cpu cortex-m3
@@ -58,7 +58,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccxPfPLf.s 			page 1
   30:Core/Src/dma.c **** /*----------------------------------------------------------------------------*/
   31:Core/Src/dma.c **** 
   32:Core/Src/dma.c **** /* USER CODE BEGIN 1 */
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccxPfPLf.s 			page 2
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccyNQAj0.s 			page 2
 
 
   33:Core/Src/dma.c **** 
@@ -102,10 +102,10 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccxPfPLf.s 			page 1
   44:Core/Src/dma.c **** 
   45:Core/Src/dma.c ****   /* DMA interrupt init */
   46:Core/Src/dma.c ****   /* DMA1_Channel1_IRQn interrupt configuration */
-  47:Core/Src/dma.c ****   HAL_NVIC_SetPriority(DMA1_Channel1_IRQn, 0, 0);
+  47:Core/Src/dma.c ****   HAL_NVIC_SetPriority(DMA1_Channel1_IRQn, 5, 0);
   54              		.loc 1 47 3 view .LVU7
   55 0018 0022     		movs	r2, #0
-  56 001a 1146     		mov	r1, r2
+  56 001a 0521     		movs	r1, #5
   57 001c 0B20     		movs	r0, #11
   58 001e FFF7FEFF 		bl	HAL_NVIC_SetPriority
   59              	.LVL0:
@@ -118,7 +118,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccxPfPLf.s 			page 1
   50:Core/Src/dma.c **** }
   64              		.loc 1 50 1 is_stmt 0 view .LVU9
   65 0028 03B0     		add	sp, sp, #12
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccxPfPLf.s 			page 3
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccyNQAj0.s 			page 3
 
 
   66              	.LCFI2:
@@ -137,14 +137,14 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccxPfPLf.s 			page 1
   80              		.file 3 "D:/gcc-arm/14.3 rel1/arm-none-eabi/include/machine/_default_types.h"
   81              		.file 4 "D:/gcc-arm/14.3 rel1/arm-none-eabi/include/sys/_stdint.h"
   82              		.file 5 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_cortex.h"
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccxPfPLf.s 			page 4
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccyNQAj0.s 			page 4
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 dma.c
-C:\Users\Administrator\AppData\Local\Temp\ccxPfPLf.s:19     .text.MX_DMA_Init:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\ccxPfPLf.s:25     .text.MX_DMA_Init:00000000 MX_DMA_Init
-C:\Users\Administrator\AppData\Local\Temp\ccxPfPLf.s:73     .text.MX_DMA_Init:00000030 $d
+C:\Users\Administrator\AppData\Local\Temp\ccyNQAj0.s:19     .text.MX_DMA_Init:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\ccyNQAj0.s:25     .text.MX_DMA_Init:00000000 MX_DMA_Init
+C:\Users\Administrator\AppData\Local\Temp\ccyNQAj0.s:73     .text.MX_DMA_Init:00000030 $d
 
 UNDEFINED SYMBOLS
 HAL_NVIC_SetPriority

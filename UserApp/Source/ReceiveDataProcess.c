@@ -145,10 +145,6 @@ uint8_t vReceiveDataQueueSendISRTask(uint8_t* Buf, uint32_t *Len)
  */
 void vParseReceivedDataPacket(void)
 {
-    // 检查数据包长度（至少需要 Header[2] + Command[2] + Payload[59] + Checksum[1] = 64 字节）
-    if (dataPacket.length < 64)
-        return;
-
     // 拆分数据包头 (索引 0-1)
     parsedDataPacket.Header[0] = dataPacket.data[0];
     parsedDataPacket.Header[1] = dataPacket.data[1];

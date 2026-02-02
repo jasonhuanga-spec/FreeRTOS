@@ -20,10 +20,10 @@ typedef struct {
 
 //拆开接收到的数据包
 typedef struct {
-    uint8_t Header[2];          /* 数据包头 */
-    uint8_t Command[2];         /* 命令字 */
-    uint8_t Payload[59];        /* 有效载荷 */
-    uint8_t Checksum;           /* 校验和CRC8 */
+    uint8_t Header;          /* 数据包头 */
+    uint8_t Command;         /* 命令字 */
+    uint8_t Payload;         /* 有效载荷 */
+    uint8_t Checksum;        /* 校验和CRC8 */
 } ParsedDataPacket_t;
 
 /* 队列句柄，用于接收数据的存储和传递。 */

@@ -96,8 +96,10 @@ int main(void)
   MX_ADC1_Init();
   MX_USB_DEVICE_Init();
   /* USER CODE BEGIN 2 */
+
   vCreateReceiveDataTask();
   vCreateSendLogTask();
+  
   /* USER CODE END 2 */
 
   /* Init scheduler */

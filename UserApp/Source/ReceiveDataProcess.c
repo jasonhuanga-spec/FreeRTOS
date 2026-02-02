@@ -10,13 +10,7 @@ QueueHandle_t xReceiveDataQueue = NULL;
 ReceiveDataPacket_t dataPacket;
 BaseType_t xHigherPriorityTaskWoken = pdFALSE;
 // 拆开接收到的数据包
-ParsedDataPacket_t parsedDataPacket =
-{
-    .Header = {0},                  /* 数据包头 */
-    .Command = {0},                 /* 命令字 */
-    .Payload = {0},                 /* 有效载荷 */
-    .Checksum = 0                   /* 校验和CRC8 */
-};
+ParsedDataPacket_t parsedDataPacket;
 
 
 
@@ -147,42 +141,8 @@ uint8_t vReceiveDataQueueSendISRTask(uint8_t* Buf, uint32_t *Len)
  */
 void vParseReceivedDataPacket(void)
 {
-    // 拆分数据包头 (索引 0-1)
-    parsedDataPacket.Header[0] = dataPacket.data[0];
-    parsedDataPacket.Header[1] = dataPacket.data[1];
-
-    // 判断数据包头是否正确（例如：FE EF）
-    if (parsedDataPacket.Header[0] != 0xFE || parsedDataPacket.Header[1] != 0xEF)
-    {
-        QueueSendfmt(xReceiveLogQueue, 0, "数据包头错误: %02X %02X\r\n", 
-                    parsedDataPacket.Header[0], parsedDataPacket.Header[1]);
-        return;
-    }
-
-    
-    // 拆分命令字 (索引 2-3)
-    parsedDataPacket.Command[0] = dataPacket.data[2];
-    parsedDataPacket.Command[1] = dataPacket.data[3];
-    // 将两个字节按大端拼成一个整型值并赋值给 commandValue
-    uint16_t commandValue = parsedDataPacket.Command[0] + parsedDataPacket.Command[1];
-
-    // 拆分校验和 (索引 4)
-    parsedDataPacket.Checksum = dataPacket.data[4];
-
-    // TODO: 检查CRC8校验位
-    if (1)
-    {
-        /* code */
-    }
-
-    // 拆分有效载荷 (索引 5-63，共59字节)
-    for (uint8_t i = 0; i < 59; i++)
-    {
-        parsedDataPacket.Payload[i] = dataPacket.data[5 + i];
-    }
-
     
     
     // 发送解析成功的日志
-    QueueSendfmt(xReceiveLogQueue, 0, "数据包解析成功，执行任务: %d \r\n", commandValue);
+    QueueSendfmt(xReceiveLogQueue, 0, "数据包解析成功，执行任务: %d \r\n");
 }

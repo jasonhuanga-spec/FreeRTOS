@@ -8,6 +8,7 @@
 #include "usbd_def.h"
 #include "usbd_cdc.h"
 #include "SendLog.h"
+#include "HWCI.h"
 
 /* 定义最大接收数据包大小 */
 #define MAX_RECEIVE_DATA_SIZE 64
@@ -19,18 +20,24 @@ typedef struct {
 } ReceiveDataPacket_t;
 
 //拆开接收到的数据包
-typedef struct {
-    uint8_t Header;          /* 数据包头 */
-    uint8_t Command;         /* 命令字 */
-    uint8_t Payload;         /* 有效载荷 */
-    uint8_t Checksum;        /* 校验和CRC8 */
-} ParsedDataPacket_t;
+typedef struct { // 解析后的数据包结构体定义，包含协议字段
+    uint8_t Header;        /* 数据包头，固定0xAA */ // 每行添加注释
+    uint8_t FunctionCode;  /* 通信功能码，位于数组索引1 */ // 每行添加注释
+    uint16_t ExecIndex;    /* 下位机执行索引，2字节，位于数组索引2-3 */ // 每行添加注释
+    uint8_t DataLen;       /* 有效数据长度，动态表示数据字段长度 */ // 每行添加注释
+    uint8_t Data[59];      /* 数据码，最大59字节，对应数组索引4-62 */ // 每行添加注释
+    uint8_t CRC8;          /* 校验码CRC8，位于数据包最后一位 */ // 每行添加注释
+} ParsedDataPacket_t; // 解析后的数据包类型定义
 
 /* 队列句柄，用于接收数据的存储和传递。 */
 extern QueueHandle_t xReceiveDataQueue;
 // 拆开接收到的数据包
 extern ParsedDataPacket_t parsedDataPacket;
 
+/* 解析后数据包的队列句柄，供 HWCI 任务从中接收解析后的数据包 */ // 每行注释
+extern QueueHandle_t xParsedDataQueue; /* extern 声明：解析后数据队列 */ // 每行注释
+/* HWCI 任务句柄的外部声明，供其他模块引用 */ // 每行注释
+extern TaskHandle_t xHWCIProcessTaskHandle; /* extern 声明：HWCI 任务句柄 */ // 每行注释
 
 
 void vCreateReceiveDataTask(void);

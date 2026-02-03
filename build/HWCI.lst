@@ -1,0 +1,372 @@
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccCgYUL2.s 			page 1
+
+
+   1              		.cpu cortex-m3
+   2              		.arch armv7-m
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"HWCI.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.file 1 "UserAPP/Source/HWCI.c"
+  18              		.section	.rodata.vHWCIProcessTask.str1.4,"aMS",%progbits,1
+  19              		.align	2
+  20              	.LC0:
+  21 0000 48574349 		.ascii	"HWCI: \345\244\204\347\220\206\346\210\220\345\212\237"
+  21      3A20E5A4 
+  21      84E79086 
+  21      E68890E5 
+  21      8A9F
+  22 0012 2C204578 		.ascii	", ExecIndex=%u, DataLen=%u\015\012\000"
+  22      6563496E 
+  22      6465783D 
+  22      25752C20 
+  22      44617461 
+  23 002f 00       		.align	2
+  24              	.LC1:
+  25 0030 48574349 		.ascii	"HWCI: \346\234\252\347\237\245\345\212\237\350\203\275"
+  25      3A20E69C 
+  25      AAE79FA5 
+  25      E58A9FE8 
+  25      83BD
+  26 0042 E7A08120 		.ascii	"\347\240\201 0x%02X\015\012\000"
+  26      30782530 
+  26      32580D0A 
+  26      00
+  27              		.section	.text.vHWCIProcessTask,"ax",%progbits
+  28              		.align	1
+  29              		.global	vHWCIProcessTask
+  30              		.syntax unified
+  31              		.thumb
+  32              		.thumb_func
+  34              	vHWCIProcessTask:
+  35              	.LFB79:
+   1:UserAPP/Source/HWCI.c **** #include "ReceiveDataProcess.h" // 包含解析和队列的声明
+   2:UserAPP/Source/HWCI.c **** 
+   3:UserAPP/Source/HWCI.c **** /* HWCI 任务句柄定义 */ // 每行注释
+   4:UserAPP/Source/HWCI.c **** TaskHandle_t xHWCIProcessTaskHandle = NULL; // 定义 HWCI 任务句柄
+   5:UserAPP/Source/HWCI.c **** 
+   6:UserAPP/Source/HWCI.c **** /* 解析后数据队列定义 */ // 每行注释
+   7:UserAPP/Source/HWCI.c **** QueueHandle_t xParsedDataQueue = NULL; // 用于在解析和处理之间传递数据的队列
+   8:UserAPP/Source/HWCI.c **** 
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccCgYUL2.s 			page 2
+
+
+   9:UserAPP/Source/HWCI.c **** /**
+  10:UserAPP/Source/HWCI.c ****  * @brief HWCI 处理任务：从解析队列获取 ParsedDataPacket 并执行对应处理
+  11:UserAPP/Source/HWCI.c ****  */
+  12:UserAPP/Source/HWCI.c **** void vHWCIProcessTask(void *pvParameters) // HWCI 任务入口函数
+  13:UserAPP/Source/HWCI.c **** {
+  36              		.loc 1 13 1 view -0
+  37              		.cfi_startproc
+  38              		@ Volatile: function does not return.
+  39              		@ args = 0, pretend = 0, frame = 72
+  40              		@ frame_needed = 0, uses_anonymous_args = 0
+  41              	.LVL0:
+  42              		.loc 1 13 1 is_stmt 0 view .LVU1
+  43 0000 00B5     		push	{lr}
+  44              	.LCFI0:
+  45              		.cfi_def_cfa_offset 4
+  46              		.cfi_offset 14, -4
+  47 0002 95B0     		sub	sp, sp, #84
+  48              	.LCFI1:
+  49              		.cfi_def_cfa_offset 88
+  50 0004 0AE0     		b	.L3
+  51              	.LVL1:
+  52              	.L6:
+  14:UserAPP/Source/HWCI.c ****     ParsedDataPacket_t localPacket; // 本地变量：存放从队列接收的解析后数据包
+  15:UserAPP/Source/HWCI.c **** 
+  16:UserAPP/Source/HWCI.c ****     for(;;) // 永久循环，任务主循环
+  17:UserAPP/Source/HWCI.c ****     {
+  18:UserAPP/Source/HWCI.c ****         if (xParsedDataQueue != NULL) // 检查队列是否已创建
+  19:UserAPP/Source/HWCI.c ****         {
+  20:UserAPP/Source/HWCI.c ****             if (xQueueReceive(xParsedDataQueue, &localPacket, portMAX_DELAY) == pdPASS) // 阻塞�
+  21:UserAPP/Source/HWCI.c ****             {
+  22:UserAPP/Source/HWCI.c ****                 /* 根据 FunctionCode 分发处理逻辑 */ // 每行注释
+  23:UserAPP/Source/HWCI.c ****                 switch (localPacket.FunctionCode) // 根据功能码选择处理分支
+  24:UserAPP/Source/HWCI.c ****                 {
+  25:UserAPP/Source/HWCI.c ****                     case 0x02: // 功能码示例：0x02
+  26:UserAPP/Source/HWCI.c ****                         // TODO: 在此处添加对应的处理逻辑
+  27:UserAPP/Source/HWCI.c ****                         if (localPacket.ExecIndex == TASK_ID_SelectESLSPI)
+  28:UserAPP/Source/HWCI.c ****                         {
+  29:UserAPP/Source/HWCI.c ****                             SelectESLSPI(localPacket.Data[0]); // 调用 SelectESLSPI 函数，传�
+  30:UserAPP/Source/HWCI.c ****                         }
+  31:UserAPP/Source/HWCI.c ****                         
+  32:UserAPP/Source/HWCI.c ****                         QueueSendfmt(xReceiveLogQueue, 0, "HWCI: 处理成功, ExecIndex=%u, DataLe
+  53              		.loc 1 32 25 is_stmt 1 view .LVU2
+  54              		.loc 1 32 145 is_stmt 0 view .LVU3
+  55 0006 9DF81030 		ldrb	r3, [sp, #16]	@ zero_extendqisi2
+  56              		.loc 1 32 25 view .LVU4
+  57 000a 0093     		str	r3, [sp]
+  58 000c BDF80E30 		ldrh	r3, [sp, #14]
+  59 0010 124A     		ldr	r2, .L9
+  60 0012 0021     		movs	r1, #0
+  61 0014 1248     		ldr	r0, .L9+4
+  62 0016 0068     		ldr	r0, [r0]
+  63 0018 FFF7FEFF 		bl	QueueSendfmt
+  64              	.LVL2:
+  33:UserAPP/Source/HWCI.c ****                         break; // 退出该 case
+  65              		.loc 1 33 25 is_stmt 1 view .LVU5
+  66              	.L3:
+  14:UserAPP/Source/HWCI.c ****     ParsedDataPacket_t localPacket; // 本地变量：存放从队列接收的解析后数据包
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccCgYUL2.s 			page 3
+
+
+  67              		.loc 1 14 5 view .LVU6
+  16:UserAPP/Source/HWCI.c ****     {
+  68              		.loc 1 16 5 view .LVU7
+  18:UserAPP/Source/HWCI.c ****         {
+  69              		.loc 1 18 9 view .LVU8
+  18:UserAPP/Source/HWCI.c ****         {
+  70              		.loc 1 18 30 is_stmt 0 view .LVU9
+  71 001c 114B     		ldr	r3, .L9+8
+  72 001e 1868     		ldr	r0, [r3]
+  18:UserAPP/Source/HWCI.c ****         {
+  73              		.loc 1 18 12 view .LVU10
+  74 0020 0028     		cmp	r0, #0
+  75 0022 FBD0     		beq	.L3
+  20:UserAPP/Source/HWCI.c ****             {
+  76              		.loc 1 20 13 is_stmt 1 view .LVU11
+  20:UserAPP/Source/HWCI.c ****             {
+  77              		.loc 1 20 17 is_stmt 0 view .LVU12
+  78 0024 4FF0FF32 		mov	r2, #-1
+  79 0028 03A9     		add	r1, sp, #12
+  80 002a FFF7FEFF 		bl	xQueueReceive
+  81              	.LVL3:
+  20:UserAPP/Source/HWCI.c ****             {
+  82              		.loc 1 20 16 discriminator 1 view .LVU13
+  83 002e 0128     		cmp	r0, #1
+  84 0030 F4D1     		bne	.L3
+  23:UserAPP/Source/HWCI.c ****                 {
+  85              		.loc 1 23 17 is_stmt 1 view .LVU14
+  23:UserAPP/Source/HWCI.c ****                 {
+  86              		.loc 1 23 36 is_stmt 0 view .LVU15
+  87 0032 9DF80D30 		ldrb	r3, [sp, #13]	@ zero_extendqisi2
+  23:UserAPP/Source/HWCI.c ****                 {
+  88              		.loc 1 23 17 view .LVU16
+  89 0036 022B     		cmp	r3, #2
+  90 0038 08D1     		bne	.L5
+  27:UserAPP/Source/HWCI.c ****                         {
+  91              		.loc 1 27 25 is_stmt 1 view .LVU17
+  27:UserAPP/Source/HWCI.c ****                         {
+  92              		.loc 1 27 40 is_stmt 0 view .LVU18
+  93 003a BDF80E30 		ldrh	r3, [sp, #14]
+  27:UserAPP/Source/HWCI.c ****                         {
+  94              		.loc 1 27 28 view .LVU19
+  95 003e 012B     		cmp	r3, #1
+  96 0040 E1D1     		bne	.L6
+  29:UserAPP/Source/HWCI.c ****                         }
+  97              		.loc 1 29 29 is_stmt 1 view .LVU20
+  98 0042 9DF81100 		ldrb	r0, [sp, #17]	@ zero_extendqisi2
+  99 0046 FFF7FEFF 		bl	SelectESLSPI
+ 100              	.LVL4:
+ 101 004a DCE7     		b	.L6
+ 102              	.L5:
+  34:UserAPP/Source/HWCI.c **** 
+  35:UserAPP/Source/HWCI.c ****                     default: // 未知功能码分支处理
+  36:UserAPP/Source/HWCI.c ****                         QueueSendfmt(xReceiveLogQueue, 0, "HWCI: 未知功能码 0x%02X\r\n", local
+ 103              		.loc 1 36 25 view .LVU21
+ 104 004c 064A     		ldr	r2, .L9+12
+ 105 004e 0021     		movs	r1, #0
+ 106 0050 0348     		ldr	r0, .L9+4
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccCgYUL2.s 			page 4
+
+
+ 107 0052 0068     		ldr	r0, [r0]
+ 108 0054 FFF7FEFF 		bl	QueueSendfmt
+ 109              	.LVL5:
+  37:UserAPP/Source/HWCI.c ****                         break; // 退出默认分支
+ 110              		.loc 1 37 25 view .LVU22
+ 111 0058 E0E7     		b	.L3
+ 112              	.L10:
+ 113 005a 00BF     		.align	2
+ 114              	.L9:
+ 115 005c 00000000 		.word	.LC0
+ 116 0060 00000000 		.word	xReceiveLogQueue
+ 117 0064 00000000 		.word	xParsedDataQueue
+ 118 0068 30000000 		.word	.LC1
+ 119              		.cfi_endproc
+ 120              	.LFE79:
+ 122              		.section	.rodata.vCreateHWCIProcessTask.str1.4,"aMS",%progbits,1
+ 123              		.align	2
+ 124              	.LC2:
+ 125 0000 E5889BE5 		.ascii	"\345\210\233\345\273\272 xParsedDataQueue \345\244\261"
+ 125      BBBA2078 
+ 125      50617273 
+ 125      65644461 
+ 125      74615175 
+ 126 001b E8B4A50D 		.ascii	"\350\264\245\015\012\000"
+ 126      0A00
+ 127 0021 000000   		.align	2
+ 128              	.LC3:
+ 129 0024 76485743 		.ascii	"vHWCIProcessTask\000"
+ 129      4950726F 
+ 129      63657373 
+ 129      5461736B 
+ 129      00
+ 130              		.section	.text.vCreateHWCIProcessTask,"ax",%progbits
+ 131              		.align	1
+ 132              		.global	vCreateHWCIProcessTask
+ 133              		.syntax unified
+ 134              		.thumb
+ 135              		.thumb_func
+ 137              	vCreateHWCIProcessTask:
+ 138              	.LFB80:
+  38:UserAPP/Source/HWCI.c ****                 }
+  39:UserAPP/Source/HWCI.c ****             }
+  40:UserAPP/Source/HWCI.c ****         }
+  41:UserAPP/Source/HWCI.c ****     }
+  42:UserAPP/Source/HWCI.c **** }
+  43:UserAPP/Source/HWCI.c **** 
+  44:UserAPP/Source/HWCI.c **** /**
+  45:UserAPP/Source/HWCI.c ****  * @brief 创建并启动 HWCI 处理任务和解析结果队列
+  46:UserAPP/Source/HWCI.c ****  */
+  47:UserAPP/Source/HWCI.c **** void vCreateHWCIProcessTask(void) // 创建 HWCI 任务的函数实现
+  48:UserAPP/Source/HWCI.c **** {
+ 139              		.loc 1 48 1 view -0
+ 140              		.cfi_startproc
+ 141              		@ args = 0, pretend = 0, frame = 0
+ 142              		@ frame_needed = 0, uses_anonymous_args = 0
+ 143 0000 00B5     		push	{lr}
+ 144              	.LCFI2:
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccCgYUL2.s 			page 5
+
+
+ 145              		.cfi_def_cfa_offset 4
+ 146              		.cfi_offset 14, -4
+ 147 0002 83B0     		sub	sp, sp, #12
+ 148              	.LCFI3:
+ 149              		.cfi_def_cfa_offset 16
+  49:UserAPP/Source/HWCI.c ****     /* 创建解析后数据队列，容量为 10 个 ParsedDataPacket_t */ // 每行注释
+  50:UserAPP/Source/HWCI.c ****     xParsedDataQueue = xQueueCreate(10, sizeof(ParsedDataPacket_t)); // 创建队列用于在解析
+ 150              		.loc 1 50 5 view .LVU24
+ 151              		.loc 1 50 24 is_stmt 0 view .LVU25
+ 152 0004 0022     		movs	r2, #0
+ 153 0006 4221     		movs	r1, #66
+ 154 0008 0A20     		movs	r0, #10
+ 155 000a FFF7FEFF 		bl	xQueueGenericCreate
+ 156              	.LVL6:
+ 157              		.loc 1 50 22 discriminator 1 view .LVU26
+ 158 000e 0B4B     		ldr	r3, .L16
+ 159 0010 1860     		str	r0, [r3]
+  51:UserAPP/Source/HWCI.c **** 
+  52:UserAPP/Source/HWCI.c ****     if (xParsedDataQueue == NULL) // 如果队列创建失败
+ 160              		.loc 1 52 5 is_stmt 1 view .LVU27
+ 161              		.loc 1 52 8 is_stmt 0 view .LVU28
+ 162 0012 60B1     		cbz	r0, .L15
+  53:UserAPP/Source/HWCI.c ****     {
+  54:UserAPP/Source/HWCI.c ****         QueueSendfmt(xReceiveLogQueue, 0, "创建 xParsedDataQueue 失败\r\n"); // 记录队列创
+  55:UserAPP/Source/HWCI.c ****         return; // 返回，不创建任务
+  56:UserAPP/Source/HWCI.c ****     }
+  57:UserAPP/Source/HWCI.c **** 
+  58:UserAPP/Source/HWCI.c ****     /* 创建 HWCI 处理任务并保存句柄 */ // 每行注释
+  59:UserAPP/Source/HWCI.c ****     xTaskCreate(vHWCIProcessTask, 
+ 163              		.loc 1 59 5 is_stmt 1 view .LVU29
+ 164 0014 0A4B     		ldr	r3, .L16+4
+ 165 0016 0193     		str	r3, [sp, #4]
+ 166 0018 0023     		movs	r3, #0
+ 167 001a 0093     		str	r3, [sp]
+ 168 001c 4FF48072 		mov	r2, #256
+ 169 0020 0849     		ldr	r1, .L16+8
+ 170 0022 0948     		ldr	r0, .L16+12
+ 171 0024 FFF7FEFF 		bl	xTaskCreate
+ 172              	.LVL7:
+ 173              	.L11:
+  60:UserAPP/Source/HWCI.c ****                 "vHWCIProcessTask", 
+  61:UserAPP/Source/HWCI.c ****                 256, 
+  62:UserAPP/Source/HWCI.c ****                 NULL, 
+  63:UserAPP/Source/HWCI.c ****                 tskIDLE_PRIORITY, 
+  64:UserAPP/Source/HWCI.c ****                 &xHWCIProcessTaskHandle); // 创建任务并获取任务句柄
+  65:UserAPP/Source/HWCI.c **** }
+ 174              		.loc 1 65 1 is_stmt 0 view .LVU30
+ 175 0028 03B0     		add	sp, sp, #12
+ 176              	.LCFI4:
+ 177              		.cfi_remember_state
+ 178              		.cfi_def_cfa_offset 4
+ 179              		@ sp needed
+ 180 002a 5DF804FB 		ldr	pc, [sp], #4
+ 181              	.L15:
+ 182              	.LCFI5:
+ 183              		.cfi_restore_state
+  54:UserAPP/Source/HWCI.c ****         return; // 返回，不创建任务
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccCgYUL2.s 			page 6
+
+
+ 184              		.loc 1 54 9 is_stmt 1 view .LVU31
+ 185 002e 074A     		ldr	r2, .L16+16
+ 186 0030 0021     		movs	r1, #0
+ 187 0032 074B     		ldr	r3, .L16+20
+ 188 0034 1868     		ldr	r0, [r3]
+ 189 0036 FFF7FEFF 		bl	QueueSendfmt
+ 190              	.LVL8:
+  55:UserAPP/Source/HWCI.c ****     }
+ 191              		.loc 1 55 9 view .LVU32
+ 192 003a F5E7     		b	.L11
+ 193              	.L17:
+ 194              		.align	2
+ 195              	.L16:
+ 196 003c 00000000 		.word	xParsedDataQueue
+ 197 0040 00000000 		.word	xHWCIProcessTaskHandle
+ 198 0044 24000000 		.word	.LC3
+ 199 0048 00000000 		.word	vHWCIProcessTask
+ 200 004c 00000000 		.word	.LC2
+ 201 0050 00000000 		.word	xReceiveLogQueue
+ 202              		.cfi_endproc
+ 203              	.LFE80:
+ 205              		.global	xParsedDataQueue
+ 206              		.section	.bss.xParsedDataQueue,"aw",%nobits
+ 207              		.align	2
+ 210              	xParsedDataQueue:
+ 211 0000 00000000 		.space	4
+ 212              		.global	xHWCIProcessTaskHandle
+ 213              		.section	.bss.xHWCIProcessTaskHandle,"aw",%nobits
+ 214              		.align	2
+ 217              	xHWCIProcessTaskHandle:
+ 218 0000 00000000 		.space	4
+ 219              		.text
+ 220              	.Letext0:
+ 221              		.file 2 "D:/gcc-arm/14.3 rel1/arm-none-eabi/include/machine/_default_types.h"
+ 222              		.file 3 "D:/gcc-arm/14.3 rel1/arm-none-eabi/include/sys/_stdint.h"
+ 223              		.file 4 "Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h"
+ 224              		.file 5 "Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h"
+ 225              		.file 6 "Middlewares/Third_Party/FreeRTOS/Source/include/task.h"
+ 226              		.file 7 "Middlewares/Third_Party/FreeRTOS/Source/include/queue.h"
+ 227              		.file 8 "UserAPP/Include/SendLog.h"
+ 228              		.file 9 "UserAPP/Include/HWCI.h"
+ 229              		.file 10 "UserAPP/Include/ReceiveDataProcess.h"
+ 230              		.file 11 "UserAPP/Include/TaskList.h"
+ 231              		.file 12 "UserDriver/Include/HWCIDri.h"
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccCgYUL2.s 			page 7
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 HWCI.c
+C:\Users\Administrator\AppData\Local\Temp\ccCgYUL2.s:19     .rodata.vHWCIProcessTask.str1.4:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\ccCgYUL2.s:28     .text.vHWCIProcessTask:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\ccCgYUL2.s:34     .text.vHWCIProcessTask:00000000 vHWCIProcessTask
+C:\Users\Administrator\AppData\Local\Temp\ccCgYUL2.s:115    .text.vHWCIProcessTask:0000005c $d
+C:\Users\Administrator\AppData\Local\Temp\ccCgYUL2.s:210    .bss.xParsedDataQueue:00000000 xParsedDataQueue
+C:\Users\Administrator\AppData\Local\Temp\ccCgYUL2.s:123    .rodata.vCreateHWCIProcessTask.str1.4:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\ccCgYUL2.s:131    .text.vCreateHWCIProcessTask:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\ccCgYUL2.s:137    .text.vCreateHWCIProcessTask:00000000 vCreateHWCIProcessTask
+C:\Users\Administrator\AppData\Local\Temp\ccCgYUL2.s:196    .text.vCreateHWCIProcessTask:0000003c $d
+C:\Users\Administrator\AppData\Local\Temp\ccCgYUL2.s:217    .bss.xHWCIProcessTaskHandle:00000000 xHWCIProcessTaskHandle
+C:\Users\Administrator\AppData\Local\Temp\ccCgYUL2.s:207    .bss.xParsedDataQueue:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\ccCgYUL2.s:214    .bss.xHWCIProcessTaskHandle:00000000 $d
+
+UNDEFINED SYMBOLS
+QueueSendfmt
+xQueueReceive
+SelectESLSPI
+xReceiveLogQueue
+xQueueGenericCreate
+xTaskCreate

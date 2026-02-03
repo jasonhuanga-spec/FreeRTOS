@@ -67,7 +67,7 @@ void vReceiveDataProcessTask( void * pvParameters )
                     offset += sprintf(hexStr + offset, "接收到数据[%d字节]: ", dataPacket.length);
                     
                     // 打印所有接收到的字节
-                    for (uint16_t i = 0; i < dataPacket.length && i < MAX_RECEIVE_DATA_SIZE; i++)
+                    for (uint16_t i = 0; i < dataPacket.length; i++)
                     {
                         offset += sprintf(hexStr + offset, "%02X ", dataPacket.data[i]);
                     }
@@ -136,13 +136,94 @@ uint8_t vReceiveDataQueueSendISRTask(uint8_t* Buf, uint32_t *Len)
 
 
 /**
+ * @brief 计算 CRC-8 校验值（多项式 0x07，初始值 0x00）的封装函数
+ */
+static uint8_t CalculateCRC8(const uint8_t *data, uint16_t length) { /* 封装的 CRC8 计算函数定义 */ // 每行注释
+    uint8_t crc = 0x00;                                           /* 初始化 CRC 值为 0x00 */ // 每行注释
+    for (uint16_t i = 0; i < length; i++) {                       /* 遍历所有输入字节 */ // 每行注释
+        crc ^= data[i];                                           /* 与当前字节异或 */ // 每行注释
+        for (uint8_t bit = 0; bit < 8; bit++) {                   /* 对每个位进行处理 */ // 每行注释
+            if (crc & 0x80)                                       /* 如果最高位为 1 */ // 每行注释
+            {
+                crc = (uint8_t)((crc << 1) ^ 0x07);              /* 左移并按多项式异或 */ // 每行注释
+            }
+            else
+            {
+                crc <<= 1;                                       /* 仅左移一位 */ // 每行注释
+            }
+        }
+    }
+    return crc;                                                   /* 返回计算得到的 CRC 值 */ // 每行注释
+}
+
+/**
  * @brief 解析接收到的数据包
  *
  */
 void vParseReceivedDataPacket(void)
 {
-    
-    
-    // 发送解析成功的日志
-    QueueSendfmt(xReceiveLogQueue, 0, "数据包解析成功，执行任务: %d \r\n");
+    uint8_t computedCRC = 0;                                        /* 计算得到的 CRC8 值 */ // 每行注释
+    uint8_t receivedCRC = 0;                                        /* 接收到的 CRC8 值 */ // 每行注释
+    uint8_t *buf = dataPacket.data;                                 /* 指向接收数据缓冲区的指针 */ // 每行注释
+    uint16_t len = dataPacket.length;                                /* 接收数据的长度 */ // 每行注释
+
+    /* 检查最小长度：头(1)+功能码(1)+执行索引(2)+CRC(1) = 5 */ // 每行注释
+    if (len < 5)                                                    /* 长度不足，直接返回 */ // 每行注释
+    {
+        QueueSendfmt(xReceiveLogQueue, 0, "解析失败：数据长度过短(%d)\r\n", len); /* 记录错误日志 */ // 每行注释
+        return;                                                      /* 退出函数 */ // 每行注释
+    }
+
+    /* 验证包头是否为 0xAA */ // 每行注释
+    if (buf[0] != 0xAA)                                              /* 包头错误，记录并返回 */ // 每行注释
+    {
+        QueueSendfmt(xReceiveLogQueue, 0, "解析失败：包头错误(0x%02X)\r\n", buf[0]); /* 日志包头错误 */ // 每行注释
+        return;                                                      /* 退出函数 */ // 每行注释
+    }
+
+    /* 计算 CRC8：调用封装的 CalculateCRC8 函数，计算除最后一字节之外的 CRC */ // 每行注释
+    computedCRC = CalculateCRC8(buf, (uint16_t)(len - 1));          /* 通过封装函数计算 CRC */ // 每行注释
+
+    receivedCRC = buf[len - 1];                                      /* 取出接收到的 CRC8 */ // 每行注释
+
+    if (computedCRC != receivedCRC)                                  /* CRC 校验失败时记录日志并返回 */ // 每行注释
+    {
+        QueueSendfmt(xReceiveLogQueue, 0, "解析失败:CRC 校验错误(计算=0x%02X, 接收=0x%02X)\r\n", computedCRC, receivedCRC); /* CRC 错误日志 */ // 每行注释
+        return;                                                      /* 退出函数 */ // 每行注释
+    }
+
+    /* CRC 校验通过，填充 parsedDataPacket 结构体 */ // 每行注释
+    parsedDataPacket.Header = buf[0];                                /* 填充包头 */ // 每行注释
+    parsedDataPacket.FunctionCode = buf[1];                          /* 填充功能码 */ // 每行注释
+    parsedDataPacket.ExecIndex = (uint16_t)((buf[2] << 8) | buf[3]);  /* 填充执行索引（按大端组合） */ // 每行注释
+
+    /* 计算数据段长度：总长度 - (头1 + 功能1 + 执行索引2 + CRC1) = len - 5 */ // 每行注释
+    parsedDataPacket.DataLen = (uint8_t)((len > 5) ? (len - 5) : 0);  /* 填充数据长度 */ // 每行注释
+
+    if (parsedDataPacket.DataLen > 0)                                /* 如果有数据则拷贝数据 */ // 每行注释
+    {
+        memcpy(parsedDataPacket.Data, &buf[4], parsedDataPacket.DataLen); /* 将数据段复制到结构体的 Data 数组 */ // 每行注释
+    }
+
+    parsedDataPacket.CRC8 = receivedCRC;                             /* 填充 CRC8 字段 */ // 每行注释
+
+    /* 将解析后的数据包发送到 xParsedDataQueue，以便 HWCI 任务处理 */ // 每行注释
+    if (xParsedDataQueue != NULL)                                     /* 检查解析队列是否已创建 */ // 每行注释
+    {
+        if (xQueueSend(xParsedDataQueue, &parsedDataPacket, (TickType_t)10) != pdPASS) /* 尝试发送解析包到队列，超时10个tick */ // 每行注释
+        {
+            QueueSendfmt(xReceiveLogQueue, 0, "解析后的数据发送到 xParsedDataQueue 失败\r\n"); /* 发送失败则记录日志 */ // 每行注释
+        }
+        else
+        {
+            QueueSendfmt(xReceiveLogQueue, 0, "解析后的数据已发送到 xParsedDataQueue\r\n"); /* 发送成功则记录日志 */ // 每行注释
+        }
+    }
+    else
+    {
+        QueueSendfmt(xReceiveLogQueue, 0, "解析后的数据队列 xParsedDataQueue 未创建\r\n"); /* 队列不存在时记录日志 */ // 每行注释
+    }
+
+    /* 记录解析成功的日志，包括功能码、执行索引和数据长度 */ // 每行注释
+    QueueSendfmt(xReceiveLogQueue, 0, "数据包解析成功: Func=0x%02X, ExecIdx=%u, DataLen=%u, CRC=0x%02X\r\n", parsedDataPacket.FunctionCode, parsedDataPacket.ExecIndex, parsedDataPacket.DataLen, parsedDataPacket.CRC8); /* 发送成功日志 */ // 每行注释
 }

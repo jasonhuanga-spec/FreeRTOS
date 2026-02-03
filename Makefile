@@ -84,7 +84,9 @@ Middlewares/Third_Party/FreeRTOS/Source/timers.c \
 Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.c \
 Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang/heap_4.c \
 Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c\
-UserAPP/Source/SendLog.c 
+UserAPP/Source/SendLog.c \
+UserDriver/Source/HWCIDri.c	\
+UserAPP/Source/HWCI.c
 
 
 
@@ -162,7 +164,8 @@ C_INCLUDES =  \
 -IDrivers/CMSIS/Include \
 -IMiddlewares/Third_Party/FreeRTOS/Source/include \
 -IMiddlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 \
--IMiddlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3
+-IMiddlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3 \
+-IUserDriver/Include 
 
 
 # compile gcc flags

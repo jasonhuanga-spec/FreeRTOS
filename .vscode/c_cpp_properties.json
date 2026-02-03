@@ -5,6 +5,7 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "${workspaceFolder}/UserAPP/Include",
+                "${workspaceFolder}/UserDriver/Include",
                 "${workspaceFolder}/Core/Inc",
                 "${workspaceFolder}/Drivers/CMSIS/Include",
                 "${workspaceFolder}/Drivers/STM32F1xx_HAL_Driver/Inc",

@@ -28,6 +28,7 @@
 /* USER CODE BEGIN Includes */
 #include "ReceiveDataProcess.h"
 #include "SendLog.h"
+#include "HWCI.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -99,6 +100,7 @@ int main(void)
 
   vCreateReceiveDataTask();
   vCreateSendLogTask();
+  vCreateHWCIProcessTask();
   
   /* USER CODE END 2 */
 

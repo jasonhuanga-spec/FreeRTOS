@@ -52,7 +52,9 @@ build/main.o: Core/Src/main.c Core/Inc/main.h \
  Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h \
  Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ctlreq.h \
  UserAPP/Include/SendLog.h USB_DEVICE/App/usbd_cdc_if.h \
- UserAPP/Include/SendLog.h
+ UserAPP/Include/HWCI.h UserDriver/Include/HWCIDri.h \
+ UserAPP/Include/TaskList.h UserAPP/Include/SendLog.h \
+ UserAPP/Include/HWCI.h
 Core/Inc/main.h:
 Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h:
 Core/Inc/stm32f1xx_hal_conf.h:
@@ -113,4 +115,8 @@ Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h:
 Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ctlreq.h:
 UserAPP/Include/SendLog.h:
 USB_DEVICE/App/usbd_cdc_if.h:
+UserAPP/Include/HWCI.h:
+UserDriver/Include/HWCIDri.h:
+UserAPP/Include/TaskList.h:
 UserAPP/Include/SendLog.h:
+UserAPP/Include/HWCI.h:

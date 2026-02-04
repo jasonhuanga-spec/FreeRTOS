@@ -7,7 +7,7 @@
 #include <string.h>  
 #include "usbd_def.h"
 #include "usbd_cdc.h"
-#include "SendLog.h"
+#include "SendDataProcess.h"
 #include "HWCI.h"
 
 /* 定义最大接收数据包大小 */

@@ -119,7 +119,7 @@ void VDDLOrHiz(uint8_t SelectU2HW)
         HAL_GPIO_WritePin(VDDLOrHizIN1GPIOX, VDDLOrHizIN1PINX, GPIO_PIN_RESET);
         HAL_GPIO_WritePin(VDDLOrHizIN2GPIOX, VDDLOrHizIN2PINX, GPIO_PIN_SET);
     }   
-    if (SelectU2HW == Hiz)
+    if (SelectU2HW == U2Hiz)
     {
         HAL_GPIO_WritePin(VDDLOrHizIN1GPIOX, VDDLOrHizIN1PINX, GPIO_PIN_SET);
         HAL_GPIO_WritePin(VDDLOrHizIN2GPIOX, VDDLOrHizIN2PINX, GPIO_PIN_RESET);
@@ -130,7 +130,7 @@ void VDDLOrHiz(uint8_t SelectU2HW)
  * @函数名称       控制U3的模拟开关芯片，选择TSCL还是VSPL2
  * @说明           SelectU3HW:选择电路
  */
-void TSCLOrVSPL2(uint8_t SelectU3HW)
+void TSCLOrVSPL2OrHiz(uint8_t SelectU3HW)
 {
     if (SelectU3HW == VAVSPL2)
     {
@@ -141,6 +141,11 @@ void TSCLOrVSPL2(uint8_t SelectU3HW)
     {
         HAL_GPIO_WritePin(TSCLOrVSPL2IN1GPIOX, TSCLOrVSPL2IN1PINX, GPIO_PIN_SET);
         HAL_GPIO_WritePin(TSCLOrVSPL2IN2GPIOX, TSCLOrVSPL2IN2PINX, GPIO_PIN_RESET);
+    }
+    if (SelectU3HW == U3Hiz)
+    {
+        HAL_GPIO_WritePin(TSCLOrVSPL2IN1GPIOX, TSCLOrVSPL2IN1PINX, GPIO_PIN_SET);
+        HAL_GPIO_WritePin(TSCLOrVSPL2IN2GPIOX, TSCLOrVSPL2IN2PINX, GPIO_PIN_SET);
     }
 }
 
@@ -159,5 +164,35 @@ void VSNL2rVMTP(uint8_t SelectU8HW)
     {
         HAL_GPIO_WritePin(TSCLOrVSPL2IN1GPIOX, TSCLOrVSPL2IN1PINX, GPIO_PIN_SET);
         HAL_GPIO_WritePin(TSCLOrVSPL2IN2GPIOX, TSCLOrVSPL2IN2PINX, GPIO_PIN_RESET);
+    }
+}
+
+
+/**
+ * @函数名称       选择IC类型
+ * @说明           ICType:选择IC类型
+ */
+void ICTypeSelect(uint8_t ICType)
+{
+    if (ICType == E52bit)
+    {
+        VDDLOrHiz(U2Hiz);
+        TSCLOrVSPL2OrHiz(TSCL);
+        VDDOrAAVSPL2(VDD);
+        VSNL2rVMTP(VMTP);
+    }   
+    if (ICType == E53bitAA)
+    {
+        VDDLOrHiz(VDDL);
+        TSCLOrVSPL2OrHiz(U3Hiz);
+        VDDOrAAVSPL2(AAVSPL2);
+        VSNL2rVMTP(VSNL2);
+    }
+    if (ICType == E53bitVA)
+    {
+        VDDLOrHiz(VDDL);
+        TSCLOrVSPL2OrHiz(VSNL2);
+        VDDOrAAVSPL2(VDD);
+        VSNL2rVMTP(VSNL2);
     }
 }

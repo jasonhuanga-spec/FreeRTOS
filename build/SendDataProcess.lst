@@ -1,0 +1,1615 @@
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 1
+
+
+   1              		.cpu cortex-m3
+   2              		.arch armv7-m
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"SendDataProcess.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.file 1 "UserAPP/Source/SendDataProcess.c"
+  18              		.section	.text.Packet_CRC8,"ax",%progbits
+  19              		.align	1
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  24              	Packet_CRC8:
+  25              	.LVL0:
+  26              	.LFB83:
+   1:UserAPP/Source/SendDataProcess.c **** #include "SendDataProcess.h" // 包含本模块的头文件，声明接口和常量
+   2:UserAPP/Source/SendDataProcess.c **** #include "TaskList.h" // 包含功能码与应答码的定义（FUNCTION_CODE_Reply, REPLY_OK 等�
+   3:UserAPP/Source/SendDataProcess.c **** 
+   4:UserAPP/Source/SendDataProcess.c **** 
+   5:UserAPP/Source/SendDataProcess.c **** 
+   6:UserAPP/Source/SendDataProcess.c **** // 全局变量定义
+   7:UserAPP/Source/SendDataProcess.c **** BaseType_t xCreateSendLogTaskReturned;
+   8:UserAPP/Source/SendDataProcess.c **** TaskHandle_t xCreateSendLogTaskHandle = NULL;
+   9:UserAPP/Source/SendDataProcess.c **** /* 队列句柄，用于接收数据的存储和传递。 */
+  10:UserAPP/Source/SendDataProcess.c **** QueueHandle_t xReceiveLogQueue = NULL;
+  11:UserAPP/Source/SendDataProcess.c **** 
+  12:UserAPP/Source/SendDataProcess.c **** /**
+  13:UserAPP/Source/SendDataProcess.c ****  * @brief 创建并启动发送日志任务。
+  14:UserAPP/Source/SendDataProcess.c ****  *
+  15:UserAPP/Source/SendDataProcess.c ****  * 创建任务并检查返回值；任务实现应为无限循环并在阻塞点等待数据。
+  16:UserAPP/Source/SendDataProcess.c ****  */
+  17:UserAPP/Source/SendDataProcess.c **** void vCreateSendLogTask(void)
+  18:UserAPP/Source/SendDataProcess.c **** {
+  19:UserAPP/Source/SendDataProcess.c ****     vCreateReceiveLogQueueTask(NULL);
+  20:UserAPP/Source/SendDataProcess.c **** 
+  21:UserAPP/Source/SendDataProcess.c ****     /* Create the task, storing the handle. */
+  22:UserAPP/Source/SendDataProcess.c ****     xCreateSendLogTaskReturned = xTaskCreate(
+  23:UserAPP/Source/SendDataProcess.c ****                    vSendLogProcessTask,                 /* Function that implements the task. */
+  24:UserAPP/Source/SendDataProcess.c ****                     "vSendLogProcessTask",              /* Text name for the task. */
+  25:UserAPP/Source/SendDataProcess.c ****                     512,                                    /* Stack size in words, not bytes. */
+  26:UserAPP/Source/SendDataProcess.c ****                     ( void * ) 1,                           /* Parameter passed into the task. */
+  27:UserAPP/Source/SendDataProcess.c ****                     tskIDLE_PRIORITY + 2,                   /* Priority at which the task is create
+  28:UserAPP/Source/SendDataProcess.c ****                     &xCreateSendLogTaskHandle );        /* Used to pass out the created task's hand
+  29:UserAPP/Source/SendDataProcess.c **** 
+  30:UserAPP/Source/SendDataProcess.c ****     if( xCreateSendLogTaskReturned == pdPASS )
+  31:UserAPP/Source/SendDataProcess.c ****     {
+  32:UserAPP/Source/SendDataProcess.c ****         
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 2
+
+
+  33:UserAPP/Source/SendDataProcess.c ****     }
+  34:UserAPP/Source/SendDataProcess.c **** }
+  35:UserAPP/Source/SendDataProcess.c **** 
+  36:UserAPP/Source/SendDataProcess.c **** 
+  37:UserAPP/Source/SendDataProcess.c **** /**
+  38:UserAPP/Source/SendDataProcess.c ****  * @brief 接收数据处理任务
+  39:UserAPP/Source/SendDataProcess.c ****  *
+  40:UserAPP/Source/SendDataProcess.c ****  * 该任务负责从系统的接收通道（例如 UART、SPI、USB 等）获取原始数据，
+  41:UserAPP/Source/SendDataProcess.c ****  * 对数据进行必要的解析与校验，并将处理后的消息/事件分发到应用层。
+  42:UserAPP/Source/SendDataProcess.c ****  */
+  43:UserAPP/Source/SendDataProcess.c **** void vSendLogProcessTask( void * pvParameters )
+  44:UserAPP/Source/SendDataProcess.c **** {
+  45:UserAPP/Source/SendDataProcess.c ****     /* 该参数值期望为 1，因为在下面对 xTaskCreate() 的调用中将 1 作为 pvParame
+  46:UserAPP/Source/SendDataProcess.c ****     configASSERT( ( ( uint32_t ) pvParameters ) == 1 );
+  47:UserAPP/Source/SendDataProcess.c **** 
+  48:UserAPP/Source/SendDataProcess.c ****     for (;;)
+  49:UserAPP/Source/SendDataProcess.c ****     {
+  50:UserAPP/Source/SendDataProcess.c ****         //放到循环中，不停更新这个数组
+  51:UserAPP/Source/SendDataProcess.c ****         char xReceiveLogQueueBuf[PRINT_QUEUE_ITEM_SIZE];
+  52:UserAPP/Source/SendDataProcess.c **** 
+  53:UserAPP/Source/SendDataProcess.c ****         if( xReceiveLogQueue != NULL )
+  54:UserAPP/Source/SendDataProcess.c ****             {
+  55:UserAPP/Source/SendDataProcess.c ****                 /* 从已创建的队列接收一条消息，阻塞等待最多 portMAX_DELAY */
+  56:UserAPP/Source/SendDataProcess.c ****                 if( xQueueReceive( xReceiveLogQueue, xReceiveLogQueueBuf, portMAX_DELAY ) == pdPASS
+  57:UserAPP/Source/SendDataProcess.c ****                 {
+  58:UserAPP/Source/SendDataProcess.c ****                     /* 计算实际字符串长度（不包括结尾的 \0 和垃圾数据） */
+  59:UserAPP/Source/SendDataProcess.c ****                     int actual_len = strlen(xReceiveLogQueueBuf);
+  60:UserAPP/Source/SendDataProcess.c ****                     
+  61:UserAPP/Source/SendDataProcess.c ****                     /* 只发送实际的字符串内容，而不是整个缓冲区 */
+  62:UserAPP/Source/SendDataProcess.c ****                     if( actual_len > 0 )    CDC_Transmit_FS((uint8_t*)xReceiveLogQueueBuf, actual_l
+  63:UserAPP/Source/SendDataProcess.c **** 
+  64:UserAPP/Source/SendDataProcess.c ****                 }
+  65:UserAPP/Source/SendDataProcess.c ****             }
+  66:UserAPP/Source/SendDataProcess.c ****     }
+  67:UserAPP/Source/SendDataProcess.c **** }   
+  68:UserAPP/Source/SendDataProcess.c **** 
+  69:UserAPP/Source/SendDataProcess.c **** 
+  70:UserAPP/Source/SendDataProcess.c **** /**
+  71:UserAPP/Source/SendDataProcess.c ****  * @brief 示例任务：创建一个队列用于接收数据
+  72:UserAPP/Source/SendDataProcess.c ****  *
+  73:UserAPP/Source/SendDataProcess.c ****  * 该任务创建一个队列以存储接收到的数据。实际应用中，
+  74:UserAPP/Source/SendDataProcess.c ****  * 任务应包含从外设接收数据并将其发送到队列的逻辑。
+  75:UserAPP/Source/SendDataProcess.c ****  */
+  76:UserAPP/Source/SendDataProcess.c **** void vCreateReceiveLogQueueTask( void *pvParameters )
+  77:UserAPP/Source/SendDataProcess.c **** {
+  78:UserAPP/Source/SendDataProcess.c ****     /* 创建一个用于保存接收数据包（ReceiveDataPacket_t）的队列，最多可容纳 
+  79:UserAPP/Source/SendDataProcess.c ****     /* 使用 PRINT_QUEUE_ITEM_SIZE 以确保队列项大小与发送/接收缓冲区一致，避�
+  80:UserAPP/Source/SendDataProcess.c ****     xReceiveLogQueue = xQueueCreate(10, PRINT_QUEUE_ITEM_SIZE);
+  81:UserAPP/Source/SendDataProcess.c **** 
+  82:UserAPP/Source/SendDataProcess.c ****     if( xReceiveLogQueue == NULL )
+  83:UserAPP/Source/SendDataProcess.c ****     {
+  84:UserAPP/Source/SendDataProcess.c ****         /* Queue was not created and must not be used. */
+  85:UserAPP/Source/SendDataProcess.c ****         
+  86:UserAPP/Source/SendDataProcess.c ****     }
+  87:UserAPP/Source/SendDataProcess.c **** }
+  88:UserAPP/Source/SendDataProcess.c **** 
+  89:UserAPP/Source/SendDataProcess.c **** 
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 3
+
+
+  90:UserAPP/Source/SendDataProcess.c **** 
+  91:UserAPP/Source/SendDataProcess.c ****  /** * @brief 格式化字符串并发送到队列
+  92:UserAPP/Source/SendDataProcess.c ****  *  * 
+  93:UserAPP/Source/SendDataProcess.c ****   * @param xQueue 队列句柄
+  94:UserAPP/Source/SendDataProcess.c ****   * @param xTicksToWait 等待时间
+  95:UserAPP/Source/SendDataProcess.c ****   * @param fmt 格式化字符串
+  96:UserAPP/Source/SendDataProcess.c ****   * @param ... 可变参数
+  97:UserAPP/Source/SendDataProcess.c ****   * @return BaseType_t 发送结果
+  98:UserAPP/Source/SendDataProcess.c ****   * 
+  99:UserAPP/Source/SendDataProcess.c ****   * // 无等待（不允许阻塞）
+ 100:UserAPP/Source/SendDataProcess.c ****     QueueSendfmt(xPrintQueue, 0, "接收到数据: %02X", parsedDataPacket.Payload[0]);
+ 101:UserAPP/Source/SendDataProcess.c ****   */                    
+ 102:UserAPP/Source/SendDataProcess.c **** BaseType_t QueueSendfmt(QueueHandle_t xQueue, TickType_t xTicksToWait, const char *fmt, ...)
+ 103:UserAPP/Source/SendDataProcess.c **** {
+ 104:UserAPP/Source/SendDataProcess.c ****     if (xQueue == NULL || fmt == NULL) {
+ 105:UserAPP/Source/SendDataProcess.c ****         return pdFAIL;
+ 106:UserAPP/Source/SendDataProcess.c ****     }
+ 107:UserAPP/Source/SendDataProcess.c **** 
+ 108:UserAPP/Source/SendDataProcess.c ****     char buf[PRINT_QUEUE_ITEM_SIZE];
+ 109:UserAPP/Source/SendDataProcess.c ****     memset(buf, 0, sizeof(buf));
+ 110:UserAPP/Source/SendDataProcess.c **** 
+ 111:UserAPP/Source/SendDataProcess.c ****     va_list ap;
+ 112:UserAPP/Source/SendDataProcess.c ****     va_start(ap, fmt);
+ 113:UserAPP/Source/SendDataProcess.c ****     vsnprintf(buf, sizeof(buf), fmt, ap);
+ 114:UserAPP/Source/SendDataProcess.c ****     va_end(ap);
+ 115:UserAPP/Source/SendDataProcess.c **** 
+ 116:UserAPP/Source/SendDataProcess.c ****     return xQueueSend(xQueue, buf, xTicksToWait);
+ 117:UserAPP/Source/SendDataProcess.c **** }
+ 118:UserAPP/Source/SendDataProcess.c **** 
+ 119:UserAPP/Source/SendDataProcess.c **** 
+ 120:UserAPP/Source/SendDataProcess.c **** /* @brief 计算数据包的 CRC8 校验值
+ 121:UserAPP/Source/SendDataProcess.c ****  * @param data 数据指针
+ 122:UserAPP/Source/SendDataProcess.c ****  * @param length 数据长度
+ 123:UserAPP/Source/SendDataProcess.c ****  * @return 计算得到的 CRC8 值
+ 124:UserAPP/Source/SendDataProcess.c ****  */
+ 125:UserAPP/Source/SendDataProcess.c **** static uint8_t Packet_CRC8(const uint8_t *data, size_t length) 
+ 126:UserAPP/Source/SendDataProcess.c **** { // 每行注释
+  27              		.loc 1 126 1 view -0
+  28              		.cfi_startproc
+  29              		@ args = 0, pretend = 0, frame = 0
+  30              		@ frame_needed = 0, uses_anonymous_args = 0
+  31              		.loc 1 126 1 is_stmt 0 view .LVU1
+  32 0000 00B5     		push	{lr}
+  33              	.LCFI0:
+  34              		.cfi_def_cfa_offset 4
+  35              		.cfi_offset 14, -4
+  36 0002 8646     		mov	lr, r0
+ 127:UserAPP/Source/SendDataProcess.c ****     uint8_t crc = 0x00; // 初始化 CRC
+  37              		.loc 1 127 5 is_stmt 1 view .LVU2
+  38              	.LVL1:
+ 128:UserAPP/Source/SendDataProcess.c ****     for (size_t i = 0; i < length; ++i) { // 遍历所有字节
+  39              		.loc 1 128 5 view .LVU3
+  40              	.LBB6:
+  41              		.loc 1 128 10 view .LVU4
+  42              		.loc 1 128 17 is_stmt 0 view .LVU5
+  43 0004 4FF0000C 		mov	ip, #0
+  44              	.LBE6:
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 4
+
+
+ 127:UserAPP/Source/SendDataProcess.c ****     uint8_t crc = 0x00; // 初始化 CRC
+  45              		.loc 1 127 13 view .LVU6
+  46 0008 6046     		mov	r0, ip
+  47              	.LVL2:
+  48              	.LBB9:
+  49              		.loc 1 128 5 view .LVU7
+  50 000a 0FE0     		b	.L2
+  51              	.LVL3:
+  52              	.L10:
+  53              	.LBB7:
+ 129:UserAPP/Source/SendDataProcess.c ****         crc ^= data[i]; // 异或字节
+ 130:UserAPP/Source/SendDataProcess.c ****         for (uint8_t bit = 0; bit < 8; ++bit) { // 逐位处理
+ 131:UserAPP/Source/SendDataProcess.c ****             if (crc & 0x80) { // 检查最高位
+ 132:UserAPP/Source/SendDataProcess.c ****                 crc = (uint8_t)((crc << 1) ^ 0x07); // 左移并按多项式异或
+  54              		.loc 1 132 17 is_stmt 1 view .LVU8
+  55              		.loc 1 132 44 is_stmt 0 view .LVU9
+  56 000c 5200     		lsls	r2, r2, #1
+  57 000e 82F00702 		eor	r2, r2, #7
+  58              		.loc 1 132 21 view .LVU10
+  59 0012 D0B2     		uxtb	r0, r2
+  60              	.LVL4:
+  61              	.L5:
+ 130:UserAPP/Source/SendDataProcess.c ****             if (crc & 0x80) { // 检查最高位
+  62              		.loc 1 130 40 is_stmt 1 discriminator 2 view .LVU11
+  63 0014 0133     		adds	r3, r3, #1
+  64              	.LVL5:
+ 130:UserAPP/Source/SendDataProcess.c ****             if (crc & 0x80) { // 检查最高位
+  65              		.loc 1 130 40 is_stmt 0 discriminator 2 view .LVU12
+  66 0016 DBB2     		uxtb	r3, r3
+  67              	.LVL6:
+  68              	.L3:
+ 130:UserAPP/Source/SendDataProcess.c ****             if (crc & 0x80) { // 检查最高位
+  69              		.loc 1 130 35 is_stmt 1 discriminator 1 view .LVU13
+  70 0018 072B     		cmp	r3, #7
+  71 001a 05D8     		bhi	.L9
+ 131:UserAPP/Source/SendDataProcess.c ****                 crc = (uint8_t)((crc << 1) ^ 0x07); // 左移并按多项式异或
+  72              		.loc 1 131 13 view .LVU14
+ 131:UserAPP/Source/SendDataProcess.c ****                 crc = (uint8_t)((crc << 1) ^ 0x07); // 左移并按多项式异或
+  73              		.loc 1 131 17 is_stmt 0 view .LVU15
+  74 001c 42B2     		sxtb	r2, r0
+ 131:UserAPP/Source/SendDataProcess.c ****                 crc = (uint8_t)((crc << 1) ^ 0x07); // 左移并按多项式异或
+  75              		.loc 1 131 16 view .LVU16
+  76 001e 002A     		cmp	r2, #0
+  77 0020 F4DB     		blt	.L10
+ 133:UserAPP/Source/SendDataProcess.c ****             } else {
+ 134:UserAPP/Source/SendDataProcess.c ****                 crc <<= 1; // 仅左移
+  78              		.loc 1 134 17 is_stmt 1 view .LVU17
+  79              		.loc 1 134 21 is_stmt 0 view .LVU18
+  80 0022 4000     		lsls	r0, r0, #1
+  81              	.LVL7:
+  82              		.loc 1 134 21 view .LVU19
+  83 0024 C0B2     		uxtb	r0, r0
+  84 0026 F5E7     		b	.L5
+  85              	.LVL8:
+  86              	.L9:
+  87              		.loc 1 134 21 view .LVU20
+  88              	.LBE7:
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 5
+
+
+ 128:UserAPP/Source/SendDataProcess.c ****         crc ^= data[i]; // 异或字节
+  89              		.loc 1 128 36 is_stmt 1 discriminator 2 view .LVU21
+  90 0028 0CF1010C 		add	ip, ip, #1
+  91              	.LVL9:
+  92              	.L2:
+ 128:UserAPP/Source/SendDataProcess.c ****         crc ^= data[i]; // 异或字节
+  93              		.loc 1 128 26 discriminator 1 view .LVU22
+  94 002c 8C45     		cmp	ip, r1
+  95 002e 04D2     		bcs	.L11
+ 129:UserAPP/Source/SendDataProcess.c ****         for (uint8_t bit = 0; bit < 8; ++bit) { // 逐位处理
+  96              		.loc 1 129 9 view .LVU23
+ 129:UserAPP/Source/SendDataProcess.c ****         for (uint8_t bit = 0; bit < 8; ++bit) { // 逐位处理
+  97              		.loc 1 129 20 is_stmt 0 view .LVU24
+  98 0030 1EF80C30 		ldrb	r3, [lr, ip]	@ zero_extendqisi2
+ 129:UserAPP/Source/SendDataProcess.c ****         for (uint8_t bit = 0; bit < 8; ++bit) { // 逐位处理
+  99              		.loc 1 129 13 view .LVU25
+ 100 0034 5840     		eors	r0, r0, r3
+ 101              	.LVL10:
+ 130:UserAPP/Source/SendDataProcess.c ****             if (crc & 0x80) { // 检查最高位
+ 102              		.loc 1 130 9 is_stmt 1 view .LVU26
+ 103              	.LBB8:
+ 130:UserAPP/Source/SendDataProcess.c ****             if (crc & 0x80) { // 检查最高位
+ 104              		.loc 1 130 14 view .LVU27
+ 130:UserAPP/Source/SendDataProcess.c ****             if (crc & 0x80) { // 检查最高位
+ 105              		.loc 1 130 22 is_stmt 0 view .LVU28
+ 106 0036 0023     		movs	r3, #0
+ 130:UserAPP/Source/SendDataProcess.c ****             if (crc & 0x80) { // 检查最高位
+ 107              		.loc 1 130 9 view .LVU29
+ 108 0038 EEE7     		b	.L3
+ 109              	.LVL11:
+ 110              	.L11:
+ 130:UserAPP/Source/SendDataProcess.c ****             if (crc & 0x80) { // 检查最高位
+ 111              		.loc 1 130 9 view .LVU30
+ 112              	.LBE8:
+ 113              	.LBE9:
+ 135:UserAPP/Source/SendDataProcess.c ****             }
+ 136:UserAPP/Source/SendDataProcess.c ****         }
+ 137:UserAPP/Source/SendDataProcess.c ****     }
+ 138:UserAPP/Source/SendDataProcess.c ****     return crc; // 返回 CRC 值
+ 114              		.loc 1 138 5 is_stmt 1 view .LVU31
+ 139:UserAPP/Source/SendDataProcess.c **** }
+ 115              		.loc 1 139 1 is_stmt 0 view .LVU32
+ 116 003a 5DF804FB 		ldr	pc, [sp], #4
+ 117              		.cfi_endproc
+ 118              	.LFE83:
+ 120              		.section	.text.vSendLogProcessTask,"ax",%progbits
+ 121              		.align	1
+ 122              		.global	vSendLogProcessTask
+ 123              		.syntax unified
+ 124              		.thumb
+ 125              		.thumb_func
+ 127              	vSendLogProcessTask:
+ 128              	.LVL12:
+ 129              	.LFB80:
+  44:UserAPP/Source/SendDataProcess.c ****     /* 该参数值期望为 1，因为在下面对 xTaskCreate() 的调用中将 1 作为 pvParame
+ 130              		.loc 1 44 1 is_stmt 1 view -0
+ 131              		.cfi_startproc
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 6
+
+
+ 132              		@ args = 0, pretend = 0, frame = 128
+ 133              		@ frame_needed = 0, uses_anonymous_args = 0
+  46:UserAPP/Source/SendDataProcess.c **** 
+ 134              		.loc 1 46 5 view .LVU34
+ 135 0000 0128     		cmp	r0, #1
+ 136 0002 08D0     		beq	.L17
+  46:UserAPP/Source/SendDataProcess.c **** 
+ 137              		.loc 1 46 5 discriminator 1 view .LVU35
+ 138              	.LBB10:
+ 139              	.LBI10:
+ 140              		.file 2 "Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h"
+   1:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /*
+   2:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * FreeRTOS Kernel V10.3.1
+   3:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * Copyright (C) 2020 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
+   4:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  *
+   5:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * Permission is hereby granted, free of charge, to any person obtaining a copy of
+   6:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * this software and associated documentation files (the "Software"), to deal in
+   7:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * the Software without restriction, including without limitation the rights to
+   8:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+   9:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * the Software, and to permit persons to whom the Software is furnished to do so,
+  10:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * subject to the following conditions:
+  11:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  *
+  12:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * The above copyright notice and this permission notice shall be included in all
+  13:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * copies or substantial portions of the Software.
+  14:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  *
+  15:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  16:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+  17:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+  18:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+  19:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+  20:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+  21:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  *
+  22:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * http://www.FreeRTOS.org
+  23:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * http://aws.amazon.com/freertos
+  24:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  *
+  25:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * 1 tab == 4 spaces!
+  26:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  */
+  27:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+  28:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+  29:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #ifndef PORTMACRO_H
+  30:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define PORTMACRO_H
+  31:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+  32:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #ifdef __cplusplus
+  33:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** extern "C" {
+  34:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #endif
+  35:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+  36:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /*-----------------------------------------------------------
+  37:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * Port specific definitions.
+  38:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  *
+  39:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * The settings in this file configure FreeRTOS correctly for the
+  40:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * given hardware and compiler.
+  41:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  *
+  42:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * These settings should not be altered.
+  43:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  *-----------------------------------------------------------
+  44:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  */
+  45:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+  46:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /* Type definitions. */
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 7
+
+
+  47:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define portCHAR		char
+  48:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define portFLOAT		float
+  49:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define portDOUBLE		double
+  50:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define portLONG		long
+  51:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define portSHORT		short
+  52:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define portSTACK_TYPE	uint32_t
+  53:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define portBASE_TYPE	long
+  54:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+  55:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** typedef portSTACK_TYPE StackType_t;
+  56:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** typedef long BaseType_t;
+  57:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** typedef unsigned long UBaseType_t;
+  58:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+  59:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #if( configUSE_16_BIT_TICKS == 1 )
+  60:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	typedef uint16_t TickType_t;
+  61:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	#define portMAX_DELAY ( TickType_t ) 0xffff
+  62:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #else
+  63:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	typedef uint32_t TickType_t;
+  64:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	#define portMAX_DELAY ( TickType_t ) 0xffffffffUL
+  65:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+  66:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	/* 32-bit tick type on a 32-bit architecture, so reads of the tick count do
+  67:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	not need to be guarded with a critical section. */
+  68:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	#define portTICK_TYPE_IS_ATOMIC 1
+  69:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #endif
+  70:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /*-----------------------------------------------------------*/
+  71:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+  72:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /* Architecture specifics. */
+  73:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define portSTACK_GROWTH			( -1 )
+  74:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define portTICK_PERIOD_MS			( ( TickType_t ) 1000 / configTICK_RATE_HZ )
+  75:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define portBYTE_ALIGNMENT			8
+  76:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /*-----------------------------------------------------------*/
+  77:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+  78:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /* Scheduler utilities. */
+  79:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define portYIELD() 															\
+  80:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** {																				\
+  81:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	/* Set a PendSV to request a context switch. */								\
+  82:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	portNVIC_INT_CTRL_REG = portNVIC_PENDSVSET_BIT;								\
+  83:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 																				\
+  84:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	/* Barriers are normally not required but do ensure the code is completely	\
+  85:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	within the specified behaviour for the architecture. */						\
+  86:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	__asm volatile( "dsb" ::: "memory" );										\
+  87:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	__asm volatile( "isb" );													\
+  88:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** }
+  89:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+  90:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define portNVIC_INT_CTRL_REG		( * ( ( volatile uint32_t * ) 0xe000ed04 ) )
+  91:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define portNVIC_PENDSVSET_BIT		( 1UL << 28UL )
+  92:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define portEND_SWITCHING_ISR( xSwitchRequired ) if( xSwitchRequired != pdFALSE ) portYIELD()
+  93:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define portYIELD_FROM_ISR( x ) portEND_SWITCHING_ISR( x )
+  94:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /*-----------------------------------------------------------*/
+  95:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+  96:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /* Critical section management. */
+  97:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** extern void vPortEnterCritical( void );
+  98:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** extern void vPortExitCritical( void );
+  99:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define portSET_INTERRUPT_MASK_FROM_ISR()		ulPortRaiseBASEPRI()
+ 100:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define portCLEAR_INTERRUPT_MASK_FROM_ISR(x)	vPortSetBASEPRI(x)
+ 101:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define portDISABLE_INTERRUPTS()				vPortRaiseBASEPRI()
+ 102:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define portENABLE_INTERRUPTS()					vPortSetBASEPRI(0)
+ 103:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define portENTER_CRITICAL()					vPortEnterCritical()
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 8
+
+
+ 104:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define portEXIT_CRITICAL()						vPortExitCritical()
+ 105:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 106:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /*-----------------------------------------------------------*/
+ 107:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 108:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /* Task function macros as described on the FreeRTOS.org WEB site.  These are
+ 109:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** not necessary for to use this port.  They are defined so the common demo files
+ 110:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** (which build with all the ports) will build. */
+ 111:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define portTASK_FUNCTION_PROTO( vFunction, pvParameters ) void vFunction( void *pvParameters )
+ 112:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define portTASK_FUNCTION( vFunction, pvParameters ) void vFunction( void *pvParameters )
+ 113:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /*-----------------------------------------------------------*/
+ 114:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 115:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /* Tickless idle/low power functionality. */
+ 116:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #ifndef portSUPPRESS_TICKS_AND_SLEEP
+ 117:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	extern void vPortSuppressTicksAndSleep( TickType_t xExpectedIdleTime );
+ 118:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	#define portSUPPRESS_TICKS_AND_SLEEP( xExpectedIdleTime ) vPortSuppressTicksAndSleep( xExpectedIdl
+ 119:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #endif
+ 120:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /*-----------------------------------------------------------*/
+ 121:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 122:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /* Architecture specific optimisations. */
+ 123:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #ifndef configUSE_PORT_OPTIMISED_TASK_SELECTION
+ 124:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	#define configUSE_PORT_OPTIMISED_TASK_SELECTION 1
+ 125:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #endif
+ 126:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 127:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #if configUSE_PORT_OPTIMISED_TASK_SELECTION == 1
+ 128:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 129:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	/* Generic helper function. */
+ 130:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	__attribute__( ( always_inline ) ) static inline uint8_t ucPortCountLeadingZeros( uint32_t ulBitma
+ 131:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	{
+ 132:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	uint8_t ucReturn;
+ 133:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 134:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 		__asm volatile ( "clz %0, %1" : "=r" ( ucReturn ) : "r" ( ulBitmap ) : "memory" );
+ 135:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 		return ucReturn;
+ 136:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	}
+ 137:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 138:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	/* Check the configuration. */
+ 139:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	#if( configMAX_PRIORITIES > 32 )
+ 140:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 		#error configUSE_PORT_OPTIMISED_TASK_SELECTION can only be set to 1 when configMAX_PRIORITIES is 
+ 141:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	#endif
+ 142:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 143:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	/* Store/clear the ready priorities in a bit map. */
+ 144:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	#define portRECORD_READY_PRIORITY( uxPriority, uxReadyPriorities ) ( uxReadyPriorities ) |= ( 1UL 
+ 145:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	#define portRESET_READY_PRIORITY( uxPriority, uxReadyPriorities ) ( uxReadyPriorities ) &= ~( 1UL 
+ 146:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 147:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	/*-----------------------------------------------------------*/
+ 148:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 149:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	#define portGET_HIGHEST_PRIORITY( uxTopPriority, uxReadyPriorities ) uxTopPriority = ( 31UL - ( ui
+ 150:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 151:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #endif /* configUSE_PORT_OPTIMISED_TASK_SELECTION */
+ 152:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 153:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /*-----------------------------------------------------------*/
+ 154:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 155:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #ifdef configASSERT
+ 156:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	void vPortValidateInterruptPriority( void );
+ 157:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	#define portASSERT_IF_INTERRUPT_PRIORITY_INVALID() 	vPortValidateInterruptPriority()
+ 158:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #endif
+ 159:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 160:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /* portNOP() is not required by this port. */
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 9
+
+
+ 161:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define portNOP()
+ 162:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 163:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define portINLINE	__inline
+ 164:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 165:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #ifndef portFORCE_INLINE
+ 166:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	#define portFORCE_INLINE inline __attribute__(( always_inline))
+ 167:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #endif
+ 168:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 169:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /*-----------------------------------------------------------*/
+ 170:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 171:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** portFORCE_INLINE static BaseType_t xPortIsInsideInterrupt( void )
+ 172:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** {
+ 173:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** uint32_t ulCurrentInterrupt;
+ 174:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** BaseType_t xReturn;
+ 175:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 176:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	/* Obtain the number of the currently executing interrupt. */
+ 177:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	__asm volatile( "mrs %0, ipsr" : "=r"( ulCurrentInterrupt ) :: "memory" );
+ 178:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 179:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	if( ulCurrentInterrupt == 0 )
+ 180:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	{
+ 181:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 		xReturn = pdFALSE;
+ 182:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	}
+ 183:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	else
+ 184:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	{
+ 185:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 		xReturn = pdTRUE;
+ 186:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	}
+ 187:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 188:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	return xReturn;
+ 189:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** }
+ 190:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 191:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /*-----------------------------------------------------------*/
+ 192:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 193:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** portFORCE_INLINE static void vPortRaiseBASEPRI( void )
+ 141              		.loc 2 193 30 view .LVU36
+ 142              	.LBB11:
+ 194:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** {
+ 195:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** uint32_t ulNewBASEPRI;
+ 143              		.loc 2 195 1 view .LVU37
+ 196:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ 197:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	__asm volatile
+ 144              		.loc 2 197 2 view .LVU38
+ 145              		.syntax unified
+ 146              	@ 197 "Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h" 1
+ 147 0004 4FF05003 			mov r3, #80												
+ 148 0008 83F31188 		msr basepri, r3											
+ 149 000c BFF36F8F 		isb														
+ 150 0010 BFF34F8F 		dsb														
+ 151              	
+ 152              	@ 0 "" 2
+ 153              		.thumb
+ 154              		.syntax unified
+ 155              	.L14:
+ 156              	.LBE11:
+ 157              	.LBE10:
+  46:UserAPP/Source/SendDataProcess.c **** 
+ 158              		.loc 1 46 5 view .LVU39
+  46:UserAPP/Source/SendDataProcess.c **** 
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 10
+
+
+ 159              		.loc 1 46 5 view .LVU40
+ 160 0014 FEE7     		b	.L14
+ 161              	.L17:
+  44:UserAPP/Source/SendDataProcess.c ****     /* 该参数值期望为 1，因为在下面对 xTaskCreate() 的调用中将 1 作为 pvParame
+ 162              		.loc 1 44 1 is_stmt 0 view .LVU41
+ 163 0016 00B5     		push	{lr}
+ 164              	.LCFI1:
+ 165              		.cfi_def_cfa_offset 4
+ 166              		.cfi_offset 14, -4
+ 167 0018 A1B0     		sub	sp, sp, #132
+ 168              	.LCFI2:
+ 169              		.cfi_def_cfa_offset 136
+ 170              	.LVL13:
+ 171              	.L13:
+  46:UserAPP/Source/SendDataProcess.c **** 
+ 172              		.loc 1 46 55 is_stmt 1 view .LVU42
+  48:UserAPP/Source/SendDataProcess.c ****     {
+ 173              		.loc 1 48 5 view .LVU43
+ 174              	.LBB12:
+  51:UserAPP/Source/SendDataProcess.c **** 
+ 175              		.loc 1 51 9 view .LVU44
+  53:UserAPP/Source/SendDataProcess.c ****             {
+ 176              		.loc 1 53 9 view .LVU45
+  53:UserAPP/Source/SendDataProcess.c ****             {
+ 177              		.loc 1 53 30 is_stmt 0 view .LVU46
+ 178 001a 0A4B     		ldr	r3, .L18
+ 179 001c 1868     		ldr	r0, [r3]
+  53:UserAPP/Source/SendDataProcess.c ****             {
+ 180              		.loc 1 53 11 view .LVU47
+ 181 001e 0028     		cmp	r0, #0
+ 182 0020 FBD0     		beq	.L13
+  56:UserAPP/Source/SendDataProcess.c ****                 {
+ 183              		.loc 1 56 17 is_stmt 1 view .LVU48
+  56:UserAPP/Source/SendDataProcess.c ****                 {
+ 184              		.loc 1 56 21 is_stmt 0 view .LVU49
+ 185 0022 4FF0FF32 		mov	r2, #-1
+ 186 0026 6946     		mov	r1, sp
+ 187 0028 FFF7FEFF 		bl	xQueueReceive
+ 188              	.LVL14:
+  56:UserAPP/Source/SendDataProcess.c ****                 {
+ 189              		.loc 1 56 19 discriminator 1 view .LVU50
+ 190 002c 0128     		cmp	r0, #1
+ 191 002e F4D1     		bne	.L13
+ 192              	.LBB13:
+  59:UserAPP/Source/SendDataProcess.c ****                     
+ 193              		.loc 1 59 21 is_stmt 1 view .LVU51
+  59:UserAPP/Source/SendDataProcess.c ****                     
+ 194              		.loc 1 59 38 is_stmt 0 view .LVU52
+ 195 0030 6846     		mov	r0, sp
+ 196 0032 FFF7FEFF 		bl	strlen
+ 197              	.LVL15:
+  62:UserAPP/Source/SendDataProcess.c **** 
+ 198              		.loc 1 62 21 is_stmt 1 view .LVU53
+  62:UserAPP/Source/SendDataProcess.c **** 
+ 199              		.loc 1 62 23 is_stmt 0 view .LVU54
+ 200 0036 0028     		cmp	r0, #0
+  62:UserAPP/Source/SendDataProcess.c **** 
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 11
+
+
+ 201              		.loc 1 62 23 view .LVU55
+ 202 0038 EFDD     		ble	.L13
+  62:UserAPP/Source/SendDataProcess.c **** 
+ 203              		.loc 1 62 45 is_stmt 1 discriminator 1 view .LVU56
+ 204 003a 81B2     		uxth	r1, r0
+ 205 003c 6846     		mov	r0, sp
+ 206              	.LVL16:
+  62:UserAPP/Source/SendDataProcess.c **** 
+ 207              		.loc 1 62 45 is_stmt 0 discriminator 1 view .LVU57
+ 208 003e FFF7FEFF 		bl	CDC_Transmit_FS
+ 209              	.LVL17:
+ 210              	.LBE13:
+ 211              	.LBE12:
+  48:UserAPP/Source/SendDataProcess.c ****     {
+ 212              		.loc 1 48 5 is_stmt 1 view .LVU58
+  49:UserAPP/Source/SendDataProcess.c ****         //放到循环中，不停更新这个数组
+ 213              		.loc 1 49 5 is_stmt 0 view .LVU59
+ 214 0042 EAE7     		b	.L13
+ 215              	.L19:
+ 216              		.align	2
+ 217              	.L18:
+ 218 0044 00000000 		.word	xReceiveLogQueue
+ 219              		.cfi_endproc
+ 220              	.LFE80:
+ 222              		.section	.text.vCreateReceiveLogQueueTask,"ax",%progbits
+ 223              		.align	1
+ 224              		.global	vCreateReceiveLogQueueTask
+ 225              		.syntax unified
+ 226              		.thumb
+ 227              		.thumb_func
+ 229              	vCreateReceiveLogQueueTask:
+ 230              	.LVL18:
+ 231              	.LFB81:
+  77:UserAPP/Source/SendDataProcess.c ****     /* 创建一个用于保存接收数据包（ReceiveDataPacket_t）的队列，最多可容纳 
+ 232              		.loc 1 77 1 is_stmt 1 view -0
+ 233              		.cfi_startproc
+ 234              		@ args = 0, pretend = 0, frame = 0
+ 235              		@ frame_needed = 0, uses_anonymous_args = 0
+  77:UserAPP/Source/SendDataProcess.c ****     /* 创建一个用于保存接收数据包（ReceiveDataPacket_t）的队列，最多可容纳 
+ 236              		.loc 1 77 1 is_stmt 0 view .LVU61
+ 237 0000 08B5     		push	{r3, lr}
+ 238              	.LCFI3:
+ 239              		.cfi_def_cfa_offset 8
+ 240              		.cfi_offset 3, -8
+ 241              		.cfi_offset 14, -4
+  80:UserAPP/Source/SendDataProcess.c **** 
+ 242              		.loc 1 80 5 is_stmt 1 view .LVU62
+  80:UserAPP/Source/SendDataProcess.c **** 
+ 243              		.loc 1 80 24 is_stmt 0 view .LVU63
+ 244 0002 0022     		movs	r2, #0
+ 245 0004 8021     		movs	r1, #128
+ 246 0006 0A20     		movs	r0, #10
+ 247              	.LVL19:
+  80:UserAPP/Source/SendDataProcess.c **** 
+ 248              		.loc 1 80 24 view .LVU64
+ 249 0008 FFF7FEFF 		bl	xQueueGenericCreate
+ 250              	.LVL20:
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 12
+
+
+  80:UserAPP/Source/SendDataProcess.c **** 
+ 251              		.loc 1 80 22 discriminator 1 view .LVU65
+ 252 000c 014B     		ldr	r3, .L22
+ 253 000e 1860     		str	r0, [r3]
+  82:UserAPP/Source/SendDataProcess.c ****     {
+ 254              		.loc 1 82 5 is_stmt 1 view .LVU66
+  86:UserAPP/Source/SendDataProcess.c **** }
+ 255              		.loc 1 86 5 view .LVU67
+  87:UserAPP/Source/SendDataProcess.c **** 
+ 256              		.loc 1 87 1 is_stmt 0 view .LVU68
+ 257 0010 08BD     		pop	{r3, pc}
+ 258              	.L23:
+ 259 0012 00BF     		.align	2
+ 260              	.L22:
+ 261 0014 00000000 		.word	xReceiveLogQueue
+ 262              		.cfi_endproc
+ 263              	.LFE81:
+ 265              		.section	.rodata.vCreateSendLogTask.str1.4,"aMS",%progbits,1
+ 266              		.align	2
+ 267              	.LC0:
+ 268 0000 7653656E 		.ascii	"vSendLogProcessTask\000"
+ 268      644C6F67 
+ 268      50726F63 
+ 268      65737354 
+ 268      61736B00 
+ 269              		.section	.text.vCreateSendLogTask,"ax",%progbits
+ 270              		.align	1
+ 271              		.global	vCreateSendLogTask
+ 272              		.syntax unified
+ 273              		.thumb
+ 274              		.thumb_func
+ 276              	vCreateSendLogTask:
+ 277              	.LFB79:
+  18:UserAPP/Source/SendDataProcess.c ****     vCreateReceiveLogQueueTask(NULL);
+ 278              		.loc 1 18 1 is_stmt 1 view -0
+ 279              		.cfi_startproc
+ 280              		@ args = 0, pretend = 0, frame = 0
+ 281              		@ frame_needed = 0, uses_anonymous_args = 0
+ 282 0000 00B5     		push	{lr}
+ 283              	.LCFI4:
+ 284              		.cfi_def_cfa_offset 4
+ 285              		.cfi_offset 14, -4
+ 286 0002 83B0     		sub	sp, sp, #12
+ 287              	.LCFI5:
+ 288              		.cfi_def_cfa_offset 16
+  19:UserAPP/Source/SendDataProcess.c **** 
+ 289              		.loc 1 19 5 view .LVU70
+ 290 0004 0020     		movs	r0, #0
+ 291 0006 FFF7FEFF 		bl	vCreateReceiveLogQueueTask
+ 292              	.LVL21:
+  22:UserAPP/Source/SendDataProcess.c ****                    vSendLogProcessTask,                 /* Function that implements the task. */
+ 293              		.loc 1 22 5 view .LVU71
+  22:UserAPP/Source/SendDataProcess.c ****                    vSendLogProcessTask,                 /* Function that implements the task. */
+ 294              		.loc 1 22 34 is_stmt 0 view .LVU72
+ 295 000a 084B     		ldr	r3, .L26
+ 296 000c 0193     		str	r3, [sp, #4]
+ 297 000e 0223     		movs	r3, #2
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 13
+
+
+ 298 0010 0093     		str	r3, [sp]
+ 299 0012 0123     		movs	r3, #1
+ 300 0014 4FF40072 		mov	r2, #512
+ 301 0018 0549     		ldr	r1, .L26+4
+ 302 001a 0648     		ldr	r0, .L26+8
+ 303 001c FFF7FEFF 		bl	xTaskCreate
+ 304              	.LVL22:
+  22:UserAPP/Source/SendDataProcess.c ****                    vSendLogProcessTask,                 /* Function that implements the task. */
+ 305              		.loc 1 22 32 discriminator 1 view .LVU73
+ 306 0020 054B     		ldr	r3, .L26+12
+ 307 0022 1860     		str	r0, [r3]
+  30:UserAPP/Source/SendDataProcess.c ****     {
+ 308              		.loc 1 30 5 is_stmt 1 view .LVU74
+  33:UserAPP/Source/SendDataProcess.c **** }
+ 309              		.loc 1 33 5 view .LVU75
+  34:UserAPP/Source/SendDataProcess.c **** 
+ 310              		.loc 1 34 1 is_stmt 0 view .LVU76
+ 311 0024 03B0     		add	sp, sp, #12
+ 312              	.LCFI6:
+ 313              		.cfi_def_cfa_offset 4
+ 314              		@ sp needed
+ 315 0026 5DF804FB 		ldr	pc, [sp], #4
+ 316              	.L27:
+ 317 002a 00BF     		.align	2
+ 318              	.L26:
+ 319 002c 00000000 		.word	xCreateSendLogTaskHandle
+ 320 0030 00000000 		.word	.LC0
+ 321 0034 00000000 		.word	vSendLogProcessTask
+ 322 0038 00000000 		.word	xCreateSendLogTaskReturned
+ 323              		.cfi_endproc
+ 324              	.LFE79:
+ 326              		.section	.text.QueueSendfmt,"ax",%progbits
+ 327              		.align	1
+ 328              		.global	QueueSendfmt
+ 329              		.syntax unified
+ 330              		.thumb
+ 331              		.thumb_func
+ 333              	QueueSendfmt:
+ 334              	.LVL23:
+ 335              	.LFB82:
+ 103:UserAPP/Source/SendDataProcess.c ****     if (xQueue == NULL || fmt == NULL) {
+ 336              		.loc 1 103 1 is_stmt 1 view -0
+ 337              		.cfi_startproc
+ 338              		@ args = 4, pretend = 8, frame = 136
+ 339              		@ frame_needed = 0, uses_anonymous_args = 1
+ 103:UserAPP/Source/SendDataProcess.c ****     if (xQueue == NULL || fmt == NULL) {
+ 340              		.loc 1 103 1 is_stmt 0 view .LVU78
+ 341 0000 0CB4     		push	{r2, r3}
+ 342              	.LCFI7:
+ 343              		.cfi_def_cfa_offset 8
+ 344              		.cfi_offset 2, -8
+ 345              		.cfi_offset 3, -4
+ 346 0002 2DE9F041 		push	{r4, r5, r6, r7, r8, lr}
+ 347              	.LCFI8:
+ 348              		.cfi_def_cfa_offset 32
+ 349              		.cfi_offset 4, -32
+ 350              		.cfi_offset 5, -28
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 14
+
+
+ 351              		.cfi_offset 6, -24
+ 352              		.cfi_offset 7, -20
+ 353              		.cfi_offset 8, -16
+ 354              		.cfi_offset 14, -12
+ 355 0006 A2B0     		sub	sp, sp, #136
+ 356              	.LCFI9:
+ 357              		.cfi_def_cfa_offset 168
+ 358 0008 289D     		ldr	r5, [sp, #160]
+ 104:UserAPP/Source/SendDataProcess.c ****         return pdFAIL;
+ 359              		.loc 1 104 5 is_stmt 1 view .LVU79
+ 104:UserAPP/Source/SendDataProcess.c ****         return pdFAIL;
+ 360              		.loc 1 104 8 is_stmt 0 view .LVU80
+ 361 000a D8B1     		cbz	r0, .L30
+ 362 000c 0C46     		mov	r4, r1
+ 363 000e 8046     		mov	r8, r0
+ 104:UserAPP/Source/SendDataProcess.c ****         return pdFAIL;
+ 364              		.loc 1 104 24 discriminator 1 view .LVU81
+ 365 0010 D5B1     		cbz	r5, .L31
+ 108:UserAPP/Source/SendDataProcess.c ****     memset(buf, 0, sizeof(buf));
+ 366              		.loc 1 108 5 is_stmt 1 view .LVU82
+ 109:UserAPP/Source/SendDataProcess.c **** 
+ 367              		.loc 1 109 5 view .LVU83
+ 368 0012 02AE     		add	r6, sp, #8
+ 369 0014 8027     		movs	r7, #128
+ 370 0016 3A46     		mov	r2, r7
+ 371 0018 0021     		movs	r1, #0
+ 372              	.LVL24:
+ 109:UserAPP/Source/SendDataProcess.c **** 
+ 373              		.loc 1 109 5 is_stmt 0 view .LVU84
+ 374 001a 3046     		mov	r0, r6
+ 375              	.LVL25:
+ 109:UserAPP/Source/SendDataProcess.c **** 
+ 376              		.loc 1 109 5 view .LVU85
+ 377 001c FFF7FEFF 		bl	memset
+ 378              	.LVL26:
+ 111:UserAPP/Source/SendDataProcess.c ****     va_start(ap, fmt);
+ 379              		.loc 1 111 5 is_stmt 1 view .LVU86
+ 112:UserAPP/Source/SendDataProcess.c ****     vsnprintf(buf, sizeof(buf), fmt, ap);
+ 380              		.loc 1 112 5 view .LVU87
+ 381 0020 29AB     		add	r3, sp, #164
+ 382 0022 0193     		str	r3, [sp, #4]
+ 113:UserAPP/Source/SendDataProcess.c ****     va_end(ap);
+ 383              		.loc 1 113 5 view .LVU88
+ 384 0024 2A46     		mov	r2, r5
+ 385 0026 3946     		mov	r1, r7
+ 386 0028 3046     		mov	r0, r6
+ 387 002a FFF7FEFF 		bl	vsnprintf
+ 388              	.LVL27:
+ 114:UserAPP/Source/SendDataProcess.c **** 
+ 389              		.loc 1 114 5 view .LVU89
+ 116:UserAPP/Source/SendDataProcess.c **** }
+ 390              		.loc 1 116 5 view .LVU90
+ 116:UserAPP/Source/SendDataProcess.c **** }
+ 391              		.loc 1 116 12 is_stmt 0 view .LVU91
+ 392 002e 0023     		movs	r3, #0
+ 393 0030 2246     		mov	r2, r4
+ 394 0032 3146     		mov	r1, r6
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 15
+
+
+ 395 0034 4046     		mov	r0, r8
+ 396 0036 FFF7FEFF 		bl	xQueueGenericSend
+ 397              	.LVL28:
+ 398              	.L28:
+ 117:UserAPP/Source/SendDataProcess.c **** 
+ 399              		.loc 1 117 1 view .LVU92
+ 400 003a 22B0     		add	sp, sp, #136
+ 401              	.LCFI10:
+ 402              		.cfi_remember_state
+ 403              		.cfi_def_cfa_offset 32
+ 404              		@ sp needed
+ 405 003c BDE8F041 		pop	{r4, r5, r6, r7, r8, lr}
+ 406              	.LCFI11:
+ 407              		.cfi_restore 14
+ 408              		.cfi_restore 8
+ 409              		.cfi_restore 7
+ 410              		.cfi_restore 6
+ 411              		.cfi_restore 5
+ 412              		.cfi_restore 4
+ 413              		.cfi_def_cfa_offset 8
+ 414 0040 02B0     		add	sp, sp, #8
+ 415              	.LCFI12:
+ 416              		.cfi_restore 3
+ 417              		.cfi_restore 2
+ 418              		.cfi_def_cfa_offset 0
+ 419 0042 7047     		bx	lr
+ 420              	.LVL29:
+ 421              	.L30:
+ 422              	.LCFI13:
+ 423              		.cfi_restore_state
+ 105:UserAPP/Source/SendDataProcess.c ****     }
+ 424              		.loc 1 105 16 view .LVU93
+ 425 0044 0020     		movs	r0, #0
+ 426              	.LVL30:
+ 105:UserAPP/Source/SendDataProcess.c ****     }
+ 427              		.loc 1 105 16 view .LVU94
+ 428 0046 F8E7     		b	.L28
+ 429              	.LVL31:
+ 430              	.L31:
+ 105:UserAPP/Source/SendDataProcess.c ****     }
+ 431              		.loc 1 105 16 view .LVU95
+ 432 0048 0020     		movs	r0, #0
+ 433              	.LVL32:
+ 105:UserAPP/Source/SendDataProcess.c ****     }
+ 434              		.loc 1 105 16 view .LVU96
+ 435 004a F6E7     		b	.L28
+ 436              		.cfi_endproc
+ 437              	.LFE82:
+ 439              		.section	.text.BuildReplyPacket,"ax",%progbits
+ 440              		.align	1
+ 441              		.global	BuildReplyPacket
+ 442              		.syntax unified
+ 443              		.thumb
+ 444              		.thumb_func
+ 446              	BuildReplyPacket:
+ 447              	.LVL33:
+ 448              	.LFB84:
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 16
+
+
+ 140:UserAPP/Source/SendDataProcess.c **** 
+ 141:UserAPP/Source/SendDataProcess.c **** 
+ 142:UserAPP/Source/SendDataProcess.c **** /* 重构后的：构建应答包
+ 143:UserAPP/Source/SendDataProcess.c ****  * 保持原有签名，增加更严格的参数与长度检查，避免缓冲区溢出
+ 144:UserAPP/Source/SendDataProcess.c ****  */
+ 145:UserAPP/Source/SendDataProcess.c **** uint8_t BuildReplyPacket(uint8_t functionCode, uint16_t execIndex, const uint8_t *data, uint8_t dat
+ 146:UserAPP/Source/SendDataProcess.c **** {
+ 449              		.loc 1 146 1 is_stmt 1 view -0
+ 450              		.cfi_startproc
+ 451              		@ args = 8, pretend = 0, frame = 0
+ 452              		@ frame_needed = 0, uses_anonymous_args = 0
+ 453              		.loc 1 146 1 is_stmt 0 view .LVU98
+ 454 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+ 455              	.LCFI14:
+ 456              		.cfi_def_cfa_offset 24
+ 457              		.cfi_offset 3, -24
+ 458              		.cfi_offset 4, -20
+ 459              		.cfi_offset 5, -16
+ 460              		.cfi_offset 6, -12
+ 461              		.cfi_offset 7, -8
+ 462              		.cfi_offset 14, -4
+ 463 0002 069F     		ldr	r7, [sp, #24]
+ 464 0004 079D     		ldr	r5, [sp, #28]
+ 147:UserAPP/Source/SendDataProcess.c ****     if (outBuf == NULL || outLen == NULL) {
+ 465              		.loc 1 147 5 is_stmt 1 view .LVU99
+ 466              		.loc 1 147 8 is_stmt 0 view .LVU100
+ 467 0006 0FB3     		cbz	r7, .L37
+ 468 0008 1646     		mov	r6, r2
+ 469 000a 1C46     		mov	r4, r3
+ 470              		.loc 1 147 24 discriminator 1 view .LVU101
+ 471 000c 05B3     		cbz	r5, .L38
+ 148:UserAPP/Source/SendDataProcess.c ****         return 1; // 空指针
+ 149:UserAPP/Source/SendDataProcess.c ****     }
+ 150:UserAPP/Source/SendDataProcess.c ****     if (dataLen > PACKET_MAX_DATA_LEN) {
+ 472              		.loc 1 150 5 is_stmt 1 view .LVU102
+ 473              		.loc 1 150 8 is_stmt 0 view .LVU103
+ 474 000e 3B2B     		cmp	r3, #59
+ 475 0010 20D8     		bhi	.L39
+ 151:UserAPP/Source/SendDataProcess.c ****         return 2; // 数据域过长
+ 152:UserAPP/Source/SendDataProcess.c ****     }
+ 153:UserAPP/Source/SendDataProcess.c ****     if (dataLen > 0 && data == NULL) {
+ 476              		.loc 1 153 5 is_stmt 1 view .LVU104
+ 477              		.loc 1 153 8 is_stmt 0 view .LVU105
+ 478 0012 1BB1     		cbz	r3, .L35
+ 479              		.loc 1 153 21 discriminator 1 view .LVU106
+ 480 0014 02B3     		cbz	r2, .L40
+ 154:UserAPP/Source/SendDataProcess.c ****         return 3; // dataLen>0 但 data 为 NULL
+ 155:UserAPP/Source/SendDataProcess.c ****     }
+ 156:UserAPP/Source/SendDataProcess.c **** 
+ 157:UserAPP/Source/SendDataProcess.c ****     /* 计算包长度并检查是否超过允许的最大包长 */
+ 158:UserAPP/Source/SendDataProcess.c ****     const uint16_t headerLen = 1;   /* 0xAA */
+ 481              		.loc 1 158 5 is_stmt 1 view .LVU107
+ 482              	.LVL34:
+ 159:UserAPP/Source/SendDataProcess.c ****     const uint16_t funcLen   = 1;
+ 483              		.loc 1 159 5 view .LVU108
+ 160:UserAPP/Source/SendDataProcess.c ****     const uint16_t indexLen  = 2;
+ 484              		.loc 1 160 5 view .LVU109
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 17
+
+
+ 161:UserAPP/Source/SendDataProcess.c ****     const uint16_t crcLen    = 1;
+ 485              		.loc 1 161 5 view .LVU110
+ 162:UserAPP/Source/SendDataProcess.c ****     uint16_t totalLen = headerLen + funcLen + indexLen + dataLen + crcLen;
+ 486              		.loc 1 162 5 view .LVU111
+ 487              		.loc 1 162 14 is_stmt 0 view .LVU112
+ 488 0016 0533     		adds	r3, r3, #5
+ 489              	.LVL35:
+ 163:UserAPP/Source/SendDataProcess.c **** 
+ 164:UserAPP/Source/SendDataProcess.c ****     if (totalLen > PACKET_MAX_SIZE) {
+ 490              		.loc 1 164 5 is_stmt 1 view .LVU113
+ 491              		.loc 1 164 8 is_stmt 0 view .LVU114
+ 492 0018 402B     		cmp	r3, #64
+ 493 001a 1FD8     		bhi	.L41
+ 494              	.LVL36:
+ 495              	.L35:
+ 165:UserAPP/Source/SendDataProcess.c ****         return 4; // 超出最大缓冲区
+ 166:UserAPP/Source/SendDataProcess.c ****     }
+ 167:UserAPP/Source/SendDataProcess.c **** 
+ 168:UserAPP/Source/SendDataProcess.c ****     /* 填充包内容 */
+ 169:UserAPP/Source/SendDataProcess.c ****     uint16_t pos = 0;
+ 496              		.loc 1 169 5 is_stmt 1 view .LVU115
+ 170:UserAPP/Source/SendDataProcess.c ****     outBuf[pos++] = 0xAA;                    /* 包头 */
+ 497              		.loc 1 170 5 view .LVU116
+ 498              		.loc 1 170 19 is_stmt 0 view .LVU117
+ 499 001c AA23     		movs	r3, #170
+ 500 001e 3B70     		strb	r3, [r7]
+ 171:UserAPP/Source/SendDataProcess.c ****     outBuf[pos++] = functionCode;            /* 功能码 */
+ 501              		.loc 1 171 5 is_stmt 1 view .LVU118
+ 502              	.LVL37:
+ 503              		.loc 1 171 19 is_stmt 0 view .LVU119
+ 504 0020 7870     		strb	r0, [r7, #1]
+ 172:UserAPP/Source/SendDataProcess.c ****     outBuf[pos++] = (uint8_t)(execIndex >> 8); /* 执行索引高字节 */
+ 505              		.loc 1 172 5 is_stmt 1 view .LVU120
+ 506              	.LVL38:
+ 507              		.loc 1 172 21 is_stmt 0 view .LVU121
+ 508 0022 0B0A     		lsrs	r3, r1, #8
+ 509              		.loc 1 172 19 view .LVU122
+ 510 0024 BB70     		strb	r3, [r7, #2]
+ 173:UserAPP/Source/SendDataProcess.c ****     outBuf[pos++] = (uint8_t)(execIndex & 0xFF); /* 执行索引低字节 */
+ 511              		.loc 1 173 5 is_stmt 1 view .LVU123
+ 512              	.LVL39:
+ 513              		.loc 1 173 19 is_stmt 0 view .LVU124
+ 514 0026 F970     		strb	r1, [r7, #3]
+ 174:UserAPP/Source/SendDataProcess.c **** 
+ 175:UserAPP/Source/SendDataProcess.c ****     if (dataLen > 0) {
+ 515              		.loc 1 175 5 is_stmt 1 view .LVU125
+ 516              		.loc 1 175 8 is_stmt 0 view .LVU126
+ 517 0028 4CB9     		cbnz	r4, .L44
+ 173:UserAPP/Source/SendDataProcess.c ****     outBuf[pos++] = (uint8_t)(execIndex & 0xFF); /* 执行索引低字节 */
+ 518              		.loc 1 173 15 view .LVU127
+ 519 002a 0424     		movs	r4, #4
+ 520              	.LVL40:
+ 521              	.L36:
+ 176:UserAPP/Source/SendDataProcess.c ****         memcpy(&outBuf[pos], data, dataLen);
+ 177:UserAPP/Source/SendDataProcess.c ****         pos += dataLen;
+ 178:UserAPP/Source/SendDataProcess.c ****     }
+ 179:UserAPP/Source/SendDataProcess.c **** 
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 18
+
+
+ 180:UserAPP/Source/SendDataProcess.c ****     /* 计算 CRC（对包头至数据末尾计算，不包含 CRC 字节） */
+ 181:UserAPP/Source/SendDataProcess.c ****     uint8_t crc = Packet_CRC8(outBuf, pos);
+ 522              		.loc 1 181 5 is_stmt 1 view .LVU128
+ 523              		.loc 1 181 19 is_stmt 0 view .LVU129
+ 524 002c 2146     		mov	r1, r4
+ 525 002e 3846     		mov	r0, r7
+ 526 0030 FFF7FEFF 		bl	Packet_CRC8
+ 527              	.LVL41:
+ 182:UserAPP/Source/SendDataProcess.c ****     outBuf[pos++] = crc;
+ 528              		.loc 1 182 5 is_stmt 1 view .LVU130
+ 529              		.loc 1 182 15 is_stmt 0 view .LVU131
+ 530 0034 631C     		adds	r3, r4, #1
+ 531              	.LVL42:
+ 532              		.loc 1 182 19 view .LVU132
+ 533 0036 3855     		strb	r0, [r7, r4]
+ 183:UserAPP/Source/SendDataProcess.c **** 
+ 184:UserAPP/Source/SendDataProcess.c ****     /* 返回实际长度 */
+ 185:UserAPP/Source/SendDataProcess.c ****     *outLen = pos;
+ 534              		.loc 1 185 5 is_stmt 1 view .LVU133
+ 535              		.loc 1 185 13 is_stmt 0 view .LVU134
+ 536 0038 2B80     		strh	r3, [r5]	@ movhi
+ 186:UserAPP/Source/SendDataProcess.c ****     return 0;
+ 537              		.loc 1 186 5 is_stmt 1 view .LVU135
+ 538              		.loc 1 186 12 is_stmt 0 view .LVU136
+ 539 003a 0020     		movs	r0, #0
+ 540              	.LVL43:
+ 541              	.L34:
+ 187:UserAPP/Source/SendDataProcess.c **** }
+ 542              		.loc 1 187 1 view .LVU137
+ 543 003c F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 544              	.LVL44:
+ 545              	.L44:
+ 176:UserAPP/Source/SendDataProcess.c ****         pos += dataLen;
+ 546              		.loc 1 176 9 is_stmt 1 view .LVU138
+ 547 003e 2246     		mov	r2, r4
+ 548              	.LVL45:
+ 176:UserAPP/Source/SendDataProcess.c ****         pos += dataLen;
+ 549              		.loc 1 176 9 is_stmt 0 view .LVU139
+ 550 0040 3146     		mov	r1, r6
+ 551              	.LVL46:
+ 176:UserAPP/Source/SendDataProcess.c ****         pos += dataLen;
+ 552              		.loc 1 176 9 view .LVU140
+ 553 0042 381D     		adds	r0, r7, #4
+ 554              	.LVL47:
+ 176:UserAPP/Source/SendDataProcess.c ****         pos += dataLen;
+ 555              		.loc 1 176 9 view .LVU141
+ 556 0044 FFF7FEFF 		bl	memcpy
+ 557              	.LVL48:
+ 177:UserAPP/Source/SendDataProcess.c ****     }
+ 558              		.loc 1 177 9 is_stmt 1 view .LVU142
+ 177:UserAPP/Source/SendDataProcess.c ****     }
+ 559              		.loc 1 177 13 is_stmt 0 view .LVU143
+ 560 0048 0434     		adds	r4, r4, #4
+ 561              	.LVL49:
+ 177:UserAPP/Source/SendDataProcess.c ****     }
+ 562              		.loc 1 177 13 view .LVU144
+ 563 004a EFE7     		b	.L36
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 19
+
+
+ 564              	.LVL50:
+ 565              	.L37:
+ 148:UserAPP/Source/SendDataProcess.c ****     }
+ 566              		.loc 1 148 16 view .LVU145
+ 567 004c 0120     		movs	r0, #1
+ 568              	.LVL51:
+ 148:UserAPP/Source/SendDataProcess.c ****     }
+ 569              		.loc 1 148 16 view .LVU146
+ 570 004e F5E7     		b	.L34
+ 571              	.LVL52:
+ 572              	.L38:
+ 148:UserAPP/Source/SendDataProcess.c ****     }
+ 573              		.loc 1 148 16 view .LVU147
+ 574 0050 0120     		movs	r0, #1
+ 575              	.LVL53:
+ 148:UserAPP/Source/SendDataProcess.c ****     }
+ 576              		.loc 1 148 16 view .LVU148
+ 577 0052 F3E7     		b	.L34
+ 578              	.LVL54:
+ 579              	.L39:
+ 151:UserAPP/Source/SendDataProcess.c ****     }
+ 580              		.loc 1 151 16 view .LVU149
+ 581 0054 0220     		movs	r0, #2
+ 582              	.LVL55:
+ 151:UserAPP/Source/SendDataProcess.c ****     }
+ 583              		.loc 1 151 16 view .LVU150
+ 584 0056 F1E7     		b	.L34
+ 585              	.LVL56:
+ 586              	.L40:
+ 154:UserAPP/Source/SendDataProcess.c ****     }
+ 587              		.loc 1 154 16 view .LVU151
+ 588 0058 0320     		movs	r0, #3
+ 589              	.LVL57:
+ 154:UserAPP/Source/SendDataProcess.c ****     }
+ 590              		.loc 1 154 16 view .LVU152
+ 591 005a EFE7     		b	.L34
+ 592              	.LVL58:
+ 593              	.L41:
+ 165:UserAPP/Source/SendDataProcess.c ****     }
+ 594              		.loc 1 165 16 view .LVU153
+ 595 005c 0420     		movs	r0, #4
+ 596              	.LVL59:
+ 165:UserAPP/Source/SendDataProcess.c ****     }
+ 597              		.loc 1 165 16 view .LVU154
+ 598 005e EDE7     		b	.L34
+ 599              		.cfi_endproc
+ 600              	.LFE84:
+ 602              		.section	.rodata.ReplyPacket.str1.4,"aMS",%progbits,1
+ 603              		.align	2
+ 604              	.LC1:
+ 605 0000 E69E84E5 		.ascii	"\346\236\204\345\273\272\345\272\224\347\255\224\345"
+ 605      BBBAE5BA 
+ 605      94E7AD94 
+ 605      E5
+ 606 000d 8C85E5A4 		.ascii	"\214\205\345\244\261\350\264\245\357\274\214\351\224"
+ 606      B1E8B4A5 
+ 606      EFBC8CE9 
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 20
+
+
+ 606      94
+ 607 001a 99E8AFAF 		.ascii	"\231\350\257\257\347\240\201=%u\015\012\000"
+ 607      E7A0813D 
+ 607      25750D0A 
+ 607      00
+ 608 0027 00       		.align	2
+ 609              	.LC2:
+ 610 0028 25303258 		.ascii	"%02X \000"
+ 610      2000
+ 611 002e 0000     		.align	2
+ 612              	.LC3:
+ 613 0030 E69E84E5 		.ascii	"\346\236\204\345\273\272\345\256\214\346\210\220\357"
+ 613      BBBAE5AE 
+ 613      8CE68890 
+ 613      EF
+ 614 003d BC882575 		.ascii	"\274\210%u \345\255\227\350\212\202\357\274\211\357"
+ 614      20E5AD97 
+ 614      E88A82EF 
+ 614      BC89EF
+ 615 004c BC9A2573 		.ascii	"\274\232%s\015\012\000"
+ 615      0D0A00
+ 616 0053 00       		.align	2
+ 617              	.LC4:
+ 618 0054 4344435F 		.ascii	"CDC_Transmit_FS \345\260\235\350\257\225=%d \350\277"
+ 618      5472616E 
+ 618      736D6974 
+ 618      5F465320 
+ 618      E5B09DE8 
+ 619 0070 94E59B9E 		.ascii	"\224\345\233\236=%u\015\012\000"
+ 619      3D25750D 
+ 619      0A00
+ 620 007a 0000     		.align	2
+ 621              	.LC5:
+ 622 007c E58F91E9 		.ascii	"\345\217\221\351\200\201\346\210\220\345\212\237\357"
+ 622      8081E688 
+ 622      90E58A9F 
+ 622      EF
+ 623 0089 BC8CE995 		.ascii	"\274\214\351\225\277\345\272\246=%u\015\012\000"
+ 623      BFE5BAA6 
+ 623      3D25750D 
+ 623      0A00
+ 624 0097 00       		.align	2
+ 625              	.LC6:
+ 626 0098 E58F91E9 		.ascii	"\345\217\221\351\200\201\345\244\261\350\264\245\357"
+ 626      8081E5A4 
+ 626      B1E8B4A5 
+ 626      EF
+ 627 00a5 BC8CE69C 		.ascii	"\274\214\346\234\200\345\220\216\351\224\231\350\257"
+ 627      80E5908E 
+ 627      E99499E8 
+ 627      AF
+ 628 00b2 AF3D2575 		.ascii	"\257=%u\015\012\000"
+ 628      0D0A00
+ 629              		.section	.text.ReplyPacket,"ax",%progbits
+ 630              		.align	1
+ 631              		.global	ReplyPacket
+ 632              		.syntax unified
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 21
+
+
+ 633              		.thumb
+ 634              		.thumb_func
+ 636              	ReplyPacket:
+ 637              	.LVL60:
+ 638              	.LFB85:
+ 188:UserAPP/Source/SendDataProcess.c **** 
+ 189:UserAPP/Source/SendDataProcess.c **** 
+ 190:UserAPP/Source/SendDataProcess.c **** /* 重构后的：封装构建并发送应答包到日志队列
+ 191:UserAPP/Source/SendDataProcess.c ****  * - 原实现将二进制包放入 xReceiveLogQueue（文本队列），会被 strlen 截断，导
+ 192:UserAPP/Source/SendDataProcess.c ****  * - 本实现直接通过 CDC_Transmit_FS 发送二进制包，并用文本日志报告发送结�
+ 193:UserAPP/Source/SendDataProcess.c ****  */
+ 194:UserAPP/Source/SendDataProcess.c **** void ReplyPacket(ReplyCode_t reply)
+ 195:UserAPP/Source/SendDataProcess.c **** {
+ 639              		.loc 1 195 1 is_stmt 1 view -0
+ 640              		.cfi_startproc
+ 641              		@ args = 0, pretend = 0, frame = 200
+ 642              		@ frame_needed = 0, uses_anonymous_args = 0
+ 643              		.loc 1 195 1 is_stmt 0 view .LVU156
+ 644 0000 70B5     		push	{r4, r5, r6, lr}
+ 645              	.LCFI15:
+ 646              		.cfi_def_cfa_offset 16
+ 647              		.cfi_offset 4, -16
+ 648              		.cfi_offset 5, -12
+ 649              		.cfi_offset 6, -8
+ 650              		.cfi_offset 14, -4
+ 651 0002 B4B0     		sub	sp, sp, #208
+ 652              	.LCFI16:
+ 653              		.cfi_def_cfa_offset 224
+ 654 0004 0146     		mov	r1, r0
+ 196:UserAPP/Source/SendDataProcess.c ****     uint8_t outBuf[PACKET_MAX_SIZE]; // 定义输出缓冲区用于构建数据包
+ 655              		.loc 1 196 5 is_stmt 1 view .LVU157
+ 197:UserAPP/Source/SendDataProcess.c ****     uint16_t outLen = 0; // 存放构建后的包长度
+ 656              		.loc 1 197 5 view .LVU158
+ 657              		.loc 1 197 14 is_stmt 0 view .LVU159
+ 658 0006 0022     		movs	r2, #0
+ 659 0008 ADF88E20 		strh	r2, [sp, #142]	@ movhi
+ 198:UserAPP/Source/SendDataProcess.c ****     uint16_t execIndex = (uint16_t)reply; // 将应答码放入执行索引字段（2 字节）
+ 660              		.loc 1 198 5 is_stmt 1 view .LVU160
+ 661              	.LVL61:
+ 199:UserAPP/Source/SendDataProcess.c **** 
+ 200:UserAPP/Source/SendDataProcess.c ****     uint8_t buildRet = BuildReplyPacket((uint8_t)FUNCTION_CODE_Reply, execIndex, NULL, 0, outBuf, &
+ 662              		.loc 1 200 5 view .LVU161
+ 663              		.loc 1 200 24 is_stmt 0 view .LVU162
+ 664 000c 0DF18E03 		add	r3, sp, #142
+ 665 0010 0193     		str	r3, [sp, #4]
+ 666 0012 24AB     		add	r3, sp, #144
+ 667 0014 0093     		str	r3, [sp]
+ 668 0016 1346     		mov	r3, r2
+ 669 0018 0120     		movs	r0, #1
+ 670              	.LVL62:
+ 671              		.loc 1 200 24 view .LVU163
+ 672 001a FFF7FEFF 		bl	BuildReplyPacket
+ 673              	.LVL63:
+ 201:UserAPP/Source/SendDataProcess.c ****     if (buildRet != 0) { // 检查构建结果
+ 674              		.loc 1 201 5 is_stmt 1 view .LVU164
+ 675              		.loc 1 201 8 is_stmt 0 view .LVU165
+ 676 001e 0646     		mov	r6, r0
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 22
+
+
+ 677 0020 28B9     		cbnz	r0, .L63
+ 202:UserAPP/Source/SendDataProcess.c ****         if (xReceiveLogQueue != NULL) { // 若日志队列存在则记录错误
+ 203:UserAPP/Source/SendDataProcess.c ****             QueueSendfmt(xReceiveLogQueue, 0, "构建应答包失败，错误码=%u\r\n", buildRet)
+ 204:UserAPP/Source/SendDataProcess.c ****         }
+ 205:UserAPP/Source/SendDataProcess.c ****         return; // 构建失败，返回
+ 206:UserAPP/Source/SendDataProcess.c ****     }
+ 207:UserAPP/Source/SendDataProcess.c **** 
+ 208:UserAPP/Source/SendDataProcess.c ****     /* 如需查看实际构建的字节序列，记录十六进制文本日志（非二进制队�
+ 209:UserAPP/Source/SendDataProcess.c ****     if (xReceiveLogQueue != NULL) { // 若日志队列存在则格式化打印十六进制表示
+ 678              		.loc 1 209 5 is_stmt 1 view .LVU166
+ 679              		.loc 1 209 26 is_stmt 0 view .LVU167
+ 680 0022 314B     		ldr	r3, .L66
+ 681 0024 1B68     		ldr	r3, [r3]
+ 682              		.loc 1 209 8 view .LVU168
+ 683 0026 7BB3     		cbz	r3, .L50
+ 684              	.LBB14:
+ 685              	.LBB15:
+ 210:UserAPP/Source/SendDataProcess.c ****         char hexbuf[128]; // 缓冲区用于构建十六进制字符串
+ 211:UserAPP/Source/SendDataProcess.c ****         int pos = 0; // 当前写入位置
+ 212:UserAPP/Source/SendDataProcess.c ****         for (uint16_t i = 0; i < outLen && pos < (int)sizeof(hexbuf) - 4; ++i) { // 遍历包字节
+ 686              		.loc 1 212 23 view .LVU169
+ 687 0028 0024     		movs	r4, #0
+ 688              	.LBE15:
+ 211:UserAPP/Source/SendDataProcess.c ****         for (uint16_t i = 0; i < outLen && pos < (int)sizeof(hexbuf) - 4; ++i) { // 遍历包字节
+ 689              		.loc 1 211 13 view .LVU170
+ 690 002a 2546     		mov	r5, r4
+ 691 002c 18E0     		b	.L49
+ 692              	.L63:
+ 693              	.LBE14:
+ 202:UserAPP/Source/SendDataProcess.c ****         if (xReceiveLogQueue != NULL) { // 若日志队列存在则记录错误
+ 694              		.loc 1 202 9 is_stmt 1 view .LVU171
+ 202:UserAPP/Source/SendDataProcess.c ****         if (xReceiveLogQueue != NULL) { // 若日志队列存在则记录错误
+ 695              		.loc 1 202 30 is_stmt 0 view .LVU172
+ 696 002e 2E4B     		ldr	r3, .L66
+ 697 0030 1868     		ldr	r0, [r3]
+ 698              	.LVL64:
+ 202:UserAPP/Source/SendDataProcess.c ****         if (xReceiveLogQueue != NULL) { // 若日志队列存在则记录错误
+ 699              		.loc 1 202 12 view .LVU173
+ 700 0032 0028     		cmp	r0, #0
+ 701 0034 45D0     		beq	.L45
+ 203:UserAPP/Source/SendDataProcess.c ****         }
+ 702              		.loc 1 203 13 is_stmt 1 view .LVU174
+ 703 0036 3346     		mov	r3, r6
+ 704 0038 2C4A     		ldr	r2, .L66+4
+ 705 003a 0021     		movs	r1, #0
+ 706 003c FFF7FEFF 		bl	QueueSendfmt
+ 707              	.LVL65:
+ 205:UserAPP/Source/SendDataProcess.c ****     }
+ 708              		.loc 1 205 9 view .LVU175
+ 709 0040 3FE0     		b	.L45
+ 710              	.LVL66:
+ 711              	.L52:
+ 712              	.LBB17:
+ 713              	.LBB16:
+ 213:UserAPP/Source/SendDataProcess.c ****             pos += snprintf(&hexbuf[pos], sizeof(hexbuf) - pos, "%02X ", outBuf[i]); // 将每个�
+ 714              		.loc 1 213 13 view .LVU176
+ 715              		.loc 1 213 80 is_stmt 0 view .LVU177
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 23
+
+
+ 716 0042 04F1D003 		add	r3, r4, #208
+ 717 0046 6B44     		add	r3, sp, r3
+ 718              		.loc 1 213 20 view .LVU178
+ 719 0048 13F8403C 		ldrb	r3, [r3, #-64]	@ zero_extendqisi2
+ 720 004c 284A     		ldr	r2, .L66+8
+ 721 004e C5F18001 		rsb	r1, r5, #128
+ 722 0052 03A8     		add	r0, sp, #12
+ 723 0054 2844     		add	r0, r0, r5
+ 724 0056 FFF7FEFF 		bl	snprintf
+ 725              	.LVL67:
+ 726              		.loc 1 213 17 discriminator 1 view .LVU179
+ 727 005a 0544     		add	r5, r5, r0
+ 728              	.LVL68:
+ 212:UserAPP/Source/SendDataProcess.c ****             pos += snprintf(&hexbuf[pos], sizeof(hexbuf) - pos, "%02X ", outBuf[i]); // 将每个�
+ 729              		.loc 1 212 75 is_stmt 1 discriminator 4 view .LVU180
+ 730 005c 0134     		adds	r4, r4, #1
+ 731              	.LVL69:
+ 212:UserAPP/Source/SendDataProcess.c ****             pos += snprintf(&hexbuf[pos], sizeof(hexbuf) - pos, "%02X ", outBuf[i]); // 将每个�
+ 732              		.loc 1 212 75 is_stmt 0 discriminator 4 view .LVU181
+ 733 005e A4B2     		uxth	r4, r4
+ 734              	.LVL70:
+ 735              	.L49:
+ 212:UserAPP/Source/SendDataProcess.c ****             pos += snprintf(&hexbuf[pos], sizeof(hexbuf) - pos, "%02X ", outBuf[i]); // 将每个�
+ 736              		.loc 1 212 41 is_stmt 1 discriminator 1 view .LVU182
+ 212:UserAPP/Source/SendDataProcess.c ****             pos += snprintf(&hexbuf[pos], sizeof(hexbuf) - pos, "%02X ", outBuf[i]); // 将每个�
+ 737              		.loc 1 212 32 is_stmt 0 discriminator 1 view .LVU183
+ 738 0060 BDF88E30 		ldrh	r3, [sp, #142]
+ 212:UserAPP/Source/SendDataProcess.c ****             pos += snprintf(&hexbuf[pos], sizeof(hexbuf) - pos, "%02X ", outBuf[i]); // 将每个�
+ 739              		.loc 1 212 41 discriminator 1 view .LVU184
+ 740 0064 A342     		cmp	r3, r4
+ 741 0066 01D9     		bls	.L51
+ 212:UserAPP/Source/SendDataProcess.c ****             pos += snprintf(&hexbuf[pos], sizeof(hexbuf) - pos, "%02X ", outBuf[i]); // 将每个�
+ 742              		.loc 1 212 41 discriminator 3 view .LVU185
+ 743 0068 7B2D     		cmp	r5, #123
+ 744 006a EADD     		ble	.L52
+ 745              	.L51:
+ 746              	.LBE16:
+ 214:UserAPP/Source/SendDataProcess.c ****         }
+ 215:UserAPP/Source/SendDataProcess.c ****         hexbuf[pos] = '\0'; // 以 null 结尾
+ 747              		.loc 1 215 9 is_stmt 1 view .LVU186
+ 748              		.loc 1 215 21 is_stmt 0 view .LVU187
+ 749 006c 05F1D002 		add	r2, r5, #208
+ 750 0070 0DEB0205 		add	r5, sp, r2
+ 751              	.LVL71:
+ 752              		.loc 1 215 21 view .LVU188
+ 753 0074 0021     		movs	r1, #0
+ 754 0076 05F8C41C 		strb	r1, [r5, #-196]
+ 216:UserAPP/Source/SendDataProcess.c ****         QueueSendfmt(xReceiveLogQueue, 0, "构建完成（%u 字节）：%s\r\n", outLen, hexbuf); 
+ 755              		.loc 1 216 9 is_stmt 1 view .LVU189
+ 756 007a 03AA     		add	r2, sp, #12
+ 757              	.LVL72:
+ 758              		.loc 1 216 9 is_stmt 0 view .LVU190
+ 759 007c 0092     		str	r2, [sp]
+ 760 007e 1D4A     		ldr	r2, .L66+12
+ 761 0080 1948     		ldr	r0, .L66
+ 762 0082 0068     		ldr	r0, [r0]
+ 763 0084 FFF7FEFF 		bl	QueueSendfmt
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 24
+
+
+ 764              	.LVL73:
+ 765              	.L50:
+ 211:UserAPP/Source/SendDataProcess.c ****         for (uint16_t i = 0; i < outLen && pos < (int)sizeof(hexbuf) - 4; ++i) { // 遍历包字节
+ 766              		.loc 1 211 13 view .LVU191
+ 767 0088 0024     		movs	r4, #0
+ 768              	.LVL74:
+ 769              	.L57:
+ 211:UserAPP/Source/SendDataProcess.c ****         for (uint16_t i = 0; i < outLen && pos < (int)sizeof(hexbuf) - 4; ++i) { // 遍历包字节
+ 770              		.loc 1 211 13 view .LVU192
+ 771              	.LBE17:
+ 772              	.LBB18:
+ 217:UserAPP/Source/SendDataProcess.c ****     }
+ 218:UserAPP/Source/SendDataProcess.c **** 
+ 219:UserAPP/Source/SendDataProcess.c ****     /* 直接发送二进制包到上位机，避免文本队列截断 */
+ 220:UserAPP/Source/SendDataProcess.c ****     const int maxRetries = 3; // 最大重试次数
+ 221:UserAPP/Source/SendDataProcess.c ****     uint8_t txRet = USBD_OK; // 发送返回值
+ 222:UserAPP/Source/SendDataProcess.c ****     for (int attempt = 0; attempt < maxRetries; ++attempt) { // 循环尝试发送
+ 773              		.loc 1 222 35 is_stmt 1 discriminator 1 view .LVU193
+ 774 008a 022C     		cmp	r4, #2
+ 775 008c 11DC     		bgt	.L56
+ 223:UserAPP/Source/SendDataProcess.c ****         txRet = CDC_Transmit_FS(outBuf, outLen); // 调用 CDC 发送接口发送二进制包
+ 776              		.loc 1 223 9 view .LVU194
+ 777              		.loc 1 223 17 is_stmt 0 view .LVU195
+ 778 008e BDF88E10 		ldrh	r1, [sp, #142]
+ 779 0092 24A8     		add	r0, sp, #144
+ 780 0094 FFF7FEFF 		bl	CDC_Transmit_FS
+ 781              	.LVL75:
+ 782 0098 0646     		mov	r6, r0
+ 783              	.LVL76:
+ 224:UserAPP/Source/SendDataProcess.c ****         if (xReceiveLogQueue != NULL) { // 记录每次尝试的返回值，便于诊断
+ 784              		.loc 1 224 9 is_stmt 1 view .LVU196
+ 785              		.loc 1 224 30 is_stmt 0 view .LVU197
+ 786 009a 134B     		ldr	r3, .L66
+ 787 009c 1868     		ldr	r0, [r3]
+ 788              		.loc 1 224 12 view .LVU198
+ 789 009e 28B1     		cbz	r0, .L53
+ 225:UserAPP/Source/SendDataProcess.c ****             QueueSendfmt(xReceiveLogQueue, 0, "CDC_Transmit_FS 尝试=%d 返回=%u\r\n", attempt, t
+ 790              		.loc 1 225 13 is_stmt 1 view .LVU199
+ 791 00a0 0096     		str	r6, [sp]
+ 792 00a2 2346     		mov	r3, r4
+ 793 00a4 144A     		ldr	r2, .L66+16
+ 794 00a6 0021     		movs	r1, #0
+ 795 00a8 FFF7FEFF 		bl	QueueSendfmt
+ 796              	.LVL77:
+ 797              	.L53:
+ 226:UserAPP/Source/SendDataProcess.c ****         }
+ 227:UserAPP/Source/SendDataProcess.c ****         if (txRet == USBD_OK) { // 发送成功
+ 798              		.loc 1 227 9 view .LVU200
+ 799              		.loc 1 227 12 is_stmt 0 view .LVU201
+ 800 00ac 5EB1     		cbz	r6, .L64
+ 228:UserAPP/Source/SendDataProcess.c ****             if (xReceiveLogQueue != NULL) { // 记录发送成功信息
+ 229:UserAPP/Source/SendDataProcess.c ****                 QueueSendfmt(xReceiveLogQueue, 0, "发送成功，长度=%u\r\n", outLen); // 发�
+ 230:UserAPP/Source/SendDataProcess.c ****             }
+ 231:UserAPP/Source/SendDataProcess.c ****             return; // 发送成功，返回
+ 232:UserAPP/Source/SendDataProcess.c ****         }
+ 233:UserAPP/Source/SendDataProcess.c ****         if (txRet == USBD_BUSY) { // 若 USB 繁忙，等待短时延后重试
+ 801              		.loc 1 233 9 is_stmt 1 view .LVU202
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 25
+
+
+ 802              		.loc 1 233 12 is_stmt 0 view .LVU203
+ 803 00ae 012E     		cmp	r6, #1
+ 804 00b0 14D0     		beq	.L65
+ 805              	.L56:
+ 806              		.loc 1 233 12 view .LVU204
+ 807              	.LBE18:
+ 234:UserAPP/Source/SendDataProcess.c ****             vTaskDelay(pdMS_TO_TICKS(20)); // 延迟 20ms 后继续重试
+ 235:UserAPP/Source/SendDataProcess.c ****             continue; // 继续重试循环
+ 236:UserAPP/Source/SendDataProcess.c ****         }
+ 237:UserAPP/Source/SendDataProcess.c ****         /* 其他错误则不再重试 */
+ 238:UserAPP/Source/SendDataProcess.c ****         break; // 跳出重试循环
+ 239:UserAPP/Source/SendDataProcess.c ****     }
+ 240:UserAPP/Source/SendDataProcess.c **** 
+ 241:UserAPP/Source/SendDataProcess.c ****     /* 如果到达此处表示发送失败，记录最终状态 */
+ 242:UserAPP/Source/SendDataProcess.c ****     if (xReceiveLogQueue != NULL) { // 记录失败信息
+ 808              		.loc 1 242 5 is_stmt 1 view .LVU205
+ 809              		.loc 1 242 26 is_stmt 0 view .LVU206
+ 810 00b2 0D4B     		ldr	r3, .L66
+ 811 00b4 1868     		ldr	r0, [r3]
+ 812              		.loc 1 242 8 view .LVU207
+ 813 00b6 20B1     		cbz	r0, .L45
+ 243:UserAPP/Source/SendDataProcess.c ****         QueueSendfmt(xReceiveLogQueue, 0, "发送失败，最后错误=%u\r\n", txRet); // 记录�
+ 814              		.loc 1 243 9 is_stmt 1 view .LVU208
+ 815 00b8 3346     		mov	r3, r6
+ 816 00ba 104A     		ldr	r2, .L66+20
+ 817 00bc 0021     		movs	r1, #0
+ 818 00be FFF7FEFF 		bl	QueueSendfmt
+ 819              	.LVL78:
+ 820              	.L45:
+ 244:UserAPP/Source/SendDataProcess.c ****     }
+ 245:UserAPP/Source/SendDataProcess.c **** }
+ 821              		.loc 1 245 1 is_stmt 0 view .LVU209
+ 822 00c2 34B0     		add	sp, sp, #208
+ 823              	.LCFI17:
+ 824              		.cfi_remember_state
+ 825              		.cfi_def_cfa_offset 16
+ 826              		@ sp needed
+ 827 00c4 70BD     		pop	{r4, r5, r6, pc}
+ 828              	.LVL79:
+ 829              	.L64:
+ 830              	.LCFI18:
+ 831              		.cfi_restore_state
+ 832              	.LBB19:
+ 228:UserAPP/Source/SendDataProcess.c ****                 QueueSendfmt(xReceiveLogQueue, 0, "发送成功，长度=%u\r\n", outLen); // 发�
+ 833              		.loc 1 228 13 is_stmt 1 view .LVU210
+ 228:UserAPP/Source/SendDataProcess.c ****                 QueueSendfmt(xReceiveLogQueue, 0, "发送成功，长度=%u\r\n", outLen); // 发�
+ 834              		.loc 1 228 34 is_stmt 0 view .LVU211
+ 835 00c6 084B     		ldr	r3, .L66
+ 836 00c8 1868     		ldr	r0, [r3]
+ 228:UserAPP/Source/SendDataProcess.c ****                 QueueSendfmt(xReceiveLogQueue, 0, "发送成功，长度=%u\r\n", outLen); // 发�
+ 837              		.loc 1 228 16 view .LVU212
+ 838 00ca 0028     		cmp	r0, #0
+ 839 00cc F9D0     		beq	.L45
+ 229:UserAPP/Source/SendDataProcess.c ****             }
+ 840              		.loc 1 229 17 is_stmt 1 view .LVU213
+ 841 00ce BDF88E30 		ldrh	r3, [sp, #142]
+ 842 00d2 0B4A     		ldr	r2, .L66+24
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 26
+
+
+ 843 00d4 0021     		movs	r1, #0
+ 844 00d6 FFF7FEFF 		bl	QueueSendfmt
+ 845              	.LVL80:
+ 231:UserAPP/Source/SendDataProcess.c ****         }
+ 846              		.loc 1 231 13 view .LVU214
+ 847 00da F2E7     		b	.L45
+ 848              	.L65:
+ 234:UserAPP/Source/SendDataProcess.c ****             continue; // 继续重试循环
+ 849              		.loc 1 234 13 view .LVU215
+ 850 00dc 1420     		movs	r0, #20
+ 851 00de FFF7FEFF 		bl	vTaskDelay
+ 852              	.LVL81:
+ 235:UserAPP/Source/SendDataProcess.c ****         }
+ 853              		.loc 1 235 13 view .LVU216
+ 222:UserAPP/Source/SendDataProcess.c ****         txRet = CDC_Transmit_FS(outBuf, outLen); // 调用 CDC 发送接口发送二进制包
+ 854              		.loc 1 222 49 discriminator 2 view .LVU217
+ 855 00e2 0134     		adds	r4, r4, #1
+ 856              	.LVL82:
+ 222:UserAPP/Source/SendDataProcess.c ****         txRet = CDC_Transmit_FS(outBuf, outLen); // 调用 CDC 发送接口发送二进制包
+ 857              		.loc 1 222 49 is_stmt 0 discriminator 2 view .LVU218
+ 858 00e4 D1E7     		b	.L57
+ 859              	.L67:
+ 860 00e6 00BF     		.align	2
+ 861              	.L66:
+ 862 00e8 00000000 		.word	xReceiveLogQueue
+ 863 00ec 00000000 		.word	.LC1
+ 864 00f0 28000000 		.word	.LC2
+ 865 00f4 30000000 		.word	.LC3
+ 866 00f8 54000000 		.word	.LC4
+ 867 00fc 98000000 		.word	.LC6
+ 868 0100 7C000000 		.word	.LC5
+ 869              	.LBE19:
+ 870              		.cfi_endproc
+ 871              	.LFE85:
+ 873              		.global	xReceiveLogQueue
+ 874              		.section	.bss.xReceiveLogQueue,"aw",%nobits
+ 875              		.align	2
+ 878              	xReceiveLogQueue:
+ 879 0000 00000000 		.space	4
+ 880              		.global	xCreateSendLogTaskHandle
+ 881              		.section	.bss.xCreateSendLogTaskHandle,"aw",%nobits
+ 882              		.align	2
+ 885              	xCreateSendLogTaskHandle:
+ 886 0000 00000000 		.space	4
+ 887              		.global	xCreateSendLogTaskReturned
+ 888              		.section	.bss.xCreateSendLogTaskReturned,"aw",%nobits
+ 889              		.align	2
+ 892              	xCreateSendLogTaskReturned:
+ 893 0000 00000000 		.space	4
+ 894              		.text
+ 895              	.Letext0:
+ 896              		.file 3 "D:/gcc-arm/14.3 rel1/arm-none-eabi/include/machine/_default_types.h"
+ 897              		.file 4 "D:/gcc-arm/14.3 rel1/arm-none-eabi/include/sys/_stdint.h"
+ 898              		.file 5 "D:/gcc-arm/14.3 rel1/lib/gcc/arm-none-eabi/14.3.1/include/stddef.h"
+ 899              		.file 6 "D:/gcc-arm/14.3 rel1/lib/gcc/arm-none-eabi/14.3.1/include/stdarg.h"
+ 900              		.file 7 "D:/gcc-arm/14.3 rel1/arm-none-eabi/include/stdio.h"
+ 901              		.file 8 "Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h"
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 27
+
+
+ 902              		.file 9 "Middlewares/Third_Party/FreeRTOS/Source/include/task.h"
+ 903              		.file 10 "Middlewares/Third_Party/FreeRTOS/Source/include/queue.h"
+ 904              		.file 11 "Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_def.h"
+ 905              		.file 12 "UserAPP/Include/TaskList.h"
+ 906              		.file 13 "UserAPP/Include/SendDataProcess.h"
+ 907              		.file 14 "D:/gcc-arm/14.3 rel1/arm-none-eabi/include/string.h"
+ 908              		.file 15 "USB_DEVICE/App/usbd_cdc_if.h"
+ 909              		.file 16 "<built-in>"
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 28
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 SendDataProcess.c
+C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s:19     .text.Packet_CRC8:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s:24     .text.Packet_CRC8:00000000 Packet_CRC8
+C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s:121    .text.vSendLogProcessTask:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s:127    .text.vSendLogProcessTask:00000000 vSendLogProcessTask
+C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s:218    .text.vSendLogProcessTask:00000044 $d
+C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s:878    .bss.xReceiveLogQueue:00000000 xReceiveLogQueue
+C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s:223    .text.vCreateReceiveLogQueueTask:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s:229    .text.vCreateReceiveLogQueueTask:00000000 vCreateReceiveLogQueueTask
+C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s:261    .text.vCreateReceiveLogQueueTask:00000014 $d
+C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s:266    .rodata.vCreateSendLogTask.str1.4:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s:270    .text.vCreateSendLogTask:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s:276    .text.vCreateSendLogTask:00000000 vCreateSendLogTask
+C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s:319    .text.vCreateSendLogTask:0000002c $d
+C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s:885    .bss.xCreateSendLogTaskHandle:00000000 xCreateSendLogTaskHandle
+C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s:892    .bss.xCreateSendLogTaskReturned:00000000 xCreateSendLogTaskReturned
+C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s:327    .text.QueueSendfmt:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s:333    .text.QueueSendfmt:00000000 QueueSendfmt
+C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s:440    .text.BuildReplyPacket:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s:446    .text.BuildReplyPacket:00000000 BuildReplyPacket
+C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s:603    .rodata.ReplyPacket.str1.4:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s:630    .text.ReplyPacket:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s:636    .text.ReplyPacket:00000000 ReplyPacket
+C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s:862    .text.ReplyPacket:000000e8 $d
+C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s:875    .bss.xReceiveLogQueue:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s:882    .bss.xCreateSendLogTaskHandle:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s:889    .bss.xCreateSendLogTaskReturned:00000000 $d
+
+UNDEFINED SYMBOLS
+xQueueReceive
+strlen
+CDC_Transmit_FS
+xQueueGenericCreate
+xTaskCreate
+memset
+vsnprintf
+xQueueGenericSend
+memcpy
+snprintf
+vTaskDelay

@@ -5,7 +5,7 @@
 #include "cmsis_os.h"
 #include <queue.h>
 #include <string.h>  
-#include "SendLog.h"
+#include "SendDataProcess.h"
 #include "HWCIDri.h"
 #include "TaskList.h"
 

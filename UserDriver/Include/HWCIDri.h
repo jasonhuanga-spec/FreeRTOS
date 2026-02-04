@@ -51,34 +51,38 @@
 #define VSNL2rVMTPIN2GPIOX              GPIOA
 #define VSNL2rVMTPIN2PINX               GPIO_PIN_13
 
-#define VDDON       1
 #define VDDOFF      0
+#define VDDON       1
 
-#define LVON        1
 #define LVOFF       0
+#define LVON        1
 
-#define P47uH       1
-#define P10uH       0
+#define P47uH       0
+#define P10uH       1
 
-#define P2p2ohm     1
-#define P0p47ohm    2
-#define P0ohm       0
+#define P2p2ohm     0
+#define P0p47ohm    1
+#define P0ohm       2
 
-#define ESL4SPI     1
 #define ESL3SPI     0
+#define ESL4SPI     1
 
-#define VDD         1
 #define AAVSPL2     0
+#define VDD         1
 
+#define U2Hiz       0
 #define VDDL        1
-#define Hiz         0
 
-#define VAVSPL2     1
 #define TSCL        0
+#define VAVSPL2     1
+#define U3Hiz       2
 
-#define VMTP        1
 #define VSNL2       0
+#define VMTP        1
 
+#define E52bit      0
+#define E53bitAA    1
+#define E53bitVA    2
 
 void VDDSwitch(uint8_t VDDStates);
 void LVSwitch(uint8_t LVSwitch);
@@ -87,7 +91,8 @@ void SelectResistance(uint8_t ResistanceParameter);
 void SelectESLSPI(uint8_t SPIXLine);
 void VDDOrAAVSPL2(uint8_t SelectU4HW);
 void VDDLOrHiz(uint8_t SelectU2HW);
-void TSCLOrVSPL2(uint8_t SelectU3HW);
+void TSCLOrVSPL2OrHiz(uint8_t SelectU3HW);
 void VSNL2rVMTP(uint8_t SelectU8HW);
+void ICTypeSelect(uint8_t ICType);
 
 #endif

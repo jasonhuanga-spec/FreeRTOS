@@ -22,18 +22,31 @@ void vHWCIProcessTask(void *pvParameters) // HWCI 任务入口函数
                 /* 根据 FunctionCode 分发处理逻辑 */ // 每行注释
                 switch (localPacket.FunctionCode) // 根据功能码选择处理分支
                 {
-                    case 0x02: // 功能码示例：0x02
+                    case FUNCTION_CODE_DataPacket: // 功能码示例：0x02
                         // TODO: 在此处添加对应的处理逻辑
-                        if (localPacket.ExecIndex == TASK_ID_SelectESLSPI)
+                        if (localPacket.ExecIndex == TASK_ID_SelectESLSPI)// 如果执行索引为 SelectESLSPI
                         {
                             SelectESLSPI(localPacket.Data[0]); // 调用 SelectESLSPI 函数，传入 SPIXLine 参数
                         }
-                        
-                        QueueSendfmt(xReceiveLogQueue, 0, "HWCI: 处理成功, ExecIndex=%u, DataLen=%u\r\n", localPacket.ExecIndex, localPacket.DataLen); // 发送日志
+                        if (localPacket.ExecIndex == TASK_ID_ICTypeSelect)// 如果执行索引为 ICTypeSelect
+                        {
+                            ICTypeSelect(localPacket.Data[0]); // 调用 ICTypeSelect 函数，传入 ICType 参数
+                        }
+                        if (localPacket.ExecIndex == TASK_ID_SelectInductor)// 如果执行索引为 SelectInductor
+                        {
+                            SelectInductor(localPacket.Data[0]); // 调用 SelectInductor 函数，传入 Inductor 参数
+                        }
+                        if (localPacket.ExecIndex == TASK_ID_SelectResistance)// 如果执行索引为 SelectResistance
+                        {
+                            SelectResistance(localPacket.Data[0]); // 调用 SelectResistance 函数，传入 Resistance 参数
+                        }
+
+                        QueueSendfmt(xReceiveLogQueue, 0, "硬件配置成功, ExecIndex=%u, DataLen=%u\r\n", localPacket.ExecIndex, localPacket.DataLen); // 发送日志
+                        ReplyPacket(REPLY_OK); // 发送应答包
                         break; // 退出该 case
 
                     default: // 未知功能码分支处理
-                        QueueSendfmt(xReceiveLogQueue, 0, "HWCI: 未知功能码 0x%02X\r\n", localPacket.FunctionCode); // 发送未知功能码日志
+                        QueueSendfmt(xReceiveLogQueue, 0, "未知功能码 0x%02X\r\n", localPacket.FunctionCode); // 发送未知功能码日志
                         break; // 退出默认分支
                 }
             }
@@ -46,8 +59,8 @@ void vHWCIProcessTask(void *pvParameters) // HWCI 任务入口函数
  */
 void vCreateHWCIProcessTask(void) // 创建 HWCI 任务的函数实现
 {
-    /* 创建解析后数据队列，容量为 10 个 ParsedDataPacket_t */ // 每行注释
-    xParsedDataQueue = xQueueCreate(10, sizeof(ParsedDataPacket_t)); // 创建队列用于在解析和处理之间传递数据
+    /* 创建解析后数据队列，容量为 5 个 ParsedDataPacket_t */ // 每行注释
+    xParsedDataQueue = xQueueCreate(5, sizeof(ParsedDataPacket_t)); // 创建队列用于在解析和处理之间传递数据
 
     if (xParsedDataQueue == NULL) // 如果队列创建失败
     {

@@ -84,9 +84,10 @@ Middlewares/Third_Party/FreeRTOS/Source/timers.c \
 Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.c \
 Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang/heap_4.c \
 Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c\
-UserAPP/Source/SendLog.c \
+UserAPP/Source/SendDataProcess.c \
 UserDriver/Source/HWCIDri.c	\
-UserAPP/Source/HWCI.c
+UserAPP/Source/HWCI.c	\
+UserAPP/Source/ADCAPP.c
 
 
 

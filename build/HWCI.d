@@ -48,9 +48,9 @@ build/HWCI.o: UserAPP/Source/HWCI.c UserAPP/Include/ReceiveDataProcess.h \
  Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_core.h \
  Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h \
  Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ctlreq.h \
- UserAPP/Include/SendLog.h USB_DEVICE/App/usbd_cdc_if.h \
- UserAPP/Include/HWCI.h UserDriver/Include/HWCIDri.h Core/Inc/gpio.h \
- Core/Inc/main.h UserAPP/Include/TaskList.h
+ UserAPP/Include/SendDataProcess.h USB_DEVICE/App/usbd_cdc_if.h \
+ UserAPP/Include/TaskList.h UserAPP/Include/HWCI.h \
+ UserDriver/Include/HWCIDri.h Core/Inc/gpio.h Core/Inc/main.h
 UserAPP/Include/ReceiveDataProcess.h:
 Core/Inc/main.h:
 Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h:
@@ -104,10 +104,10 @@ Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_def.h:
 Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_core.h:
 Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h:
 Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ctlreq.h:
-UserAPP/Include/SendLog.h:
+UserAPP/Include/SendDataProcess.h:
 USB_DEVICE/App/usbd_cdc_if.h:
+UserAPP/Include/TaskList.h:
 UserAPP/Include/HWCI.h:
 UserDriver/Include/HWCIDri.h:
 Core/Inc/gpio.h:
 Core/Inc/main.h:
-UserAPP/Include/TaskList.h:

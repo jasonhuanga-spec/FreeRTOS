@@ -27,8 +27,9 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "ReceiveDataProcess.h"
-#include "SendLog.h"
+#include "SendDataProcess.h"
 #include "HWCI.h"
+#include "ADCAPP.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -101,6 +102,7 @@ int main(void)
   vCreateReceiveDataTask();
   vCreateSendLogTask();
   vCreateHWCIProcessTask();
+  vCreateADCTask();
   
   /* USER CODE END 2 */
 

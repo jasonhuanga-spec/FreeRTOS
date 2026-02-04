@@ -11,6 +11,7 @@
 #include <string.h>
 #include <stdio.h>    /* 若使用 vsnprintf/printf */
 #include <stdarg.h>   /* for va_start / va_end */
+#include "TaskList.h"
 
 
 
@@ -18,11 +19,16 @@
 extern QueueHandle_t xReceiveLogQueue;
 
 #define PRINT_QUEUE_ITEM_SIZE 128
+/* 最大数据字段长度，根据协议最大包 64 字节：头1+功1+索引2+数据N+CRC1 <=64 */ // 每行注释
+#define PACKET_MAX_DATA_LEN 59 /* 最大数据字节数 */ // 每行注释
+#define PACKET_MAX_SIZE 64 /* 最大包长度（含 CRC） */ // 每行注释
 
 void vCreateSendLogTask(void);
 void vSendLogProcessTask( void * pvParameters );
 void vCreateReceiveLogQueueTask( void *pvParameters );
 BaseType_t QueueSendfmt(QueueHandle_t xQueue, TickType_t xTicksToWait, const char *fmt, ...);
+uint8_t BuildReplyPacket(uint8_t functionCode, uint16_t execIndex, const uint8_t *data, uint8_t dataLen, uint8_t *outBuf, uint16_t *outLen);
+void ReplyPacket(ReplyCode_t reply);
 
 
 #endif // SendLog_H

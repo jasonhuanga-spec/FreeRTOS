@@ -26,8 +26,8 @@
 
 
 float adc_to_voltage(uint16_t adc_value);
+float get_current_vdd_voltage(void); /* 获取当前VDD电压的函数声明 */ // 每行注释
 void send_voltage_packet(void); /* 发送电压数据包的函数声明 */ // 每行注释
-float get_current_vdd_voltage(void); /* 获取当前VDD电压值的函数声明 */ // 每行注释
 void vCreateADCTask(void); /* 创建 ADC 处理任务的函数声明 */ // 每行注释
 void vADCProcessTask(void *pvParameters); /* ADC 处理任务的主函数声明 */ // 每行注释
 

@@ -10,6 +10,9 @@ uint32_t adcbuf[11] = {0};
 // 2. 添加DMA传输完成标记（核心！解决脏读）
 uint8_t adc_dma_complete = 0;
 
+// 3. 全局电压数组，存储转换后的实际电压值（单位V）
+float voltage_array[11] = {0.0f};
+
 /* ADC 任务句柄定义 */ // 每行注释
 TaskHandle_t xADCProcessTaskHandle = NULL; // 定义 ADC 任务句柄
 
@@ -72,41 +75,6 @@ float adc_to_voltage(uint16_t adc_value) // 转换函数实现
 
 
 /**
- * @brief 获取当前VDD电压值
- * @return 当前VDD电压值，单位V；若采样失败返回 -1.0f
- */
-float get_current_vdd_voltage(void) // 获取当前VDD电压的实现
-{
-    adc_dma_complete = 0; // 清除完成标志
-    
-    /* 启动 DMA 转换，采样 11 个通道到 adcbuf */
-    if (HAL_ADC_Start_DMA(&hadc1, adcbuf, 11) != HAL_OK) // 启动 DMA
-    {
-        return -1.0f; // 启动失败，返回错误值
-    }
-
-    /* 等待转换完成，增加超时机制（10ms足够11个通道转换） */
-    uint32_t timeout = 10; // 超时计数 10ms
-    while (adc_dma_complete == 0 && timeout > 0) // 等待完成标志或超时
-    {
-        vTaskDelay(pdMS_TO_TICKS(1)); // 挂起 1ms 避免独占 CPU
-        timeout--; // 递减计数
-    }
-    
-    HAL_ADC_Stop_DMA(&hadc1); // 停止 ADC DMA
-
-    if (timeout == 0) // 检查是否超时
-    {
-        return -1.0f; // 超时失败，返回错误值
-    }
-
-    /* 返回 VDD 通道（adcbuf[0]）的电压值 */
-    return adc_to_voltage(adcbuf[0]); // 计算并返回VDD电压
-}
-
-
-
-/**
  * @brief 发送电压数据包给上位机
  * @note 将11个ADC通道的电压值转换后通过BuildReplyPacket构建数据包发送
  */
@@ -142,7 +110,6 @@ void send_voltage_packet(void) // 发送电压数据包的实现
     }
 
     /* 创建电压值数组，存储转换后的实际电压值（单位：V，使用float转为uint16_t，精度0.01V） */
-    float voltage_array[11]; // 浮点电压数组
     for (uint8_t i = 0; i < 11; i++) // 遍历11个通道
     {
         voltage_array[i] = adc_to_voltage(adcbuf[i]); // 将ADC原始值转换为实际电压
@@ -198,4 +165,21 @@ void send_voltage_packet(void) // 发送电压数据包的实现
     if (xReceiveLogQueue != NULL) { // 记录失败信息
         QueueSendfmt(xReceiveLogQueue, 0, "电压数据包发送失败，最后错误=%u\r\n", txRet); // 记录失败
     }
+}
+
+
+/**
+ * @brief 获取当前VDD电压值
+ * @return float 返回当前VDD电压值（单位V），如果数据无效返回-1.0f
+ */
+float get_current_vdd_voltage(void) // 获取当前VDD电压
+{
+    // 检查DMA传输是否完成
+    if (adc_dma_complete == 0) // 如果DMA未完成
+    {
+        return -1.0f; // 返回错误值
+    }
+    
+    // 返回voltage_array[0]（VDD电压）
+    return voltage_array[0]; // 返回VDD通道的电压值
 }

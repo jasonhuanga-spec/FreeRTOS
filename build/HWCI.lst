@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccXMbySg.s 			page 1
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc2sMpTu.s 			page 1
 
 
    1              		.cpu cortex-m3
@@ -58,7 +58,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccXMbySg.s 			page 1
    8:UserAPP/Source/HWCI.c **** 
    9:UserAPP/Source/HWCI.c **** /**
   10:UserAPP/Source/HWCI.c ****  * @brief HWCI 处理任务：从解析队列获取 ParsedDataPacket 并执行对应处理
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccXMbySg.s 			page 2
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc2sMpTu.s 			page 2
 
 
   11:UserAPP/Source/HWCI.c ****  */
@@ -118,7 +118,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccXMbySg.s 			page 1
   36:UserAPP/Source/HWCI.c ****                         {
   37:UserAPP/Source/HWCI.c ****                             SelectInductor(localPacket.Data[0]); // 调用 SelectInductor 函数，
   66              		.loc 1 37 29 view .LVU4
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccXMbySg.s 			page 3
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc2sMpTu.s 			page 3
 
 
   67 001a 9DF81100 		ldrb	r0, [sp, #17]	@ zero_extendqisi2
@@ -178,7 +178,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccXMbySg.s 			page 1
   20:UserAPP/Source/HWCI.c ****             {
  105              		.loc 1 20 16 discriminator 1 view .LVU17
  106 0052 0128     		cmp	r0, #1
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccXMbySg.s 			page 4
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc2sMpTu.s 			page 4
 
 
  107 0054 F4D1     		bne	.L3
@@ -238,7 +238,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccXMbySg.s 			page 1
  145 0086 CDE7     		b	.L9
  146              	.L5:
   47:UserAPP/Source/HWCI.c **** 
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccXMbySg.s 			page 5
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc2sMpTu.s 			page 5
 
 
   48:UserAPP/Source/HWCI.c ****                     default: // 未知功能码分支处理
@@ -298,7 +298,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccXMbySg.s 			page 1
   59:UserAPP/Source/HWCI.c ****  */
   60:UserAPP/Source/HWCI.c **** void vCreateHWCIProcessTask(void) // 创建 HWCI 任务的函数实现
   61:UserAPP/Source/HWCI.c **** {
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccXMbySg.s 			page 6
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc2sMpTu.s 			page 6
 
 
  183              		.loc 1 61 1 view -0
@@ -312,13 +312,13 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccXMbySg.s 			page 1
  191 0002 83B0     		sub	sp, sp, #12
  192              	.LCFI3:
  193              		.cfi_def_cfa_offset 16
-  62:UserAPP/Source/HWCI.c ****     /* 创建解析后数据队列，容量为 5 个 ParsedDataPacket_t */ // 每行注释
-  63:UserAPP/Source/HWCI.c ****     xParsedDataQueue = xQueueCreate(5, sizeof(ParsedDataPacket_t)); // 创建队列用于在解析�
+  62:UserAPP/Source/HWCI.c ****     /* 创建解析后数据队列，容量为 10 个 ParsedDataPacket_t */ // 每行注释
+  63:UserAPP/Source/HWCI.c ****     xParsedDataQueue = xQueueCreate(10, sizeof(ParsedDataPacket_t)); // 创建队列用于在解析
  194              		.loc 1 63 5 view .LVU37
  195              		.loc 1 63 24 is_stmt 0 view .LVU38
  196 0004 0022     		movs	r2, #0
  197 0006 4221     		movs	r1, #66
- 198 0008 0520     		movs	r0, #5
+ 198 0008 0A20     		movs	r0, #10
  199 000a FFF7FEFF 		bl	xQueueGenericCreate
  200              	.LVL10:
  201              		.loc 1 63 22 discriminator 1 view .LVU39
@@ -358,7 +358,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccXMbySg.s 			page 1
  220              	.LCFI4:
  221              		.cfi_remember_state
  222              		.cfi_def_cfa_offset 4
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccXMbySg.s 			page 7
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc2sMpTu.s 			page 7
 
 
  223              		@ sp needed
@@ -411,23 +411,23 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccXMbySg.s 			page 1
  273              		.file 10 "UserAPP/Include/HWCI.h"
  274              		.file 11 "UserAPP/Include/ReceiveDataProcess.h"
  275              		.file 12 "UserDriver/Include/HWCIDri.h"
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccXMbySg.s 			page 8
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc2sMpTu.s 			page 8
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 HWCI.c
-C:\Users\Administrator\AppData\Local\Temp\ccXMbySg.s:19     .rodata.vHWCIProcessTask.str1.4:00000000 $d
-C:\Users\Administrator\AppData\Local\Temp\ccXMbySg.s:29     .text.vHWCIProcessTask:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\ccXMbySg.s:35     .text.vHWCIProcessTask:00000000 vHWCIProcessTask
-C:\Users\Administrator\AppData\Local\Temp\ccXMbySg.s:159    .text.vHWCIProcessTask:00000098 $d
-C:\Users\Administrator\AppData\Local\Temp\ccXMbySg.s:254    .bss.xParsedDataQueue:00000000 xParsedDataQueue
-C:\Users\Administrator\AppData\Local\Temp\ccXMbySg.s:167    .rodata.vCreateHWCIProcessTask.str1.4:00000000 $d
-C:\Users\Administrator\AppData\Local\Temp\ccXMbySg.s:175    .text.vCreateHWCIProcessTask:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\ccXMbySg.s:181    .text.vCreateHWCIProcessTask:00000000 vCreateHWCIProcessTask
-C:\Users\Administrator\AppData\Local\Temp\ccXMbySg.s:240    .text.vCreateHWCIProcessTask:0000003c $d
-C:\Users\Administrator\AppData\Local\Temp\ccXMbySg.s:261    .bss.xHWCIProcessTaskHandle:00000000 xHWCIProcessTaskHandle
-C:\Users\Administrator\AppData\Local\Temp\ccXMbySg.s:251    .bss.xParsedDataQueue:00000000 $d
-C:\Users\Administrator\AppData\Local\Temp\ccXMbySg.s:258    .bss.xHWCIProcessTaskHandle:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\cc2sMpTu.s:19     .rodata.vHWCIProcessTask.str1.4:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\cc2sMpTu.s:29     .text.vHWCIProcessTask:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\cc2sMpTu.s:35     .text.vHWCIProcessTask:00000000 vHWCIProcessTask
+C:\Users\Administrator\AppData\Local\Temp\cc2sMpTu.s:159    .text.vHWCIProcessTask:00000098 $d
+C:\Users\Administrator\AppData\Local\Temp\cc2sMpTu.s:254    .bss.xParsedDataQueue:00000000 xParsedDataQueue
+C:\Users\Administrator\AppData\Local\Temp\cc2sMpTu.s:167    .rodata.vCreateHWCIProcessTask.str1.4:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\cc2sMpTu.s:175    .text.vCreateHWCIProcessTask:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\cc2sMpTu.s:181    .text.vCreateHWCIProcessTask:00000000 vCreateHWCIProcessTask
+C:\Users\Administrator\AppData\Local\Temp\cc2sMpTu.s:240    .text.vCreateHWCIProcessTask:0000003c $d
+C:\Users\Administrator\AppData\Local\Temp\cc2sMpTu.s:261    .bss.xHWCIProcessTaskHandle:00000000 xHWCIProcessTaskHandle
+C:\Users\Administrator\AppData\Local\Temp\cc2sMpTu.s:251    .bss.xParsedDataQueue:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\cc2sMpTu.s:258    .bss.xHWCIProcessTaskHandle:00000000 $d
 
 UNDEFINED SYMBOLS
 SelectESLSPI

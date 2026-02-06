@@ -8,7 +8,8 @@
 #include "usbd_def.h"
 #include "usbd_cdc.h"
 #include "SendDataProcess.h"
-#include "HWCI.h"
+#include "TaskList.h"
+
 
 /* 定义最大接收数据包大小 */
 #define MAX_RECEIVE_DATA_SIZE 64

@@ -86,8 +86,10 @@ Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang/heap_4.c \
 Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c\
 UserAPP/Source/SendDataProcess.c \
 UserDriver/Source/HWCIDri.c	\
-UserAPP/Source/HWCI.c	\
-UserAPP/Source/ADCAPP.c
+UserAPP/Source/ADCAPP.c	\
+UserAPP/Source/TaskList.c \
+UserAPP/Source/DPPTM.c \
+UserAPP/Source/DPPTMIIC.c
 
 
 

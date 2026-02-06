@@ -50,8 +50,11 @@ build/ReceiveDataProcess.o: UserAPP/Source/ReceiveDataProcess.c \
  Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h \
  Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ctlreq.h \
  UserAPP/Include/SendDataProcess.h USB_DEVICE/App/usbd_cdc_if.h \
- UserAPP/Include/TaskList.h UserAPP/Include/HWCI.h \
- UserDriver/Include/HWCIDri.h Core/Inc/gpio.h Core/Inc/main.h
+ UserAPP/Include/DPPTM.h UserDriver/Include/DPPTMIIC.h \
+ UserAPP/Include/Tasklist.h UserAPP/Include/ReceiveDataProcess.h \
+ UserDriver/Include/HWCIDri.h Core/Inc/gpio.h Core/Inc/main.h \
+ UserAPP/Include/ADCAPP.h Core/Inc/adc.h Core/Inc/dma.h \
+ UserAPP/Include/TaskList.h
 UserAPP/Include/ReceiveDataProcess.h:
 Core/Inc/main.h:
 Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h:
@@ -107,8 +110,14 @@ Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h:
 Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ctlreq.h:
 UserAPP/Include/SendDataProcess.h:
 USB_DEVICE/App/usbd_cdc_if.h:
-UserAPP/Include/TaskList.h:
-UserAPP/Include/HWCI.h:
+UserAPP/Include/DPPTM.h:
+UserDriver/Include/DPPTMIIC.h:
+UserAPP/Include/Tasklist.h:
+UserAPP/Include/ReceiveDataProcess.h:
 UserDriver/Include/HWCIDri.h:
 Core/Inc/gpio.h:
 Core/Inc/main.h:
+UserAPP/Include/ADCAPP.h:
+Core/Inc/adc.h:
+Core/Inc/dma.h:
+UserAPP/Include/TaskList.h:

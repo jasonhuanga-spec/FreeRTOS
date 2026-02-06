@@ -6,6 +6,9 @@
 #include "gpio.h"
 #include "adc.h"
 #include "dma.h"
+#include "SendDataProcess.h" // 包含日志发送模块
+#include "TaskList.h" // 包含功能码定义（FUNCTION_CODE_DataPacket等）
+#include "usbd_cdc_if.h" // 包含USB CDC发送函数
 
 // STM32F103 ADC 相关参数定义
 #define ADC_RESOLUTION  4095    // 12位ADC的最大值 (2^12 - 1)
@@ -23,7 +26,8 @@
 
 
 float adc_to_voltage(uint16_t adc_value);
-void print_voltage(void); /* 打印电压值的函数声明 */ // 每行注释
+void send_voltage_packet(void); /* 发送电压数据包的函数声明 */ // 每行注释
+float get_current_vdd_voltage(void); /* 获取当前VDD电压值的函数声明 */ // 每行注释
 void vCreateADCTask(void); /* 创建 ADC 处理任务的函数声明 */ // 每行注释
 void vADCProcessTask(void *pvParameters); /* ADC 处理任务的主函数声明 */ // 每行注释
 

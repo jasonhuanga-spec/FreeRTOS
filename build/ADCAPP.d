@@ -50,7 +50,11 @@ build/ADCAPP.o: UserAPP/Source/ADCAPP.c UserAPP/Include/ADCAPP.h \
  Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_core.h \
  Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h \
  Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ctlreq.h \
- UserAPP/Include/TaskList.h
+ UserAPP/Include/DPPTM.h UserDriver/Include/DPPTMIIC.h \
+ UserAPP/Include/Tasklist.h UserAPP/Include/ReceiveDataProcess.h \
+ Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_def.h \
+ UserAPP/Include/SendDataProcess.h UserAPP/Include/TaskList.h \
+ UserDriver/Include/HWCIDri.h UserAPP/Include/ADCAPP.h
 UserAPP/Include/ADCAPP.h:
 Core/Inc/main.h:
 Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h:
@@ -109,4 +113,12 @@ USB_DEVICE/Target/usbd_conf.h:
 Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_core.h:
 Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h:
 Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ctlreq.h:
+UserAPP/Include/DPPTM.h:
+UserDriver/Include/DPPTMIIC.h:
+UserAPP/Include/Tasklist.h:
+UserAPP/Include/ReceiveDataProcess.h:
+Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_def.h:
+UserAPP/Include/SendDataProcess.h:
 UserAPP/Include/TaskList.h:
+UserDriver/Include/HWCIDri.h:
+UserAPP/Include/ADCAPP.h:

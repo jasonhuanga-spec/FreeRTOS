@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccUEamhf.s 			page 1
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccCk5UFD.s 			page 1
 
 
    1              		.cpu cortex-m3
@@ -58,7 +58,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccUEamhf.s 			page 1
   35 0000 00B5     		push	{lr}
   36              	.LCFI0:
   37              		.cfi_def_cfa_offset 4
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccUEamhf.s 			page 2
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccCk5UFD.s 			page 2
 
 
   38              		.cfi_offset 14, -4
@@ -70,43 +70,42 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccUEamhf.s 			page 1
   42              		.loc 1 20 5 view .LVU1
   43 0004 064B     		ldr	r3, .L3
   44 0006 0193     		str	r3, [sp, #4]
-  45 0008 0123     		movs	r3, #1
+  45 0008 0023     		movs	r3, #0
   46 000a 0093     		str	r3, [sp]
-  47 000c 0023     		movs	r3, #0
-  48 000e 4FF40072 		mov	r2, #512
-  49 0012 0449     		ldr	r1, .L3+4
-  50 0014 0448     		ldr	r0, .L3+8
-  51 0016 FFF7FEFF 		bl	xTaskCreate
-  52              	.LVL0:
+  47 000c 4FF48072 		mov	r2, #256
+  48 0010 0449     		ldr	r1, .L3+4
+  49 0012 0548     		ldr	r0, .L3+8
+  50 0014 FFF7FEFF 		bl	xTaskCreate
+  51              	.LVL0:
   21:UserAPP/Source/ADCAPP.c ****                 "vADCProcessTask",         /* 任务名称 */
-  22:UserAPP/Source/ADCAPP.c ****                 512,                       /* 堆栈大小（字） */
+  22:UserAPP/Source/ADCAPP.c ****                 256,                       /* 堆栈大小（字） */
   23:UserAPP/Source/ADCAPP.c ****                 NULL,                      /* 任务参数 */
-  24:UserAPP/Source/ADCAPP.c ****                 tskIDLE_PRIORITY + 1,      /* 优先级 */
+  24:UserAPP/Source/ADCAPP.c ****                 tskIDLE_PRIORITY,      /* 优先级 */
   25:UserAPP/Source/ADCAPP.c ****                 &xADCProcessTaskHandle);   /* 任务句柄 */
   26:UserAPP/Source/ADCAPP.c **** }
-  53              		.loc 1 26 1 is_stmt 0 view .LVU2
-  54 001a 03B0     		add	sp, sp, #12
-  55              	.LCFI2:
-  56              		.cfi_def_cfa_offset 4
-  57              		@ sp needed
-  58 001c 5DF804FB 		ldr	pc, [sp], #4
-  59              	.L4:
-  60              		.align	2
-  61              	.L3:
-  62 0020 00000000 		.word	xADCProcessTaskHandle
-  63 0024 00000000 		.word	.LC0
-  64 0028 00000000 		.word	vADCProcessTask
-  65              		.cfi_endproc
-  66              	.LFE79:
-  68              		.section	.text.HAL_ADC_ConvCpltCallback,"ax",%progbits
-  69              		.align	1
-  70              		.global	HAL_ADC_ConvCpltCallback
-  71              		.syntax unified
-  72              		.thumb
-  73              		.thumb_func
-  75              	HAL_ADC_ConvCpltCallback:
-  76              	.LVL1:
-  77              	.LFB81:
+  52              		.loc 1 26 1 is_stmt 0 view .LVU2
+  53 0018 03B0     		add	sp, sp, #12
+  54              	.LCFI2:
+  55              		.cfi_def_cfa_offset 4
+  56              		@ sp needed
+  57 001a 5DF804FB 		ldr	pc, [sp], #4
+  58              	.L4:
+  59 001e 00BF     		.align	2
+  60              	.L3:
+  61 0020 00000000 		.word	xADCProcessTaskHandle
+  62 0024 00000000 		.word	.LC0
+  63 0028 00000000 		.word	vADCProcessTask
+  64              		.cfi_endproc
+  65              	.LFE79:
+  67              		.section	.text.HAL_ADC_ConvCpltCallback,"ax",%progbits
+  68              		.align	1
+  69              		.global	HAL_ADC_ConvCpltCallback
+  70              		.syntax unified
+  71              		.thumb
+  72              		.thumb_func
+  74              	HAL_ADC_ConvCpltCallback:
+  75              	.LVL1:
+  76              	.LFB81:
   27:UserAPP/Source/ADCAPP.c **** 
   28:UserAPP/Source/ADCAPP.c **** /**
   29:UserAPP/Source/ADCAPP.c ****  * @brief ADC 处理任务主循环
@@ -118,605 +117,575 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccUEamhf.s 			page 1
   35:UserAPP/Source/ADCAPP.c ****     (void)pvParameters;
   36:UserAPP/Source/ADCAPP.c **** 
   37:UserAPP/Source/ADCAPP.c ****     for (;;) // 任务主循环
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccUEamhf.s 			page 3
-
-
   38:UserAPP/Source/ADCAPP.c ****     {
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccCk5UFD.s 			page 3
+
+
   39:UserAPP/Source/ADCAPP.c ****         print_voltage(); // 执行 ADC 采样与打印
-  40:UserAPP/Source/ADCAPP.c ****         
-  41:UserAPP/Source/ADCAPP.c ****         /* 延迟 1000ms（根据需求调整采样频率） */ // 每行注释
-  42:UserAPP/Source/ADCAPP.c ****         vTaskDelay(pdMS_TO_TICKS(1000));
-  43:UserAPP/Source/ADCAPP.c ****     }
-  44:UserAPP/Source/ADCAPP.c **** }
-  45:UserAPP/Source/ADCAPP.c **** 
-  46:UserAPP/Source/ADCAPP.c **** 
-  47:UserAPP/Source/ADCAPP.c **** // DMA传输完成回调函数（CubeMX配置了DMA中断才会触发）
-  48:UserAPP/Source/ADCAPP.c **** void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
-  49:UserAPP/Source/ADCAPP.c **** {
-  78              		.loc 1 49 1 is_stmt 1 view -0
-  79              		.cfi_startproc
-  80              		@ args = 0, pretend = 0, frame = 0
-  81              		@ frame_needed = 0, uses_anonymous_args = 0
-  82              		@ link register save eliminated.
-  50:UserAPP/Source/ADCAPP.c ****   if (hadc->Instance == ADC1)
-  83              		.loc 1 50 3 view .LVU4
-  84              		.loc 1 50 11 is_stmt 0 view .LVU5
-  85 0000 0268     		ldr	r2, [r0]
-  86              		.loc 1 50 6 view .LVU6
-  87 0002 044B     		ldr	r3, .L8
-  88 0004 9A42     		cmp	r2, r3
-  89 0006 00D0     		beq	.L7
-  90              	.L5:
-  51:UserAPP/Source/ADCAPP.c ****   {
-  52:UserAPP/Source/ADCAPP.c ****     adc_dma_complete = 1; // 标记数据传输完成
-  53:UserAPP/Source/ADCAPP.c ****   }
-  54:UserAPP/Source/ADCAPP.c **** }
-  91              		.loc 1 54 1 view .LVU7
-  92 0008 7047     		bx	lr
-  93              	.L7:
-  52:UserAPP/Source/ADCAPP.c ****   }
-  94              		.loc 1 52 5 is_stmt 1 view .LVU8
-  52:UserAPP/Source/ADCAPP.c ****   }
-  95              		.loc 1 52 22 is_stmt 0 view .LVU9
-  96 000a 034B     		ldr	r3, .L8+4
-  97 000c 0122     		movs	r2, #1
-  98 000e 1A70     		strb	r2, [r3]
-  99              		.loc 1 54 1 view .LVU10
- 100 0010 FAE7     		b	.L5
- 101              	.L9:
- 102 0012 00BF     		.align	2
- 103              	.L8:
- 104 0014 00240140 		.word	1073816576
- 105 0018 00000000 		.word	adc_dma_complete
- 106              		.cfi_endproc
- 107              	.LFE81:
- 109              		.section	.text.adc_to_voltage,"ax",%progbits
- 110              		.align	1
- 111              		.global	adc_to_voltage
- 112              		.syntax unified
- 113              		.thumb
- 114              		.thumb_func
- 116              	adc_to_voltage:
- 117              	.LVL2:
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccUEamhf.s 			page 4
+  40:UserAPP/Source/ADCAPP.c ****     }
+  41:UserAPP/Source/ADCAPP.c **** }
+  42:UserAPP/Source/ADCAPP.c **** 
+  43:UserAPP/Source/ADCAPP.c **** 
+  44:UserAPP/Source/ADCAPP.c **** // DMA传输完成回调函数（CubeMX配置了DMA中断才会触发）
+  45:UserAPP/Source/ADCAPP.c **** void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
+  46:UserAPP/Source/ADCAPP.c **** {
+  77              		.loc 1 46 1 is_stmt 1 view -0
+  78              		.cfi_startproc
+  79              		@ args = 0, pretend = 0, frame = 0
+  80              		@ frame_needed = 0, uses_anonymous_args = 0
+  81              		@ link register save eliminated.
+  47:UserAPP/Source/ADCAPP.c ****   if (hadc->Instance == ADC1)
+  82              		.loc 1 47 3 view .LVU4
+  83              		.loc 1 47 11 is_stmt 0 view .LVU5
+  84 0000 0268     		ldr	r2, [r0]
+  85              		.loc 1 47 6 view .LVU6
+  86 0002 044B     		ldr	r3, .L8
+  87 0004 9A42     		cmp	r2, r3
+  88 0006 00D0     		beq	.L7
+  89              	.L5:
+  48:UserAPP/Source/ADCAPP.c ****   {
+  49:UserAPP/Source/ADCAPP.c ****     adc_dma_complete = 1; // 标记数据传输完成
+  50:UserAPP/Source/ADCAPP.c ****   }
+  51:UserAPP/Source/ADCAPP.c **** }
+  90              		.loc 1 51 1 view .LVU7
+  91 0008 7047     		bx	lr
+  92              	.L7:
+  49:UserAPP/Source/ADCAPP.c ****   }
+  93              		.loc 1 49 5 is_stmt 1 view .LVU8
+  49:UserAPP/Source/ADCAPP.c ****   }
+  94              		.loc 1 49 22 is_stmt 0 view .LVU9
+  95 000a 034B     		ldr	r3, .L8+4
+  96 000c 0122     		movs	r2, #1
+  97 000e 1A70     		strb	r2, [r3]
+  98              		.loc 1 51 1 view .LVU10
+  99 0010 FAE7     		b	.L5
+ 100              	.L9:
+ 101 0012 00BF     		.align	2
+ 102              	.L8:
+ 103 0014 00240140 		.word	1073816576
+ 104 0018 00000000 		.word	adc_dma_complete
+ 105              		.cfi_endproc
+ 106              	.LFE81:
+ 108              		.section	.text.adc_to_voltage,"ax",%progbits
+ 109              		.align	1
+ 110              		.global	adc_to_voltage
+ 111              		.syntax unified
+ 112              		.thumb
+ 113              		.thumb_func
+ 115              	adc_to_voltage:
+ 116              	.LVL2:
+ 117              	.LFB82:
+  52:UserAPP/Source/ADCAPP.c **** 
+  53:UserAPP/Source/ADCAPP.c **** 
+  54:UserAPP/Source/ADCAPP.c **** /**
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccCk5UFD.s 			page 4
 
 
- 118              	.LFB82:
-  55:UserAPP/Source/ADCAPP.c **** 
-  56:UserAPP/Source/ADCAPP.c **** 
-  57:UserAPP/Source/ADCAPP.c **** /**
-  58:UserAPP/Source/ADCAPP.c ****  * @brief 将ADC采样值转换为实际输入电压
-  59:UserAPP/Source/ADCAPP.c ****  * @param adc_value: ADC采集到的数字值（0~4095）
-  60:UserAPP/Source/ADCAPP.c ****  * @return 实际输入电压值，单位V（范围约-20.12~+20.12V）
-  61:UserAPP/Source/ADCAPP.c ****  */
-  62:UserAPP/Source/ADCAPP.c **** float adc_to_voltage(uint16_t adc_value) // 转换函数实现
-  63:UserAPP/Source/ADCAPP.c **** {
- 119              		.loc 1 63 1 is_stmt 1 view -0
- 120              		.cfi_startproc
- 121              		@ args = 0, pretend = 0, frame = 0
- 122              		@ frame_needed = 0, uses_anonymous_args = 0
- 123              		.loc 1 63 1 is_stmt 0 view .LVU12
- 124 0000 08B5     		push	{r3, lr}
- 125              	.LCFI3:
- 126              		.cfi_def_cfa_offset 8
- 127              		.cfi_offset 3, -8
- 128              		.cfi_offset 14, -4
-  64:UserAPP/Source/ADCAPP.c ****     float adc_voltage = (float)adc_value * ADC_REF_VOLTAGE / ADC_RESOLUTION; // 计算引脚电压
- 129              		.loc 1 64 5 is_stmt 1 view .LVU13
- 130              		.loc 1 64 25 is_stmt 0 view .LVU14
- 131 0002 FFF7FEFF 		bl	__aeabi_ui2f
- 132              	.LVL3:
- 133              		.loc 1 64 42 view .LVU15
- 134 0006 0949     		ldr	r1, .L12
- 135 0008 FFF7FEFF 		bl	__aeabi_fmul
- 136              	.LVL4:
- 137              		.loc 1 64 11 view .LVU16
- 138 000c 0849     		ldr	r1, .L12+4
- 139 000e FFF7FEFF 		bl	__aeabi_fdiv
- 140              	.LVL5:
- 141 0012 0146     		mov	r1, r0
- 142              	.LVL6:
+  55:UserAPP/Source/ADCAPP.c ****  * @brief 将ADC采样值转换为实际输入电压
+  56:UserAPP/Source/ADCAPP.c ****  * @param adc_value: ADC采集到的数字值（0~4095）
+  57:UserAPP/Source/ADCAPP.c ****  * @return 实际输入电压值，单位V（范围约-20.12~+20.12V）
+  58:UserAPP/Source/ADCAPP.c ****  */
+  59:UserAPP/Source/ADCAPP.c **** float adc_to_voltage(uint16_t adc_value) // 转换函数实现
+  60:UserAPP/Source/ADCAPP.c **** {
+ 118              		.loc 1 60 1 is_stmt 1 view -0
+ 119              		.cfi_startproc
+ 120              		@ args = 0, pretend = 0, frame = 0
+ 121              		@ frame_needed = 0, uses_anonymous_args = 0
+ 122              		.loc 1 60 1 is_stmt 0 view .LVU12
+ 123 0000 08B5     		push	{r3, lr}
+ 124              	.LCFI3:
+ 125              		.cfi_def_cfa_offset 8
+ 126              		.cfi_offset 3, -8
+ 127              		.cfi_offset 14, -4
+  61:UserAPP/Source/ADCAPP.c ****     float adc_voltage = (float)adc_value * ADC_REF_VOLTAGE / ADC_RESOLUTION; // 计算引脚电压
+ 128              		.loc 1 61 5 is_stmt 1 view .LVU13
+ 129              		.loc 1 61 25 is_stmt 0 view .LVU14
+ 130 0002 FFF7FEFF 		bl	__aeabi_ui2f
+ 131              	.LVL3:
+ 132              		.loc 1 61 42 view .LVU15
+ 133 0006 0949     		ldr	r1, .L12
+ 134 0008 FFF7FEFF 		bl	__aeabi_fmul
+ 135              	.LVL4:
+ 136              		.loc 1 61 11 view .LVU16
+ 137 000c 0849     		ldr	r1, .L12+4
+ 138 000e FFF7FEFF 		bl	__aeabi_fdiv
+ 139              	.LVL5:
+ 140 0012 0146     		mov	r1, r0
+ 141              	.LVL6:
+  62:UserAPP/Source/ADCAPP.c ****     
+  63:UserAPP/Source/ADCAPP.c ****     // 原始公式：V_in = (V_pin * LEVEL_SHIFT - V_ref) / DIV_RATIO
+  64:UserAPP/Source/ADCAPP.c ****     float raw_voltage = ((adc_voltage * LEVEL_SHIFT_RATIO) - ADC_REF_VOLTAGE) / VOLTAGE_DIV_RATIO;
+ 142              		.loc 1 64 5 is_stmt 1 view .LVU17
+ 143              		.loc 1 64 39 is_stmt 0 view .LVU18
+ 144 0014 FFF7FEFF 		bl	__aeabi_fadd
+ 145              	.LVL7:
+ 146              		.loc 1 64 60 view .LVU19
+ 147 0018 0449     		ldr	r1, .L12
+ 148 001a FFF7FEFF 		bl	__aeabi_fsub
+ 149              	.LVL8:
+ 150              		.loc 1 64 11 view .LVU20
+ 151 001e 0549     		ldr	r1, .L12+8
+ 152 0020 FFF7FEFF 		bl	__aeabi_fdiv
+ 153              	.LVL9:
   65:UserAPP/Source/ADCAPP.c ****     
-  66:UserAPP/Source/ADCAPP.c ****     // 原始公式：V_in = (V_pin * LEVEL_SHIFT - V_ref) / DIV_RATIO
-  67:UserAPP/Source/ADCAPP.c ****     float raw_voltage = ((adc_voltage * LEVEL_SHIFT_RATIO) - ADC_REF_VOLTAGE) / VOLTAGE_DIV_RATIO;
- 143              		.loc 1 67 5 is_stmt 1 view .LVU17
- 144              		.loc 1 67 39 is_stmt 0 view .LVU18
- 145 0014 FFF7FEFF 		bl	__aeabi_fadd
- 146              	.LVL7:
- 147              		.loc 1 67 60 view .LVU19
- 148 0018 0449     		ldr	r1, .L12
- 149 001a FFF7FEFF 		bl	__aeabi_fsub
- 150              	.LVL8:
- 151              		.loc 1 67 11 view .LVU20
- 152 001e 0549     		ldr	r1, .L12+8
- 153 0020 FFF7FEFF 		bl	__aeabi_fdiv
- 154              	.LVL9:
-  68:UserAPP/Source/ADCAPP.c ****     
-  69:UserAPP/Source/ADCAPP.c ****     // 应用线性补偿
-  70:UserAPP/Source/ADCAPP.c ****     return raw_voltage + ADC_VOLTAGE_OFFSET; 
- 155              		.loc 1 70 5 is_stmt 1 view .LVU21
- 156              		.loc 1 70 24 is_stmt 0 view .LVU22
- 157 0024 0449     		ldr	r1, .L12+12
- 158 0026 FFF7FEFF 		bl	__aeabi_fadd
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccUEamhf.s 			page 5
+  66:UserAPP/Source/ADCAPP.c ****     // 应用线性补偿
+  67:UserAPP/Source/ADCAPP.c ****     return raw_voltage + ADC_VOLTAGE_OFFSET; 
+ 154              		.loc 1 67 5 is_stmt 1 view .LVU21
+ 155              		.loc 1 67 24 is_stmt 0 view .LVU22
+ 156 0024 0449     		ldr	r1, .L12+12
+ 157 0026 FFF7FEFF 		bl	__aeabi_fadd
+ 158              	.LVL10:
+  68:UserAPP/Source/ADCAPP.c **** }
+ 159              		.loc 1 68 1 view .LVU23
+ 160 002a 08BD     		pop	{r3, pc}
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccCk5UFD.s 			page 5
 
 
- 159              	.LVL10:
-  71:UserAPP/Source/ADCAPP.c **** }
- 160              		.loc 1 71 1 view .LVU23
- 161 002a 08BD     		pop	{r3, pc}
- 162              	.L13:
- 163              		.align	2
- 164              	.L12:
- 165 002c 33335340 		.word	1079194419
- 166 0030 00F07F45 		.word	1166012416
- 167 0034 9EEF273E 		.word	1042804638
- 168 0038 9A99193F 		.word	1058642330
- 169              		.cfi_endproc
- 170              	.LFE82:
- 172              		.section	.rodata.print_voltage.str1.4,"aMS",%progbits,1
- 173              		.align	2
- 174              	.LC1:
- 175 0000 41444320 		.ascii	"ADC Start DMA Error\015\012\000"
- 175      53746172 
- 175      7420444D 
- 175      41204572 
- 175      726F720D 
- 176 0016 0000     		.align	2
- 177              	.LC2:
- 178 0018 41444320 		.ascii	"ADC DMA Timeout\015\012\000"
- 178      444D4120 
- 178      54696D65 
- 178      6F75740D 
- 178      0A00
- 179 002a 0000     		.align	2
- 180              	.LC3:
- 181 002c 5644443A 		.ascii	"VDD:%.2fV VSPL:%.2fV VDD15V:%.2fV\015\012\000"
- 181      252E3266 
- 181      56205653 
- 181      504C3A25 
- 181      2E326656 
- 182              		.align	2
- 183              	.LC4:
- 184 0050 56434F4D 		.ascii	"VCOM:%.2fV VGN:%.2fV VSN:%.2fV\015\012\000"
- 184      3A252E32 
- 184      66562056 
- 184      474E3A25 
- 184      2E326656 
- 185 0071 000000   		.align	2
- 186              	.LC5:
- 187 0074 5647503A 		.ascii	"VGP:%.2fV VSP:%.2fV\015\012\000"
- 187      252E3266 
- 187      56205653 
- 187      503A252E 
- 187      3266560D 
- 188              		.section	.text.print_voltage,"ax",%progbits
- 189              		.align	1
- 190              		.global	print_voltage
- 191              		.syntax unified
- 192              		.thumb
- 193              		.thumb_func
- 195              	print_voltage:
- 196              	.LFB83:
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccUEamhf.s 			page 6
+ 161              	.L13:
+ 162              		.align	2
+ 163              	.L12:
+ 164 002c 33335340 		.word	1079194419
+ 165 0030 00F07F45 		.word	1166012416
+ 166 0034 9EEF273E 		.word	1042804638
+ 167 0038 9A99193F 		.word	1058642330
+ 168              		.cfi_endproc
+ 169              	.LFE82:
+ 171              		.section	.rodata.print_voltage.str1.4,"aMS",%progbits,1
+ 172              		.align	2
+ 173              	.LC1:
+ 174 0000 41444320 		.ascii	"ADC Start DMA Error\015\012\000"
+ 174      53746172 
+ 174      7420444D 
+ 174      41204572 
+ 174      726F720D 
+ 175 0016 0000     		.align	2
+ 176              	.LC2:
+ 177 0018 41444320 		.ascii	"ADC DMA Timeout\015\012\000"
+ 177      444D4120 
+ 177      54696D65 
+ 177      6F75740D 
+ 177      0A00
+ 178              		.section	.text.print_voltage,"ax",%progbits
+ 179              		.align	1
+ 180              		.global	print_voltage
+ 181              		.syntax unified
+ 182              		.thumb
+ 183              		.thumb_func
+ 185              	print_voltage:
+ 186              	.LFB83:
+  69:UserAPP/Source/ADCAPP.c **** 
+  70:UserAPP/Source/ADCAPP.c **** /**
+  71:UserAPP/Source/ADCAPP.c ****  * @brief 打印ADC值对应的实际电压
+  72:UserAPP/Source/ADCAPP.c ****  * @note 使用 HAL_ADC_Start_DMA 并在中断中设置标志位，此处等待完成
+  73:UserAPP/Source/ADCAPP.c ****  */
+  74:UserAPP/Source/ADCAPP.c **** void print_voltage(void) // 采样与打印函数实现
+  75:UserAPP/Source/ADCAPP.c **** {
+ 187              		.loc 1 75 1 is_stmt 1 view -0
+ 188              		.cfi_startproc
+ 189              		@ args = 0, pretend = 0, frame = 0
+ 190              		@ frame_needed = 0, uses_anonymous_args = 0
+ 191 0000 10B5     		push	{r4, lr}
+ 192              	.LCFI4:
+ 193              		.cfi_def_cfa_offset 8
+ 194              		.cfi_offset 4, -8
+ 195              		.cfi_offset 14, -4
+  76:UserAPP/Source/ADCAPP.c ****     adc_dma_complete = 0; // 清除完成标志
+ 196              		.loc 1 76 5 view .LVU25
+ 197              		.loc 1 76 22 is_stmt 0 view .LVU26
+ 198 0002 154B     		ldr	r3, .L25
+ 199 0004 0022     		movs	r2, #0
+ 200 0006 1A70     		strb	r2, [r3]
+  77:UserAPP/Source/ADCAPP.c ****     
+  78:UserAPP/Source/ADCAPP.c ****     /* 启动 DMA 转换，采样 11 个通道到 adcbuf */
+  79:UserAPP/Source/ADCAPP.c ****     if (HAL_ADC_Start_DMA(&hadc1, adcbuf, 11) != HAL_OK) // 启动 DMA
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccCk5UFD.s 			page 6
 
 
-  72:UserAPP/Source/ADCAPP.c **** 
-  73:UserAPP/Source/ADCAPP.c **** /**
-  74:UserAPP/Source/ADCAPP.c ****  * @brief 打印ADC值对应的实际电压
-  75:UserAPP/Source/ADCAPP.c ****  * @note 使用 HAL_ADC_Start_DMA 并在中断中设置标志位，此处等待完成
-  76:UserAPP/Source/ADCAPP.c ****  */
-  77:UserAPP/Source/ADCAPP.c **** void print_voltage(void) // 采样与打印函数实现
-  78:UserAPP/Source/ADCAPP.c **** {
- 197              		.loc 1 78 1 is_stmt 1 view -0
- 198              		.cfi_startproc
- 199              		@ args = 0, pretend = 0, frame = 0
- 200              		@ frame_needed = 0, uses_anonymous_args = 0
- 201 0000 2DE9F047 		push	{r4, r5, r6, r7, r8, r9, r10, lr}
- 202              	.LCFI4:
- 203              		.cfi_def_cfa_offset 32
- 204              		.cfi_offset 4, -32
- 205              		.cfi_offset 5, -28
- 206              		.cfi_offset 6, -24
- 207              		.cfi_offset 7, -20
- 208              		.cfi_offset 8, -16
- 209              		.cfi_offset 9, -12
- 210              		.cfi_offset 10, -8
- 211              		.cfi_offset 14, -4
- 212 0004 86B0     		sub	sp, sp, #24
- 213              	.LCFI5:
- 214              		.cfi_def_cfa_offset 56
-  79:UserAPP/Source/ADCAPP.c ****     adc_dma_complete = 0; // 清除完成标志
- 215              		.loc 1 79 5 view .LVU25
- 216              		.loc 1 79 22 is_stmt 0 view .LVU26
- 217 0006 444B     		ldr	r3, .L26
- 218 0008 0022     		movs	r2, #0
- 219 000a 1A70     		strb	r2, [r3]
-  80:UserAPP/Source/ADCAPP.c ****     
-  81:UserAPP/Source/ADCAPP.c ****     /* 启动 DMA 转换，采样 11 个通道到 adcbuf */
-  82:UserAPP/Source/ADCAPP.c ****     if (HAL_ADC_Start_DMA(&hadc1, adcbuf, 11) != HAL_OK) // 启动 DMA
- 220              		.loc 1 82 5 is_stmt 1 view .LVU27
- 221              		.loc 1 82 9 is_stmt 0 view .LVU28
- 222 000c 0B22     		movs	r2, #11
- 223 000e 4349     		ldr	r1, .L26+4
- 224 0010 4348     		ldr	r0, .L26+8
- 225 0012 FFF7FEFF 		bl	HAL_ADC_Start_DMA
- 226              	.LVL11:
- 227              		.loc 1 82 8 discriminator 1 view .LVU29
- 228 0016 08B9     		cbnz	r0, .L24
-  83:UserAPP/Source/ADCAPP.c ****     {
-  84:UserAPP/Source/ADCAPP.c ****         /* 启动失败处理，打印错误日志 */
-  85:UserAPP/Source/ADCAPP.c ****         if (xReceiveLogQueue != NULL) { // 检查日志队列有效性
-  86:UserAPP/Source/ADCAPP.c ****              QueueSendfmt(xReceiveLogQueue, 0, "ADC Start DMA Error\r\n"); // 发送错误信息
-  87:UserAPP/Source/ADCAPP.c ****         }
-  88:UserAPP/Source/ADCAPP.c ****         return; // 退出
-  89:UserAPP/Source/ADCAPP.c ****     }
-  90:UserAPP/Source/ADCAPP.c **** 
-  91:UserAPP/Source/ADCAPP.c ****     /* 等待转换完成，增加超时机制（10ms足够11个通道转换） */
-  92:UserAPP/Source/ADCAPP.c ****     uint32_t timeout = 10; // 超时计数 10ms
- 229              		.loc 1 92 14 view .LVU30
- 230 0018 0A24     		movs	r4, #10
- 231 001a 0CE0     		b	.L15
- 232              	.L24:
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccUEamhf.s 			page 7
+ 201              		.loc 1 79 5 is_stmt 1 view .LVU27
+ 202              		.loc 1 79 9 is_stmt 0 view .LVU28
+ 203 0008 0B22     		movs	r2, #11
+ 204 000a 1449     		ldr	r1, .L25+4
+ 205 000c 1448     		ldr	r0, .L25+8
+ 206 000e FFF7FEFF 		bl	HAL_ADC_Start_DMA
+ 207              	.LVL11:
+ 208              		.loc 1 79 8 discriminator 1 view .LVU29
+ 209 0012 08B9     		cbnz	r0, .L23
+  80:UserAPP/Source/ADCAPP.c ****     {
+  81:UserAPP/Source/ADCAPP.c ****         /* 启动失败处理，打印错误日志 */
+  82:UserAPP/Source/ADCAPP.c ****         if (xReceiveLogQueue != NULL) { // 检查日志队列有效性
+  83:UserAPP/Source/ADCAPP.c ****              QueueSendfmt(xReceiveLogQueue, 0, "ADC Start DMA Error\r\n"); // 发送错误信息
+  84:UserAPP/Source/ADCAPP.c ****         }
+  85:UserAPP/Source/ADCAPP.c ****         return; // 退出
+  86:UserAPP/Source/ADCAPP.c ****     }
+  87:UserAPP/Source/ADCAPP.c **** 
+  88:UserAPP/Source/ADCAPP.c ****     /* 等待转换完成，增加超时机制（10ms足够11个通道转换） */
+  89:UserAPP/Source/ADCAPP.c ****     uint32_t timeout = 10; // 超时计数 10ms
+ 210              		.loc 1 89 14 view .LVU30
+ 211 0014 0A24     		movs	r4, #10
+ 212 0016 0BE0     		b	.L15
+ 213              	.L23:
+  82:UserAPP/Source/ADCAPP.c ****              QueueSendfmt(xReceiveLogQueue, 0, "ADC Start DMA Error\r\n"); // 发送错误信息
+ 214              		.loc 1 82 9 is_stmt 1 view .LVU31
+  82:UserAPP/Source/ADCAPP.c ****              QueueSendfmt(xReceiveLogQueue, 0, "ADC Start DMA Error\r\n"); // 发送错误信息
+ 215              		.loc 1 82 30 is_stmt 0 view .LVU32
+ 216 0018 124B     		ldr	r3, .L25+12
+ 217 001a 1868     		ldr	r0, [r3]
+  82:UserAPP/Source/ADCAPP.c ****              QueueSendfmt(xReceiveLogQueue, 0, "ADC Start DMA Error\r\n"); // 发送错误信息
+ 218              		.loc 1 82 12 view .LVU33
+ 219 001c 88B1     		cbz	r0, .L14
+  83:UserAPP/Source/ADCAPP.c ****         }
+ 220              		.loc 1 83 14 is_stmt 1 view .LVU34
+ 221 001e 124A     		ldr	r2, .L25+16
+ 222 0020 0021     		movs	r1, #0
+ 223 0022 FFF7FEFF 		bl	QueueSendfmt
+ 224              	.LVL12:
+  85:UserAPP/Source/ADCAPP.c ****     }
+ 225              		.loc 1 85 9 view .LVU35
+ 226 0026 0CE0     		b	.L14
+ 227              	.LVL13:
+ 228              	.L19:
+  90:UserAPP/Source/ADCAPP.c ****     while (adc_dma_complete == 0 && timeout > 0) // 等待完成标志或超时
+  91:UserAPP/Source/ADCAPP.c ****     {
+  92:UserAPP/Source/ADCAPP.c ****         vTaskDelay(pdMS_TO_TICKS(1)); // 挂起 1ms 避免独占 CPU
+ 229              		.loc 1 92 9 view .LVU36
+ 230 0028 0220     		movs	r0, #2
+ 231 002a FFF7FEFF 		bl	vTaskDelay
+ 232              	.LVL14:
+  93:UserAPP/Source/ADCAPP.c ****         timeout--; // 递减计数
+ 233              		.loc 1 93 9 view .LVU37
+ 234              		.loc 1 93 16 is_stmt 0 view .LVU38
+ 235 002e 013C     		subs	r4, r4, #1
+ 236              	.LVL15:
+ 237              	.L15:
+  90:UserAPP/Source/ADCAPP.c ****     while (adc_dma_complete == 0 && timeout > 0) // 等待完成标志或超时
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccCk5UFD.s 			page 7
 
 
-  85:UserAPP/Source/ADCAPP.c ****              QueueSendfmt(xReceiveLogQueue, 0, "ADC Start DMA Error\r\n"); // 发送错误信息
- 233              		.loc 1 85 9 is_stmt 1 view .LVU31
-  85:UserAPP/Source/ADCAPP.c ****              QueueSendfmt(xReceiveLogQueue, 0, "ADC Start DMA Error\r\n"); // 发送错误信息
- 234              		.loc 1 85 30 is_stmt 0 view .LVU32
- 235 001c 414B     		ldr	r3, .L26+12
- 236 001e 1868     		ldr	r0, [r3]
-  85:UserAPP/Source/ADCAPP.c ****              QueueSendfmt(xReceiveLogQueue, 0, "ADC Start DMA Error\r\n"); // 发送错误信息
- 237              		.loc 1 85 12 view .LVU33
- 238 0020 0028     		cmp	r0, #0
- 239 0022 6CD0     		beq	.L14
-  86:UserAPP/Source/ADCAPP.c ****         }
- 240              		.loc 1 86 14 is_stmt 1 view .LVU34
- 241 0024 404A     		ldr	r2, .L26+16
- 242 0026 0021     		movs	r1, #0
- 243 0028 FFF7FEFF 		bl	QueueSendfmt
- 244              	.LVL12:
-  88:UserAPP/Source/ADCAPP.c ****     }
- 245              		.loc 1 88 9 view .LVU35
- 246 002c 67E0     		b	.L14
- 247              	.LVL13:
- 248              	.L19:
-  93:UserAPP/Source/ADCAPP.c ****     while (adc_dma_complete == 0 && timeout > 0) // 等待完成标志或超时
-  94:UserAPP/Source/ADCAPP.c ****     {
-  95:UserAPP/Source/ADCAPP.c ****         vTaskDelay(pdMS_TO_TICKS(1)); // 挂起 1ms 避免独占 CPU
- 249              		.loc 1 95 9 view .LVU36
- 250 002e 0120     		movs	r0, #1
- 251 0030 FFF7FEFF 		bl	vTaskDelay
- 252              	.LVL14:
-  96:UserAPP/Source/ADCAPP.c ****         timeout--; // 递减计数
- 253              		.loc 1 96 9 view .LVU37
- 254              		.loc 1 96 16 is_stmt 0 view .LVU38
- 255 0034 013C     		subs	r4, r4, #1
- 256              	.LVL15:
- 257              	.L15:
-  93:UserAPP/Source/ADCAPP.c ****     while (adc_dma_complete == 0 && timeout > 0) // 等待完成标志或超时
- 258              		.loc 1 93 34 is_stmt 1 view .LVU39
-  93:UserAPP/Source/ADCAPP.c ****     while (adc_dma_complete == 0 && timeout > 0) // 等待完成标志或超时
- 259              		.loc 1 93 29 is_stmt 0 view .LVU40
- 260 0036 384B     		ldr	r3, .L26
- 261 0038 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
-  93:UserAPP/Source/ADCAPP.c ****     while (adc_dma_complete == 0 && timeout > 0) // 等待完成标志或超时
- 262              		.loc 1 93 34 view .LVU41
- 263 003a 0BB9     		cbnz	r3, .L18
-  93:UserAPP/Source/ADCAPP.c ****     while (adc_dma_complete == 0 && timeout > 0) // 等待完成标志或超时
- 264              		.loc 1 93 34 discriminator 1 view .LVU42
- 265 003c 002C     		cmp	r4, #0
- 266 003e F6D1     		bne	.L19
- 267              	.L18:
-  97:UserAPP/Source/ADCAPP.c ****     }
-  98:UserAPP/Source/ADCAPP.c ****     
-  99:UserAPP/Source/ADCAPP.c ****     HAL_ADC_Stop_DMA(&hadc1); // 停止 ADC DMA
- 268              		.loc 1 99 5 is_stmt 1 view .LVU43
- 269 0040 3748     		ldr	r0, .L26+8
- 270 0042 FFF7FEFF 		bl	HAL_ADC_Stop_DMA
- 271              	.LVL16:
- 100:UserAPP/Source/ADCAPP.c **** 
- 101:UserAPP/Source/ADCAPP.c ****     if (timeout == 0) // 检查是否超时
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccUEamhf.s 			page 8
+ 238              		.loc 1 90 34 is_stmt 1 view .LVU39
+  90:UserAPP/Source/ADCAPP.c ****     while (adc_dma_complete == 0 && timeout > 0) // 等待完成标志或超时
+ 239              		.loc 1 90 29 is_stmt 0 view .LVU40
+ 240 0030 094B     		ldr	r3, .L25
+ 241 0032 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+  90:UserAPP/Source/ADCAPP.c ****     while (adc_dma_complete == 0 && timeout > 0) // 等待完成标志或超时
+ 242              		.loc 1 90 34 view .LVU41
+ 243 0034 0BB9     		cbnz	r3, .L18
+  90:UserAPP/Source/ADCAPP.c ****     while (adc_dma_complete == 0 && timeout > 0) // 等待完成标志或超时
+ 244              		.loc 1 90 34 discriminator 1 view .LVU42
+ 245 0036 002C     		cmp	r4, #0
+ 246 0038 F6D1     		bne	.L19
+ 247              	.L18:
+  94:UserAPP/Source/ADCAPP.c ****     }
+  95:UserAPP/Source/ADCAPP.c ****     
+  96:UserAPP/Source/ADCAPP.c ****     HAL_ADC_Stop_DMA(&hadc1); // 停止 ADC DMA
+ 248              		.loc 1 96 5 is_stmt 1 view .LVU43
+ 249 003a 0948     		ldr	r0, .L25+8
+ 250 003c FFF7FEFF 		bl	HAL_ADC_Stop_DMA
+ 251              	.LVL16:
+  97:UserAPP/Source/ADCAPP.c **** 
+  98:UserAPP/Source/ADCAPP.c ****     if (timeout == 0) // 检查是否超时
+ 252              		.loc 1 98 5 view .LVU44
+ 253              		.loc 1 98 8 is_stmt 0 view .LVU45
+ 254 0040 04B1     		cbz	r4, .L24
+ 255              	.LVL17:
+ 256              	.L14:
+  99:UserAPP/Source/ADCAPP.c ****     {
+ 100:UserAPP/Source/ADCAPP.c ****         if (xReceiveLogQueue != NULL) { // 检查日志队列有效性
+ 101:UserAPP/Source/ADCAPP.c ****             QueueSendfmt(xReceiveLogQueue, 0, "ADC DMA Timeout\r\n"); // 发送超时信息
+ 102:UserAPP/Source/ADCAPP.c ****         }
+ 103:UserAPP/Source/ADCAPP.c ****         return; // 退出
+ 104:UserAPP/Source/ADCAPP.c ****     }
+ 105:UserAPP/Source/ADCAPP.c **** 
+ 106:UserAPP/Source/ADCAPP.c ****     /* 格式化并通过日志队列打印各通道电压，格式模仿用户Log */
+ 107:UserAPP/Source/ADCAPP.c ****     if (xReceiveLogQueue != NULL) { // 检查队列有效性
+ 108:UserAPP/Source/ADCAPP.c ****         // // 第一行：VDD, VSPL, VDD15V
+ 109:UserAPP/Source/ADCAPP.c ****         // QueueSendfmt(xReceiveLogQueue, 0, "VDD:%.2fV VSPL:%.2fV VDD15V:%.2fV\r\n", 
+ 110:UserAPP/Source/ADCAPP.c ****         //     adc_to_voltage(adcbuf[0]), adc_to_voltage(adcbuf[2]), adc_to_voltage(adcbuf[4])); 
+ 111:UserAPP/Source/ADCAPP.c ****         // // 第二行：VCOM, VGN, VSN
+ 112:UserAPP/Source/ADCAPP.c ****         // QueueSendfmt(xReceiveLogQueue, 0, "VCOM:%.2fV VGN:%.2fV VSN:%.2fV\r\n", 
+ 113:UserAPP/Source/ADCAPP.c ****         //     adc_to_voltage(adcbuf[5]), adc_to_voltage(adcbuf[6]), adc_to_voltage(adcbuf[9])); 
+ 114:UserAPP/Source/ADCAPP.c ****         // // 第三行：VGP, VSP
+ 115:UserAPP/Source/ADCAPP.c ****         // QueueSendfmt(xReceiveLogQueue, 0, "VGP:%.2fV VSP:%.2fV\r\n", 
+ 116:UserAPP/Source/ADCAPP.c ****         //     adc_to_voltage(adcbuf[10]), adc_to_voltage(adcbuf[7])); 
+ 117:UserAPP/Source/ADCAPP.c ****     }
+ 118:UserAPP/Source/ADCAPP.c **** }
+ 257              		.loc 1 118 1 view .LVU46
+ 258 0042 10BD     		pop	{r4, pc}
+ 259              	.LVL18:
+ 260              	.L24:
+ 100:UserAPP/Source/ADCAPP.c ****             QueueSendfmt(xReceiveLogQueue, 0, "ADC DMA Timeout\r\n"); // 发送超时信息
+ 261              		.loc 1 100 9 is_stmt 1 view .LVU47
+ 100:UserAPP/Source/ADCAPP.c ****             QueueSendfmt(xReceiveLogQueue, 0, "ADC DMA Timeout\r\n"); // 发送超时信息
+ 262              		.loc 1 100 30 is_stmt 0 view .LVU48
+ 263 0044 074B     		ldr	r3, .L25+12
+ 264 0046 1868     		ldr	r0, [r3]
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccCk5UFD.s 			page 8
 
 
- 272              		.loc 1 101 5 view .LVU44
- 273              		.loc 1 101 8 is_stmt 0 view .LVU45
- 274 0046 002C     		cmp	r4, #0
- 275 0048 5CD0     		beq	.L25
- 102:UserAPP/Source/ADCAPP.c ****     {
- 103:UserAPP/Source/ADCAPP.c ****         if (xReceiveLogQueue != NULL) { // 检查日志队列有效性
- 104:UserAPP/Source/ADCAPP.c ****             QueueSendfmt(xReceiveLogQueue, 0, "ADC DMA Timeout\r\n"); // 发送超时信息
- 105:UserAPP/Source/ADCAPP.c ****         }
- 106:UserAPP/Source/ADCAPP.c ****         return; // 退出
- 107:UserAPP/Source/ADCAPP.c ****     }
- 108:UserAPP/Source/ADCAPP.c **** 
- 109:UserAPP/Source/ADCAPP.c ****     /* 格式化并通过日志队列打印各通道电压，格式模仿用户Log */
- 110:UserAPP/Source/ADCAPP.c ****     if (xReceiveLogQueue != NULL) { // 检查队列有效性
- 276              		.loc 1 110 5 is_stmt 1 view .LVU46
- 277              		.loc 1 110 26 is_stmt 0 view .LVU47
- 278 004a 364B     		ldr	r3, .L26+12
- 279 004c 1D68     		ldr	r5, [r3]
- 280              		.loc 1 110 8 view .LVU48
- 281 004e 002D     		cmp	r5, #0
- 282 0050 55D0     		beq	.L14
- 111:UserAPP/Source/ADCAPP.c ****         // 第一行：VDD, VSPL, VDD15V
- 112:UserAPP/Source/ADCAPP.c ****         QueueSendfmt(xReceiveLogQueue, 0, "VDD:%.2fV VSPL:%.2fV VDD15V:%.2fV\r\n", 
- 283              		.loc 1 112 9 is_stmt 1 view .LVU49
- 113:UserAPP/Source/ADCAPP.c ****             adc_to_voltage(adcbuf[0]), adc_to_voltage(adcbuf[2]), adc_to_voltage(adcbuf[4])); 
- 284              		.loc 1 113 34 is_stmt 0 view .LVU50
- 285 0052 324C     		ldr	r4, .L26+4
- 286              	.LVL17:
- 287              		.loc 1 113 13 view .LVU51
- 288 0054 2088     		ldrh	r0, [r4]
- 289 0056 FFF7FEFF 		bl	adc_to_voltage
- 290              	.LVL18:
- 112:UserAPP/Source/ADCAPP.c ****             adc_to_voltage(adcbuf[0]), adc_to_voltage(adcbuf[2]), adc_to_voltage(adcbuf[4])); 
- 291              		.loc 1 112 9 view .LVU52
- 292 005a FFF7FEFF 		bl	__aeabi_f2d
- 293              	.LVL19:
- 294 005e 0646     		mov	r6, r0
- 295 0060 0F46     		mov	r7, r1
- 296              		.loc 1 113 40 view .LVU53
- 297 0062 2089     		ldrh	r0, [r4, #8]
- 298 0064 FFF7FEFF 		bl	adc_to_voltage
- 299              	.LVL20:
- 112:UserAPP/Source/ADCAPP.c ****             adc_to_voltage(adcbuf[0]), adc_to_voltage(adcbuf[2]), adc_to_voltage(adcbuf[4])); 
- 300              		.loc 1 112 9 view .LVU54
- 301 0068 FFF7FEFF 		bl	__aeabi_f2d
- 302              	.LVL21:
- 303 006c 8046     		mov	r8, r0
- 304 006e 8946     		mov	r9, r1
- 305              		.loc 1 113 67 view .LVU55
- 306 0070 208A     		ldrh	r0, [r4, #16]
- 307 0072 FFF7FEFF 		bl	adc_to_voltage
- 308              	.LVL22:
- 112:UserAPP/Source/ADCAPP.c ****             adc_to_voltage(adcbuf[0]), adc_to_voltage(adcbuf[2]), adc_to_voltage(adcbuf[4])); 
- 309              		.loc 1 112 9 view .LVU56
- 310 0076 FFF7FEFF 		bl	__aeabi_f2d
- 311              	.LVL23:
- 312 007a CDE90401 		strd	r0, [sp, #16]
- 313 007e CDE90289 		strd	r8, [sp, #8]
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccUEamhf.s 			page 9
-
-
- 314 0082 CDE90067 		strd	r6, [sp]
- 315 0086 294A     		ldr	r2, .L26+20
- 316 0088 0021     		movs	r1, #0
- 317 008a 2846     		mov	r0, r5
- 318 008c FFF7FEFF 		bl	QueueSendfmt
- 319              	.LVL24:
- 114:UserAPP/Source/ADCAPP.c ****         // 第二行：VCOM, VGN, VSN
- 115:UserAPP/Source/ADCAPP.c ****         QueueSendfmt(xReceiveLogQueue, 0, "VCOM:%.2fV VGN:%.2fV VSN:%.2fV\r\n", 
- 320              		.loc 1 115 9 is_stmt 1 view .LVU57
- 321 0090 244D     		ldr	r5, .L26+12
- 322 0092 D5F800A0 		ldr	r10, [r5]
- 116:UserAPP/Source/ADCAPP.c ****             adc_to_voltage(adcbuf[5]), adc_to_voltage(adcbuf[6]), adc_to_voltage(adcbuf[9])); 
- 323              		.loc 1 116 13 is_stmt 0 view .LVU58
- 324 0096 A08A     		ldrh	r0, [r4, #20]
- 325 0098 FFF7FEFF 		bl	adc_to_voltage
- 326              	.LVL25:
- 115:UserAPP/Source/ADCAPP.c ****             adc_to_voltage(adcbuf[5]), adc_to_voltage(adcbuf[6]), adc_to_voltage(adcbuf[9])); 
- 327              		.loc 1 115 9 view .LVU59
- 328 009c FFF7FEFF 		bl	__aeabi_f2d
- 329              	.LVL26:
- 330 00a0 0646     		mov	r6, r0
- 331 00a2 0F46     		mov	r7, r1
- 332              		.loc 1 116 40 view .LVU60
- 333 00a4 208B     		ldrh	r0, [r4, #24]
- 334 00a6 FFF7FEFF 		bl	adc_to_voltage
- 335              	.LVL27:
- 115:UserAPP/Source/ADCAPP.c ****             adc_to_voltage(adcbuf[5]), adc_to_voltage(adcbuf[6]), adc_to_voltage(adcbuf[9])); 
- 336              		.loc 1 115 9 view .LVU61
- 337 00aa FFF7FEFF 		bl	__aeabi_f2d
- 338              	.LVL28:
- 339 00ae 8046     		mov	r8, r0
- 340 00b0 8946     		mov	r9, r1
- 341              		.loc 1 116 67 view .LVU62
- 342 00b2 A08C     		ldrh	r0, [r4, #36]
- 343 00b4 FFF7FEFF 		bl	adc_to_voltage
- 344              	.LVL29:
- 115:UserAPP/Source/ADCAPP.c ****             adc_to_voltage(adcbuf[5]), adc_to_voltage(adcbuf[6]), adc_to_voltage(adcbuf[9])); 
- 345              		.loc 1 115 9 view .LVU63
- 346 00b8 FFF7FEFF 		bl	__aeabi_f2d
- 347              	.LVL30:
- 348 00bc CDE90401 		strd	r0, [sp, #16]
- 349 00c0 CDE90289 		strd	r8, [sp, #8]
- 350 00c4 CDE90067 		strd	r6, [sp]
- 351 00c8 194A     		ldr	r2, .L26+24
- 352 00ca 0021     		movs	r1, #0
- 353 00cc 5046     		mov	r0, r10
- 354 00ce FFF7FEFF 		bl	QueueSendfmt
- 355              	.LVL31:
- 117:UserAPP/Source/ADCAPP.c ****         // 第三行：VGP, VSP
- 118:UserAPP/Source/ADCAPP.c ****         QueueSendfmt(xReceiveLogQueue, 0, "VGP:%.2fV VSP:%.2fV\r\n", 
- 356              		.loc 1 118 9 is_stmt 1 view .LVU64
- 357 00d2 2D68     		ldr	r5, [r5]
- 119:UserAPP/Source/ADCAPP.c ****             adc_to_voltage(adcbuf[10]), adc_to_voltage(adcbuf[7])); 
- 358              		.loc 1 119 13 is_stmt 0 view .LVU65
- 359 00d4 208D     		ldrh	r0, [r4, #40]
- 360 00d6 FFF7FEFF 		bl	adc_to_voltage
- 361              	.LVL32:
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccUEamhf.s 			page 10
-
-
- 118:UserAPP/Source/ADCAPP.c ****             adc_to_voltage(adcbuf[10]), adc_to_voltage(adcbuf[7])); 
- 362              		.loc 1 118 9 view .LVU66
- 363 00da FFF7FEFF 		bl	__aeabi_f2d
- 364              	.LVL33:
- 365 00de 0646     		mov	r6, r0
- 366 00e0 0F46     		mov	r7, r1
- 367              		.loc 1 119 41 view .LVU67
- 368 00e2 A08B     		ldrh	r0, [r4, #28]
- 369 00e4 FFF7FEFF 		bl	adc_to_voltage
- 370              	.LVL34:
- 118:UserAPP/Source/ADCAPP.c ****             adc_to_voltage(adcbuf[10]), adc_to_voltage(adcbuf[7])); 
- 371              		.loc 1 118 9 view .LVU68
- 372 00e8 FFF7FEFF 		bl	__aeabi_f2d
- 373              	.LVL35:
- 374 00ec CDE90201 		strd	r0, [sp, #8]
- 375 00f0 CDE90067 		strd	r6, [sp]
- 376 00f4 0F4A     		ldr	r2, .L26+28
- 377 00f6 0021     		movs	r1, #0
- 378 00f8 2846     		mov	r0, r5
- 379 00fa FFF7FEFF 		bl	QueueSendfmt
- 380              	.LVL36:
- 381              	.L14:
- 120:UserAPP/Source/ADCAPP.c ****     }
- 121:UserAPP/Source/ADCAPP.c **** }
- 382              		.loc 1 121 1 view .LVU69
- 383 00fe 06B0     		add	sp, sp, #24
- 384              	.LCFI6:
- 385              		.cfi_remember_state
- 386              		.cfi_def_cfa_offset 32
- 387              		@ sp needed
- 388 0100 BDE8F087 		pop	{r4, r5, r6, r7, r8, r9, r10, pc}
- 389              	.LVL37:
- 390              	.L25:
- 391              	.LCFI7:
- 392              		.cfi_restore_state
- 103:UserAPP/Source/ADCAPP.c ****             QueueSendfmt(xReceiveLogQueue, 0, "ADC DMA Timeout\r\n"); // 发送超时信息
- 393              		.loc 1 103 9 is_stmt 1 view .LVU70
- 103:UserAPP/Source/ADCAPP.c ****             QueueSendfmt(xReceiveLogQueue, 0, "ADC DMA Timeout\r\n"); // 发送超时信息
- 394              		.loc 1 103 30 is_stmt 0 view .LVU71
- 395 0104 074B     		ldr	r3, .L26+12
- 396 0106 1868     		ldr	r0, [r3]
- 103:UserAPP/Source/ADCAPP.c ****             QueueSendfmt(xReceiveLogQueue, 0, "ADC DMA Timeout\r\n"); // 发送超时信息
- 397              		.loc 1 103 12 view .LVU72
- 398 0108 0028     		cmp	r0, #0
- 399 010a F8D0     		beq	.L14
- 104:UserAPP/Source/ADCAPP.c ****         }
- 400              		.loc 1 104 13 is_stmt 1 view .LVU73
- 401 010c 0A4A     		ldr	r2, .L26+32
- 402 010e 0021     		movs	r1, #0
- 403 0110 FFF7FEFF 		bl	QueueSendfmt
- 404              	.LVL38:
- 106:UserAPP/Source/ADCAPP.c ****     }
- 405              		.loc 1 106 9 view .LVU74
- 406 0114 F3E7     		b	.L14
- 407              	.L27:
- 408 0116 00BF     		.align	2
- 409              	.L26:
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccUEamhf.s 			page 11
-
-
- 410 0118 00000000 		.word	adc_dma_complete
- 411 011c 00000000 		.word	adcbuf
- 412 0120 00000000 		.word	hadc1
- 413 0124 00000000 		.word	xReceiveLogQueue
- 414 0128 00000000 		.word	.LC1
- 415 012c 2C000000 		.word	.LC3
- 416 0130 50000000 		.word	.LC4
- 417 0134 74000000 		.word	.LC5
- 418 0138 18000000 		.word	.LC2
- 419              		.cfi_endproc
- 420              	.LFE83:
- 422              		.section	.text.vADCProcessTask,"ax",%progbits
- 423              		.align	1
- 424              		.global	vADCProcessTask
- 425              		.syntax unified
- 426              		.thumb
- 427              		.thumb_func
- 429              	vADCProcessTask:
- 430              	.LFB80:
+ 100:UserAPP/Source/ADCAPP.c ****             QueueSendfmt(xReceiveLogQueue, 0, "ADC DMA Timeout\r\n"); // 发送超时信息
+ 265              		.loc 1 100 12 view .LVU49
+ 266 0048 0028     		cmp	r0, #0
+ 267 004a FAD0     		beq	.L14
+ 101:UserAPP/Source/ADCAPP.c ****         }
+ 268              		.loc 1 101 13 is_stmt 1 view .LVU50
+ 269 004c 074A     		ldr	r2, .L25+20
+ 270 004e 0021     		movs	r1, #0
+ 271 0050 FFF7FEFF 		bl	QueueSendfmt
+ 272              	.LVL19:
+ 103:UserAPP/Source/ADCAPP.c ****     }
+ 273              		.loc 1 103 9 view .LVU51
+ 117:UserAPP/Source/ADCAPP.c **** }
+ 274              		.loc 1 117 5 view .LVU52
+ 103:UserAPP/Source/ADCAPP.c ****     }
+ 275              		.loc 1 103 9 is_stmt 0 view .LVU53
+ 276 0054 F5E7     		b	.L14
+ 277              	.L26:
+ 278 0056 00BF     		.align	2
+ 279              	.L25:
+ 280 0058 00000000 		.word	adc_dma_complete
+ 281 005c 00000000 		.word	adcbuf
+ 282 0060 00000000 		.word	hadc1
+ 283 0064 00000000 		.word	xReceiveLogQueue
+ 284 0068 00000000 		.word	.LC1
+ 285 006c 18000000 		.word	.LC2
+ 286              		.cfi_endproc
+ 287              	.LFE83:
+ 289              		.section	.text.vADCProcessTask,"ax",%progbits
+ 290              		.align	1
+ 291              		.global	vADCProcessTask
+ 292              		.syntax unified
+ 293              		.thumb
+ 294              		.thumb_func
+ 296              	vADCProcessTask:
+ 297              	.LFB80:
   33:UserAPP/Source/ADCAPP.c ****     /* 避免编译器警告未使用参数 */ // 每行注释
- 431              		.loc 1 33 1 view -0
- 432              		.cfi_startproc
- 433              		@ Volatile: function does not return.
- 434              		@ args = 0, pretend = 0, frame = 0
- 435              		@ frame_needed = 0, uses_anonymous_args = 0
- 436              	.LVL39:
+ 298              		.loc 1 33 1 is_stmt 1 view -0
+ 299              		.cfi_startproc
+ 300              		@ Volatile: function does not return.
+ 301              		@ args = 0, pretend = 0, frame = 0
+ 302              		@ frame_needed = 0, uses_anonymous_args = 0
+ 303              	.LVL20:
   33:UserAPP/Source/ADCAPP.c ****     /* 避免编译器警告未使用参数 */ // 每行注释
- 437              		.loc 1 33 1 is_stmt 0 view .LVU76
- 438 0000 08B5     		push	{r3, lr}
- 439              	.LCFI8:
- 440              		.cfi_def_cfa_offset 8
- 441              		.cfi_offset 3, -8
- 442              		.cfi_offset 14, -4
- 443              	.LVL40:
- 444              	.L29:
+ 304              		.loc 1 33 1 is_stmt 0 view .LVU55
+ 305 0000 08B5     		push	{r3, lr}
+ 306              	.LCFI5:
+ 307              		.cfi_def_cfa_offset 8
+ 308              		.cfi_offset 3, -8
+ 309              		.cfi_offset 14, -4
+ 310              	.LVL21:
+ 311              	.L28:
   35:UserAPP/Source/ADCAPP.c **** 
- 445              		.loc 1 35 5 is_stmt 1 view .LVU77
+ 312              		.loc 1 35 5 is_stmt 1 view .LVU56
   37:UserAPP/Source/ADCAPP.c ****     {
- 446              		.loc 1 37 5 view .LVU78
-  39:UserAPP/Source/ADCAPP.c ****         
- 447              		.loc 1 39 9 view .LVU79
- 448 0002 FFF7FEFF 		bl	print_voltage
- 449              	.LVL41:
-  42:UserAPP/Source/ADCAPP.c ****     }
- 450              		.loc 1 42 9 discriminator 1 view .LVU80
- 451 0006 4FF47A70 		mov	r0, #1000
- 452 000a FFF7FEFF 		bl	vTaskDelay
- 453              	.LVL42:
-  37:UserAPP/Source/ADCAPP.c ****     {
- 454              		.loc 1 37 5 view .LVU81
- 455 000e F8E7     		b	.L29
- 456              		.cfi_endproc
- 457              	.LFE80:
- 459              		.global	xADCProcessTaskHandle
- 460              		.section	.bss.xADCProcessTaskHandle,"aw",%nobits
- 461              		.align	2
- 464              	xADCProcessTaskHandle:
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccUEamhf.s 			page 12
+ 313              		.loc 1 37 5 view .LVU57
+  39:UserAPP/Source/ADCAPP.c ****     }
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccCk5UFD.s 			page 9
 
 
- 465 0000 00000000 		.space	4
- 466              		.global	adc_dma_complete
- 467              		.section	.bss.adc_dma_complete,"aw",%nobits
- 470              	adc_dma_complete:
- 471 0000 00       		.space	1
- 472              		.global	adcbuf
- 473              		.section	.bss.adcbuf,"aw",%nobits
- 474              		.align	2
- 477              	adcbuf:
- 478 0000 00000000 		.space	44
- 478      00000000 
- 478      00000000 
- 478      00000000 
- 478      00000000 
- 479              		.text
- 480              	.Letext0:
- 481              		.file 2 "D:/gcc-arm/14.3 rel1/arm-none-eabi/include/machine/_default_types.h"
- 482              		.file 3 "D:/gcc-arm/14.3 rel1/arm-none-eabi/include/sys/_stdint.h"
- 483              		.file 4 "Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f103xg.h"
- 484              		.file 5 "Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f1xx.h"
- 485              		.file 6 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_def.h"
- 486              		.file 7 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_dma.h"
- 487              		.file 8 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_adc.h"
- 488              		.file 9 "Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h"
- 489              		.file 10 "Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h"
- 490              		.file 11 "Middlewares/Third_Party/FreeRTOS/Source/include/task.h"
- 491              		.file 12 "Middlewares/Third_Party/FreeRTOS/Source/include/queue.h"
- 492              		.file 13 "Core/Inc/adc.h"
- 493              		.file 14 "UserAPP/Include/SendDataProcess.h"
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccUEamhf.s 			page 13
+ 314              		.loc 1 39 9 discriminator 1 view .LVU58
+ 315 0002 FFF7FEFF 		bl	print_voltage
+ 316              	.LVL22:
+  37:UserAPP/Source/ADCAPP.c ****     {
+ 317              		.loc 1 37 5 view .LVU59
+ 318 0006 FCE7     		b	.L28
+ 319              		.cfi_endproc
+ 320              	.LFE80:
+ 322              		.section	.text.get_current_vdd_voltage,"ax",%progbits
+ 323              		.align	1
+ 324              		.global	get_current_vdd_voltage
+ 325              		.syntax unified
+ 326              		.thumb
+ 327              		.thumb_func
+ 329              	get_current_vdd_voltage:
+ 330              	.LFB84:
+ 119:UserAPP/Source/ADCAPP.c **** 
+ 120:UserAPP/Source/ADCAPP.c **** /**
+ 121:UserAPP/Source/ADCAPP.c ****  * @brief 获取当前VDD电压值
+ 122:UserAPP/Source/ADCAPP.c ****  * @return 当前VDD电压值，单位V；若采样失败返回 -1.0f
+ 123:UserAPP/Source/ADCAPP.c ****  */
+ 124:UserAPP/Source/ADCAPP.c **** float get_current_vdd_voltage(void) // 获取当前VDD电压的实现
+ 125:UserAPP/Source/ADCAPP.c **** {
+ 331              		.loc 1 125 1 view -0
+ 332              		.cfi_startproc
+ 333              		@ args = 0, pretend = 0, frame = 0
+ 334              		@ frame_needed = 0, uses_anonymous_args = 0
+ 335 0000 10B5     		push	{r4, lr}
+ 336              	.LCFI6:
+ 337              		.cfi_def_cfa_offset 8
+ 338              		.cfi_offset 4, -8
+ 339              		.cfi_offset 14, -4
+ 126:UserAPP/Source/ADCAPP.c ****     adc_dma_complete = 0; // 清除完成标志
+ 340              		.loc 1 126 5 view .LVU61
+ 341              		.loc 1 126 22 is_stmt 0 view .LVU62
+ 342 0002 104B     		ldr	r3, .L38
+ 343 0004 0022     		movs	r2, #0
+ 344 0006 1A70     		strb	r2, [r3]
+ 127:UserAPP/Source/ADCAPP.c ****     
+ 128:UserAPP/Source/ADCAPP.c ****     /* 启动 DMA 转换，采样 11 个通道到 adcbuf */
+ 129:UserAPP/Source/ADCAPP.c ****     if (HAL_ADC_Start_DMA(&hadc1, adcbuf, 11) != HAL_OK) // 启动 DMA
+ 345              		.loc 1 129 5 is_stmt 1 view .LVU63
+ 346              		.loc 1 129 9 is_stmt 0 view .LVU64
+ 347 0008 0B22     		movs	r2, #11
+ 348 000a 0F49     		ldr	r1, .L38+4
+ 349 000c 0F48     		ldr	r0, .L38+8
+ 350 000e FFF7FEFF 		bl	HAL_ADC_Start_DMA
+ 351              	.LVL23:
+ 352              		.loc 1 129 8 discriminator 1 view .LVU65
+ 353 0012 98B9     		cbnz	r0, .L35
+ 130:UserAPP/Source/ADCAPP.c ****     {
+ 131:UserAPP/Source/ADCAPP.c ****         return -1.0f; // 启动失败，返回错误值
+ 132:UserAPP/Source/ADCAPP.c ****     }
+ 133:UserAPP/Source/ADCAPP.c **** 
+ 134:UserAPP/Source/ADCAPP.c ****     /* 等待转换完成，增加超时机制（10ms足够11个通道转换） */
+ 135:UserAPP/Source/ADCAPP.c ****     uint32_t timeout = 10; // 超时计数 10ms
+ 354              		.loc 1 135 14 view .LVU66
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccCk5UFD.s 			page 10
+
+
+ 355 0014 0A24     		movs	r4, #10
+ 356 0016 03E0     		b	.L32
+ 357              	.LVL24:
+ 358              	.L34:
+ 136:UserAPP/Source/ADCAPP.c ****     while (adc_dma_complete == 0 && timeout > 0) // 等待完成标志或超时
+ 137:UserAPP/Source/ADCAPP.c ****     {
+ 138:UserAPP/Source/ADCAPP.c ****         vTaskDelay(pdMS_TO_TICKS(1)); // 挂起 1ms 避免独占 CPU
+ 359              		.loc 1 138 9 is_stmt 1 view .LVU67
+ 360 0018 0220     		movs	r0, #2
+ 361 001a FFF7FEFF 		bl	vTaskDelay
+ 362              	.LVL25:
+ 139:UserAPP/Source/ADCAPP.c ****         timeout--; // 递减计数
+ 363              		.loc 1 139 9 view .LVU68
+ 364              		.loc 1 139 16 is_stmt 0 view .LVU69
+ 365 001e 013C     		subs	r4, r4, #1
+ 366              	.LVL26:
+ 367              	.L32:
+ 136:UserAPP/Source/ADCAPP.c ****     while (adc_dma_complete == 0 && timeout > 0) // 等待完成标志或超时
+ 368              		.loc 1 136 34 is_stmt 1 view .LVU70
+ 136:UserAPP/Source/ADCAPP.c ****     while (adc_dma_complete == 0 && timeout > 0) // 等待完成标志或超时
+ 369              		.loc 1 136 29 is_stmt 0 view .LVU71
+ 370 0020 084B     		ldr	r3, .L38
+ 371 0022 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 136:UserAPP/Source/ADCAPP.c ****     while (adc_dma_complete == 0 && timeout > 0) // 等待完成标志或超时
+ 372              		.loc 1 136 34 view .LVU72
+ 373 0024 0BB9     		cbnz	r3, .L33
+ 136:UserAPP/Source/ADCAPP.c ****     while (adc_dma_complete == 0 && timeout > 0) // 等待完成标志或超时
+ 374              		.loc 1 136 34 discriminator 1 view .LVU73
+ 375 0026 002C     		cmp	r4, #0
+ 376 0028 F6D1     		bne	.L34
+ 377              	.L33:
+ 140:UserAPP/Source/ADCAPP.c ****     }
+ 141:UserAPP/Source/ADCAPP.c ****     
+ 142:UserAPP/Source/ADCAPP.c ****     HAL_ADC_Stop_DMA(&hadc1); // 停止 ADC DMA
+ 378              		.loc 1 142 5 is_stmt 1 view .LVU74
+ 379 002a 0848     		ldr	r0, .L38+8
+ 380 002c FFF7FEFF 		bl	HAL_ADC_Stop_DMA
+ 381              	.LVL27:
+ 143:UserAPP/Source/ADCAPP.c **** 
+ 144:UserAPP/Source/ADCAPP.c ****     if (timeout == 0) // 检查是否超时
+ 382              		.loc 1 144 5 view .LVU75
+ 383              		.loc 1 144 8 is_stmt 0 view .LVU76
+ 384 0030 34B1     		cbz	r4, .L36
+ 145:UserAPP/Source/ADCAPP.c ****     {
+ 146:UserAPP/Source/ADCAPP.c ****         return -1.0f; // 超时失败，返回错误值
+ 147:UserAPP/Source/ADCAPP.c ****     }
+ 148:UserAPP/Source/ADCAPP.c **** 
+ 149:UserAPP/Source/ADCAPP.c ****     /* 返回 VDD 通道（adcbuf[0]）的电压值 */
+ 150:UserAPP/Source/ADCAPP.c ****     return adc_to_voltage(adcbuf[0]); // 计算并返回VDD电压
+ 385              		.loc 1 150 5 is_stmt 1 view .LVU77
+ 386              		.loc 1 150 12 is_stmt 0 view .LVU78
+ 387 0032 054B     		ldr	r3, .L38+4
+ 388 0034 1888     		ldrh	r0, [r3]
+ 389 0036 FFF7FEFF 		bl	adc_to_voltage
+ 390              	.LVL28:
+ 391              	.L30:
+ 151:UserAPP/Source/ADCAPP.c **** }
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccCk5UFD.s 			page 11
+
+
+ 392              		.loc 1 151 1 view .LVU79
+ 393 003a 10BD     		pop	{r4, pc}
+ 394              	.L35:
+ 131:UserAPP/Source/ADCAPP.c ****     }
+ 395              		.loc 1 131 16 view .LVU80
+ 396 003c 0448     		ldr	r0, .L38+12
+ 397 003e FCE7     		b	.L30
+ 398              	.LVL29:
+ 399              	.L36:
+ 146:UserAPP/Source/ADCAPP.c ****     }
+ 400              		.loc 1 146 16 view .LVU81
+ 401 0040 0348     		ldr	r0, .L38+12
+ 402 0042 FAE7     		b	.L30
+ 403              	.L39:
+ 404              		.align	2
+ 405              	.L38:
+ 406 0044 00000000 		.word	adc_dma_complete
+ 407 0048 00000000 		.word	adcbuf
+ 408 004c 00000000 		.word	hadc1
+ 409 0050 000080BF 		.word	-1082130432
+ 410              		.cfi_endproc
+ 411              	.LFE84:
+ 413              		.global	xADCProcessTaskHandle
+ 414              		.section	.bss.xADCProcessTaskHandle,"aw",%nobits
+ 415              		.align	2
+ 418              	xADCProcessTaskHandle:
+ 419 0000 00000000 		.space	4
+ 420              		.global	adc_dma_complete
+ 421              		.section	.bss.adc_dma_complete,"aw",%nobits
+ 424              	adc_dma_complete:
+ 425 0000 00       		.space	1
+ 426              		.global	adcbuf
+ 427              		.section	.bss.adcbuf,"aw",%nobits
+ 428              		.align	2
+ 431              	adcbuf:
+ 432 0000 00000000 		.space	44
+ 432      00000000 
+ 432      00000000 
+ 432      00000000 
+ 432      00000000 
+ 433              		.text
+ 434              	.Letext0:
+ 435              		.file 2 "D:/gcc-arm/14.3 rel1/arm-none-eabi/include/machine/_default_types.h"
+ 436              		.file 3 "D:/gcc-arm/14.3 rel1/arm-none-eabi/include/sys/_stdint.h"
+ 437              		.file 4 "Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f103xg.h"
+ 438              		.file 5 "Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f1xx.h"
+ 439              		.file 6 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_def.h"
+ 440              		.file 7 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_dma.h"
+ 441              		.file 8 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_adc.h"
+ 442              		.file 9 "Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h"
+ 443              		.file 10 "Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h"
+ 444              		.file 11 "Middlewares/Third_Party/FreeRTOS/Source/include/task.h"
+ 445              		.file 12 "Middlewares/Third_Party/FreeRTOS/Source/include/queue.h"
+ 446              		.file 13 "Core/Inc/adc.h"
+ 447              		.file 14 "UserAPP/Include/SendDataProcess.h"
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccCk5UFD.s 			page 12
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 ADCAPP.c
-C:\Users\Administrator\AppData\Local\Temp\ccUEamhf.s:19     .rodata.vCreateADCTask.str1.4:00000000 $d
-C:\Users\Administrator\AppData\Local\Temp\ccUEamhf.s:23     .text.vCreateADCTask:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\ccUEamhf.s:29     .text.vCreateADCTask:00000000 vCreateADCTask
-C:\Users\Administrator\AppData\Local\Temp\ccUEamhf.s:62     .text.vCreateADCTask:00000020 $d
-C:\Users\Administrator\AppData\Local\Temp\ccUEamhf.s:464    .bss.xADCProcessTaskHandle:00000000 xADCProcessTaskHandle
-C:\Users\Administrator\AppData\Local\Temp\ccUEamhf.s:429    .text.vADCProcessTask:00000000 vADCProcessTask
-C:\Users\Administrator\AppData\Local\Temp\ccUEamhf.s:69     .text.HAL_ADC_ConvCpltCallback:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\ccUEamhf.s:75     .text.HAL_ADC_ConvCpltCallback:00000000 HAL_ADC_ConvCpltCallback
-C:\Users\Administrator\AppData\Local\Temp\ccUEamhf.s:104    .text.HAL_ADC_ConvCpltCallback:00000014 $d
-C:\Users\Administrator\AppData\Local\Temp\ccUEamhf.s:470    .bss.adc_dma_complete:00000000 adc_dma_complete
-C:\Users\Administrator\AppData\Local\Temp\ccUEamhf.s:110    .text.adc_to_voltage:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\ccUEamhf.s:116    .text.adc_to_voltage:00000000 adc_to_voltage
-C:\Users\Administrator\AppData\Local\Temp\ccUEamhf.s:165    .text.adc_to_voltage:0000002c $d
-C:\Users\Administrator\AppData\Local\Temp\ccUEamhf.s:173    .rodata.print_voltage.str1.4:00000000 $d
-C:\Users\Administrator\AppData\Local\Temp\ccUEamhf.s:189    .text.print_voltage:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\ccUEamhf.s:195    .text.print_voltage:00000000 print_voltage
-C:\Users\Administrator\AppData\Local\Temp\ccUEamhf.s:410    .text.print_voltage:00000118 $d
-C:\Users\Administrator\AppData\Local\Temp\ccUEamhf.s:477    .bss.adcbuf:00000000 adcbuf
-C:\Users\Administrator\AppData\Local\Temp\ccUEamhf.s:423    .text.vADCProcessTask:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\ccUEamhf.s:461    .bss.xADCProcessTaskHandle:00000000 $d
-C:\Users\Administrator\AppData\Local\Temp\ccUEamhf.s:471    .bss.adc_dma_complete:00000000 $d
-C:\Users\Administrator\AppData\Local\Temp\ccUEamhf.s:474    .bss.adcbuf:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\ccCk5UFD.s:19     .rodata.vCreateADCTask.str1.4:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\ccCk5UFD.s:23     .text.vCreateADCTask:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\ccCk5UFD.s:29     .text.vCreateADCTask:00000000 vCreateADCTask
+C:\Users\Administrator\AppData\Local\Temp\ccCk5UFD.s:61     .text.vCreateADCTask:00000020 $d
+C:\Users\Administrator\AppData\Local\Temp\ccCk5UFD.s:418    .bss.xADCProcessTaskHandle:00000000 xADCProcessTaskHandle
+C:\Users\Administrator\AppData\Local\Temp\ccCk5UFD.s:296    .text.vADCProcessTask:00000000 vADCProcessTask
+C:\Users\Administrator\AppData\Local\Temp\ccCk5UFD.s:68     .text.HAL_ADC_ConvCpltCallback:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\ccCk5UFD.s:74     .text.HAL_ADC_ConvCpltCallback:00000000 HAL_ADC_ConvCpltCallback
+C:\Users\Administrator\AppData\Local\Temp\ccCk5UFD.s:103    .text.HAL_ADC_ConvCpltCallback:00000014 $d
+C:\Users\Administrator\AppData\Local\Temp\ccCk5UFD.s:424    .bss.adc_dma_complete:00000000 adc_dma_complete
+C:\Users\Administrator\AppData\Local\Temp\ccCk5UFD.s:109    .text.adc_to_voltage:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\ccCk5UFD.s:115    .text.adc_to_voltage:00000000 adc_to_voltage
+C:\Users\Administrator\AppData\Local\Temp\ccCk5UFD.s:164    .text.adc_to_voltage:0000002c $d
+C:\Users\Administrator\AppData\Local\Temp\ccCk5UFD.s:172    .rodata.print_voltage.str1.4:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\ccCk5UFD.s:179    .text.print_voltage:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\ccCk5UFD.s:185    .text.print_voltage:00000000 print_voltage
+C:\Users\Administrator\AppData\Local\Temp\ccCk5UFD.s:280    .text.print_voltage:00000058 $d
+C:\Users\Administrator\AppData\Local\Temp\ccCk5UFD.s:431    .bss.adcbuf:00000000 adcbuf
+C:\Users\Administrator\AppData\Local\Temp\ccCk5UFD.s:290    .text.vADCProcessTask:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\ccCk5UFD.s:323    .text.get_current_vdd_voltage:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\ccCk5UFD.s:329    .text.get_current_vdd_voltage:00000000 get_current_vdd_voltage
+C:\Users\Administrator\AppData\Local\Temp\ccCk5UFD.s:406    .text.get_current_vdd_voltage:00000044 $d
+C:\Users\Administrator\AppData\Local\Temp\ccCk5UFD.s:415    .bss.xADCProcessTaskHandle:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\ccCk5UFD.s:425    .bss.adc_dma_complete:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\ccCk5UFD.s:428    .bss.adcbuf:00000000 $d
 
 UNDEFINED SYMBOLS
 xTaskCreate
@@ -729,6 +698,5 @@ HAL_ADC_Start_DMA
 QueueSendfmt
 vTaskDelay
 HAL_ADC_Stop_DMA
-__aeabi_f2d
 hadc1
 xReceiveLogQueue

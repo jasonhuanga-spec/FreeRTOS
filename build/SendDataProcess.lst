@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 1
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccBCM8Yq.s 			page 1
 
 
    1              		.cpu cortex-m3
@@ -26,7 +26,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 1
   24              	Packet_CRC8:
   25              	.LVL0:
   26              	.LFB83:
-   1:UserAPP/Source/SendDataProcess.c **** #include "SendDataProcess.h" // 包含本模块的头文件，声明接口和常量
+   1:UserAPP/Source/SendDataProcess.c **** #include "SendDataProcess.h" // 包含本模块的头文件，声明接口和常�?
    2:UserAPP/Source/SendDataProcess.c **** #include "TaskList.h" // 包含功能码与应答码的定义（FUNCTION_CODE_Reply, REPLY_OK 等�
    3:UserAPP/Source/SendDataProcess.c **** 
    4:UserAPP/Source/SendDataProcess.c **** 
@@ -34,13 +34,13 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 1
    6:UserAPP/Source/SendDataProcess.c **** // 全局变量定义
    7:UserAPP/Source/SendDataProcess.c **** BaseType_t xCreateSendLogTaskReturned;
    8:UserAPP/Source/SendDataProcess.c **** TaskHandle_t xCreateSendLogTaskHandle = NULL;
-   9:UserAPP/Source/SendDataProcess.c **** /* 队列句柄，用于接收数据的存储和传递。 */
+   9:UserAPP/Source/SendDataProcess.c **** /* 队列句柄，用于接收数据的存储和传递�?*/
   10:UserAPP/Source/SendDataProcess.c **** QueueHandle_t xReceiveLogQueue = NULL;
   11:UserAPP/Source/SendDataProcess.c **** 
   12:UserAPP/Source/SendDataProcess.c **** /**
-  13:UserAPP/Source/SendDataProcess.c ****  * @brief 创建并启动发送日志任务。
+  13:UserAPP/Source/SendDataProcess.c ****  * @brief 创建并启动发送日志任务�?
   14:UserAPP/Source/SendDataProcess.c ****  *
-  15:UserAPP/Source/SendDataProcess.c ****  * 创建任务并检查返回值；任务实现应为无限循环并在阻塞点等待数据。
+  15:UserAPP/Source/SendDataProcess.c ****  * 创建任务并检查返回值；任务实现应为无限循环并在阻塞点等待数据�?
   16:UserAPP/Source/SendDataProcess.c ****  */
   17:UserAPP/Source/SendDataProcess.c **** void vCreateSendLogTask(void)
   18:UserAPP/Source/SendDataProcess.c **** {
@@ -50,15 +50,15 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 1
   22:UserAPP/Source/SendDataProcess.c ****     xCreateSendLogTaskReturned = xTaskCreate(
   23:UserAPP/Source/SendDataProcess.c ****                    vSendLogProcessTask,                 /* Function that implements the task. */
   24:UserAPP/Source/SendDataProcess.c ****                     "vSendLogProcessTask",              /* Text name for the task. */
-  25:UserAPP/Source/SendDataProcess.c ****                     512,                                    /* Stack size in words, not bytes. */
+  25:UserAPP/Source/SendDataProcess.c ****                     256,                                    /* Stack size in words, not bytes. */
   26:UserAPP/Source/SendDataProcess.c ****                     ( void * ) 1,                           /* Parameter passed into the task. */
-  27:UserAPP/Source/SendDataProcess.c ****                     tskIDLE_PRIORITY + 2,                   /* Priority at which the task is create
+  27:UserAPP/Source/SendDataProcess.c ****                     tskIDLE_PRIORITY,                   /* Priority at which the task is created. *
   28:UserAPP/Source/SendDataProcess.c ****                     &xCreateSendLogTaskHandle );        /* Used to pass out the created task's hand
   29:UserAPP/Source/SendDataProcess.c **** 
   30:UserAPP/Source/SendDataProcess.c ****     if( xCreateSendLogTaskReturned == pdPASS )
   31:UserAPP/Source/SendDataProcess.c ****     {
   32:UserAPP/Source/SendDataProcess.c ****         
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 2
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccBCM8Yq.s 			page 2
 
 
   33:UserAPP/Source/SendDataProcess.c ****     }
@@ -68,12 +68,12 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 1
   37:UserAPP/Source/SendDataProcess.c **** /**
   38:UserAPP/Source/SendDataProcess.c ****  * @brief 接收数据处理任务
   39:UserAPP/Source/SendDataProcess.c ****  *
-  40:UserAPP/Source/SendDataProcess.c ****  * 该任务负责从系统的接收通道（例如 UART、SPI、USB 等）获取原始数据，
-  41:UserAPP/Source/SendDataProcess.c ****  * 对数据进行必要的解析与校验，并将处理后的消息/事件分发到应用层。
+  40:UserAPP/Source/SendDataProcess.c ****  * 该任务负责从系统的接收通道（例�?UART、SPI、USB 等）获取原始数据�?
+  41:UserAPP/Source/SendDataProcess.c ****  * 对数据进行必要的解析与校验，并将处理后的消息/事件分发到应用层�?
   42:UserAPP/Source/SendDataProcess.c ****  */
   43:UserAPP/Source/SendDataProcess.c **** void vSendLogProcessTask( void * pvParameters )
   44:UserAPP/Source/SendDataProcess.c **** {
-  45:UserAPP/Source/SendDataProcess.c ****     /* 该参数值期望为 1，因为在下面对 xTaskCreate() 的调用中将 1 作为 pvParame
+  45:UserAPP/Source/SendDataProcess.c ****     /* 该参数值期望为 1，因为在下面�?xTaskCreate() 的调用中�?1 作为 pvParame
   46:UserAPP/Source/SendDataProcess.c ****     configASSERT( ( ( uint32_t ) pvParameters ) == 1 );
   47:UserAPP/Source/SendDataProcess.c **** 
   48:UserAPP/Source/SendDataProcess.c ****     for (;;)
@@ -83,7 +83,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 1
   52:UserAPP/Source/SendDataProcess.c **** 
   53:UserAPP/Source/SendDataProcess.c ****         if( xReceiveLogQueue != NULL )
   54:UserAPP/Source/SendDataProcess.c ****             {
-  55:UserAPP/Source/SendDataProcess.c ****                 /* 从已创建的队列接收一条消息，阻塞等待最多 portMAX_DELAY */
+  55:UserAPP/Source/SendDataProcess.c ****                 /* 从已创建的队列接收一条消息，阻塞等待最�?portMAX_DELAY */
   56:UserAPP/Source/SendDataProcess.c ****                 if( xQueueReceive( xReceiveLogQueue, xReceiveLogQueueBuf, portMAX_DELAY ) == pdPASS
   57:UserAPP/Source/SendDataProcess.c ****                 {
   58:UserAPP/Source/SendDataProcess.c ****                     /* 计算实际字符串长度（不包括结尾的 \0 和垃圾数据） */
@@ -99,16 +99,16 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 1
   68:UserAPP/Source/SendDataProcess.c **** 
   69:UserAPP/Source/SendDataProcess.c **** 
   70:UserAPP/Source/SendDataProcess.c **** /**
-  71:UserAPP/Source/SendDataProcess.c ****  * @brief 示例任务：创建一个队列用于接收数据
+  71:UserAPP/Source/SendDataProcess.c ****  * @brief 示例任务：创建一个队列用于接收数�?
   72:UserAPP/Source/SendDataProcess.c ****  *
-  73:UserAPP/Source/SendDataProcess.c ****  * 该任务创建一个队列以存储接收到的数据。实际应用中，
-  74:UserAPP/Source/SendDataProcess.c ****  * 任务应包含从外设接收数据并将其发送到队列的逻辑。
+  73:UserAPP/Source/SendDataProcess.c ****  * 该任务创建一个队列以存储接收到的数据。实际应用中�?
+  74:UserAPP/Source/SendDataProcess.c ****  * 任务应包含从外设接收数据并将其发送到队列的逻辑�?
   75:UserAPP/Source/SendDataProcess.c ****  */
   76:UserAPP/Source/SendDataProcess.c **** void vCreateReceiveLogQueueTask( void *pvParameters )
   77:UserAPP/Source/SendDataProcess.c **** {
   78:UserAPP/Source/SendDataProcess.c ****     /* 创建一个用于保存接收数据包（ReceiveDataPacket_t）的队列，最多可容纳 
-  79:UserAPP/Source/SendDataProcess.c ****     /* 使用 PRINT_QUEUE_ITEM_SIZE 以确保队列项大小与发送/接收缓冲区一致，避�
-  80:UserAPP/Source/SendDataProcess.c ****     xReceiveLogQueue = xQueueCreate(10, PRINT_QUEUE_ITEM_SIZE);
+  79:UserAPP/Source/SendDataProcess.c ****     /* 使用 PRINT_QUEUE_ITEM_SIZE 以确保队列项大小与发�?接收缓冲区一致，避�
+  80:UserAPP/Source/SendDataProcess.c ****     xReceiveLogQueue = xQueueCreate(20, PRINT_QUEUE_ITEM_SIZE);
   81:UserAPP/Source/SendDataProcess.c **** 
   82:UserAPP/Source/SendDataProcess.c ****     if( xReceiveLogQueue == NULL )
   83:UserAPP/Source/SendDataProcess.c ****     {
@@ -118,7 +118,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 1
   87:UserAPP/Source/SendDataProcess.c **** }
   88:UserAPP/Source/SendDataProcess.c **** 
   89:UserAPP/Source/SendDataProcess.c **** 
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 3
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccBCM8Yq.s 			page 3
 
 
   90:UserAPP/Source/SendDataProcess.c **** 
@@ -128,10 +128,10 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 1
   94:UserAPP/Source/SendDataProcess.c ****   * @param xTicksToWait 等待时间
   95:UserAPP/Source/SendDataProcess.c ****   * @param fmt 格式化字符串
   96:UserAPP/Source/SendDataProcess.c ****   * @param ... 可变参数
-  97:UserAPP/Source/SendDataProcess.c ****   * @return BaseType_t 发送结果
+  97:UserAPP/Source/SendDataProcess.c ****   * @return BaseType_t 发送结�?
   98:UserAPP/Source/SendDataProcess.c ****   * 
   99:UserAPP/Source/SendDataProcess.c ****   * // 无等待（不允许阻塞）
- 100:UserAPP/Source/SendDataProcess.c ****     QueueSendfmt(xPrintQueue, 0, "接收到数据: %02X", parsedDataPacket.Payload[0]);
+ 100:UserAPP/Source/SendDataProcess.c ****     QueueSendfmt(xPrintQueue, 0, "接收到数�? %02X", parsedDataPacket.Payload[0]);
  101:UserAPP/Source/SendDataProcess.c ****   */                    
  102:UserAPP/Source/SendDataProcess.c **** BaseType_t QueueSendfmt(QueueHandle_t xQueue, TickType_t xTicksToWait, const char *fmt, ...)
  103:UserAPP/Source/SendDataProcess.c **** {
@@ -151,10 +151,10 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 1
  117:UserAPP/Source/SendDataProcess.c **** }
  118:UserAPP/Source/SendDataProcess.c **** 
  119:UserAPP/Source/SendDataProcess.c **** 
- 120:UserAPP/Source/SendDataProcess.c **** /* @brief 计算数据包的 CRC8 校验值
+ 120:UserAPP/Source/SendDataProcess.c **** /* @brief 计算数据包的 CRC8 校验�?
  121:UserAPP/Source/SendDataProcess.c ****  * @param data 数据指针
  122:UserAPP/Source/SendDataProcess.c ****  * @param length 数据长度
- 123:UserAPP/Source/SendDataProcess.c ****  * @return 计算得到的 CRC8 值
+ 123:UserAPP/Source/SendDataProcess.c ****  * @return 计算得到�?CRC8 �?
  124:UserAPP/Source/SendDataProcess.c ****  */
  125:UserAPP/Source/SendDataProcess.c **** static uint8_t Packet_CRC8(const uint8_t *data, size_t length) 
  126:UserAPP/Source/SendDataProcess.c **** { // 每行注释
@@ -168,20 +168,20 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 1
   34              		.cfi_def_cfa_offset 4
   35              		.cfi_offset 14, -4
   36 0002 8646     		mov	lr, r0
- 127:UserAPP/Source/SendDataProcess.c ****     uint8_t crc = 0x00; // 初始化 CRC
+ 127:UserAPP/Source/SendDataProcess.c ****     uint8_t crc = 0x00; // 初始�?CRC
   37              		.loc 1 127 5 is_stmt 1 view .LVU2
   38              	.LVL1:
- 128:UserAPP/Source/SendDataProcess.c ****     for (size_t i = 0; i < length; ++i) { // 遍历所有字节
+ 128:UserAPP/Source/SendDataProcess.c ****     for (size_t i = 0; i < length; ++i) { // 遍历所有字�?
   39              		.loc 1 128 5 view .LVU3
   40              	.LBB6:
   41              		.loc 1 128 10 view .LVU4
   42              		.loc 1 128 17 is_stmt 0 view .LVU5
   43 0004 4FF0000C 		mov	ip, #0
   44              	.LBE6:
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 4
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccBCM8Yq.s 			page 4
 
 
- 127:UserAPP/Source/SendDataProcess.c ****     uint8_t crc = 0x00; // 初始化 CRC
+ 127:UserAPP/Source/SendDataProcess.c ****     uint8_t crc = 0x00; // 初始�?CRC
   45              		.loc 1 127 13 view .LVU6
   46 0008 6046     		mov	r0, ip
   47              	.LVL2:
@@ -194,7 +194,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 1
  129:UserAPP/Source/SendDataProcess.c ****         crc ^= data[i]; // 异或字节
  130:UserAPP/Source/SendDataProcess.c ****         for (uint8_t bit = 0; bit < 8; ++bit) { // 逐位处理
  131:UserAPP/Source/SendDataProcess.c ****             if (crc & 0x80) { // 检查最高位
- 132:UserAPP/Source/SendDataProcess.c ****                 crc = (uint8_t)((crc << 1) ^ 0x07); // 左移并按多项式异或
+ 132:UserAPP/Source/SendDataProcess.c ****                 crc = (uint8_t)((crc << 1) ^ 0x07); // 左移并按多项式异�?
   54              		.loc 1 132 17 is_stmt 1 view .LVU8
   55              		.loc 1 132 44 is_stmt 0 view .LVU9
   56 000c 5200     		lsls	r2, r2, #1
@@ -216,17 +216,17 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 1
   69              		.loc 1 130 35 is_stmt 1 discriminator 1 view .LVU13
   70 0018 072B     		cmp	r3, #7
   71 001a 05D8     		bhi	.L9
- 131:UserAPP/Source/SendDataProcess.c ****                 crc = (uint8_t)((crc << 1) ^ 0x07); // 左移并按多项式异或
+ 131:UserAPP/Source/SendDataProcess.c ****                 crc = (uint8_t)((crc << 1) ^ 0x07); // 左移并按多项式异�?
   72              		.loc 1 131 13 view .LVU14
- 131:UserAPP/Source/SendDataProcess.c ****                 crc = (uint8_t)((crc << 1) ^ 0x07); // 左移并按多项式异或
+ 131:UserAPP/Source/SendDataProcess.c ****                 crc = (uint8_t)((crc << 1) ^ 0x07); // 左移并按多项式异�?
   73              		.loc 1 131 17 is_stmt 0 view .LVU15
   74 001c 42B2     		sxtb	r2, r0
- 131:UserAPP/Source/SendDataProcess.c ****                 crc = (uint8_t)((crc << 1) ^ 0x07); // 左移并按多项式异或
+ 131:UserAPP/Source/SendDataProcess.c ****                 crc = (uint8_t)((crc << 1) ^ 0x07); // 左移并按多项式异�?
   75              		.loc 1 131 16 view .LVU16
   76 001e 002A     		cmp	r2, #0
   77 0020 F4DB     		blt	.L10
  133:UserAPP/Source/SendDataProcess.c ****             } else {
- 134:UserAPP/Source/SendDataProcess.c ****                 crc <<= 1; // 仅左移
+ 134:UserAPP/Source/SendDataProcess.c ****                 crc <<= 1; // 仅左�?
   78              		.loc 1 134 17 is_stmt 1 view .LVU17
   79              		.loc 1 134 21 is_stmt 0 view .LVU18
   80 0022 4000     		lsls	r0, r0, #1
@@ -238,7 +238,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 1
   86              	.L9:
   87              		.loc 1 134 21 view .LVU20
   88              	.LBE7:
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 5
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccBCM8Yq.s 			page 5
 
 
  128:UserAPP/Source/SendDataProcess.c ****         crc ^= data[i]; // 异或字节
@@ -279,7 +279,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 1
  135:UserAPP/Source/SendDataProcess.c ****             }
  136:UserAPP/Source/SendDataProcess.c ****         }
  137:UserAPP/Source/SendDataProcess.c ****     }
- 138:UserAPP/Source/SendDataProcess.c ****     return crc; // 返回 CRC 值
+ 138:UserAPP/Source/SendDataProcess.c ****     return crc; // 返回 CRC �?
  114              		.loc 1 138 5 is_stmt 1 view .LVU31
  139:UserAPP/Source/SendDataProcess.c **** }
  115              		.loc 1 139 1 is_stmt 0 view .LVU32
@@ -295,10 +295,10 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 1
  127              	vSendLogProcessTask:
  128              	.LVL12:
  129              	.LFB80:
-  44:UserAPP/Source/SendDataProcess.c ****     /* 该参数值期望为 1，因为在下面对 xTaskCreate() 的调用中将 1 作为 pvParame
+  44:UserAPP/Source/SendDataProcess.c ****     /* 该参数值期望为 1，因为在下面�?xTaskCreate() 的调用中�?1 作为 pvParame
  130              		.loc 1 44 1 is_stmt 1 view -0
  131              		.cfi_startproc
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 6
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccBCM8Yq.s 			page 6
 
 
  132              		@ args = 0, pretend = 0, frame = 128
@@ -358,7 +358,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 1
   44:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  */
   45:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
   46:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /* Type definitions. */
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 7
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccBCM8Yq.s 			page 7
 
 
   47:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define portCHAR		char
@@ -418,7 +418,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 1
  101:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define portDISABLE_INTERRUPTS()				vPortRaiseBASEPRI()
  102:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define portENABLE_INTERRUPTS()					vPortSetBASEPRI(0)
  103:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define portENTER_CRITICAL()					vPortEnterCritical()
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 8
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccBCM8Yq.s 			page 8
 
 
  104:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define portEXIT_CRITICAL()						vPortExitCritical()
@@ -478,7 +478,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 1
  158:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #endif
  159:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
  160:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /* portNOP() is not required by this port. */
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 9
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccBCM8Yq.s 			page 9
 
 
  161:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define portNOP()
@@ -538,13 +538,13 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 1
   46:UserAPP/Source/SendDataProcess.c **** 
  158              		.loc 1 46 5 view .LVU39
   46:UserAPP/Source/SendDataProcess.c **** 
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 10
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccBCM8Yq.s 			page 10
 
 
  159              		.loc 1 46 5 view .LVU40
  160 0014 FEE7     		b	.L14
  161              	.L17:
-  44:UserAPP/Source/SendDataProcess.c ****     /* 该参数值期望为 1，因为在下面对 xTaskCreate() 的调用中将 1 作为 pvParame
+  44:UserAPP/Source/SendDataProcess.c ****     /* 该参数值期望为 1，因为在下面�?xTaskCreate() 的调用中�?1 作为 pvParame
  162              		.loc 1 44 1 is_stmt 0 view .LVU41
  163 0016 00B5     		push	{lr}
  164              	.LCFI1:
@@ -598,7 +598,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 1
  199              		.loc 1 62 23 is_stmt 0 view .LVU54
  200 0036 0028     		cmp	r0, #0
   62:UserAPP/Source/SendDataProcess.c **** 
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 11
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccBCM8Yq.s 			page 11
 
 
  201              		.loc 1 62 23 view .LVU55
@@ -652,13 +652,13 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 1
  243              		.loc 1 80 24 is_stmt 0 view .LVU63
  244 0002 0022     		movs	r2, #0
  245 0004 8021     		movs	r1, #128
- 246 0006 0A20     		movs	r0, #10
+ 246 0006 1420     		movs	r0, #20
  247              	.LVL19:
   80:UserAPP/Source/SendDataProcess.c **** 
  248              		.loc 1 80 24 view .LVU64
  249 0008 FFF7FEFF 		bl	xQueueGenericCreate
  250              	.LVL20:
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 12
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccBCM8Yq.s 			page 12
 
 
   80:UserAPP/Source/SendDataProcess.c **** 
@@ -717,13 +717,13 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 1
  294              		.loc 1 22 34 is_stmt 0 view .LVU72
  295 000a 084B     		ldr	r3, .L26
  296 000c 0193     		str	r3, [sp, #4]
- 297 000e 0223     		movs	r3, #2
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 13
+ 297 000e 0023     		movs	r3, #0
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccBCM8Yq.s 			page 13
 
 
  298 0010 0093     		str	r3, [sp]
  299 0012 0123     		movs	r3, #1
- 300 0014 4FF40072 		mov	r2, #512
+ 300 0014 4FF48072 		mov	r2, #256
  301 0018 0549     		ldr	r1, .L26+4
  302 001a 0648     		ldr	r0, .L26+8
  303 001c FFF7FEFF 		bl	xTaskCreate
@@ -778,7 +778,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 1
  348              		.cfi_def_cfa_offset 32
  349              		.cfi_offset 4, -32
  350              		.cfi_offset 5, -28
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 14
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccBCM8Yq.s 			page 14
 
 
  351              		.cfi_offset 6, -24
@@ -838,7 +838,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 1
  392 002e 0023     		movs	r3, #0
  393 0030 2246     		mov	r2, r4
  394 0032 3146     		mov	r1, r6
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 15
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccBCM8Yq.s 			page 15
 
 
  395 0034 4046     		mov	r0, r8
@@ -898,13 +898,13 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 1
  446              	BuildReplyPacket:
  447              	.LVL33:
  448              	.LFB84:
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 16
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccBCM8Yq.s 			page 16
 
 
  140:UserAPP/Source/SendDataProcess.c **** 
  141:UserAPP/Source/SendDataProcess.c **** 
  142:UserAPP/Source/SendDataProcess.c **** /* 重构后的：构建应答包
- 143:UserAPP/Source/SendDataProcess.c ****  * 保持原有签名，增加更严格的参数与长度检查，避免缓冲区溢出
+ 143:UserAPP/Source/SendDataProcess.c ****  * 保持原有签名，增加更严格的参数与长度检查，避免缓冲区溢�?
  144:UserAPP/Source/SendDataProcess.c ****  */
  145:UserAPP/Source/SendDataProcess.c **** uint8_t BuildReplyPacket(uint8_t functionCode, uint16_t execIndex, const uint8_t *data, uint8_t dat
  146:UserAPP/Source/SendDataProcess.c **** {
@@ -932,14 +932,14 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 1
  469 000a 1C46     		mov	r4, r3
  470              		.loc 1 147 24 discriminator 1 view .LVU101
  471 000c 05B3     		cbz	r5, .L38
- 148:UserAPP/Source/SendDataProcess.c ****         return 1; // 空指针
+ 148:UserAPP/Source/SendDataProcess.c ****         return 1; // 空指�?
  149:UserAPP/Source/SendDataProcess.c ****     }
  150:UserAPP/Source/SendDataProcess.c ****     if (dataLen > PACKET_MAX_DATA_LEN) {
  472              		.loc 1 150 5 is_stmt 1 view .LVU102
  473              		.loc 1 150 8 is_stmt 0 view .LVU103
  474 000e 3B2B     		cmp	r3, #59
  475 0010 20D8     		bhi	.L39
- 151:UserAPP/Source/SendDataProcess.c ****         return 2; // 数据域过长
+ 151:UserAPP/Source/SendDataProcess.c ****         return 2; // 数据域过�?
  152:UserAPP/Source/SendDataProcess.c ****     }
  153:UserAPP/Source/SendDataProcess.c ****     if (dataLen > 0 && data == NULL) {
  476              		.loc 1 153 5 is_stmt 1 view .LVU104
@@ -947,10 +947,10 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 1
  478 0012 1BB1     		cbz	r3, .L35
  479              		.loc 1 153 21 discriminator 1 view .LVU106
  480 0014 02B3     		cbz	r2, .L40
- 154:UserAPP/Source/SendDataProcess.c ****         return 3; // dataLen>0 但 data 为 NULL
+ 154:UserAPP/Source/SendDataProcess.c ****         return 3; // dataLen>0 �?data �?NULL
  155:UserAPP/Source/SendDataProcess.c ****     }
  156:UserAPP/Source/SendDataProcess.c **** 
- 157:UserAPP/Source/SendDataProcess.c ****     /* 计算包长度并检查是否超过允许的最大包长 */
+ 157:UserAPP/Source/SendDataProcess.c ****     /* 计算包长度并检查是否超过允许的最大包�?*/
  158:UserAPP/Source/SendDataProcess.c ****     const uint16_t headerLen = 1;   /* 0xAA */
  481              		.loc 1 158 5 is_stmt 1 view .LVU107
  482              	.LVL34:
@@ -958,7 +958,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 1
  483              		.loc 1 159 5 view .LVU108
  160:UserAPP/Source/SendDataProcess.c ****     const uint16_t indexLen  = 2;
  484              		.loc 1 160 5 view .LVU109
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 17
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccBCM8Yq.s 			page 17
 
 
  161:UserAPP/Source/SendDataProcess.c ****     const uint16_t crcLen    = 1;
@@ -979,7 +979,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 1
  165:UserAPP/Source/SendDataProcess.c ****         return 4; // 超出最大缓冲区
  166:UserAPP/Source/SendDataProcess.c ****     }
  167:UserAPP/Source/SendDataProcess.c **** 
- 168:UserAPP/Source/SendDataProcess.c ****     /* 填充包内容 */
+ 168:UserAPP/Source/SendDataProcess.c ****     /* 填充包内�?*/
  169:UserAPP/Source/SendDataProcess.c ****     uint16_t pos = 0;
  496              		.loc 1 169 5 is_stmt 1 view .LVU115
  170:UserAPP/Source/SendDataProcess.c ****     outBuf[pos++] = 0xAA;                    /* 包头 */
@@ -987,19 +987,19 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 1
  498              		.loc 1 170 19 is_stmt 0 view .LVU117
  499 001c AA23     		movs	r3, #170
  500 001e 3B70     		strb	r3, [r7]
- 171:UserAPP/Source/SendDataProcess.c ****     outBuf[pos++] = functionCode;            /* 功能码 */
+ 171:UserAPP/Source/SendDataProcess.c ****     outBuf[pos++] = functionCode;            /* 功能�?*/
  501              		.loc 1 171 5 is_stmt 1 view .LVU118
  502              	.LVL37:
  503              		.loc 1 171 19 is_stmt 0 view .LVU119
  504 0020 7870     		strb	r0, [r7, #1]
- 172:UserAPP/Source/SendDataProcess.c ****     outBuf[pos++] = (uint8_t)(execIndex >> 8); /* 执行索引高字节 */
+ 172:UserAPP/Source/SendDataProcess.c ****     outBuf[pos++] = (uint8_t)(execIndex >> 8); /* 执行索引高字�?*/
  505              		.loc 1 172 5 is_stmt 1 view .LVU120
  506              	.LVL38:
  507              		.loc 1 172 21 is_stmt 0 view .LVU121
  508 0022 0B0A     		lsrs	r3, r1, #8
  509              		.loc 1 172 19 view .LVU122
  510 0024 BB70     		strb	r3, [r7, #2]
- 173:UserAPP/Source/SendDataProcess.c ****     outBuf[pos++] = (uint8_t)(execIndex & 0xFF); /* 执行索引低字节 */
+ 173:UserAPP/Source/SendDataProcess.c ****     outBuf[pos++] = (uint8_t)(execIndex & 0xFF); /* 执行索引低字�?*/
  511              		.loc 1 173 5 is_stmt 1 view .LVU123
  512              	.LVL39:
  513              		.loc 1 173 19 is_stmt 0 view .LVU124
@@ -1009,7 +1009,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 1
  515              		.loc 1 175 5 is_stmt 1 view .LVU125
  516              		.loc 1 175 8 is_stmt 0 view .LVU126
  517 0028 4CB9     		cbnz	r4, .L44
- 173:UserAPP/Source/SendDataProcess.c ****     outBuf[pos++] = (uint8_t)(execIndex & 0xFF); /* 执行索引低字节 */
+ 173:UserAPP/Source/SendDataProcess.c ****     outBuf[pos++] = (uint8_t)(execIndex & 0xFF); /* 执行索引低字�?*/
  518              		.loc 1 173 15 view .LVU127
  519 002a 0424     		movs	r4, #4
  520              	.LVL40:
@@ -1018,10 +1018,10 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 1
  177:UserAPP/Source/SendDataProcess.c ****         pos += dataLen;
  178:UserAPP/Source/SendDataProcess.c ****     }
  179:UserAPP/Source/SendDataProcess.c **** 
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 18
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccBCM8Yq.s 			page 18
 
 
- 180:UserAPP/Source/SendDataProcess.c ****     /* 计算 CRC（对包头至数据末尾计算，不包含 CRC 字节） */
+ 180:UserAPP/Source/SendDataProcess.c ****     /* 计算 CRC（对包头至数据末尾计算，不包�?CRC 字节�?*/
  181:UserAPP/Source/SendDataProcess.c ****     uint8_t crc = Packet_CRC8(outBuf, pos);
  522              		.loc 1 181 5 is_stmt 1 view .LVU128
  523              		.loc 1 181 19 is_stmt 0 view .LVU129
@@ -1078,7 +1078,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 1
  177:UserAPP/Source/SendDataProcess.c ****     }
  562              		.loc 1 177 13 view .LVU144
  563 004a EFE7     		b	.L36
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 19
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccBCM8Yq.s 			page 19
 
 
  564              	.LVL50:
@@ -1138,12 +1138,12 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 1
  606 000d 8C85E5A4 		.ascii	"\214\205\345\244\261\350\264\245\357\274\214\351\224"
  606      B1E8B4A5 
  606      EFBC8CE9 
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 20
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccBCM8Yq.s 			page 20
 
 
  606      94
- 607 001a 99E8AFAF 		.ascii	"\231\350\257\257\347\240\201=%u\015\012\000"
- 607      E7A0813D 
+ 607 001a 99E8AFAF 		.ascii	"\231\350\257\257\357\277\275?%u\015\012\000"
+ 607      EFBFBD3F 
  607      25750D0A 
  607      00
  608 0027 00       		.align	2
@@ -1156,7 +1156,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 1
  613      BBBAE5AE 
  613      8CE68890 
  613      EF
- 614 003d BC882575 		.ascii	"\274\210%u \345\255\227\350\212\202\357\274\211\357"
+ 614 003d BFBD3F75 		.ascii	"\277\275?u \345\255\227\350\212\202\357\274\211\357"
  614      20E5AD97 
  614      E88A82EF 
  614      BC89EF
@@ -1192,15 +1192,16 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 1
  627      80E5908E 
  627      E99499E8 
  627      AF
- 628 00b2 AF3D2575 		.ascii	"\257=%u\015\012\000"
- 628      0D0A00
+ 628 00b2 AFE7A081 		.ascii	"\257\347\240\201=%u\015\012\000"
+ 628      3D25750D 
+ 628      0A00
  629              		.section	.text.ReplyPacket,"ax",%progbits
  630              		.align	1
  631              		.global	ReplyPacket
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccBCM8Yq.s 			page 21
+
+
  632              		.syntax unified
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 21
-
-
  633              		.thumb
  634              		.thumb_func
  636              	ReplyPacket:
@@ -1208,11 +1209,11 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 1
  638              	.LFB85:
  188:UserAPP/Source/SendDataProcess.c **** 
  189:UserAPP/Source/SendDataProcess.c **** 
- 190:UserAPP/Source/SendDataProcess.c **** /* 重构后的：封装构建并发送应答包到日志队列
- 191:UserAPP/Source/SendDataProcess.c ****  * - 原实现将二进制包放入 xReceiveLogQueue（文本队列），会被 strlen 截断，导
- 192:UserAPP/Source/SendDataProcess.c ****  * - 本实现直接通过 CDC_Transmit_FS 发送二进制包，并用文本日志报告发送结�
+ 190:UserAPP/Source/SendDataProcess.c **** /* 重构后的：封装构建并发送应答包到日志队�?
+ 191:UserAPP/Source/SendDataProcess.c ****  * - 原实现将二进制包放入 xReceiveLogQueue（文本队列），会�?strlen 截断，导
+ 192:UserAPP/Source/SendDataProcess.c ****  * - 本实现直接通过 CDC_Transmit_FS 发送二进制包，并用文本日志报告发送结�
  193:UserAPP/Source/SendDataProcess.c ****  */
- 194:UserAPP/Source/SendDataProcess.c **** void ReplyPacket(ReplyCode_t reply)
+ 194:UserAPP/Source/SendDataProcess.c **** void ReplyPacket(uint8_t reply) // 参数改为 uint8_t 避免头文件循环依�?
  195:UserAPP/Source/SendDataProcess.c **** {
  639              		.loc 1 195 1 is_stmt 1 view -0
  640              		.cfi_startproc
@@ -1232,12 +1233,12 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 1
  654 0004 0146     		mov	r1, r0
  196:UserAPP/Source/SendDataProcess.c ****     uint8_t outBuf[PACKET_MAX_SIZE]; // 定义输出缓冲区用于构建数据包
  655              		.loc 1 196 5 is_stmt 1 view .LVU157
- 197:UserAPP/Source/SendDataProcess.c ****     uint16_t outLen = 0; // 存放构建后的包长度
+ 197:UserAPP/Source/SendDataProcess.c ****     uint16_t outLen = 0; // 存放构建后的包长�?
  656              		.loc 1 197 5 view .LVU158
  657              		.loc 1 197 14 is_stmt 0 view .LVU159
  658 0006 0022     		movs	r2, #0
  659 0008 ADF88E20 		strh	r2, [sp, #142]	@ movhi
- 198:UserAPP/Source/SendDataProcess.c ****     uint16_t execIndex = (uint16_t)reply; // 将应答码放入执行索引字段（2 字节）
+ 198:UserAPP/Source/SendDataProcess.c ****     uint16_t execIndex = (uint16_t)reply; // 将应答码放入执行索引字段�? 字节�?
  660              		.loc 1 198 5 is_stmt 1 view .LVU160
  661              	.LVL61:
  199:UserAPP/Source/SendDataProcess.c **** 
@@ -1257,19 +1258,19 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 1
  201:UserAPP/Source/SendDataProcess.c ****     if (buildRet != 0) { // 检查构建结果
  674              		.loc 1 201 5 is_stmt 1 view .LVU164
  675              		.loc 1 201 8 is_stmt 0 view .LVU165
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccBCM8Yq.s 			page 22
+
+
  676 001e 0646     		mov	r6, r0
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 22
-
-
  677 0020 28B9     		cbnz	r0, .L63
  202:UserAPP/Source/SendDataProcess.c ****         if (xReceiveLogQueue != NULL) { // 若日志队列存在则记录错误
- 203:UserAPP/Source/SendDataProcess.c ****             QueueSendfmt(xReceiveLogQueue, 0, "构建应答包失败，错误码=%u\r\n", buildRet)
+ 203:UserAPP/Source/SendDataProcess.c ****             QueueSendfmt(xReceiveLogQueue, 0, "构建应答包失败，错误�?%u\r\n", buildRet)
  204:UserAPP/Source/SendDataProcess.c ****         }
  205:UserAPP/Source/SendDataProcess.c ****         return; // 构建失败，返回
  206:UserAPP/Source/SendDataProcess.c ****     }
  207:UserAPP/Source/SendDataProcess.c **** 
  208:UserAPP/Source/SendDataProcess.c ****     /* 如需查看实际构建的字节序列，记录十六进制文本日志（非二进制队�
- 209:UserAPP/Source/SendDataProcess.c ****     if (xReceiveLogQueue != NULL) { // 若日志队列存在则格式化打印十六进制表示
+ 209:UserAPP/Source/SendDataProcess.c ****     if (xReceiveLogQueue != NULL) { // 若日志队列存在则格式化打印十六进制表�?
  678              		.loc 1 209 5 is_stmt 1 view .LVU166
  679              		.loc 1 209 26 is_stmt 0 view .LVU167
  680 0022 314B     		ldr	r3, .L66
@@ -1317,10 +1318,10 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 1
  713              	.LBB16:
  213:UserAPP/Source/SendDataProcess.c ****             pos += snprintf(&hexbuf[pos], sizeof(hexbuf) - pos, "%02X ", outBuf[i]); // 将每个�
  714              		.loc 1 213 13 view .LVU176
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccBCM8Yq.s 			page 23
+
+
  715              		.loc 1 213 80 is_stmt 0 view .LVU177
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 23
-
-
  716 0042 04F1D003 		add	r3, r4, #208
  717 0046 6B44     		add	r3, sp, r3
  718              		.loc 1 213 20 view .LVU178
@@ -1359,7 +1360,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 1
  745              	.L51:
  746              	.LBE16:
  214:UserAPP/Source/SendDataProcess.c ****         }
- 215:UserAPP/Source/SendDataProcess.c ****         hexbuf[pos] = '\0'; // 以 null 结尾
+ 215:UserAPP/Source/SendDataProcess.c ****         hexbuf[pos] = '\0'; // �?null 结尾
  747              		.loc 1 215 9 is_stmt 1 view .LVU186
  748              		.loc 1 215 21 is_stmt 0 view .LVU187
  749 006c 05F1D002 		add	r2, r5, #208
@@ -1368,7 +1369,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 1
  752              		.loc 1 215 21 view .LVU188
  753 0074 0021     		movs	r1, #0
  754 0076 05F8C41C 		strb	r1, [r5, #-196]
- 216:UserAPP/Source/SendDataProcess.c ****         QueueSendfmt(xReceiveLogQueue, 0, "构建完成（%u 字节）：%s\r\n", outLen, hexbuf); 
+ 216:UserAPP/Source/SendDataProcess.c ****         QueueSendfmt(xReceiveLogQueue, 0, "构建完成�?u 字节）：%s\r\n", outLen, hexbuf); 
  755              		.loc 1 216 9 is_stmt 1 view .LVU189
  756 007a 03AA     		add	r2, sp, #12
  757              	.LVL72:
@@ -1377,10 +1378,10 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 1
  760 007e 1D4A     		ldr	r2, .L66+12
  761 0080 1948     		ldr	r0, .L66
  762 0082 0068     		ldr	r0, [r0]
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccBCM8Yq.s 			page 24
+
+
  763 0084 FFF7FEFF 		bl	QueueSendfmt
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 24
-
-
  764              	.LVL73:
  765              	.L50:
  211:UserAPP/Source/SendDataProcess.c ****         for (uint16_t i = 0; i < outLen && pos < (int)sizeof(hexbuf) - 4; ++i) { // 遍历包字节
@@ -1395,13 +1396,13 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 1
  217:UserAPP/Source/SendDataProcess.c ****     }
  218:UserAPP/Source/SendDataProcess.c **** 
  219:UserAPP/Source/SendDataProcess.c ****     /* 直接发送二进制包到上位机，避免文本队列截断 */
- 220:UserAPP/Source/SendDataProcess.c ****     const int maxRetries = 3; // 最大重试次数
- 221:UserAPP/Source/SendDataProcess.c ****     uint8_t txRet = USBD_OK; // 发送返回值
- 222:UserAPP/Source/SendDataProcess.c ****     for (int attempt = 0; attempt < maxRetries; ++attempt) { // 循环尝试发送
+ 220:UserAPP/Source/SendDataProcess.c ****     const int maxRetries = 3; // 最大重试次�?
+ 221:UserAPP/Source/SendDataProcess.c ****     uint8_t txRet = USBD_OK; // 发送返回�?
+ 222:UserAPP/Source/SendDataProcess.c ****     for (int attempt = 0; attempt < maxRetries; ++attempt) { // 循环尝试发�?
  773              		.loc 1 222 35 is_stmt 1 discriminator 1 view .LVU193
  774 008a 022C     		cmp	r4, #2
  775 008c 11DC     		bgt	.L56
- 223:UserAPP/Source/SendDataProcess.c ****         txRet = CDC_Transmit_FS(outBuf, outLen); // 调用 CDC 发送接口发送二进制包
+ 223:UserAPP/Source/SendDataProcess.c ****         txRet = CDC_Transmit_FS(outBuf, outLen); // 调用 CDC 发送接口发送二进制�?
  776              		.loc 1 223 9 view .LVU194
  777              		.loc 1 223 17 is_stmt 0 view .LVU195
  778 008e BDF88E10 		ldrh	r1, [sp, #142]
@@ -1436,11 +1437,11 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 1
  230:UserAPP/Source/SendDataProcess.c ****             }
  231:UserAPP/Source/SendDataProcess.c ****             return; // 发送成功，返回
  232:UserAPP/Source/SendDataProcess.c ****         }
- 233:UserAPP/Source/SendDataProcess.c ****         if (txRet == USBD_BUSY) { // 若 USB 繁忙，等待短时延后重试
+ 233:UserAPP/Source/SendDataProcess.c ****         if (txRet == USBD_BUSY) { // USB 繁忙，等待短时延后重试
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccBCM8Yq.s 			page 25
+
+
  801              		.loc 1 233 9 is_stmt 1 view .LVU202
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 25
-
-
  802              		.loc 1 233 12 is_stmt 0 view .LVU203
  803 00ae 012E     		cmp	r6, #1
  804 00b0 14D0     		beq	.L65
@@ -1462,7 +1463,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 1
  811 00b4 1868     		ldr	r0, [r3]
  812              		.loc 1 242 8 view .LVU207
  813 00b6 20B1     		cbz	r0, .L45
- 243:UserAPP/Source/SendDataProcess.c ****         QueueSendfmt(xReceiveLogQueue, 0, "发送失败，最后错误=%u\r\n", txRet); // 记录�
+ 243:UserAPP/Source/SendDataProcess.c ****         QueueSendfmt(xReceiveLogQueue, 0, "发送失败，最后错误码=%u\r\n", txRet); // 记�
  814              		.loc 1 243 9 is_stmt 1 view .LVU208
  815 00b8 3346     		mov	r3, r6
  816 00ba 104A     		ldr	r2, .L66+20
@@ -1497,10 +1498,10 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 1
  229:UserAPP/Source/SendDataProcess.c ****             }
  840              		.loc 1 229 17 is_stmt 1 view .LVU213
  841 00ce BDF88E30 		ldrh	r3, [sp, #142]
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccBCM8Yq.s 			page 26
+
+
  842 00d2 0B4A     		ldr	r2, .L66+24
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 26
-
-
  843 00d4 0021     		movs	r1, #0
  844 00d6 FFF7FEFF 		bl	QueueSendfmt
  845              	.LVL80:
@@ -1510,16 +1511,16 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 1
  848              	.L65:
  234:UserAPP/Source/SendDataProcess.c ****             continue; // 继续重试循环
  849              		.loc 1 234 13 view .LVU215
- 850 00dc 1420     		movs	r0, #20
+ 850 00dc 2820     		movs	r0, #40
  851 00de FFF7FEFF 		bl	vTaskDelay
  852              	.LVL81:
  235:UserAPP/Source/SendDataProcess.c ****         }
  853              		.loc 1 235 13 view .LVU216
- 222:UserAPP/Source/SendDataProcess.c ****         txRet = CDC_Transmit_FS(outBuf, outLen); // 调用 CDC 发送接口发送二进制包
+ 222:UserAPP/Source/SendDataProcess.c ****         txRet = CDC_Transmit_FS(outBuf, outLen); // 调用 CDC 发送接口发送二进制�?
  854              		.loc 1 222 49 discriminator 2 view .LVU217
  855 00e2 0134     		adds	r4, r4, #1
  856              	.LVL82:
- 222:UserAPP/Source/SendDataProcess.c ****         txRet = CDC_Transmit_FS(outBuf, outLen); // 调用 CDC 发送接口发送二进制包
+ 222:UserAPP/Source/SendDataProcess.c ****         txRet = CDC_Transmit_FS(outBuf, outLen); // 调用 CDC 发送接口发送二进制�?
  857              		.loc 1 222 49 is_stmt 0 discriminator 2 view .LVU218
  858 00e4 D1E7     		b	.L57
  859              	.L67:
@@ -1557,49 +1558,49 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 1
  898              		.file 5 "D:/gcc-arm/14.3 rel1/lib/gcc/arm-none-eabi/14.3.1/include/stddef.h"
  899              		.file 6 "D:/gcc-arm/14.3 rel1/lib/gcc/arm-none-eabi/14.3.1/include/stdarg.h"
  900              		.file 7 "D:/gcc-arm/14.3 rel1/arm-none-eabi/include/stdio.h"
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccBCM8Yq.s 			page 27
+
+
  901              		.file 8 "Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h"
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 27
-
-
  902              		.file 9 "Middlewares/Third_Party/FreeRTOS/Source/include/task.h"
  903              		.file 10 "Middlewares/Third_Party/FreeRTOS/Source/include/queue.h"
  904              		.file 11 "Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_def.h"
- 905              		.file 12 "UserAPP/Include/TaskList.h"
+ 905              		.file 12 "UserAPP/Include/Tasklist.h"
  906              		.file 13 "UserAPP/Include/SendDataProcess.h"
  907              		.file 14 "D:/gcc-arm/14.3 rel1/arm-none-eabi/include/string.h"
  908              		.file 15 "USB_DEVICE/App/usbd_cdc_if.h"
  909              		.file 16 "<built-in>"
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s 			page 28
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccBCM8Yq.s 			page 28
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 SendDataProcess.c
-C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s:19     .text.Packet_CRC8:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s:24     .text.Packet_CRC8:00000000 Packet_CRC8
-C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s:121    .text.vSendLogProcessTask:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s:127    .text.vSendLogProcessTask:00000000 vSendLogProcessTask
-C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s:218    .text.vSendLogProcessTask:00000044 $d
-C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s:878    .bss.xReceiveLogQueue:00000000 xReceiveLogQueue
-C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s:223    .text.vCreateReceiveLogQueueTask:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s:229    .text.vCreateReceiveLogQueueTask:00000000 vCreateReceiveLogQueueTask
-C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s:261    .text.vCreateReceiveLogQueueTask:00000014 $d
-C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s:266    .rodata.vCreateSendLogTask.str1.4:00000000 $d
-C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s:270    .text.vCreateSendLogTask:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s:276    .text.vCreateSendLogTask:00000000 vCreateSendLogTask
-C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s:319    .text.vCreateSendLogTask:0000002c $d
-C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s:885    .bss.xCreateSendLogTaskHandle:00000000 xCreateSendLogTaskHandle
-C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s:892    .bss.xCreateSendLogTaskReturned:00000000 xCreateSendLogTaskReturned
-C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s:327    .text.QueueSendfmt:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s:333    .text.QueueSendfmt:00000000 QueueSendfmt
-C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s:440    .text.BuildReplyPacket:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s:446    .text.BuildReplyPacket:00000000 BuildReplyPacket
-C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s:603    .rodata.ReplyPacket.str1.4:00000000 $d
-C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s:630    .text.ReplyPacket:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s:636    .text.ReplyPacket:00000000 ReplyPacket
-C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s:862    .text.ReplyPacket:000000e8 $d
-C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s:875    .bss.xReceiveLogQueue:00000000 $d
-C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s:882    .bss.xCreateSendLogTaskHandle:00000000 $d
-C:\Users\Administrator\AppData\Local\Temp\cc7HCUy2.s:889    .bss.xCreateSendLogTaskReturned:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\ccBCM8Yq.s:19     .text.Packet_CRC8:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\ccBCM8Yq.s:24     .text.Packet_CRC8:00000000 Packet_CRC8
+C:\Users\Administrator\AppData\Local\Temp\ccBCM8Yq.s:121    .text.vSendLogProcessTask:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\ccBCM8Yq.s:127    .text.vSendLogProcessTask:00000000 vSendLogProcessTask
+C:\Users\Administrator\AppData\Local\Temp\ccBCM8Yq.s:218    .text.vSendLogProcessTask:00000044 $d
+C:\Users\Administrator\AppData\Local\Temp\ccBCM8Yq.s:878    .bss.xReceiveLogQueue:00000000 xReceiveLogQueue
+C:\Users\Administrator\AppData\Local\Temp\ccBCM8Yq.s:223    .text.vCreateReceiveLogQueueTask:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\ccBCM8Yq.s:229    .text.vCreateReceiveLogQueueTask:00000000 vCreateReceiveLogQueueTask
+C:\Users\Administrator\AppData\Local\Temp\ccBCM8Yq.s:261    .text.vCreateReceiveLogQueueTask:00000014 $d
+C:\Users\Administrator\AppData\Local\Temp\ccBCM8Yq.s:266    .rodata.vCreateSendLogTask.str1.4:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\ccBCM8Yq.s:270    .text.vCreateSendLogTask:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\ccBCM8Yq.s:276    .text.vCreateSendLogTask:00000000 vCreateSendLogTask
+C:\Users\Administrator\AppData\Local\Temp\ccBCM8Yq.s:319    .text.vCreateSendLogTask:0000002c $d
+C:\Users\Administrator\AppData\Local\Temp\ccBCM8Yq.s:885    .bss.xCreateSendLogTaskHandle:00000000 xCreateSendLogTaskHandle
+C:\Users\Administrator\AppData\Local\Temp\ccBCM8Yq.s:892    .bss.xCreateSendLogTaskReturned:00000000 xCreateSendLogTaskReturned
+C:\Users\Administrator\AppData\Local\Temp\ccBCM8Yq.s:327    .text.QueueSendfmt:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\ccBCM8Yq.s:333    .text.QueueSendfmt:00000000 QueueSendfmt
+C:\Users\Administrator\AppData\Local\Temp\ccBCM8Yq.s:440    .text.BuildReplyPacket:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\ccBCM8Yq.s:446    .text.BuildReplyPacket:00000000 BuildReplyPacket
+C:\Users\Administrator\AppData\Local\Temp\ccBCM8Yq.s:603    .rodata.ReplyPacket.str1.4:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\ccBCM8Yq.s:630    .text.ReplyPacket:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\ccBCM8Yq.s:636    .text.ReplyPacket:00000000 ReplyPacket
+C:\Users\Administrator\AppData\Local\Temp\ccBCM8Yq.s:862    .text.ReplyPacket:000000e8 $d
+C:\Users\Administrator\AppData\Local\Temp\ccBCM8Yq.s:875    .bss.xReceiveLogQueue:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\ccBCM8Yq.s:882    .bss.xCreateSendLogTaskHandle:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\ccBCM8Yq.s:889    .bss.xCreateSendLogTaskReturned:00000000 $d
 
 UNDEFINED SYMBOLS
 xQueueReceive

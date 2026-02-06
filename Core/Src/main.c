@@ -28,8 +28,8 @@
 /* USER CODE BEGIN Includes */
 #include "ReceiveDataProcess.h"
 #include "SendDataProcess.h"
-#include "HWCI.h"
 #include "ADCAPP.h"
+#include "TaskList.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/

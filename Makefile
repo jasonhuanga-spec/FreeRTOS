@@ -89,7 +89,10 @@ UserDriver/Source/HWCIDri.c	\
 UserAPP/Source/ADCAPP.c	\
 UserAPP/Source/TaskList.c \
 UserAPP/Source/DPPTM.c \
-UserAPP/Source/DPPTMIIC.c
+UserAPP/Source/DPPTMIIC.c \
+UserAPP/Source/ESL.c \
+UserAPP/Source/ESL4SPI.c \
+UserAPP/Source/ESLComDri.c
 
 
 

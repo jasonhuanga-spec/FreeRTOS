@@ -8,6 +8,7 @@
 #include "ReceiveDataProcess.h" 
 #include "SendDataProcess.h"
 #include "HWCIDri.h"
+#include "ESL.h"
 
 /* 功能码列表：用于区分不同的通信功能 */ // 每行注释
 typedef enum {
@@ -24,7 +25,8 @@ typedef enum {
     TASK_ID_SelectInductor = 3, /* SelectInductor 任务，值为 3 */ // 每行注释
     TASK_ID_SelectResistance = 4, /* SelectResistance 任务，值为 4 */ // 每行注释
     TASK_ID_SetESLVDDVoltage = 5, /* ControlDPPTM 任务，值为 5 */ // 每行注释
-    TASK_ID_SendVoltagePacket = 6 /* SendVoltagePacket 任务，值为 6 */ // 每行注释
+    TASK_ID_SendVoltagePacket = 6, /* SendVoltagePacket 任务，值为 6 */ // 每行注释
+    TASK_ID_ESLCommands = 7 /* ESLCommands 任务，值为 7 */ // 每行注释
 } TaskID_t; /* 任务 ID 枚举类型定义 */ // 每行注释
 
 /* 应答码枚举：用于上位机和下位机之间的应答表示 */ // 每行注释
@@ -37,6 +39,7 @@ extern QueueHandle_t xParsedDataQueue; /* extern 声明：解析后数据队列 
 
 /* HWCI 任务句柄的外部声明，供其他模块引用 */ // 每行注释
 extern TaskHandle_t xHWCIProcessTaskHandle; /* extern 声明：HWCI 任务句柄 */ // 每行注释
+extern float TargetVDDVoltage; /* 目标 VDD 电压全局变量声明 */ // 每行注释
 
 /* 创建 HWCI 处理任务的接口函数声明 */ // 每行注释
 void vCreateHWCIProcessTask(void); /* 创建并启动 HWCI 处理任务 */ // 每行注释

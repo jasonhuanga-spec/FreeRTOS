@@ -295,6 +295,8 @@ uint8_t CDC_Transmit_FS(uint8_t* Buf, uint16_t Len)
   return result;
 }
 
+
+
 /* USER CODE BEGIN PRIVATE_FUNCTIONS_IMPLEMENTATION */
 
 /**
@@ -315,6 +317,14 @@ int _write(int fd, uint8_t* ptr, int len)
     return len;
 }
 
+
+
+
+uint8_t USBD_CDC_GetTxState(void)
+{
+  USBD_CDC_HandleTypeDef *hcdc = (USBD_CDC_HandleTypeDef*)hUsbDeviceFS.pClassData;
+  return (hcdc != NULL) ? hcdc->TxState : 0;
+}
 /* USER CODE END PRIVATE_FUNCTIONS_IMPLEMENTATION */
 
 /**

@@ -35,33 +35,32 @@ void Soft_IIC_Init(void)
 }
 
 /**
- * @brief SDA引脚设置输出模式
+ * @brief SDA引脚设置输出模式（直接操作CRL/CRH寄存器，比HAL_GPIO_Init快10倍以上）
  * @param  无
  * @return 无
  */
 static void Soft_IIC_Output(void)
 {
-    GPIO_InitTypeDef SOFT_IIC_GPIO_STRUCT;
-    SOFT_IIC_GPIO_STRUCT.Mode = GPIO_MODE_OUTPUT_PP;
-    SOFT_IIC_GPIO_STRUCT.Pin = IIC_SDA_PIN;
-    SOFT_IIC_GPIO_STRUCT.Speed = GPIO_SPEED_FREQ_HIGH;
-
-    HAL_GPIO_Init(IIC_SDA_PORT, &SOFT_IIC_GPIO_STRUCT);
+    /* PC2 在 CRL 寄存器 [11:8] 位对应 MODE2[1:0]+CNF2[1:0]
+       输出推挽50MHz: MODE=11, CNF=00 → 0x3 */
+    uint32_t tmp = IIC_SDA_PORT->CRL;
+    tmp &= ~(0xFUL << (2 * 4));          // 清除 PIN2 的 4 位配置
+    tmp |=  (0x3UL << (2 * 4));          // MODE=11(50MHz输出), CNF=00(推挽)
+    IIC_SDA_PORT->CRL = tmp;
 }
 
 /**
- * @brief SDA引脚设置输入模式
+ * @brief SDA引脚设置输入模式（直接操作CRL/CRH寄存器）
  * @param  无
  * @return 无
  */
 static void Soft_IIC_Input(void)
 {
-    GPIO_InitTypeDef SOFT_IIC_GPIO_STRUCT;
-    SOFT_IIC_GPIO_STRUCT.Mode = GPIO_MODE_INPUT;
-    SOFT_IIC_GPIO_STRUCT.Pin = IIC_SDA_PIN;
-    SOFT_IIC_GPIO_STRUCT.Speed = GPIO_SPEED_FREQ_HIGH;
-
-    HAL_GPIO_Init(IIC_SDA_PORT, &SOFT_IIC_GPIO_STRUCT);
+    /* PC2 浮空输入: MODE=00, CNF=01 → 0x4 */
+    uint32_t tmp = IIC_SDA_PORT->CRL;
+    tmp &= ~(0xFUL << (2 * 4));          // 清除 PIN2 的 4 位配置
+    tmp |=  (0x4UL << (2 * 4));          // MODE=00(输入), CNF=01(浮空输入)
+    IIC_SDA_PORT->CRL = tmp;
 }
 
 /**
@@ -135,7 +134,7 @@ void Soft_IIC_NACK(void)
  */
 uint8_t Soft_IIC_Wait_ACK(void)
 {
-    static uint8_t wait;
+    uint16_t wait = 0;                    // 【修复】改为局部变量，每次调用都从0开始
     Soft_IIC_Output();
     IIC_SDA_H();
     Soft_IIC_Input();
@@ -144,11 +143,12 @@ uint8_t Soft_IIC_Wait_ACK(void)
     while (HAL_GPIO_ReadPin(IIC_SDA_PORT, IIC_SDA_PIN))
     {
         wait++;
-        if (wait > 200)
+        if (wait > 500)                   // 增大超时上限，避免快速总线误判
         {
             Soft_IIC_Stop();
             return 0;
         }
+        __NOP();                          // 加入空指令，减少GPIO读取频率
     }
     IIC_SCL_L();
     return 1;

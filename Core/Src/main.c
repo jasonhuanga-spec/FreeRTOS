@@ -100,7 +100,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   vCreateReceiveDataTask();
-  vCreateSendLogTask();
+  vCreateSendDataTask();
   vCreateHWCIProcessTask();
   vCreateADCTask();
   

@@ -1,0 +1,705 @@
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccBHX8rg.s 			page 1
+
+
+   1              		.cpu cortex-m3
+   2              		.arch armv7-m
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"ESL.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.file 1 "UserAPP/Source/ESL.c"
+  18              		.section	.text.ESLtest,"ax",%progbits
+  19              		.align	1
+  20              		.global	ESLtest
+  21              		.syntax unified
+  22              		.thumb
+  23              		.thumb_func
+  25              	ESLtest:
+  26              	.LFB79:
+   1:UserAPP/Source/ESL.c **** #include "ESL.h"
+   2:UserAPP/Source/ESL.c **** #include "SendDataProcess.h"  // 添加SendDataProcess.h以使用BuildReplyPacket等函数
+   3:UserAPP/Source/ESL.c **** 
+   4:UserAPP/Source/ESL.c **** 
+   5:UserAPP/Source/ESL.c **** /**
+   6:UserAPP/Source/ESL.c ****  * @函数名称       测试
+   7:UserAPP/Source/ESL.c ****  * @说明           验证功能
+   8:UserAPP/Source/ESL.c ****  */
+   9:UserAPP/Source/ESL.c **** void ESLtest(void)
+  10:UserAPP/Source/ESL.c **** {
+  27              		.loc 1 10 1 view -0
+  28              		.cfi_startproc
+  29              		@ args = 0, pretend = 0, frame = 0
+  30              		@ frame_needed = 0, uses_anonymous_args = 0
+  31 0000 10B5     		push	{r4, lr}
+  32              	.LCFI0:
+  33              		.cfi_def_cfa_offset 8
+  34              		.cfi_offset 4, -8
+  35              		.cfi_offset 14, -4
+  11:UserAPP/Source/ESL.c ****     ESL_RESET();
+  36              		.loc 1 11 5 view .LVU1
+  37 0002 FFF7FEFF 		bl	ESL_RESET
+  38              	.LVL0:
+  12:UserAPP/Source/ESL.c **** 
+  13:UserAPP/Source/ESL.c ****     ESL4SPI_WriteCMD(0x4D);
+  39              		.loc 1 13 5 view .LVU2
+  40 0006 4D20     		movs	r0, #77
+  41 0008 FFF7FEFF 		bl	ESL4SPI_WriteCMD
+  42              	.LVL1:
+  14:UserAPP/Source/ESL.c ****     ESL4SPI_WriteDATA(0x78);
+  43              		.loc 1 14 5 view .LVU3
+  44 000c 7820     		movs	r0, #120
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccBHX8rg.s 			page 2
+
+
+  45 000e FFF7FEFF 		bl	ESL4SPI_WriteDATA
+  46              	.LVL2:
+  15:UserAPP/Source/ESL.c **** 
+  16:UserAPP/Source/ESL.c ****     ESL4SPI_WriteCMD(0x01);
+  47              		.loc 1 16 5 view .LVU4
+  48 0012 0120     		movs	r0, #1
+  49 0014 FFF7FEFF 		bl	ESL4SPI_WriteCMD
+  50              	.LVL3:
+  17:UserAPP/Source/ESL.c **** 	ESL4SPI_WriteDATA(0x07);
+  51              		.loc 1 17 2 view .LVU5
+  52 0018 0720     		movs	r0, #7
+  53 001a FFF7FEFF 		bl	ESL4SPI_WriteDATA
+  54              	.LVL4:
+  18:UserAPP/Source/ESL.c **** 	ESL4SPI_WriteDATA(0x00);
+  55              		.loc 1 18 2 view .LVU6
+  56 001e 0020     		movs	r0, #0
+  57 0020 FFF7FEFF 		bl	ESL4SPI_WriteDATA
+  58              	.LVL5:
+  19:UserAPP/Source/ESL.c **** 	ESL4SPI_WriteDATA(0x16);
+  59              		.loc 1 19 2 view .LVU7
+  60 0024 1620     		movs	r0, #22
+  61 0026 FFF7FEFF 		bl	ESL4SPI_WriteDATA
+  62              	.LVL6:
+  20:UserAPP/Source/ESL.c **** 	ESL4SPI_WriteDATA(0x78);
+  63              		.loc 1 20 2 view .LVU8
+  64 002a 7820     		movs	r0, #120
+  65 002c FFF7FEFF 		bl	ESL4SPI_WriteDATA
+  66              	.LVL7:
+  21:UserAPP/Source/ESL.c **** 	ESL4SPI_WriteDATA(0x2E);
+  67              		.loc 1 21 2 view .LVU9
+  68 0030 2E20     		movs	r0, #46
+  69 0032 FFF7FEFF 		bl	ESL4SPI_WriteDATA
+  70              	.LVL8:
+  22:UserAPP/Source/ESL.c **** 	ESL4SPI_WriteDATA(0x16);
+  71              		.loc 1 22 2 view .LVU10
+  72 0036 1620     		movs	r0, #22
+  73 0038 FFF7FEFF 		bl	ESL4SPI_WriteDATA
+  74              	.LVL9:
+  23:UserAPP/Source/ESL.c **** 	
+  24:UserAPP/Source/ESL.c **** 	ESL4SPI_WriteCMD(0x03);
+  75              		.loc 1 24 2 view .LVU11
+  76 003c 0320     		movs	r0, #3
+  77 003e FFF7FEFF 		bl	ESL4SPI_WriteCMD
+  78              	.LVL10:
+  25:UserAPP/Source/ESL.c **** 	ESL4SPI_WriteDATA(0x10);
+  79              		.loc 1 25 2 view .LVU12
+  80 0042 1020     		movs	r0, #16
+  81 0044 FFF7FEFF 		bl	ESL4SPI_WriteDATA
+  82              	.LVL11:
+  26:UserAPP/Source/ESL.c **** 	ESL4SPI_WriteDATA(0x54);
+  83              		.loc 1 26 2 view .LVU13
+  84 0048 5420     		movs	r0, #84
+  85 004a FFF7FEFF 		bl	ESL4SPI_WriteDATA
+  86              	.LVL12:
+  27:UserAPP/Source/ESL.c **** 	ESL4SPI_WriteDATA(0x44);
+  87              		.loc 1 27 2 view .LVU14
+  88 004e 4420     		movs	r0, #68
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccBHX8rg.s 			page 3
+
+
+  89 0050 FFF7FEFF 		bl	ESL4SPI_WriteDATA
+  90              	.LVL13:
+  28:UserAPP/Source/ESL.c **** 	
+  29:UserAPP/Source/ESL.c **** 	ESL4SPI_WriteCMD(0x06);
+  91              		.loc 1 29 2 view .LVU15
+  92 0054 0620     		movs	r0, #6
+  93 0056 FFF7FEFF 		bl	ESL4SPI_WriteCMD
+  94              	.LVL14:
+  30:UserAPP/Source/ESL.c **** 	ESL4SPI_WriteDATA(0x0F);
+  95              		.loc 1 30 2 view .LVU16
+  96 005a 0F20     		movs	r0, #15
+  97 005c FFF7FEFF 		bl	ESL4SPI_WriteDATA
+  98              	.LVL15:
+  31:UserAPP/Source/ESL.c **** 	ESL4SPI_WriteDATA(0x0A);
+  99              		.loc 1 31 2 view .LVU17
+ 100 0060 0A20     		movs	r0, #10
+ 101 0062 FFF7FEFF 		bl	ESL4SPI_WriteDATA
+ 102              	.LVL16:
+  32:UserAPP/Source/ESL.c **** 	ESL4SPI_WriteDATA(0x2F);
+ 103              		.loc 1 32 2 view .LVU18
+ 104 0066 2F20     		movs	r0, #47
+ 105 0068 FFF7FEFF 		bl	ESL4SPI_WriteDATA
+ 106              	.LVL17:
+  33:UserAPP/Source/ESL.c **** 	ESL4SPI_WriteDATA(0x25);
+ 107              		.loc 1 33 2 view .LVU19
+ 108 006c 2520     		movs	r0, #37
+ 109 006e FFF7FEFF 		bl	ESL4SPI_WriteDATA
+ 110              	.LVL18:
+  34:UserAPP/Source/ESL.c **** 	ESL4SPI_WriteDATA(0x22);
+ 111              		.loc 1 34 2 view .LVU20
+ 112 0072 2220     		movs	r0, #34
+ 113 0074 FFF7FEFF 		bl	ESL4SPI_WriteDATA
+ 114              	.LVL19:
+  35:UserAPP/Source/ESL.c **** 	ESL4SPI_WriteDATA(0x2E);
+ 115              		.loc 1 35 2 view .LVU21
+ 116 0078 2E20     		movs	r0, #46
+ 117 007a FFF7FEFF 		bl	ESL4SPI_WriteDATA
+ 118              	.LVL20:
+  36:UserAPP/Source/ESL.c **** 	ESL4SPI_WriteDATA(0x1A);
+ 119              		.loc 1 36 2 view .LVU22
+ 120 007e 1A20     		movs	r0, #26
+ 121 0080 FFF7FEFF 		bl	ESL4SPI_WriteDATA
+ 122              	.LVL21:
+  37:UserAPP/Source/ESL.c **** 	
+  38:UserAPP/Source/ESL.c **** 	ESL4SPI_WriteCMD(0x61);
+ 123              		.loc 1 38 2 view .LVU23
+ 124 0084 6120     		movs	r0, #97
+ 125 0086 FFF7FEFF 		bl	ESL4SPI_WriteCMD
+ 126              	.LVL22:
+  39:UserAPP/Source/ESL.c **** 	ESL4SPI_WriteDATA(0x00);
+ 127              		.loc 1 39 2 view .LVU24
+ 128 008a 0020     		movs	r0, #0
+ 129 008c FFF7FEFF 		bl	ESL4SPI_WriteDATA
+ 130              	.LVL23:
+  40:UserAPP/Source/ESL.c **** 	ESL4SPI_WriteDATA(0x98);
+ 131              		.loc 1 40 2 view .LVU25
+ 132 0090 9820     		movs	r0, #152
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccBHX8rg.s 			page 4
+
+
+ 133 0092 FFF7FEFF 		bl	ESL4SPI_WriteDATA
+ 134              	.LVL24:
+  41:UserAPP/Source/ESL.c **** 	ESL4SPI_WriteDATA(0x01);
+ 135              		.loc 1 41 2 view .LVU26
+ 136 0096 0120     		movs	r0, #1
+ 137 0098 FFF7FEFF 		bl	ESL4SPI_WriteDATA
+ 138              	.LVL25:
+  42:UserAPP/Source/ESL.c **** 	ESL4SPI_WriteDATA(0x28);
+ 139              		.loc 1 42 2 view .LVU27
+ 140 009c 2820     		movs	r0, #40
+ 141 009e FFF7FEFF 		bl	ESL4SPI_WriteDATA
+ 142              	.LVL26:
+  43:UserAPP/Source/ESL.c **** 	
+  44:UserAPP/Source/ESL.c **** 	ESL4SPI_WriteCMD(0x00);
+ 143              		.loc 1 44 2 view .LVU28
+ 144 00a2 0020     		movs	r0, #0
+ 145 00a4 FFF7FEFF 		bl	ESL4SPI_WriteCMD
+ 146              	.LVL27:
+  45:UserAPP/Source/ESL.c **** 	ESL4SPI_WriteDATA(0x03);
+ 147              		.loc 1 45 2 view .LVU29
+ 148 00a8 0320     		movs	r0, #3
+ 149 00aa FFF7FEFF 		bl	ESL4SPI_WriteDATA
+ 150              	.LVL28:
+  46:UserAPP/Source/ESL.c **** 	ESL4SPI_WriteDATA(0x29);
+ 151              		.loc 1 46 2 view .LVU30
+ 152 00ae 2920     		movs	r0, #41
+ 153 00b0 FFF7FEFF 		bl	ESL4SPI_WriteDATA
+ 154              	.LVL29:
+  47:UserAPP/Source/ESL.c **** 	
+  48:UserAPP/Source/ESL.c **** 	ESL4SPI_WriteCMD(0xE3);
+ 155              		.loc 1 48 2 view .LVU31
+ 156 00b4 E320     		movs	r0, #227
+ 157 00b6 FFF7FEFF 		bl	ESL4SPI_WriteCMD
+ 158              	.LVL30:
+  49:UserAPP/Source/ESL.c **** 	ESL4SPI_WriteDATA(0x22);
+ 159              		.loc 1 49 2 view .LVU32
+ 160 00ba 2220     		movs	r0, #34
+ 161 00bc FFF7FEFF 		bl	ESL4SPI_WriteDATA
+ 162              	.LVL31:
+  50:UserAPP/Source/ESL.c **** 	
+  51:UserAPP/Source/ESL.c **** 	ESL4SPI_WriteCMD(0xAE);
+ 163              		.loc 1 51 2 view .LVU33
+ 164 00c0 AE20     		movs	r0, #174
+ 165 00c2 FFF7FEFF 		bl	ESL4SPI_WriteCMD
+ 166              	.LVL32:
+  52:UserAPP/Source/ESL.c **** 	ESL4SPI_WriteDATA(0x0F);
+ 167              		.loc 1 52 2 view .LVU34
+ 168 00c6 0F20     		movs	r0, #15
+ 169 00c8 FFF7FEFF 		bl	ESL4SPI_WriteDATA
+ 170              	.LVL33:
+  53:UserAPP/Source/ESL.c **** 	
+  54:UserAPP/Source/ESL.c **** 	ESL4SPI_WriteCMD(0xB6);
+ 171              		.loc 1 54 2 view .LVU35
+ 172 00cc B620     		movs	r0, #182
+ 173 00ce FFF7FEFF 		bl	ESL4SPI_WriteCMD
+ 174              	.LVL34:
+  55:UserAPP/Source/ESL.c **** 	ESL4SPI_WriteDATA(0x0F);
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccBHX8rg.s 			page 5
+
+
+ 175              		.loc 1 55 2 view .LVU36
+ 176 00d2 0F20     		movs	r0, #15
+ 177 00d4 FFF7FEFF 		bl	ESL4SPI_WriteDATA
+ 178              	.LVL35:
+  56:UserAPP/Source/ESL.c **** 	
+  57:UserAPP/Source/ESL.c **** 	ESL4SPI_WriteCMD(0x82);
+ 179              		.loc 1 57 2 view .LVU37
+ 180 00d8 8220     		movs	r0, #130
+ 181 00da FFF7FEFF 		bl	ESL4SPI_WriteCMD
+ 182              	.LVL36:
+  58:UserAPP/Source/ESL.c **** 	ESL4SPI_WriteDATA(0x96);
+ 183              		.loc 1 58 2 view .LVU38
+ 184 00de 9620     		movs	r0, #150
+ 185 00e0 FFF7FEFF 		bl	ESL4SPI_WriteDATA
+ 186              	.LVL37:
+  59:UserAPP/Source/ESL.c **** 	
+  60:UserAPP/Source/ESL.c **** 	ESL4SPI_WriteCMD(0x30);
+ 187              		.loc 1 60 2 view .LVU39
+ 188 00e4 3020     		movs	r0, #48
+ 189 00e6 FFF7FEFF 		bl	ESL4SPI_WriteCMD
+ 190              	.LVL38:
+  61:UserAPP/Source/ESL.c **** 	ESL4SPI_WriteDATA(0x08);
+ 191              		.loc 1 61 2 view .LVU40
+ 192 00ea 0820     		movs	r0, #8
+ 193 00ec FFF7FEFF 		bl	ESL4SPI_WriteDATA
+ 194              	.LVL39:
+  62:UserAPP/Source/ESL.c **** 	
+  63:UserAPP/Source/ESL.c **** 	ESL4SPI_WriteCMD(0xF0);
+ 195              		.loc 1 63 2 view .LVU41
+ 196 00f0 F020     		movs	r0, #240
+ 197 00f2 FFF7FEFF 		bl	ESL4SPI_WriteCMD
+ 198              	.LVL40:
+  64:UserAPP/Source/ESL.c **** 	ESL4SPI_WriteDATA(0x5F);
+ 199              		.loc 1 64 2 view .LVU42
+ 200 00f6 5F20     		movs	r0, #95
+ 201 00f8 FFF7FEFF 		bl	ESL4SPI_WriteDATA
+ 202              	.LVL41:
+  65:UserAPP/Source/ESL.c **** 	
+  66:UserAPP/Source/ESL.c **** 	ESL4SPI_WriteCMD(0xE9);
+ 203              		.loc 1 66 2 view .LVU43
+ 204 00fc E920     		movs	r0, #233
+ 205 00fe FFF7FEFF 		bl	ESL4SPI_WriteCMD
+ 206              	.LVL42:
+  67:UserAPP/Source/ESL.c **** 	ESL4SPI_WriteDATA(0x01);
+ 207              		.loc 1 67 2 view .LVU44
+ 208 0102 0120     		movs	r0, #1
+ 209 0104 FFF7FEFF 		bl	ESL4SPI_WriteDATA
+ 210              	.LVL43:
+  68:UserAPP/Source/ESL.c **** 	
+  69:UserAPP/Source/ESL.c **** 	
+  70:UserAPP/Source/ESL.c **** 
+  71:UserAPP/Source/ESL.c **** 	ESL4SPI_WriteCMD(0x10);
+ 211              		.loc 1 71 2 view .LVU45
+ 212 0108 1020     		movs	r0, #16
+ 213 010a FFF7FEFF 		bl	ESL4SPI_WriteCMD
+ 214              	.LVL44:
+  72:UserAPP/Source/ESL.c ****     for(int i = 0; i < 11248; i ++)
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccBHX8rg.s 			page 6
+
+
+ 215              		.loc 1 72 5 view .LVU46
+ 216              	.LBB2:
+ 217              		.loc 1 72 9 view .LVU47
+ 218              		.loc 1 72 13 is_stmt 0 view .LVU48
+ 219 010e 0024     		movs	r4, #0
+ 220              		.loc 1 72 5 view .LVU49
+ 221 0110 03E0     		b	.L2
+ 222              	.LVL45:
+ 223              	.L3:
+  73:UserAPP/Source/ESL.c ****     {
+  74:UserAPP/Source/ESL.c ****         ESL4SPI_WriteDATA(0x00);
+ 224              		.loc 1 74 9 is_stmt 1 view .LVU50
+ 225 0112 0020     		movs	r0, #0
+ 226 0114 FFF7FEFF 		bl	ESL4SPI_WriteDATA
+ 227              	.LVL46:
+  72:UserAPP/Source/ESL.c ****     for(int i = 0; i < 11248; i ++)
+ 228              		.loc 1 72 33 discriminator 3 view .LVU51
+ 229 0118 0134     		adds	r4, r4, #1
+ 230              	.LVL47:
+ 231              	.L2:
+  72:UserAPP/Source/ESL.c ****     for(int i = 0; i < 11248; i ++)
+ 232              		.loc 1 72 22 discriminator 1 view .LVU52
+ 233 011a 42F6EF33 		movw	r3, #11247
+ 234 011e 9C42     		cmp	r4, r3
+ 235 0120 F7DD     		ble	.L3
+ 236              	.LBE2:
+  75:UserAPP/Source/ESL.c ****     }
+  76:UserAPP/Source/ESL.c ****     
+  77:UserAPP/Source/ESL.c **** 
+  78:UserAPP/Source/ESL.c ****     // ESL4SPI_WriteCMD(0x17);
+  79:UserAPP/Source/ESL.c **** 	// ESL4SPI_WriteDATA(0xA5);
+  80:UserAPP/Source/ESL.c **** 
+  81:UserAPP/Source/ESL.c **** 	ESL4SPI_WriteCMD(0x04); 
+ 237              		.loc 1 81 2 view .LVU53
+ 238 0122 0420     		movs	r0, #4
+ 239 0124 FFF7FEFF 		bl	ESL4SPI_WriteCMD
+ 240              	.LVL48:
+  82:UserAPP/Source/ESL.c **** 	Check_Busy();
+ 241              		.loc 1 82 2 view .LVU54
+ 242 0128 FFF7FEFF 		bl	Check_Busy
+ 243              	.LVL49:
+  83:UserAPP/Source/ESL.c **** 
+  84:UserAPP/Source/ESL.c **** 	ESL4SPI_WriteCMD(0x12); 
+ 244              		.loc 1 84 2 view .LVU55
+ 245 012c 1220     		movs	r0, #18
+ 246 012e FFF7FEFF 		bl	ESL4SPI_WriteCMD
+ 247              	.LVL50:
+  85:UserAPP/Source/ESL.c **** 	ESL4SPI_WriteDATA(0x00);
+ 248              		.loc 1 85 2 view .LVU56
+ 249 0132 0020     		movs	r0, #0
+ 250 0134 FFF7FEFF 		bl	ESL4SPI_WriteDATA
+ 251              	.LVL51:
+  86:UserAPP/Source/ESL.c **** 	Check_Busy();
+ 252              		.loc 1 86 2 view .LVU57
+ 253 0138 FFF7FEFF 		bl	Check_Busy
+ 254              	.LVL52:
+  87:UserAPP/Source/ESL.c **** 
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccBHX8rg.s 			page 7
+
+
+  88:UserAPP/Source/ESL.c ****     HAL_Delay(100);
+ 255              		.loc 1 88 5 view .LVU58
+ 256 013c 6420     		movs	r0, #100
+ 257 013e FFF7FEFF 		bl	HAL_Delay
+ 258              	.LVL53:
+  89:UserAPP/Source/ESL.c **** }
+ 259              		.loc 1 89 1 is_stmt 0 view .LVU59
+ 260 0142 10BD     		pop	{r4, pc}
+ 261              		.loc 1 89 1 view .LVU60
+ 262              		.cfi_endproc
+ 263              	.LFE79:
+ 265              		.section	.text.E52bitRead,"ax",%progbits
+ 266              		.align	1
+ 267              		.global	E52bitRead
+ 268              		.syntax unified
+ 269              		.thumb
+ 270              		.thumb_func
+ 272              	E52bitRead:
+ 273              	.LVL54:
+ 274              	.LFB80:
+  90:UserAPP/Source/ESL.c **** 
+  91:UserAPP/Source/ESL.c **** 
+  92:UserAPP/Source/ESL.c **** /**
+  93:UserAPP/Source/ESL.c ****  * @函数名称       E52bitRead
+  94:UserAPP/Source/ESL.c ****  * @说明           读取E52bit数据
+  95:UserAPP/Source/ESL.c **** */
+  96:UserAPP/Source/ESL.c **** void E52bitRead(uint8_t Address, uint8_t Number)
+  97:UserAPP/Source/ESL.c **** {
+ 275              		.loc 1 97 1 is_stmt 1 view -0
+ 276              		.cfi_startproc
+ 277              		@ args = 0, pretend = 0, frame = 128
+ 278              		@ frame_needed = 0, uses_anonymous_args = 0
+ 279              		.loc 1 97 1 is_stmt 0 view .LVU62
+ 280 0000 30B5     		push	{r4, r5, lr}
+ 281              	.LCFI1:
+ 282              		.cfi_def_cfa_offset 12
+ 283              		.cfi_offset 4, -12
+ 284              		.cfi_offset 5, -8
+ 285              		.cfi_offset 14, -4
+ 286 0002 A3B0     		sub	sp, sp, #140
+ 287              	.LCFI2:
+ 288              		.cfi_def_cfa_offset 152
+ 289 0004 0D46     		mov	r5, r1
+  98:UserAPP/Source/ESL.c ****     uint8_t readData[PACKET_MAX_DATA_LEN];  // 最大读取59字节
+ 290              		.loc 1 98 5 is_stmt 1 view .LVU63
+  99:UserAPP/Source/ESL.c ****     uint8_t outBuf[PACKET_MAX_SIZE];
+ 291              		.loc 1 99 5 view .LVU64
+ 100:UserAPP/Source/ESL.c ****     uint16_t outLen = 0;
+ 292              		.loc 1 100 5 view .LVU65
+ 293              		.loc 1 100 14 is_stmt 0 view .LVU66
+ 294 0006 0024     		movs	r4, #0
+ 295 0008 ADF80A40 		strh	r4, [sp, #10]	@ movhi
+ 101:UserAPP/Source/ESL.c **** 
+ 102:UserAPP/Source/ESL.c ****     ESL4SPI_WriteCMD(Address);  // 发送读取命令地址
+ 296              		.loc 1 102 5 is_stmt 1 view .LVU67
+ 297 000c FFF7FEFF 		bl	ESL4SPI_WriteCMD
+ 298              	.LVL55:
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccBHX8rg.s 			page 8
+
+
+ 103:UserAPP/Source/ESL.c **** 
+ 104:UserAPP/Source/ESL.c ****     for (uint8_t i = 0; i < Number; i++)
+ 299              		.loc 1 104 5 view .LVU68
+ 300              	.LBB3:
+ 301              		.loc 1 104 10 view .LVU69
+ 302              		.loc 1 104 5 is_stmt 0 view .LVU70
+ 303 0010 09E0     		b	.L6
+ 304              	.LVL56:
+ 305              	.L7:
+ 105:UserAPP/Source/ESL.c ****     {
+ 106:UserAPP/Source/ESL.c ****         readData[i] = ESL4SPI_ReadDATA();  // 读取数据并保存
+ 306              		.loc 1 106 9 is_stmt 1 view .LVU71
+ 307              		.loc 1 106 23 is_stmt 0 view .LVU72
+ 308 0012 FFF7FEFF 		bl	ESL4SPI_ReadDATA
+ 309              	.LVL57:
+ 310              		.loc 1 106 21 discriminator 1 view .LVU73
+ 311 0016 04F18803 		add	r3, r4, #136
+ 312 001a 0DEB0302 		add	r2, sp, r3
+ 313 001e 02F83C0C 		strb	r0, [r2, #-60]
+ 104:UserAPP/Source/ESL.c ****     {
+ 314              		.loc 1 104 38 is_stmt 1 discriminator 3 view .LVU74
+ 315 0022 0134     		adds	r4, r4, #1
+ 316              	.LVL58:
+ 104:UserAPP/Source/ESL.c ****     {
+ 317              		.loc 1 104 38 is_stmt 0 discriminator 3 view .LVU75
+ 318 0024 E4B2     		uxtb	r4, r4
+ 319              	.LVL59:
+ 320              	.L6:
+ 104:UserAPP/Source/ESL.c ****     {
+ 321              		.loc 1 104 27 is_stmt 1 discriminator 1 view .LVU76
+ 322 0026 AC42     		cmp	r4, r5
+ 323 0028 F3D3     		bcc	.L7
+ 324              	.LBE3:
+ 107:UserAPP/Source/ESL.c ****     }
+ 108:UserAPP/Source/ESL.c **** 
+ 109:UserAPP/Source/ESL.c ****     // 构建数据包发送读取的数据
+ 110:UserAPP/Source/ESL.c ****     uint8_t buildRet = BuildReplyPacket((uint8_t)FUNCTION_CODE_DataPacket, TASK_ID_ESLCommands, rea
+ 325              		.loc 1 110 5 view .LVU77
+ 326              		.loc 1 110 24 is_stmt 0 view .LVU78
+ 327 002a 0DF10A03 		add	r3, sp, #10
+ 328 002e 0193     		str	r3, [sp, #4]
+ 329 0030 03AB     		add	r3, sp, #12
+ 330 0032 0093     		str	r3, [sp]
+ 331 0034 2B46     		mov	r3, r5
+ 332 0036 13AA     		add	r2, sp, #76
+ 333 0038 0721     		movs	r1, #7
+ 334 003a 0220     		movs	r0, #2
+ 335 003c FFF7FEFF 		bl	BuildReplyPacket
+ 336              	.LVL60:
+ 111:UserAPP/Source/ESL.c ****     if (buildRet == 0)  // BuildReplyPacket成功返回0
+ 337              		.loc 1 111 5 is_stmt 1 view .LVU79
+ 338              		.loc 1 111 8 is_stmt 0 view .LVU80
+ 339 0040 08B1     		cbz	r0, .L10
+ 340              	.LVL61:
+ 341              	.L5:
+ 112:UserAPP/Source/ESL.c ****     {
+ 113:UserAPP/Source/ESL.c ****         SendBinaryToHost(outBuf, outLen, pdMS_TO_TICKS(20));
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccBHX8rg.s 			page 9
+
+
+ 114:UserAPP/Source/ESL.c ****     }
+ 115:UserAPP/Source/ESL.c **** }
+ 342              		.loc 1 115 1 view .LVU81
+ 343 0042 23B0     		add	sp, sp, #140
+ 344              	.LCFI3:
+ 345              		.cfi_remember_state
+ 346              		.cfi_def_cfa_offset 12
+ 347              		@ sp needed
+ 348 0044 30BD     		pop	{r4, r5, pc}
+ 349              	.LVL62:
+ 350              	.L10:
+ 351              	.LCFI4:
+ 352              		.cfi_restore_state
+ 113:UserAPP/Source/ESL.c ****     }
+ 353              		.loc 1 113 9 is_stmt 1 view .LVU82
+ 354 0046 C822     		movs	r2, #200
+ 355 0048 BDF80A10 		ldrh	r1, [sp, #10]
+ 356 004c 03A8     		add	r0, sp, #12
+ 357              	.LVL63:
+ 113:UserAPP/Source/ESL.c ****     }
+ 358              		.loc 1 113 9 is_stmt 0 view .LVU83
+ 359 004e FFF7FEFF 		bl	SendBinaryToHost
+ 360              	.LVL64:
+ 361              		.loc 1 115 1 view .LVU84
+ 362 0052 F6E7     		b	.L5
+ 363              		.cfi_endproc
+ 364              	.LFE80:
+ 366              		.section	.text.E52bitWrite,"ax",%progbits
+ 367              		.align	1
+ 368              		.global	E52bitWrite
+ 369              		.syntax unified
+ 370              		.thumb
+ 371              		.thumb_func
+ 373              	E52bitWrite:
+ 374              	.LVL65:
+ 375              	.LFB81:
+ 116:UserAPP/Source/ESL.c **** 
+ 117:UserAPP/Source/ESL.c **** 
+ 118:UserAPP/Source/ESL.c **** 
+ 119:UserAPP/Source/ESL.c **** /******************** E52bitWrite ********************
+ 120:UserAPP/Source/ESL.c ****  * @函数名称       E52bitWrite
+ 121:UserAPP/Source/ESL.c ****  * @说明           写入E52bit数据
+ 122:UserAPP/Source/ESL.c ****  * @参数           Address: 写入地址
+ 123:UserAPP/Source/ESL.c ****  *                Number: 写入数据数量
+ 124:UserAPP/Source/ESL.c ****  * @返回值         无
+ 125:UserAPP/Source/ESL.c ****  * @备注           这里示例写入索引值，实际应用中应替换为需要写入的数据
+ 126:UserAPP/Source/ESL.c ****  */
+ 127:UserAPP/Source/ESL.c **** void E52bitWrite(uint8_t Address, uint8_t Number)
+ 128:UserAPP/Source/ESL.c **** {
+ 376              		.loc 1 128 1 is_stmt 1 view -0
+ 377              		.cfi_startproc
+ 378              		@ args = 0, pretend = 0, frame = 0
+ 379              		@ frame_needed = 0, uses_anonymous_args = 0
+ 380              		.loc 1 128 1 is_stmt 0 view .LVU86
+ 381 0000 38B5     		push	{r3, r4, r5, lr}
+ 382              	.LCFI5:
+ 383              		.cfi_def_cfa_offset 16
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccBHX8rg.s 			page 10
+
+
+ 384              		.cfi_offset 3, -16
+ 385              		.cfi_offset 4, -12
+ 386              		.cfi_offset 5, -8
+ 387              		.cfi_offset 14, -4
+ 388 0002 0D46     		mov	r5, r1
+ 129:UserAPP/Source/ESL.c **** 	ESL4SPI_WriteCMD(Address);  // 发送写入命令地址
+ 389              		.loc 1 129 2 is_stmt 1 view .LVU87
+ 390 0004 FFF7FEFF 		bl	ESL4SPI_WriteCMD
+ 391              	.LVL66:
+ 130:UserAPP/Source/ESL.c **** 
+ 131:UserAPP/Source/ESL.c **** 	for (uint8_t i = 0; i < Number; i++)
+ 392              		.loc 1 131 2 view .LVU88
+ 393              	.LBB4:
+ 394              		.loc 1 131 7 view .LVU89
+ 395              		.loc 1 131 15 is_stmt 0 view .LVU90
+ 396 0008 0024     		movs	r4, #0
+ 397              		.loc 1 131 2 view .LVU91
+ 398 000a 04E0     		b	.L12
+ 399              	.LVL67:
+ 400              	.L13:
+ 132:UserAPP/Source/ESL.c **** 	{
+ 133:UserAPP/Source/ESL.c **** 		ESL4SPI_WriteDATA(i);  // 示例写入数据（这里写入索引值，实际应用中应替换�
+ 401              		.loc 1 133 3 is_stmt 1 view .LVU92
+ 402 000c 2046     		mov	r0, r4
+ 403 000e FFF7FEFF 		bl	ESL4SPI_WriteDATA
+ 404              	.LVL68:
+ 131:UserAPP/Source/ESL.c **** 	{
+ 405              		.loc 1 131 35 discriminator 3 view .LVU93
+ 406 0012 0134     		adds	r4, r4, #1
+ 407              	.LVL69:
+ 131:UserAPP/Source/ESL.c **** 	{
+ 408              		.loc 1 131 35 is_stmt 0 discriminator 3 view .LVU94
+ 409 0014 E4B2     		uxtb	r4, r4
+ 410              	.LVL70:
+ 411              	.L12:
+ 131:UserAPP/Source/ESL.c **** 	{
+ 412              		.loc 1 131 24 is_stmt 1 discriminator 1 view .LVU95
+ 413 0016 AC42     		cmp	r4, r5
+ 414 0018 F8D3     		bcc	.L13
+ 415              	.LBE4:
+ 134:UserAPP/Source/ESL.c **** 	}
+ 135:UserAPP/Source/ESL.c **** }
+ 416              		.loc 1 135 1 is_stmt 0 view .LVU96
+ 417 001a 38BD     		pop	{r3, r4, r5, pc}
+ 418              		.loc 1 135 1 view .LVU97
+ 419              		.cfi_endproc
+ 420              	.LFE81:
+ 422              		.section	.text.ESLCommands,"ax",%progbits
+ 423              		.align	1
+ 424              		.global	ESLCommands
+ 425              		.syntax unified
+ 426              		.thumb
+ 427              		.thumb_func
+ 429              	ESLCommands:
+ 430              	.LVL71:
+ 431              	.LFB82:
+ 136:UserAPP/Source/ESL.c **** 
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccBHX8rg.s 			page 11
+
+
+ 137:UserAPP/Source/ESL.c **** 
+ 138:UserAPP/Source/ESL.c **** /******************** ESLCommands ********************
+ 139:UserAPP/Source/ESL.c ****  * @函数名称       ESLCommands
+ 140:UserAPP/Source/ESL.c ****  * @说明           处理ESL相关命令，根据RW参数决定读写操作
+ 141:UserAPP/Source/ESL.c ****  * @参数           Address: 读写地址
+ 142:UserAPP/Source/ESL.c ****  *                RW: 读写标志（0表示读，1表示写）
+ 143:UserAPP/Source/ESL.c ****  *                Number: 读写数据数量
+ 144:UserAPP/Source/ESL.c ****  * @返回值         无
+ 145:UserAPP/Source/ESL.c ****  * @备注           根据RW参数调用E52bitRead或E52bitWrite函数执行具体的读写操作
+ 146:UserAPP/Source/ESL.c ****  */
+ 147:UserAPP/Source/ESL.c **** void ESLCommands(uint8_t Address, uint8_t RW, uint8_t Number)
+ 148:UserAPP/Source/ESL.c **** {
+ 432              		.loc 1 148 1 is_stmt 1 view -0
+ 433              		.cfi_startproc
+ 434              		@ args = 0, pretend = 0, frame = 0
+ 435              		@ frame_needed = 0, uses_anonymous_args = 0
+ 436              		.loc 1 148 1 is_stmt 0 view .LVU99
+ 437 0000 08B5     		push	{r3, lr}
+ 438              	.LCFI6:
+ 439              		.cfi_def_cfa_offset 8
+ 440              		.cfi_offset 3, -8
+ 441              		.cfi_offset 14, -4
+ 149:UserAPP/Source/ESL.c **** 	switch(RW)
+ 442              		.loc 1 149 2 is_stmt 1 view .LVU100
+ 443 0002 29B1     		cbz	r1, .L16
+ 444 0004 0129     		cmp	r1, #1
+ 445 0006 06D1     		bne	.L15
+ 150:UserAPP/Source/ESL.c **** 	{
+ 151:UserAPP/Source/ESL.c **** 		case 0:			//读
+ 152:UserAPP/Source/ESL.c **** 			E52bitRead(Address, Number);
+ 153:UserAPP/Source/ESL.c **** 			break;
+ 154:UserAPP/Source/ESL.c **** 		
+ 155:UserAPP/Source/ESL.c **** 		case 1:			//写	
+ 156:UserAPP/Source/ESL.c **** 			E52bitWrite(Address, Number);
+ 446              		.loc 1 156 4 view .LVU101
+ 447 0008 1146     		mov	r1, r2
+ 448              	.LVL72:
+ 449              		.loc 1 156 4 is_stmt 0 view .LVU102
+ 450 000a FFF7FEFF 		bl	E52bitWrite
+ 451              	.LVL73:
+ 157:UserAPP/Source/ESL.c **** 			break;
+ 452              		.loc 1 157 4 is_stmt 1 view .LVU103
+ 158:UserAPP/Source/ESL.c **** 	
+ 159:UserAPP/Source/ESL.c **** 		default:
+ 160:UserAPP/Source/ESL.c **** 			break;
+ 161:UserAPP/Source/ESL.c **** 	}
+ 162:UserAPP/Source/ESL.c **** }
+ 453              		.loc 1 162 1 is_stmt 0 view .LVU104
+ 454 000e 02E0     		b	.L15
+ 455              	.LVL74:
+ 456              	.L16:
+ 152:UserAPP/Source/ESL.c **** 			break;
+ 457              		.loc 1 152 4 is_stmt 1 view .LVU105
+ 458 0010 1146     		mov	r1, r2
+ 459              	.LVL75:
+ 152:UserAPP/Source/ESL.c **** 			break;
+ 460              		.loc 1 152 4 is_stmt 0 view .LVU106
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccBHX8rg.s 			page 12
+
+
+ 461 0012 FFF7FEFF 		bl	E52bitRead
+ 462              	.LVL76:
+ 153:UserAPP/Source/ESL.c **** 		
+ 463              		.loc 1 153 4 is_stmt 1 view .LVU107
+ 464              	.L15:
+ 465              		.loc 1 162 1 is_stmt 0 view .LVU108
+ 466 0016 08BD     		pop	{r3, pc}
+ 467              		.cfi_endproc
+ 468              	.LFE82:
+ 470              		.text
+ 471              	.Letext0:
+ 472              		.file 2 "D:/gcc-arm/14.3 rel1/arm-none-eabi/include/machine/_default_types.h"
+ 473              		.file 3 "D:/gcc-arm/14.3 rel1/arm-none-eabi/include/sys/_stdint.h"
+ 474              		.file 4 "Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h"
+ 475              		.file 5 "UserAPP/Include/Tasklist.h"
+ 476              		.file 6 "UserAPP/Include/SendDataProcess.h"
+ 477              		.file 7 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h"
+ 478              		.file 8 "UserDriver/Include/ESL4SPI.h"
+ 479              		.file 9 "UserDriver/Include/ESLComDri.h"
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccBHX8rg.s 			page 13
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 ESL.c
+C:\Users\Administrator\AppData\Local\Temp\ccBHX8rg.s:19     .text.ESLtest:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\ccBHX8rg.s:25     .text.ESLtest:00000000 ESLtest
+C:\Users\Administrator\AppData\Local\Temp\ccBHX8rg.s:266    .text.E52bitRead:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\ccBHX8rg.s:272    .text.E52bitRead:00000000 E52bitRead
+C:\Users\Administrator\AppData\Local\Temp\ccBHX8rg.s:367    .text.E52bitWrite:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\ccBHX8rg.s:373    .text.E52bitWrite:00000000 E52bitWrite
+C:\Users\Administrator\AppData\Local\Temp\ccBHX8rg.s:423    .text.ESLCommands:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\ccBHX8rg.s:429    .text.ESLCommands:00000000 ESLCommands
+
+UNDEFINED SYMBOLS
+ESL_RESET
+ESL4SPI_WriteCMD
+ESL4SPI_WriteDATA
+Check_Busy
+HAL_Delay
+ESL4SPI_ReadDATA
+BuildReplyPacket
+SendBinaryToHost

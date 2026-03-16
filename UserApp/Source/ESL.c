@@ -99,8 +99,6 @@ void E52bitRead(uint8_t Address, uint8_t Number)
     uint8_t outBuf[PACKET_MAX_SIZE];
     uint16_t outLen = 0;
 
-    ESL_RESET();  // 测试，后面要封装成单独的节点
-
     ESL4SPI_WriteCMD(Address);  // 发送读取命令地址
 
     for (uint8_t i = 0; i < Number; i++)
@@ -118,76 +116,34 @@ void E52bitRead(uint8_t Address, uint8_t Number)
 
 
 
+/******************** E52bitWrite ********************
+ * @函数名称       E52bitWrite
+ * @说明           写入E52bit数据
+ * @参数           Address: 写入地址
+ *                Number: 写入数据数量
+ * @返回值         无
+ * @备注           这里示例写入索引值，实际应用中应替换为需要写入的数据
+ */
 void E52bitWrite(uint8_t Address, uint8_t Number)
 {
-	// for (uint8_t i = 0; i < Number; i++)
-	// {
-	// 	ESL4SPI_WriteDATA(0x00);  // 示例写入数据（实际应用中应替换为需要写入的数据）
-	// }
-	ESL_RESET();
-
-    ESL4SPI_WriteCMD(0x4D);
-    ESL4SPI_WriteDATA(0x78);
-
-    ESL4SPI_WriteCMD(0x01);
-	ESL4SPI_WriteDATA(0x07);
-	ESL4SPI_WriteDATA(0x00);
-	ESL4SPI_WriteDATA(0x16);
-	ESL4SPI_WriteDATA(0x78);
-	ESL4SPI_WriteDATA(0x2E);
-	ESL4SPI_WriteDATA(0x16);
-	
-	ESL4SPI_WriteCMD(0x03);
-	ESL4SPI_WriteDATA(0x10);
-	ESL4SPI_WriteDATA(0x54);
-	ESL4SPI_WriteDATA(0x44);
-	
-	ESL4SPI_WriteCMD(0x06);
-	ESL4SPI_WriteDATA(0x0F);
-	ESL4SPI_WriteDATA(0x0A);
-	ESL4SPI_WriteDATA(0x2F);
-	ESL4SPI_WriteDATA(0x25);
-	ESL4SPI_WriteDATA(0x22);
-	ESL4SPI_WriteDATA(0x2E);
-	ESL4SPI_WriteDATA(0x1A);
-	
-	ESL4SPI_WriteCMD(0x61);
-	ESL4SPI_WriteDATA(0x00);
-	ESL4SPI_WriteDATA(0x98);
-	ESL4SPI_WriteDATA(0x01);
-	ESL4SPI_WriteDATA(0x28);
-	
-	ESL4SPI_WriteCMD(0x00);
-	ESL4SPI_WriteDATA(0x03);
-	ESL4SPI_WriteDATA(0x29);
-	
-	ESL4SPI_WriteCMD(0xE3);
-	ESL4SPI_WriteDATA(0x22);
-	
-	ESL4SPI_WriteCMD(0xAE);
-	ESL4SPI_WriteDATA(0x0F);
-	
-	ESL4SPI_WriteCMD(0xB6);
-	ESL4SPI_WriteDATA(0x0F);
-	
-	ESL4SPI_WriteCMD(0x82);
-	ESL4SPI_WriteDATA(0x96);
-	
-	ESL4SPI_WriteCMD(0x30);
-	ESL4SPI_WriteDATA(0x08);
-	
-	ESL4SPI_WriteCMD(0xF0);
-	ESL4SPI_WriteDATA(0x5F);
-	
-	ESL4SPI_WriteCMD(0xE9);
-	ESL4SPI_WriteDATA(0x01);
-
 	ESL4SPI_WriteCMD(Address);  // 发送写入命令地址
 
-	ReplyPacket(REPLY_OK); // 发送应答包
+	for (uint8_t i = 0; i < Number; i++)
+	{
+		ESL4SPI_WriteDATA(i);  // 示例写入数据（这里写入索引值，实际应用中应替换为需要写入的数据）
+	}
 }
 
 
+/******************** ESLCommands ********************
+ * @函数名称       ESLCommands
+ * @说明           处理ESL相关命令，根据RW参数决定读写操作
+ * @参数           Address: 读写地址
+ *                RW: 读写标志（0表示读，1表示写）
+ *                Number: 读写数据数量
+ * @返回值         无
+ * @备注           根据RW参数调用E52bitRead或E52bitWrite函数执行具体的读写操作
+ */
 void ESLCommands(uint8_t Address, uint8_t RW, uint8_t Number)
 {
 	switch(RW)

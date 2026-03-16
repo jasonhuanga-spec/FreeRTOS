@@ -53,7 +53,9 @@ build/TaskList.o: UserAPP/Source/TaskList.c UserAPP/Include/TaskList.h \
  UserAPP/Include/DPPTM.h UserDriver/Include/DPPTMIIC.h \
  UserAPP/Include/Tasklist.h UserAPP/Include/ADCAPP.h Core/Inc/gpio.h \
  Core/Inc/main.h Core/Inc/adc.h Core/Inc/dma.h UserAPP/Include/TaskList.h \
- UserDriver/Include/HWCIDri.h
+ UserDriver/Include/HWCIDri.h UserAPP/Include/ESL.h \
+ UserDriver/Include/ESLComDri.h UserDriver/Include/ESL4SPI.h \
+ UserAPP/Include/ADCAPP.h
 UserAPP/Include/TaskList.h:
 Core/Inc/main.h:
 Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h:
@@ -120,3 +122,7 @@ Core/Inc/adc.h:
 Core/Inc/dma.h:
 UserAPP/Include/TaskList.h:
 UserDriver/Include/HWCIDri.h:
+UserAPP/Include/ESL.h:
+UserDriver/Include/ESLComDri.h:
+UserDriver/Include/ESL4SPI.h:
+UserAPP/Include/ADCAPP.h:

@@ -53,8 +53,10 @@ build/ADCAPP.o: UserAPP/Source/ADCAPP.c UserAPP/Include/ADCAPP.h \
  UserAPP/Include/DPPTM.h UserDriver/Include/DPPTMIIC.h \
  UserAPP/Include/Tasklist.h UserAPP/Include/ReceiveDataProcess.h \
  Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_def.h \
- UserAPP/Include/SendDataProcess.h UserAPP/Include/TaskList.h \
- UserDriver/Include/HWCIDri.h UserAPP/Include/ADCAPP.h
+ UserAPP/Include/TaskList.h UserDriver/Include/HWCIDri.h \
+ UserAPP/Include/ESL.h UserDriver/Include/ESLComDri.h \
+ UserDriver/Include/ESL4SPI.h UserAPP/Include/ADCAPP.h \
+ UserAPP/Include/SendDataProcess.h UserAPP/Include/TaskList.h
 UserAPP/Include/ADCAPP.h:
 Core/Inc/main.h:
 Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h:
@@ -118,7 +120,11 @@ UserDriver/Include/DPPTMIIC.h:
 UserAPP/Include/Tasklist.h:
 UserAPP/Include/ReceiveDataProcess.h:
 Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_def.h:
-UserAPP/Include/SendDataProcess.h:
 UserAPP/Include/TaskList.h:
 UserDriver/Include/HWCIDri.h:
+UserAPP/Include/ESL.h:
+UserDriver/Include/ESLComDri.h:
+UserDriver/Include/ESL4SPI.h:
 UserAPP/Include/ADCAPP.h:
+UserAPP/Include/SendDataProcess.h:
+UserAPP/Include/TaskList.h:

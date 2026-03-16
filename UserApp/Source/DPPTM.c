@@ -1,25 +1,31 @@
 ﻿#include "DPPTM.h"
 
 /* 目标VDD电压全局变量，由HWCI任务设置，PID任务读取 */
-float TargetVDDVoltage = 0.0f;  
+float TargetVDDVoltage = -1.0f;
 
-/*=================== 实测校准查表（17个精确校准点） ===================*/
-/* 索引 = (目标电压 - 2.0) * 10，范围 0~16 对应 2.0V~3.6V
- * 电压:  2.0  2.1  2.2  2.3  2.4  2.5  2.6  2.7  2.8  2.9  3.0  3.1  3.2  3.3  3.4  3.5  3.6
- * 码值: 0x62 0x61 0x60 0x5A 0x59 0x58 0x57 0x56 0x55 0x54 0x53 0x52 0x51 0x50 0x4E 0x4D 0x4C */
-static const uint8_t voltage_code_table[17] = {
-    0x62, 0x61, 0x60, 0x5A, 0x59, 0x58, 0x57, 0x56,  // 2.0~2.7V
-    0x55, 0x54, 0x53, 0x52, 0x51, 0x50, 0x4E, 0x4D, 0x4C  // 2.8~3.6V
+/*=================== 实测校准查表（0.0V~3.3V，0.1V步进） ===================*/
+/* 索引 = 目标电压 / 0.1，范围 0~33 对应 0.0V~3.3V
+ * 端点实测：0x00=0V，0x7F=3.3V
+ * 中间点先采用线性标定值，后续可按实测继续修正
+ */
+static const uint8_t voltage_code_table[34] = {
+    0x00, 0x04, 0x08, 0x0C, 0x0F, 0x13, 0x17, 0x1B,  // 0.0~0.7V
+    0x1F, 0x23, 0x26, 0x2A, 0x2E, 0x32, 0x36, 0x3A,  // 0.8~1.5V
+    0x3E, 0x41, 0x45, 0x49, 0x4D, 0x51, 0x55, 0x59,  // 1.6~2.3V
+    0x5C, 0x60, 0x64, 0x68, 0x6C, 0x70, 0x73, 0x77,  // 2.4~3.1V
+    0x7B, 0x7F                                                   // 3.2~3.3V
 };
 
-#define VDD_MIN_VOLTAGE  2.0f                                                   // 最低目标电压
-#define VDD_MAX_VOLTAGE  3.6f                                                   // 最高目标电压
+#define VDD_MIN_VOLTAGE  0.0f                                                   // 最低目标电压
+#define VDD_MAX_VOLTAGE  3.3f                                                   // 最高目标电压
 #define VDD_STEP         0.1f                                                   // 电压步进
-#define VDD_TABLE_SIZE   17                                                     // 查表大小
+#define VDD_TABLE_SIZE   34                                                     // 查表大小
+#define DPPTM_CODE_MIN   0x00                                                   // 数字电位器码值下限
+#define DPPTM_CODE_MAX   0x7F                                                   // 数字电位器码值上限
 
 /**
  * @brief 通过目标电压直接查表获取DPPTM码值
- * @param targetV 目标电压（2.0~3.6V）
+ * @param targetV 目标电压（0.0~3.3V）
  * @return 对应的DPPTM码值
  */
 static uint8_t voltage_to_code(float targetV)
@@ -35,18 +41,18 @@ static uint8_t voltage_to_code(float targetV)
 /*===================== PID 微调状态（模块内部） ====================*/
 static float   pid_integral   = 0.0f;                                          // 积分项累积
 static float   pid_lastError  = 0.0f;                                          // 上次误差
-static uint8_t pid_dpptm      = 0x57;                                          // 当前DPPTM码值（默认2.6V）
-static uint8_t pid_baseCode   = 0x57;                                          // 查表基准码值（目标切换时更新）
+static uint8_t pid_dpptm      = 0x40;                                          // 当前DPPTM码值（默认约1.65V）
+static uint8_t pid_baseCode   = 0x40;                                          // 查表基准码值（目标切换时更新）
 static float   pid_lastTarget = -1.0f;                                         // 上次目标值
 static uint8_t pid_locked     = 0;                                             // 锁定标志
 
-/* PID 微调参数（查表已精确命中，PID仅做1~2步修正） */
+/* PID 微调参数（查表已命中，PID仅做小范围码值修正） */
 static const float PID_KP = 2.0f;                                              // 比例系数（小值，仅微调）
 static const float PID_KI = 1.0f;                                              // 积分系数（缓慢消除残差）
 static const float PID_KD = 0.3f;                                              // 微分系数（抑制振荡）
 static const float PID_INTEGRAL_MAX = 3.0f;                                    // 积分限幅（限制3步）
-static const float PID_TOLERANCE = 0.3f;                                      // 容差0.05V（半步精度）
-static const int8_t PID_MAX_TRIM = 1;                                          // 最大微调步数（每步=0.1V，±1步已是极限）
+static const float PID_TOLERANCE = 0.05f;                                      // 容差0.05V
+static const int8_t PID_MAX_TRIM = 4;                                          // 最大微调步数（每步约0.026V，±4步约0.1V）
 
 
 /**
@@ -87,13 +93,13 @@ void ControlDPPTM(uint8_t Data)
 /**
  * @brief  查表 + PID微调 调节ESL VDD电压
  * @说明   第一步：目标切换时查表直接命中精确码值（一步到位）
- *         第二步：PID监控ADC反馈，在基准码值附近3步微调补偿
+ *         第二步：PID监控ADC反馈，在基准码值附近小范围微调补偿
  *         每次被vADCProcessTask调用执行一步
  */
 void SetESLVDDVoltage(void)
 {
     /* -------- 0. 前置检查 -------- */
-    if (TargetVDDVoltage <= 0.0f)                                               // 目标无效
+    if (TargetVDDVoltage < 0.0f)                                                // 目标无效
         return;
 
     float currentV = get_current_vdd_voltage();                                 // 读取当前VDD电压
@@ -157,10 +163,10 @@ void SetESLVDDVoltage(void)
     float derivative = error - pid_lastError;
     pid_lastError = error;
 
-    // PID输出（error>0  需减小码值升压  输出为负）
-    float output = -(PID_KP * error + PID_KI * pid_integral + PID_KD * derivative);
+    // PID输出（error>0  需增大码值升压  输出为正）
+    float output = (PID_KP * error + PID_KI * pid_integral + PID_KD * derivative);
 
-    // 转为整数步进（PID输出不足半步时不调整，避免0.1V/步的振荡）
+    // 转为整数步进（PID输出不足半步时不调整，避免抖动）
     int16_t step = 0;
     if (output > 0.5f)       step = (int16_t)(output + 0.5f);                   // 正方向超半步
     else if (output < -0.5f) step = (int16_t)(output - 0.5f);                   // 负方向超半步
@@ -175,8 +181,8 @@ void SetESLVDDVoltage(void)
     int16_t hi = (int16_t)pid_baseCode + PID_MAX_TRIM;                          // 微调上限
     if (newCode < lo) newCode = lo;
     if (newCode > hi) newCode = hi;
-    if (newCode < 0x4C) newCode = 0x4C;                                         // 绝对下限（3.6V）
-    if (newCode > 0x62) newCode = 0x62;                                         // 绝对上限（2.0V）
+    if (newCode < DPPTM_CODE_MIN) newCode = DPPTM_CODE_MIN;                     // 绝对下限（0x00）
+    if (newCode > DPPTM_CODE_MAX) newCode = DPPTM_CODE_MAX;                     // 绝对上限（0x7F）
 
     pid_dpptm = (uint8_t)newCode;
     ControlDPPTM(pid_dpptm);                                                   // 写入微调码值

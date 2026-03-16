@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccaGO8vK.s 			page 1
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccrwf7hg.s 			page 1
 
 
    1              		.cpu cortex-m3
@@ -18,1070 +18,910 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccaGO8vK.s 			page 1
   15              	.Ltext0:
   16              		.cfi_sections	.debug_frame
   17              		.file 1 "UserAPP/Source/DPPTM.c"
-  18              		.section	.rodata.ControlDPPTM.str1.4,"aMS",%progbits,1
-  19              		.align	2
-  20              	.LC0:
-  21 0000 E58F91E9 		.ascii	"\345\217\221\351\200\201\346\225\260\345\255\227\347"
-  21      8081E695 
-  21      B0E5AD97 
-  21      E7
-  22 000d 94B5E4BD 		.ascii	"\224\265\344\275\215\345\231\250\345\234\260\345\235"
-  22      8DE599A8 
-  22      E59CB0E5 
-  22      9D
-  23 001a 80E68890 		.ascii	"\200\346\210\220\345\212\237\015\012\000"
-  23      E58A9F0D 
-  23      0A00
-  24              		.align	2
-  25              	.LC1:
-  26 0024 E58F91E9 		.ascii	"\345\217\221\351\200\201\346\225\260\345\255\227\347"
-  26      8081E695 
-  26      B0E5AD97 
-  26      E7
-  27 0031 94B5E4BD 		.ascii	"\224\265\344\275\215\345\231\250\345\206\231\345\221"
-  27      8DE599A8 
-  27      E58699E5 
-  27      91
-  28 003e BDE4BBA4 		.ascii	"\275\344\273\244\346\210\220\345\212\237\015\012\000"
-  28      E68890E5 
-  28      8A9F0D0A 
-  28      00
-  29 004b 00       		.align	2
-  30              	.LC2:
-  31 004c E59091E6 		.ascii	"\345\220\221\346\225\260\345\255\227\347\224\265\344"
-  31      95B0E5AD 
-  31      97E794B5 
-  31      E4
-  32 0059 BD8DE599 		.ascii	"\275\215\345\231\250\345\206\231\345\205\245\346\225"
-  32      A8E58699 
-  32      E585A5E6 
-  32      95
-  33 0066 B0E68DAE 		.ascii	"\260\346\215\256\346\210\220\345\212\237,\346\225\260"
-  33      E68890E5 
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccaGO8vK.s 			page 2
-
-
-  33      8A9F2CE6 
-  33      95B0
-  34 0074 E68DAE20 		.ascii	"\346\215\256 = 0x%02X\015\012\000"
-  34      3D203078 
-  34      25303258 
-  34      0D0A00
-  35 0083 00       		.align	2
-  36              	.LC3:
-  37 0084 E59091E6 		.ascii	"\345\220\221\346\225\260\345\255\227\347\224\265\344"
-  37      95B0E5AD 
-  37      97E794B5 
-  37      E4
-  38 0091 BD8DE599 		.ascii	"\275\215\345\231\250\345\206\231\345\205\245\346\225"
-  38      A8E58699 
-  38      E585A5E6 
-  38      95
-  39 009e B0E68DAE 		.ascii	"\260\346\215\256\345\244\261\350\264\245\015\012\000"
-  39      E5A4B1E8 
-  39      B4A50D0A 
-  39      00
-  40              		.section	.text.ControlDPPTM,"ax",%progbits
-  41              		.align	1
-  42              		.global	ControlDPPTM
-  43              		.syntax unified
-  44              		.thumb
-  45              		.thumb_func
-  47              	ControlDPPTM:
-  48              	.LVL0:
-  49              	.LFB79:
+  18              		.section	.text.voltage_to_code,"ax",%progbits
+  19              		.align	1
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  24              	voltage_to_code:
+  25              	.LVL0:
+  26              	.LFB79:
    1:UserAPP/Source/DPPTM.c **** ﻿#include "DPPTM.h"
    2:UserAPP/Source/DPPTM.c **** 
-   3:UserAPP/Source/DPPTM.c **** 
-   4:UserAPP/Source/DPPTM.c **** /**
-   5:UserAPP/Source/DPPTM.c ****  * @函数名称       电子电位器抽头初始化
-   6:UserAPP/Source/DPPTM.c ****  * @说明           Date:是需要调整抽头位置的数据
-   7:UserAPP/Source/DPPTM.c ****  */
-   8:UserAPP/Source/DPPTM.c **** void ControlDPPTM(uint8_t Data)
-   9:UserAPP/Source/DPPTM.c **** {
-  50              		.loc 1 9 1 view -0
-  51              		.cfi_startproc
-  52              		@ args = 0, pretend = 0, frame = 0
-  53              		@ frame_needed = 0, uses_anonymous_args = 0
-  54              		.loc 1 9 1 is_stmt 0 view .LVU1
-  55 0000 10B5     		push	{r4, lr}
-  56              	.LCFI0:
-  57              		.cfi_def_cfa_offset 8
-  58              		.cfi_offset 4, -8
-  59              		.cfi_offset 14, -4
-  60 0002 0446     		mov	r4, r0
-  10:UserAPP/Source/DPPTM.c ****     Soft_IIC_Start();                                                         //发送IIC起始信�
-  61              		.loc 1 10 5 is_stmt 1 view .LVU2
-  62 0004 FFF7FEFF 		bl	Soft_IIC_Start
-  63              	.LVL1:
-  11:UserAPP/Source/DPPTM.c ****     
-  12:UserAPP/Source/DPPTM.c ****     if(Soft_IIC_Write_Byte(0x7C))                                             //发送从机地址�
-  64              		.loc 1 12 5 view .LVU3
-  65              		.loc 1 12 8 is_stmt 0 view .LVU4
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccaGO8vK.s 			page 3
+   3:UserAPP/Source/DPPTM.c **** /* 目标VDD电压全局变量，由HWCI任务设置，PID任务读取 */
+   4:UserAPP/Source/DPPTM.c **** float TargetVDDVoltage = -1.0f;
+   5:UserAPP/Source/DPPTM.c **** 
+   6:UserAPP/Source/DPPTM.c **** /*=================== 实测校准查表（0.0V~3.3V，0.1V步进） ===================*/
+   7:UserAPP/Source/DPPTM.c **** /* 索引 = 目标电压 / 0.1，范围 0~33 对应 0.0V~3.3V
+   8:UserAPP/Source/DPPTM.c ****  * 端点实测：0x00=0V，0x7F=3.3V
+   9:UserAPP/Source/DPPTM.c ****  * 中间点先采用线性标定值，后续可按实测继续修正
+  10:UserAPP/Source/DPPTM.c ****  */
+  11:UserAPP/Source/DPPTM.c **** static const uint8_t voltage_code_table[34] = {
+  12:UserAPP/Source/DPPTM.c ****     0x00, 0x04, 0x08, 0x0C, 0x0F, 0x13, 0x17, 0x1B,  // 0.0~0.7V
+  13:UserAPP/Source/DPPTM.c ****     0x1F, 0x23, 0x26, 0x2A, 0x2E, 0x32, 0x36, 0x3A,  // 0.8~1.5V
+  14:UserAPP/Source/DPPTM.c ****     0x3E, 0x41, 0x45, 0x49, 0x4D, 0x51, 0x55, 0x59,  // 1.6~2.3V
+  15:UserAPP/Source/DPPTM.c ****     0x5C, 0x60, 0x64, 0x68, 0x6C, 0x70, 0x73, 0x77,  // 2.4~3.1V
+  16:UserAPP/Source/DPPTM.c ****     0x7B, 0x7F                                                   // 3.2~3.3V
+  17:UserAPP/Source/DPPTM.c **** };
+  18:UserAPP/Source/DPPTM.c **** 
+  19:UserAPP/Source/DPPTM.c **** #define VDD_MIN_VOLTAGE  0.0f                                                   // 最低目标电�
+  20:UserAPP/Source/DPPTM.c **** #define VDD_MAX_VOLTAGE  3.3f                                                   // 最高目标电�
+  21:UserAPP/Source/DPPTM.c **** #define VDD_STEP         0.1f                                                   // 电压步进
+  22:UserAPP/Source/DPPTM.c **** #define VDD_TABLE_SIZE   34                                                     // 查表大小
+  23:UserAPP/Source/DPPTM.c **** #define DPPTM_CODE_MIN   0x00                                                   // 数字电位器�
+  24:UserAPP/Source/DPPTM.c **** #define DPPTM_CODE_MAX   0x7F                                                   // 数字电位器�
+  25:UserAPP/Source/DPPTM.c **** 
+  26:UserAPP/Source/DPPTM.c **** /**
+  27:UserAPP/Source/DPPTM.c ****  * @brief 通过目标电压直接查表获取DPPTM码值
+  28:UserAPP/Source/DPPTM.c ****  * @param targetV 目标电压（0.0~3.3V）
+  29:UserAPP/Source/DPPTM.c ****  * @return 对应的DPPTM码值
+  30:UserAPP/Source/DPPTM.c ****  */
+  31:UserAPP/Source/DPPTM.c **** static uint8_t voltage_to_code(float targetV)
+  32:UserAPP/Source/DPPTM.c **** {
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccrwf7hg.s 			page 2
 
 
-  66 0008 7C20     		movs	r0, #124
-  67 000a FFF7FEFF 		bl	Soft_IIC_Write_Byte
-  68              	.LVL2:
-  69              		.loc 1 12 7 discriminator 1 view .LVU5
-  70 000e 10B9     		cbnz	r0, .L5
-  71              	.L2:
-  13:UserAPP/Source/DPPTM.c ****     {
-  14:UserAPP/Source/DPPTM.c ****         #if TEST_MODE
-  15:UserAPP/Source/DPPTM.c ****         QueueSendfmt(xReceiveLogQueue, 0, "发送数字电位器地址成功\r\n");
-  16:UserAPP/Source/DPPTM.c ****         #endif
-  17:UserAPP/Source/DPPTM.c ****         if (Soft_IIC_Write_Byte(0x00))                                        //地址发送成功,
-  18:UserAPP/Source/DPPTM.c ****         {
-  19:UserAPP/Source/DPPTM.c ****             #if TEST_MODE
-  20:UserAPP/Source/DPPTM.c ****             QueueSendfmt(xReceiveLogQueue, 0, "发送数字电位器写命令成功\r\n");
-  21:UserAPP/Source/DPPTM.c ****             #endif
-  22:UserAPP/Source/DPPTM.c ****             if (Soft_IIC_Write_Byte(Data))                                    //发送抽头调整�
-  23:UserAPP/Source/DPPTM.c ****             {
-  24:UserAPP/Source/DPPTM.c ****                 #if TEST_MODE
-  25:UserAPP/Source/DPPTM.c ****                 QueueSendfmt(xReceiveLogQueue, 0, "向数字电位器写入数据成功,数据 = 0x
-  26:UserAPP/Source/DPPTM.c ****                 #endif
-  27:UserAPP/Source/DPPTM.c ****             }
-  28:UserAPP/Source/DPPTM.c ****             else
-  29:UserAPP/Source/DPPTM.c ****             {
-  30:UserAPP/Source/DPPTM.c ****                 QueueSendfmt(xReceiveLogQueue, 0, "向数字电位器写入数据失败\r\n");
-  31:UserAPP/Source/DPPTM.c ****             }
-  32:UserAPP/Source/DPPTM.c ****         }
-  33:UserAPP/Source/DPPTM.c ****     }
-  34:UserAPP/Source/DPPTM.c ****     
-  35:UserAPP/Source/DPPTM.c ****     Soft_IIC_Stop();                                                           //发送IIC停止信
-  72              		.loc 1 35 5 is_stmt 1 view .LVU6
-  73 0010 FFF7FEFF 		bl	Soft_IIC_Stop
-  74              	.LVL3:
-  36:UserAPP/Source/DPPTM.c **** }
-  75              		.loc 1 36 1 is_stmt 0 view .LVU7
-  76 0014 10BD     		pop	{r4, pc}
-  77              	.LVL4:
-  78              	.L5:
-  15:UserAPP/Source/DPPTM.c ****         #endif
-  79              		.loc 1 15 9 is_stmt 1 view .LVU8
-  80 0016 124A     		ldr	r2, .L6
-  81 0018 0021     		movs	r1, #0
-  82 001a 124B     		ldr	r3, .L6+4
-  83 001c 1868     		ldr	r0, [r3]
-  84 001e FFF7FEFF 		bl	QueueSendfmt
-  85              	.LVL5:
-  17:UserAPP/Source/DPPTM.c ****         {
-  86              		.loc 1 17 9 view .LVU9
-  17:UserAPP/Source/DPPTM.c ****         {
-  87              		.loc 1 17 13 is_stmt 0 view .LVU10
-  88 0022 0020     		movs	r0, #0
-  89 0024 FFF7FEFF 		bl	Soft_IIC_Write_Byte
-  90              	.LVL6:
-  17:UserAPP/Source/DPPTM.c ****         {
-  91              		.loc 1 17 12 discriminator 1 view .LVU11
-  92 0028 0028     		cmp	r0, #0
-  93 002a F1D0     		beq	.L2
-  20:UserAPP/Source/DPPTM.c ****             #endif
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccaGO8vK.s 			page 4
+  27              		.loc 1 32 1 view -0
+  28              		.cfi_startproc
+  29              		@ args = 0, pretend = 0, frame = 0
+  30              		@ frame_needed = 0, uses_anonymous_args = 0
+  31              		.loc 1 32 1 is_stmt 0 view .LVU1
+  32 0000 10B5     		push	{r4, lr}
+  33              	.LCFI0:
+  34              		.cfi_def_cfa_offset 8
+  35              		.cfi_offset 4, -8
+  36              		.cfi_offset 14, -4
+  37 0002 0446     		mov	r4, r0
+  33:UserAPP/Source/DPPTM.c ****     if (targetV < VDD_MIN_VOLTAGE) targetV = VDD_MIN_VOLTAGE;                   // 下限钳位
+  38              		.loc 1 33 5 is_stmt 1 view .LVU2
+  39              		.loc 1 33 8 is_stmt 0 view .LVU3
+  40 0004 0021     		movs	r1, #0
+  41 0006 FFF7FEFF 		bl	__aeabi_fcmplt
+  42              	.LVL1:
+  43              		.loc 1 33 8 view .LVU4
+  44 000a 30B9     		cbnz	r0, .L4
+  34:UserAPP/Source/DPPTM.c ****     if (targetV > VDD_MAX_VOLTAGE) targetV = VDD_MAX_VOLTAGE;                   // 上限钳位
+  45              		.loc 1 34 5 is_stmt 1 view .LVU5
+  46              		.loc 1 34 8 is_stmt 0 view .LVU6
+  47 000c 0D49     		ldr	r1, .L9
+  48 000e 2046     		mov	r0, r4
+  49 0010 FFF7FEFF 		bl	__aeabi_fcmpgt
+  50              	.LVL2:
+  51 0014 10B1     		cbz	r0, .L2
+  52              		.loc 1 34 44 discriminator 1 view .LVU7
+  53 0016 0B4C     		ldr	r4, .L9
+  54              	.LVL3:
+  55              		.loc 1 34 44 discriminator 1 view .LVU8
+  56 0018 00E0     		b	.L2
+  57              	.LVL4:
+  58              	.L4:
+  33:UserAPP/Source/DPPTM.c ****     if (targetV < VDD_MIN_VOLTAGE) targetV = VDD_MIN_VOLTAGE;                   // 下限钳位
+  59              		.loc 1 33 44 discriminator 1 view .LVU9
+  60 001a 0024     		movs	r4, #0
+  61              	.LVL5:
+  62              	.L2:
+  35:UserAPP/Source/DPPTM.c ****     int idx = (int)((targetV - VDD_MIN_VOLTAGE) / VDD_STEP + 0.5f);            // 四舍五入到�
+  63              		.loc 1 35 5 is_stmt 1 view .LVU10
+  64              		.loc 1 35 49 is_stmt 0 view .LVU11
+  65 001c 0A49     		ldr	r1, .L9+4
+  66 001e 2046     		mov	r0, r4
+  67 0020 FFF7FEFF 		bl	__aeabi_fdiv
+  68              	.LVL6:
+  69              		.loc 1 35 60 view .LVU12
+  70 0024 4FF07C51 		mov	r1, #1056964608
+  71 0028 FFF7FEFF 		bl	__aeabi_fadd
+  72              	.LVL7:
+  73              		.loc 1 35 9 view .LVU13
+  74 002c FFF7FEFF 		bl	__aeabi_f2iz
+  75              	.LVL8:
+  36:UserAPP/Source/DPPTM.c ****     if (idx < 0) idx = 0;                                                      // 索引下限
+  76              		.loc 1 36 5 is_stmt 1 view .LVU14
+  77              		.loc 1 36 8 is_stmt 0 view .LVU15
+  78 0030 0028     		cmp	r0, #0
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccrwf7hg.s 			page 3
 
 
-  94              		.loc 1 20 13 is_stmt 1 view .LVU12
-  95 002c 0E4A     		ldr	r2, .L6+8
-  96 002e 0021     		movs	r1, #0
-  97 0030 0C4B     		ldr	r3, .L6+4
-  98 0032 1868     		ldr	r0, [r3]
-  99 0034 FFF7FEFF 		bl	QueueSendfmt
- 100              	.LVL7:
-  22:UserAPP/Source/DPPTM.c ****             {
- 101              		.loc 1 22 13 view .LVU13
-  22:UserAPP/Source/DPPTM.c ****             {
- 102              		.loc 1 22 17 is_stmt 0 view .LVU14
- 103 0038 2046     		mov	r0, r4
- 104 003a FFF7FEFF 		bl	Soft_IIC_Write_Byte
- 105              	.LVL8:
-  22:UserAPP/Source/DPPTM.c ****             {
- 106              		.loc 1 22 16 discriminator 1 view .LVU15
- 107 003e 38B1     		cbz	r0, .L3
-  25:UserAPP/Source/DPPTM.c ****                 #endif
- 108              		.loc 1 25 17 is_stmt 1 view .LVU16
- 109 0040 2346     		mov	r3, r4
- 110 0042 0A4A     		ldr	r2, .L6+12
- 111 0044 0021     		movs	r1, #0
- 112 0046 0748     		ldr	r0, .L6+4
- 113 0048 0068     		ldr	r0, [r0]
- 114 004a FFF7FEFF 		bl	QueueSendfmt
- 115              	.LVL9:
- 116 004e DFE7     		b	.L2
- 117              	.L3:
-  30:UserAPP/Source/DPPTM.c ****             }
- 118              		.loc 1 30 17 view .LVU17
- 119 0050 074A     		ldr	r2, .L6+16
- 120 0052 0021     		movs	r1, #0
- 121 0054 034B     		ldr	r3, .L6+4
- 122 0056 1868     		ldr	r0, [r3]
- 123 0058 FFF7FEFF 		bl	QueueSendfmt
- 124              	.LVL10:
- 125 005c D8E7     		b	.L2
- 126              	.L7:
- 127 005e 00BF     		.align	2
- 128              	.L6:
- 129 0060 00000000 		.word	.LC0
- 130 0064 00000000 		.word	xReceiveLogQueue
- 131 0068 24000000 		.word	.LC1
- 132 006c 4C000000 		.word	.LC2
- 133 0070 84000000 		.word	.LC3
- 134              		.cfi_endproc
- 135              	.LFE79:
- 137              		.section	.rodata.SetESLVDDVoltage.str1.4,"aMS",%progbits,1
- 138              		.align	2
- 139              	.LC4:
- 140 0000 E697A0E6 		.ascii	"\346\227\240\346\225\210\347\232\204VDD\347\264\242"
- 140      9588E79A 
- 140      84564444 
- 140      E7B4A2
- 141 000f E5BC953A 		.ascii	"\345\274\225: %u\015\012\000"
- 141      2025750D 
- 141      0A00
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccaGO8vK.s 			page 5
+  79              		.loc 1 36 8 view .LVU16
+  80 0032 03DB     		blt	.L6
+  37:UserAPP/Source/DPPTM.c ****     if (idx >= VDD_TABLE_SIZE) idx = VDD_TABLE_SIZE - 1;                        // 索引上限
+  81              		.loc 1 37 5 is_stmt 1 view .LVU17
+  82              		.loc 1 37 8 is_stmt 0 view .LVU18
+  83 0034 2128     		cmp	r0, #33
+  84 0036 02DD     		ble	.L3
+  85              		.loc 1 37 36 discriminator 1 view .LVU19
+  86 0038 2120     		movs	r0, #33
+  87              	.LVL9:
+  88              		.loc 1 37 36 discriminator 1 view .LVU20
+  89 003a 00E0     		b	.L3
+  90              	.LVL10:
+  91              	.L6:
+  36:UserAPP/Source/DPPTM.c ****     if (idx < 0) idx = 0;                                                      // 索引下限
+  92              		.loc 1 36 22 discriminator 1 view .LVU21
+  93 003c 0020     		movs	r0, #0
+  94              	.LVL11:
+  95              	.L3:
+  38:UserAPP/Source/DPPTM.c ****     return voltage_code_table[idx];                                             // 返回查表码�
+  96              		.loc 1 38 5 is_stmt 1 view .LVU22
+  39:UserAPP/Source/DPPTM.c **** }
+  97              		.loc 1 39 1 is_stmt 0 view .LVU23
+  98 003e 034B     		ldr	r3, .L9+8
+  99 0040 185C     		ldrb	r0, [r3, r0]	@ zero_extendqisi2
+ 100              	.LVL12:
+ 101              		.loc 1 39 1 view .LVU24
+ 102 0042 10BD     		pop	{r4, pc}
+ 103              	.LVL13:
+ 104              	.L10:
+ 105              		.loc 1 39 1 view .LVU25
+ 106              		.align	2
+ 107              	.L9:
+ 108 0044 33335340 		.word	1079194419
+ 109 0048 CDCCCC3D 		.word	1036831949
+ 110 004c 00000000 		.word	voltage_code_table
+ 111              		.cfi_endproc
+ 112              	.LFE79:
+ 114              		.section	.rodata.ControlDPPTM.str1.4,"aMS",%progbits,1
+ 115              		.align	2
+ 116              	.LC0:
+ 117 0000 E59091E6 		.ascii	"\345\220\221\346\225\260\345\255\227\347\224\265\344"
+ 117      95B0E5AD 
+ 117      97E794B5 
+ 117      E4
+ 118 000d BD8DE599 		.ascii	"\275\215\345\231\250\345\206\231\345\205\245\346\225"
+ 118      A8E58699 
+ 118      E585A5E6 
+ 118      95
+ 119 001a B0E68DAE 		.ascii	"\260\346\215\256\345\244\261\350\264\245\015\012\000"
+ 119      E5A4B1E8 
+ 119      B4A50D0A 
+ 119      00
+ 120              		.section	.text.ControlDPPTM,"ax",%progbits
+ 121              		.align	1
+ 122              		.global	ControlDPPTM
+ 123              		.syntax unified
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccrwf7hg.s 			page 4
 
 
- 142 0019 000000   		.align	2
- 143              	.LC5:
- 144 001c E5BC80E5 		.ascii	"\345\274\200\345\247\213\350\260\203\346\225\264VDD"
- 144      A78BE8B0 
- 144      83E695B4 
- 144      564444
- 145 002b E887B3E7 		.ascii	"\350\207\263\347\233\256\346\240\207\345\200\274: %"
- 145      9BAEE6A0 
- 145      87E580BC 
- 145      3A2025
- 146 003a 2E326656 		.ascii	".2fV\015\012\000"
- 146      0D0A00
- 147 0041 000000   		.align	2
- 148              	.LC6:
- 149 0044 414443E8 		.ascii	"ADC\350\257\273\345\217\226\345\244\261\350\264\245"
- 149      AFBBE58F 
- 149      96E5A4B1 
- 149      E8B4A5
- 150 0053 2CE4B8AD 		.ascii	",\344\270\255\346\255\242\350\260\203\346\225\264\015"
- 150      E6ADA2E8 
- 150      B083E695 
- 150      B40D
- 151 0061 0A00     		.ascii	"\012\000"
- 152 0063 00       		.align	2
- 153              	.LC7:
- 154 0064 E7ACAC25 		.ascii	"\347\254\254%u\346\254\241\350\260\203\346\225\264:"
- 154      75E6ACA1 
- 154      E8B083E6 
- 154      95B43A
- 155 0073 20E5BD93 		.ascii	" \345\275\223\345\211\215=%.2fV, \347\233\256\346\240"
- 155      E5898D3D 
- 155      252E3266 
- 155      562C20E7 
- 155      9BAEE6A0 
- 156 0087 873D252E 		.ascii	"\207=%.2fV, \350\257\257\345\267\256=%.2fV, DPPTM=%"
- 156      3266562C 
- 156      20E8AFAF 
- 156      E5B7AE3D 
- 156      252E3266 
- 157 00a5 750D0A00 		.ascii	"u\015\012\000"
- 158 00a9 000000   		.align	2
- 159              	.LC8:
- 160 00ac 564444E7 		.ascii	"VDD\347\224\265\345\216\213\350\260\203\346\225\264"
- 160      94B5E58E 
- 160      8BE8B083 
- 160      E695B4
- 161 00bb E68890E5 		.ascii	"\346\210\220\345\212\237: %.2fV (\347\233\256\346\240"
- 161      8A9F3A20 
- 161      252E3266 
- 161      562028E7 
- 161      9BAEE6A0 
- 162 00cf 873A2025 		.ascii	"\207: %.2fV)\015\012\000"
- 162      2E326656 
- 162      290D0A00 
- 163 00db 00       		.align	2
- 164              	.LC9:
- 165 00dc 564444E7 		.ascii	"VDD\347\224\265\345\216\213\350\260\203\346\225\264"
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccaGO8vK.s 			page 6
-
-
- 165      94B5E58E 
- 165      8BE8B083 
- 165      E695B4
- 166 00eb E8B685E6 		.ascii	"\350\266\205\346\227\266,\346\234\252\350\203\275\350"
- 166      97B62CE6 
- 166      9CAAE883 
- 166      BDE8
- 167 00f9 BEBEE588 		.ascii	"\276\276\345\210\260\347\233\256\346\240\207\345\200"
- 167      B0E79BAE 
- 167      E6A087E5 
- 167      80
- 168 0106 BC0D0A00 		.ascii	"\274\015\012\000"
- 169              		.section	.text.SetESLVDDVoltage,"ax",%progbits
- 170              		.align	1
- 171              		.global	SetESLVDDVoltage
- 172              		.syntax unified
- 173              		.thumb
- 174              		.thumb_func
- 176              	SetESLVDDVoltage:
- 177              	.LVL11:
- 178              	.LFB80:
-  37:UserAPP/Source/DPPTM.c **** 
-  38:UserAPP/Source/DPPTM.c **** 
-  39:UserAPP/Source/DPPTM.c **** /**
-  40:UserAPP/Source/DPPTM.c ****  * @函数名称       设置ESL的VDD电压值
-  41:UserAPP/Source/DPPTM.c ****  * @说明           根据索引确定目标电压，通过闭环控制调整数字电位器达到
-  42:UserAPP/Source/DPPTM.c ****  *                 data越小电压越大，data越大电压越小，范围0-254
-  43:UserAPP/Source/DPPTM.c ****  * @param VDDIndx  电压索引（0-16），对应2.0V-3.6V，步进0.1V
-  44:UserAPP/Source/DPPTM.c ****  */
-  45:UserAPP/Source/DPPTM.c **** void SetESLVDDVoltage(uint8_t VDDIndx)
-  46:UserAPP/Source/DPPTM.c **** {
- 179              		.loc 1 46 1 view -0
- 180              		.cfi_startproc
- 181              		@ args = 0, pretend = 0, frame = 8
- 182              		@ frame_needed = 0, uses_anonymous_args = 0
- 183              		.loc 1 46 1 is_stmt 0 view .LVU19
- 184 0000 2DE9F04F 		push	{r4, r5, r6, r7, r8, r9, r10, fp, lr}
- 185              	.LCFI1:
- 186              		.cfi_def_cfa_offset 36
- 187              		.cfi_offset 4, -36
- 188              		.cfi_offset 5, -32
- 189              		.cfi_offset 6, -28
- 190              		.cfi_offset 7, -24
- 191              		.cfi_offset 8, -20
- 192              		.cfi_offset 9, -16
- 193              		.cfi_offset 10, -12
- 194              		.cfi_offset 11, -8
- 195              		.cfi_offset 14, -4
- 196 0004 8BB0     		sub	sp, sp, #44
- 197              	.LCFI2:
- 198              		.cfi_def_cfa_offset 80
-  47:UserAPP/Source/DPPTM.c ****     float TargetVDDVoltage = 0.0f; // 目标VDD电压值
- 199              		.loc 1 47 5 is_stmt 1 view .LVU20
- 200              	.LVL12:
+ 124              		.thumb
+ 125              		.thumb_func
+ 127              	ControlDPPTM:
+ 128              	.LVL14:
+ 129              	.LFB80:
+  40:UserAPP/Source/DPPTM.c **** 
+  41:UserAPP/Source/DPPTM.c **** /*===================== PID 微调状态（模块内部） ====================*/
+  42:UserAPP/Source/DPPTM.c **** static float   pid_integral   = 0.0f;                                          // 积分项累积
+  43:UserAPP/Source/DPPTM.c **** static float   pid_lastError  = 0.0f;                                          // 上次误差
+  44:UserAPP/Source/DPPTM.c **** static uint8_t pid_dpptm      = 0x40;                                          // 当前DPPTM码值
+  45:UserAPP/Source/DPPTM.c **** static uint8_t pid_baseCode   = 0x40;                                          // 查表基准码�
+  46:UserAPP/Source/DPPTM.c **** static float   pid_lastTarget = -1.0f;                                         // 上次目标值
+  47:UserAPP/Source/DPPTM.c **** static uint8_t pid_locked     = 0;                                             // 锁定标志
   48:UserAPP/Source/DPPTM.c **** 
-  49:UserAPP/Source/DPPTM.c ****     // 根据索引设置目标电压
-  50:UserAPP/Source/DPPTM.c ****     switch (VDDIndx)
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccaGO8vK.s 			page 7
+  49:UserAPP/Source/DPPTM.c **** /* PID 微调参数（查表已命中，PID仅做小范围码值修正） */
+  50:UserAPP/Source/DPPTM.c **** static const float PID_KP = 2.0f;                                              // 比例系数（�
+  51:UserAPP/Source/DPPTM.c **** static const float PID_KI = 1.0f;                                              // 积分系数（�
+  52:UserAPP/Source/DPPTM.c **** static const float PID_KD = 0.3f;                                              // 微分系数（�
+  53:UserAPP/Source/DPPTM.c **** static const float PID_INTEGRAL_MAX = 3.0f;                                    // 积分限幅（�
+  54:UserAPP/Source/DPPTM.c **** static const float PID_TOLERANCE = 0.05f;                                      // 容差0.05V
+  55:UserAPP/Source/DPPTM.c **** static const int8_t PID_MAX_TRIM = 4;                                          // 最大微调步�
+  56:UserAPP/Source/DPPTM.c **** 
+  57:UserAPP/Source/DPPTM.c **** 
+  58:UserAPP/Source/DPPTM.c **** /**
+  59:UserAPP/Source/DPPTM.c ****  * @brief 电子电位器抽头写入
+  60:UserAPP/Source/DPPTM.c ****  * @param Data 需要调整的抽头位置数据
+  61:UserAPP/Source/DPPTM.c ****  */
+  62:UserAPP/Source/DPPTM.c **** void ControlDPPTM(uint8_t Data)
+  63:UserAPP/Source/DPPTM.c **** {
+ 130              		.loc 1 63 1 is_stmt 1 view -0
+ 131              		.cfi_startproc
+ 132              		@ args = 0, pretend = 0, frame = 0
+ 133              		@ frame_needed = 0, uses_anonymous_args = 0
+ 134              		.loc 1 63 1 is_stmt 0 view .LVU27
+ 135 0000 10B5     		push	{r4, lr}
+ 136              	.LCFI1:
+ 137              		.cfi_def_cfa_offset 8
+ 138              		.cfi_offset 4, -8
+ 139              		.cfi_offset 14, -4
+ 140 0002 0446     		mov	r4, r0
+  64:UserAPP/Source/DPPTM.c ****     Soft_IIC_Start();
+ 141              		.loc 1 64 5 is_stmt 1 view .LVU28
+ 142 0004 FFF7FEFF 		bl	Soft_IIC_Start
+ 143              	.LVL15:
+  65:UserAPP/Source/DPPTM.c ****     
+  66:UserAPP/Source/DPPTM.c ****     if(Soft_IIC_Write_Byte(0x7C))
+ 144              		.loc 1 66 5 view .LVU29
+ 145              		.loc 1 66 8 is_stmt 0 view .LVU30
+ 146 0008 7C20     		movs	r0, #124
+ 147 000a FFF7FEFF 		bl	Soft_IIC_Write_Byte
+ 148              	.LVL16:
+ 149              		.loc 1 66 7 discriminator 1 view .LVU31
+ 150 000e 10B9     		cbnz	r0, .L14
+ 151              	.L12:
+  67:UserAPP/Source/DPPTM.c ****     {
+  68:UserAPP/Source/DPPTM.c ****         #if TEST_MODE
+  69:UserAPP/Source/DPPTM.c ****         QueueSendfmt(xSendDataQueue, 0, "发送数字电位器地址成功\r\n");
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccrwf7hg.s 			page 5
 
 
- 201              		.loc 1 50 5 view .LVU21
- 202 0006 1028     		cmp	r0, #16
- 203 0008 47D8     		bhi	.L9
- 204 000a DFE800F0 		tbb	[pc, r0]
- 205              	.L11:
- 206 000e 4E       		.byte	(.L27-.L11)/2
- 207 000f 52       		.byte	(.L37-.L11)/2
- 208 0010 09       		.byte	(.L25-.L11)/2
- 209 0011 1C       		.byte	(.L24-.L11)/2
- 210 0012 1F       		.byte	(.L23-.L11)/2
- 211 0013 22       		.byte	(.L22-.L11)/2
- 212 0014 25       		.byte	(.L21-.L11)/2
- 213 0015 28       		.byte	(.L20-.L11)/2
- 214 0016 2B       		.byte	(.L19-.L11)/2
- 215 0017 2E       		.byte	(.L18-.L11)/2
- 216 0018 31       		.byte	(.L17-.L11)/2
- 217 0019 34       		.byte	(.L16-.L11)/2
- 218 001a 37       		.byte	(.L15-.L11)/2
- 219 001b 3A       		.byte	(.L14-.L11)/2
- 220 001c 3D       		.byte	(.L13-.L11)/2
- 221 001d 40       		.byte	(.L12-.L11)/2
- 222 001e 43       		.byte	(.L10-.L11)/2
- 223 001f 00       		.p2align 1
- 224              	.L25:
-  51:UserAPP/Source/DPPTM.c ****     {
-  52:UserAPP/Source/DPPTM.c ****     case 0:
-  53:UserAPP/Source/DPPTM.c ****         TargetVDDVoltage = 2.0f; // 索引0对应2.0V
-  54:UserAPP/Source/DPPTM.c ****         break;
-  55:UserAPP/Source/DPPTM.c ****     case 1:
-  56:UserAPP/Source/DPPTM.c ****         TargetVDDVoltage = 2.1f; // 索引1对应2.1V
-  57:UserAPP/Source/DPPTM.c ****         break;
-  58:UserAPP/Source/DPPTM.c ****     case 2:
-  59:UserAPP/Source/DPPTM.c ****         TargetVDDVoltage = 2.2f; // 索引2对应2.2V
- 225              		.loc 1 59 9 view .LVU22
- 226              	.LVL13:
-  60:UserAPP/Source/DPPTM.c ****         break;
- 227              		.loc 1 60 9 view .LVU23
-  59:UserAPP/Source/DPPTM.c ****         break;
- 228              		.loc 1 59 26 is_stmt 0 view .LVU24
- 229 0020 5A4B     		ldr	r3, .L48
- 230 0022 0993     		str	r3, [sp, #36]	@ float
- 231              	.LVL14:
- 232              	.L26:
-  61:UserAPP/Source/DPPTM.c ****     case 3:
-  62:UserAPP/Source/DPPTM.c ****         TargetVDDVoltage = 2.3f; // 索引3对应2.3V
-  63:UserAPP/Source/DPPTM.c ****         break;
-  64:UserAPP/Source/DPPTM.c ****     case 4:
-  65:UserAPP/Source/DPPTM.c ****         TargetVDDVoltage = 2.4f; // 索引4对应2.4V
-  66:UserAPP/Source/DPPTM.c ****         break;
-  67:UserAPP/Source/DPPTM.c ****     case 5:
-  68:UserAPP/Source/DPPTM.c ****         TargetVDDVoltage = 2.5f; // 索引5对应2.5V
-  69:UserAPP/Source/DPPTM.c ****         break;
-  70:UserAPP/Source/DPPTM.c ****     case 6: 
-  71:UserAPP/Source/DPPTM.c ****         TargetVDDVoltage = 2.6f; // 索引6对应2.6V
-  72:UserAPP/Source/DPPTM.c ****         break;
-  73:UserAPP/Source/DPPTM.c ****     case 7:
-  74:UserAPP/Source/DPPTM.c ****         TargetVDDVoltage = 2.7f; // 索引7对应2.7V
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccaGO8vK.s 			page 8
+  70:UserAPP/Source/DPPTM.c ****         #endif
+  71:UserAPP/Source/DPPTM.c ****         if (Soft_IIC_Write_Byte(0x00))
+  72:UserAPP/Source/DPPTM.c ****         {
+  73:UserAPP/Source/DPPTM.c ****             #if TEST_MODE
+  74:UserAPP/Source/DPPTM.c ****             QueueSendfmt(xSendDataQueue, 0, "发送数字电位器写命令成功\r\n");
+  75:UserAPP/Source/DPPTM.c ****             #endif
+  76:UserAPP/Source/DPPTM.c ****             if (Soft_IIC_Write_Byte(Data))
+  77:UserAPP/Source/DPPTM.c ****             {
+  78:UserAPP/Source/DPPTM.c ****                 #if TEST_MODE
+  79:UserAPP/Source/DPPTM.c ****                 QueueSendfmt(xSendDataQueue, 0, "向数字电位器写入数据成功,数据 = 0x%0
+  80:UserAPP/Source/DPPTM.c ****                 #endif
+  81:UserAPP/Source/DPPTM.c ****             }
+  82:UserAPP/Source/DPPTM.c ****             else
+  83:UserAPP/Source/DPPTM.c ****             {
+  84:UserAPP/Source/DPPTM.c ****                 QueueSendfmt(xSendDataQueue, 0, "向数字电位器写入数据失败\r\n");
+  85:UserAPP/Source/DPPTM.c ****             }
+  86:UserAPP/Source/DPPTM.c ****         }
+  87:UserAPP/Source/DPPTM.c ****     }
+  88:UserAPP/Source/DPPTM.c ****     
+  89:UserAPP/Source/DPPTM.c ****     Soft_IIC_Stop();
+ 152              		.loc 1 89 5 is_stmt 1 view .LVU32
+ 153 0010 FFF7FEFF 		bl	Soft_IIC_Stop
+ 154              	.LVL17:
+  90:UserAPP/Source/DPPTM.c **** }
+ 155              		.loc 1 90 1 is_stmt 0 view .LVU33
+ 156 0014 10BD     		pop	{r4, pc}
+ 157              	.LVL18:
+ 158              	.L14:
+  71:UserAPP/Source/DPPTM.c ****         {
+ 159              		.loc 1 71 9 is_stmt 1 view .LVU34
+  71:UserAPP/Source/DPPTM.c ****         {
+ 160              		.loc 1 71 13 is_stmt 0 view .LVU35
+ 161 0016 0020     		movs	r0, #0
+ 162 0018 FFF7FEFF 		bl	Soft_IIC_Write_Byte
+ 163              	.LVL19:
+  71:UserAPP/Source/DPPTM.c ****         {
+ 164              		.loc 1 71 12 discriminator 1 view .LVU36
+ 165 001c 0028     		cmp	r0, #0
+ 166 001e F7D0     		beq	.L12
+  76:UserAPP/Source/DPPTM.c ****             {
+ 167              		.loc 1 76 13 is_stmt 1 view .LVU37
+  76:UserAPP/Source/DPPTM.c ****             {
+ 168              		.loc 1 76 17 is_stmt 0 view .LVU38
+ 169 0020 2046     		mov	r0, r4
+ 170 0022 FFF7FEFF 		bl	Soft_IIC_Write_Byte
+ 171              	.LVL20:
+  76:UserAPP/Source/DPPTM.c ****             {
+ 172              		.loc 1 76 16 discriminator 1 view .LVU39
+ 173 0026 0028     		cmp	r0, #0
+ 174 0028 F2D1     		bne	.L12
+  84:UserAPP/Source/DPPTM.c ****             }
+ 175              		.loc 1 84 17 is_stmt 1 view .LVU40
+ 176 002a 034A     		ldr	r2, .L15
+ 177 002c 0021     		movs	r1, #0
+ 178 002e 034B     		ldr	r3, .L15+4
+ 179 0030 1868     		ldr	r0, [r3]
+ 180 0032 FFF7FEFF 		bl	QueueSendfmt
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccrwf7hg.s 			page 6
 
 
-  75:UserAPP/Source/DPPTM.c ****         break;
-  76:UserAPP/Source/DPPTM.c ****     case 8:
-  77:UserAPP/Source/DPPTM.c ****         TargetVDDVoltage = 2.8f; // 索引8对应2.8V
-  78:UserAPP/Source/DPPTM.c ****         break;
-  79:UserAPP/Source/DPPTM.c ****     case 9:
-  80:UserAPP/Source/DPPTM.c ****         TargetVDDVoltage = 2.9f; // 索引9对应2.9V
-  81:UserAPP/Source/DPPTM.c ****         break;
-  82:UserAPP/Source/DPPTM.c ****     case 10:
-  83:UserAPP/Source/DPPTM.c ****         TargetVDDVoltage = 3.0f; // 索引10对应3.0V
-  84:UserAPP/Source/DPPTM.c ****         break;
-  85:UserAPP/Source/DPPTM.c ****     case 11:
-  86:UserAPP/Source/DPPTM.c ****         TargetVDDVoltage = 3.1f; // 索引11对应3.1V
-  87:UserAPP/Source/DPPTM.c ****         break;
-  88:UserAPP/Source/DPPTM.c ****     case 12:
-  89:UserAPP/Source/DPPTM.c ****         TargetVDDVoltage = 3.2f; // 索引12对应3.2V
-  90:UserAPP/Source/DPPTM.c ****         break;
-  91:UserAPP/Source/DPPTM.c ****     case 13:
-  92:UserAPP/Source/DPPTM.c ****         TargetVDDVoltage = 3.3f; // 索引13对应3.3V
-  93:UserAPP/Source/DPPTM.c ****         break;
-  94:UserAPP/Source/DPPTM.c ****     case 14:
-  95:UserAPP/Source/DPPTM.c ****         TargetVDDVoltage = 3.4f; // 索引14对应3.4V
-  96:UserAPP/Source/DPPTM.c ****         break;
-  97:UserAPP/Source/DPPTM.c ****     case 15:
-  98:UserAPP/Source/DPPTM.c ****         TargetVDDVoltage = 3.5f; // 索引15对应3.5V
-  99:UserAPP/Source/DPPTM.c ****         break;  
- 100:UserAPP/Source/DPPTM.c ****     case 16:
- 101:UserAPP/Source/DPPTM.c ****         TargetVDDVoltage = 3.6f; // 索引16对应3.6V
- 102:UserAPP/Source/DPPTM.c ****         break;
- 103:UserAPP/Source/DPPTM.c ****     default:
- 104:UserAPP/Source/DPPTM.c ****         QueueSendfmt(xReceiveLogQueue, 0, "无效的VDD索引: %u\r\n", VDDIndx); // 记录无效�
- 105:UserAPP/Source/DPPTM.c ****         return; // 无效索引，直接返回
- 106:UserAPP/Source/DPPTM.c ****     }
- 107:UserAPP/Source/DPPTM.c **** 
- 108:UserAPP/Source/DPPTM.c ****     // 闭环控制参数
- 109:UserAPP/Source/DPPTM.c ****     const float VOLTAGE_TOLERANCE = 0.00f; // 电压容差0.00V，即允许误差范围
- 233              		.loc 1 109 5 is_stmt 1 view .LVU25
- 110:UserAPP/Source/DPPTM.c ****     const uint8_t MAX_ITERATIONS = 50;     // 最大调整次数，防止死循环
- 234              		.loc 1 110 5 view .LVU26
- 111:UserAPP/Source/DPPTM.c ****     const uint8_t DPPTM_MIN = 0;           // 数字电位器最小值（对应最大电压）
- 235              		.loc 1 111 5 view .LVU27
- 112:UserAPP/Source/DPPTM.c ****     const uint8_t DPPTM_MAX = 254;         // 数字电位器最大值（对应最小电压）
- 236              		.loc 1 112 5 view .LVU28
- 113:UserAPP/Source/DPPTM.c ****     
- 114:UserAPP/Source/DPPTM.c ****     uint8_t currentDPPTM = 127;            // 初始值设为中间值
- 237              		.loc 1 114 5 view .LVU29
- 115:UserAPP/Source/DPPTM.c ****     uint8_t iteration = 0;                 // 迭代计数器
- 238              		.loc 1 115 5 view .LVU30
- 116:UserAPP/Source/DPPTM.c ****     
- 117:UserAPP/Source/DPPTM.c ****     QueueSendfmt(xReceiveLogQueue, 0, "开始调整VDD至目标值: %.2fV\r\n", TargetVDDVoltage); 
- 239              		.loc 1 117 5 view .LVU31
- 240 0024 0998     		ldr	r0, [sp, #36]	@ float
- 241              	.LVL15:
- 242              		.loc 1 117 5 is_stmt 0 view .LVU32
- 243 0026 FFF7FEFF 		bl	__aeabi_f2d
- 244              	.LVL16:
- 245 002a 8046     		mov	r8, r0
- 246 002c 8946     		mov	r9, r1
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccaGO8vK.s 			page 9
+ 181              	.LVL21:
+ 182 0036 EBE7     		b	.L12
+ 183              	.L16:
+ 184              		.align	2
+ 185              	.L15:
+ 186 0038 00000000 		.word	.LC0
+ 187 003c 00000000 		.word	xSendDataQueue
+ 188              		.cfi_endproc
+ 189              	.LFE80:
+ 191              		.section	.text.SetESLVDDVoltage,"ax",%progbits
+ 192              		.align	1
+ 193              		.global	SetESLVDDVoltage
+ 194              		.syntax unified
+ 195              		.thumb
+ 196              		.thumb_func
+ 198              	SetESLVDDVoltage:
+ 199              	.LFB81:
+  91:UserAPP/Source/DPPTM.c **** 
+  92:UserAPP/Source/DPPTM.c **** 
+  93:UserAPP/Source/DPPTM.c **** /**
+  94:UserAPP/Source/DPPTM.c ****  * @brief  查表 + PID微调 调节ESL VDD电压
+  95:UserAPP/Source/DPPTM.c ****  * @说明   第一步：目标切换时查表直接命中精确码值（一步到位）
+  96:UserAPP/Source/DPPTM.c ****  *         第二步：PID监控ADC反馈，在基准码值附近小范围微调补偿
+  97:UserAPP/Source/DPPTM.c ****  *         每次被vADCProcessTask调用执行一步
+  98:UserAPP/Source/DPPTM.c ****  */
+  99:UserAPP/Source/DPPTM.c **** void SetESLVDDVoltage(void)
+ 100:UserAPP/Source/DPPTM.c **** {
+ 200              		.loc 1 100 1 view -0
+ 201              		.cfi_startproc
+ 202              		@ args = 0, pretend = 0, frame = 0
+ 203              		@ frame_needed = 0, uses_anonymous_args = 0
+ 204 0000 70B5     		push	{r4, r5, r6, lr}
+ 205              	.LCFI2:
+ 206              		.cfi_def_cfa_offset 16
+ 207              		.cfi_offset 4, -16
+ 208              		.cfi_offset 5, -12
+ 209              		.cfi_offset 6, -8
+ 210              		.cfi_offset 14, -4
+ 101:UserAPP/Source/DPPTM.c ****     /* -------- 0. 前置检查 -------- */
+ 102:UserAPP/Source/DPPTM.c ****     if (TargetVDDVoltage < 0.0f)                                                // 目标无效
+ 211              		.loc 1 102 5 view .LVU42
+ 212              		.loc 1 102 8 is_stmt 0 view .LVU43
+ 213 0002 0021     		movs	r1, #0
+ 214 0004 5F4B     		ldr	r3, .L53
+ 215 0006 1868     		ldr	r0, [r3]	@ float
+ 216 0008 FFF7FEFF 		bl	__aeabi_fcmplt
+ 217              	.LVL22:
+ 218 000c 0028     		cmp	r0, #0
+ 219 000e 40F0B880 		bne	.L17
+ 103:UserAPP/Source/DPPTM.c ****         return;
+ 104:UserAPP/Source/DPPTM.c **** 
+ 105:UserAPP/Source/DPPTM.c ****     float currentV = get_current_vdd_voltage();                                 // 读取当前VDD�
+ 220              		.loc 1 105 5 is_stmt 1 view .LVU44
+ 221              		.loc 1 105 22 is_stmt 0 view .LVU45
+ 222 0012 FFF7FEFF 		bl	get_current_vdd_voltage
+ 223              	.LVL23:
+ 224 0016 0546     		mov	r5, r0
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccrwf7hg.s 			page 7
 
 
- 247 002e CDE90089 		strd	r8, [sp]
- 248 0032 574A     		ldr	r2, .L48+4
- 249 0034 0021     		movs	r1, #0
- 250 0036 574B     		ldr	r3, .L48+8
- 251 0038 1868     		ldr	r0, [r3]
- 252 003a FFF7FEFF 		bl	QueueSendfmt
- 253              	.LVL17:
- 118:UserAPP/Source/DPPTM.c **** 
- 119:UserAPP/Source/DPPTM.c ****     // 闭环控制循环
- 120:UserAPP/Source/DPPTM.c ****     while (iteration < MAX_ITERATIONS)
- 254              		.loc 1 120 5 is_stmt 1 view .LVU33
- 115:UserAPP/Source/DPPTM.c ****     
- 255              		.loc 1 115 13 is_stmt 0 view .LVU34
- 256 003e 0025     		movs	r5, #0
- 114:UserAPP/Source/DPPTM.c ****     uint8_t iteration = 0;                 // 迭代计数器
- 257              		.loc 1 114 13 view .LVU35
- 258 0040 4FF07F0A 		mov	r10, #127
- 259              		.loc 1 120 11 view .LVU36
- 260 0044 55E0     		b	.L29
- 261              	.LVL18:
- 262              	.L24:
-  62:UserAPP/Source/DPPTM.c ****         break;
- 263              		.loc 1 62 9 is_stmt 1 view .LVU37
-  63:UserAPP/Source/DPPTM.c ****     case 4:
- 264              		.loc 1 63 9 view .LVU38
-  62:UserAPP/Source/DPPTM.c ****         break;
- 265              		.loc 1 62 26 is_stmt 0 view .LVU39
- 266 0046 544B     		ldr	r3, .L48+12
- 267 0048 0993     		str	r3, [sp, #36]	@ float
-  63:UserAPP/Source/DPPTM.c ****     case 4:
- 268              		.loc 1 63 9 view .LVU40
- 269 004a EBE7     		b	.L26
- 270              	.LVL19:
- 271              	.L23:
-  65:UserAPP/Source/DPPTM.c ****         break;
- 272              		.loc 1 65 9 is_stmt 1 view .LVU41
-  66:UserAPP/Source/DPPTM.c ****     case 5:
- 273              		.loc 1 66 9 view .LVU42
-  65:UserAPP/Source/DPPTM.c ****         break;
- 274              		.loc 1 65 26 is_stmt 0 view .LVU43
- 275 004c 534B     		ldr	r3, .L48+16
- 276 004e 0993     		str	r3, [sp, #36]	@ float
-  66:UserAPP/Source/DPPTM.c ****     case 5:
- 277              		.loc 1 66 9 view .LVU44
- 278 0050 E8E7     		b	.L26
- 279              	.LVL20:
- 280              	.L22:
-  68:UserAPP/Source/DPPTM.c ****         break;
- 281              		.loc 1 68 9 is_stmt 1 view .LVU45
-  69:UserAPP/Source/DPPTM.c ****     case 6: 
- 282              		.loc 1 69 9 view .LVU46
-  68:UserAPP/Source/DPPTM.c ****         break;
- 283              		.loc 1 68 26 is_stmt 0 view .LVU47
- 284 0052 534B     		ldr	r3, .L48+20
- 285 0054 0993     		str	r3, [sp, #36]	@ float
-  69:UserAPP/Source/DPPTM.c ****     case 6: 
- 286              		.loc 1 69 9 view .LVU48
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccaGO8vK.s 			page 10
+ 225              	.LVL24:
+ 106:UserAPP/Source/DPPTM.c ****     if (currentV < 0.0f)                                                       // ADC数据无效
+ 226              		.loc 1 106 5 is_stmt 1 view .LVU46
+ 227              		.loc 1 106 8 is_stmt 0 view .LVU47
+ 228 0018 0021     		movs	r1, #0
+ 229 001a FFF7FEFF 		bl	__aeabi_fcmplt
+ 230              	.LVL25:
+ 231              		.loc 1 106 8 view .LVU48
+ 232 001e 0028     		cmp	r0, #0
+ 233 0020 40F0AF80 		bne	.L17
+ 107:UserAPP/Source/DPPTM.c ****         return;
+ 108:UserAPP/Source/DPPTM.c **** 
+ 109:UserAPP/Source/DPPTM.c ****     /* -------- 1. 目标切换  查表直接命中 -------- */
+ 110:UserAPP/Source/DPPTM.c ****     if (TargetVDDVoltage != pid_lastTarget)
+ 234              		.loc 1 110 5 is_stmt 1 view .LVU49
+ 235              		.loc 1 110 26 is_stmt 0 view .LVU50
+ 236 0024 574B     		ldr	r3, .L53
+ 237 0026 1C68     		ldr	r4, [r3]	@ float
+ 238              		.loc 1 110 8 view .LVU51
+ 239 0028 574B     		ldr	r3, .L53+4
+ 240 002a 1968     		ldr	r1, [r3]	@ float
+ 241 002c 2046     		mov	r0, r4
+ 242 002e FFF7FEFF 		bl	__aeabi_fcmpeq
+ 243              	.LVL26:
+ 244 0032 0028     		cmp	r0, #0
+ 245 0034 78D0     		beq	.L51
+ 111:UserAPP/Source/DPPTM.c ****     {
+ 112:UserAPP/Source/DPPTM.c ****         pid_integral  = 0.0f;                                                  // 重置积分
+ 113:UserAPP/Source/DPPTM.c ****         pid_lastError = 0.0f;                                                  // 重置微分
+ 114:UserAPP/Source/DPPTM.c ****         pid_lastTarget = TargetVDDVoltage;                                     // 记录新目标
+ 115:UserAPP/Source/DPPTM.c ****         pid_locked = 0;                                                        // 解锁
+ 116:UserAPP/Source/DPPTM.c **** 
+ 117:UserAPP/Source/DPPTM.c ****         pid_baseCode = voltage_to_code(TargetVDDVoltage);                       // 查表获取精�
+ 118:UserAPP/Source/DPPTM.c ****         pid_dpptm = pid_baseCode;                                              // 设置当前码�
+ 119:UserAPP/Source/DPPTM.c ****         ControlDPPTM(pid_dpptm);                                               // 一步写入
+ 120:UserAPP/Source/DPPTM.c **** 
+ 121:UserAPP/Source/DPPTM.c ****         #if TEST_MODE
+ 122:UserAPP/Source/DPPTM.c ****         QueueSendfmt(xSendDataQueue, 0,
+ 123:UserAPP/Source/DPPTM.c ****                      "查表命中: %.1fV -> DPPTM=0x%02X(%u)\r\n",
+ 124:UserAPP/Source/DPPTM.c ****                      TargetVDDVoltage, pid_dpptm, pid_dpptm);
+ 125:UserAPP/Source/DPPTM.c ****         #endif
+ 126:UserAPP/Source/DPPTM.c **** 
+ 127:UserAPP/Source/DPPTM.c ****         return;                                                                 // 等下一轮ADC�
+ 128:UserAPP/Source/DPPTM.c ****     }
+ 129:UserAPP/Source/DPPTM.c **** 
+ 130:UserAPP/Source/DPPTM.c ****     /* -------- 2. 已锁定  监控漂移 -------- */
+ 131:UserAPP/Source/DPPTM.c ****     if (pid_locked)
+ 246              		.loc 1 131 5 is_stmt 1 view .LVU52
+ 247              		.loc 1 131 9 is_stmt 0 view .LVU53
+ 248 0036 554B     		ldr	r3, .L53+8
+ 249 0038 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 250              		.loc 1 131 8 view .LVU54
+ 251 003a A3B1     		cbz	r3, .L21
+ 252              	.LBB2:
+ 132:UserAPP/Source/DPPTM.c ****     {
+ 133:UserAPP/Source/DPPTM.c ****         float drift = TargetVDDVoltage - currentV;
+ 253              		.loc 1 133 9 is_stmt 1 view .LVU55
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccrwf7hg.s 			page 8
 
 
- 287 0056 E5E7     		b	.L26
- 288              	.LVL21:
- 289              	.L21:
-  71:UserAPP/Source/DPPTM.c ****         break;
- 290              		.loc 1 71 9 is_stmt 1 view .LVU49
-  72:UserAPP/Source/DPPTM.c ****     case 7:
- 291              		.loc 1 72 9 view .LVU50
-  71:UserAPP/Source/DPPTM.c ****         break;
- 292              		.loc 1 71 26 is_stmt 0 view .LVU51
- 293 0058 524B     		ldr	r3, .L48+24
- 294 005a 0993     		str	r3, [sp, #36]	@ float
-  72:UserAPP/Source/DPPTM.c ****     case 7:
- 295              		.loc 1 72 9 view .LVU52
- 296 005c E2E7     		b	.L26
- 297              	.LVL22:
- 298              	.L20:
-  74:UserAPP/Source/DPPTM.c ****         break;
- 299              		.loc 1 74 9 is_stmt 1 view .LVU53
-  75:UserAPP/Source/DPPTM.c ****     case 8:
- 300              		.loc 1 75 9 view .LVU54
-  74:UserAPP/Source/DPPTM.c ****         break;
- 301              		.loc 1 74 26 is_stmt 0 view .LVU55
- 302 005e 524B     		ldr	r3, .L48+28
- 303 0060 0993     		str	r3, [sp, #36]	@ float
-  75:UserAPP/Source/DPPTM.c ****     case 8:
- 304              		.loc 1 75 9 view .LVU56
- 305 0062 DFE7     		b	.L26
- 306              	.LVL23:
- 307              	.L19:
-  77:UserAPP/Source/DPPTM.c ****         break;
- 308              		.loc 1 77 9 is_stmt 1 view .LVU57
-  78:UserAPP/Source/DPPTM.c ****     case 9:
- 309              		.loc 1 78 9 view .LVU58
-  77:UserAPP/Source/DPPTM.c ****         break;
- 310              		.loc 1 77 26 is_stmt 0 view .LVU59
- 311 0064 514B     		ldr	r3, .L48+32
- 312 0066 0993     		str	r3, [sp, #36]	@ float
-  78:UserAPP/Source/DPPTM.c ****     case 9:
- 313              		.loc 1 78 9 view .LVU60
- 314 0068 DCE7     		b	.L26
- 315              	.LVL24:
- 316              	.L18:
-  80:UserAPP/Source/DPPTM.c ****         break;
- 317              		.loc 1 80 9 is_stmt 1 view .LVU61
-  81:UserAPP/Source/DPPTM.c ****     case 10:
- 318              		.loc 1 81 9 view .LVU62
-  80:UserAPP/Source/DPPTM.c ****         break;
- 319              		.loc 1 80 26 is_stmt 0 view .LVU63
- 320 006a 514B     		ldr	r3, .L48+36
- 321 006c 0993     		str	r3, [sp, #36]	@ float
-  81:UserAPP/Source/DPPTM.c ****     case 10:
- 322              		.loc 1 81 9 view .LVU64
- 323 006e D9E7     		b	.L26
- 324              	.LVL25:
- 325              	.L17:
-  83:UserAPP/Source/DPPTM.c ****         break;
- 326              		.loc 1 83 9 is_stmt 1 view .LVU65
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccaGO8vK.s 			page 11
+ 254              		.loc 1 133 15 is_stmt 0 view .LVU56
+ 255 003c 2946     		mov	r1, r5
+ 256 003e 2046     		mov	r0, r4
+ 257 0040 FFF7FEFF 		bl	__aeabi_fsub
+ 258              	.LVL27:
+ 259 0044 0646     		mov	r6, r0
+ 260              	.LVL28:
+ 134:UserAPP/Source/DPPTM.c ****         if (drift >= -PID_TOLERANCE && drift <= PID_TOLERANCE)
+ 261              		.loc 1 134 9 is_stmt 1 view .LVU57
+ 262              		.loc 1 134 12 is_stmt 0 view .LVU58
+ 263 0046 5249     		ldr	r1, .L53+12
+ 264 0048 FFF7FEFF 		bl	__aeabi_fcmpge
+ 265              	.LVL29:
+ 266              		.loc 1 134 12 view .LVU59
+ 267 004c 30B1     		cbz	r0, .L22
+ 268              		.loc 1 134 37 discriminator 1 view .LVU60
+ 269 004e 5149     		ldr	r1, .L53+16
+ 270 0050 3046     		mov	r0, r6
+ 271 0052 FFF7FEFF 		bl	__aeabi_fcmple
+ 272              	.LVL30:
+ 273 0056 0028     		cmp	r0, #0
+ 274 0058 40F09380 		bne	.L17
+ 275              	.L22:
+ 135:UserAPP/Source/DPPTM.c ****             return;                                                            // 仍在容差内�
+ 136:UserAPP/Source/DPPTM.c **** 
+ 137:UserAPP/Source/DPPTM.c ****         pid_locked = 0;                                                        // 漂移超差，�
+ 276              		.loc 1 137 9 is_stmt 1 view .LVU61
+ 277              		.loc 1 137 20 is_stmt 0 view .LVU62
+ 278 005c 4B4B     		ldr	r3, .L53+8
+ 279 005e 0022     		movs	r2, #0
+ 280 0060 1A70     		strb	r2, [r3]
+ 138:UserAPP/Source/DPPTM.c ****         pid_lastError = drift;                                                 // 初始化微分�
+ 281              		.loc 1 138 9 is_stmt 1 view .LVU63
+ 282              		.loc 1 138 23 is_stmt 0 view .LVU64
+ 283 0062 4D4B     		ldr	r3, .L53+20
+ 284 0064 1E60     		str	r6, [r3]	@ float
+ 285              	.LVL31:
+ 286              	.L21:
+ 287              		.loc 1 138 23 view .LVU65
+ 288              	.LBE2:
+ 139:UserAPP/Source/DPPTM.c ****     }
+ 140:UserAPP/Source/DPPTM.c **** 
+ 141:UserAPP/Source/DPPTM.c ****     /* -------- 3. PID微调 -------- */
+ 142:UserAPP/Source/DPPTM.c ****     float error = TargetVDDVoltage - currentV;                                  // 计算误差
+ 289              		.loc 1 142 5 is_stmt 1 view .LVU66
+ 290              		.loc 1 142 11 is_stmt 0 view .LVU67
+ 291 0066 2946     		mov	r1, r5
+ 292 0068 2046     		mov	r0, r4
+ 293 006a FFF7FEFF 		bl	__aeabi_fsub
+ 294              	.LVL32:
+ 295 006e 0446     		mov	r4, r0
+ 296              	.LVL33:
+ 143:UserAPP/Source/DPPTM.c **** 
+ 144:UserAPP/Source/DPPTM.c ****     // 在容差内  锁定
+ 145:UserAPP/Source/DPPTM.c ****     if (error >= -PID_TOLERANCE && error <= PID_TOLERANCE)
+ 297              		.loc 1 145 5 is_stmt 1 view .LVU68
+ 298              		.loc 1 145 8 is_stmt 0 view .LVU69
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccrwf7hg.s 			page 9
 
 
-  84:UserAPP/Source/DPPTM.c ****     case 11:
- 327              		.loc 1 84 9 view .LVU66
-  83:UserAPP/Source/DPPTM.c ****         break;
- 328              		.loc 1 83 26 is_stmt 0 view .LVU67
- 329 0070 504B     		ldr	r3, .L48+40
- 330 0072 0993     		str	r3, [sp, #36]	@ float
-  84:UserAPP/Source/DPPTM.c ****     case 11:
- 331              		.loc 1 84 9 view .LVU68
- 332 0074 D6E7     		b	.L26
- 333              	.LVL26:
- 334              	.L16:
-  86:UserAPP/Source/DPPTM.c ****         break;
- 335              		.loc 1 86 9 is_stmt 1 view .LVU69
-  87:UserAPP/Source/DPPTM.c ****     case 12:
- 336              		.loc 1 87 9 view .LVU70
-  86:UserAPP/Source/DPPTM.c ****         break;
- 337              		.loc 1 86 26 is_stmt 0 view .LVU71
- 338 0076 504B     		ldr	r3, .L48+44
- 339 0078 0993     		str	r3, [sp, #36]	@ float
-  87:UserAPP/Source/DPPTM.c ****     case 12:
- 340              		.loc 1 87 9 view .LVU72
- 341 007a D3E7     		b	.L26
- 342              	.LVL27:
- 343              	.L15:
-  89:UserAPP/Source/DPPTM.c ****         break;
- 344              		.loc 1 89 9 is_stmt 1 view .LVU73
-  90:UserAPP/Source/DPPTM.c ****     case 13:
- 345              		.loc 1 90 9 view .LVU74
-  89:UserAPP/Source/DPPTM.c ****         break;
- 346              		.loc 1 89 26 is_stmt 0 view .LVU75
- 347 007c 4F4B     		ldr	r3, .L48+48
- 348 007e 0993     		str	r3, [sp, #36]	@ float
-  90:UserAPP/Source/DPPTM.c ****     case 13:
- 349              		.loc 1 90 9 view .LVU76
- 350 0080 D0E7     		b	.L26
- 351              	.LVL28:
- 352              	.L14:
-  92:UserAPP/Source/DPPTM.c ****         break;
- 353              		.loc 1 92 9 is_stmt 1 view .LVU77
-  93:UserAPP/Source/DPPTM.c ****     case 14:
- 354              		.loc 1 93 9 view .LVU78
-  92:UserAPP/Source/DPPTM.c ****         break;
- 355              		.loc 1 92 26 is_stmt 0 view .LVU79
- 356 0082 4F4B     		ldr	r3, .L48+52
- 357 0084 0993     		str	r3, [sp, #36]	@ float
-  93:UserAPP/Source/DPPTM.c ****     case 14:
- 358              		.loc 1 93 9 view .LVU80
- 359 0086 CDE7     		b	.L26
- 360              	.LVL29:
- 361              	.L13:
-  95:UserAPP/Source/DPPTM.c ****         break;
- 362              		.loc 1 95 9 is_stmt 1 view .LVU81
-  96:UserAPP/Source/DPPTM.c ****     case 15:
- 363              		.loc 1 96 9 view .LVU82
-  95:UserAPP/Source/DPPTM.c ****         break;
- 364              		.loc 1 95 26 is_stmt 0 view .LVU83
- 365 0088 4E4B     		ldr	r3, .L48+56
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccaGO8vK.s 			page 12
-
-
- 366 008a 0993     		str	r3, [sp, #36]	@ float
-  96:UserAPP/Source/DPPTM.c ****     case 15:
- 367              		.loc 1 96 9 view .LVU84
- 368 008c CAE7     		b	.L26
- 369              	.LVL30:
- 370              	.L12:
-  98:UserAPP/Source/DPPTM.c ****         break;  
- 371              		.loc 1 98 9 is_stmt 1 view .LVU85
-  99:UserAPP/Source/DPPTM.c ****     case 16:
- 372              		.loc 1 99 9 view .LVU86
-  98:UserAPP/Source/DPPTM.c ****         break;  
- 373              		.loc 1 98 26 is_stmt 0 view .LVU87
- 374 008e 4E4B     		ldr	r3, .L48+60
- 375 0090 0993     		str	r3, [sp, #36]	@ float
-  99:UserAPP/Source/DPPTM.c ****     case 16:
- 376              		.loc 1 99 9 view .LVU88
- 377 0092 C7E7     		b	.L26
- 378              	.LVL31:
- 379              	.L10:
- 101:UserAPP/Source/DPPTM.c ****         break;
- 380              		.loc 1 101 9 is_stmt 1 view .LVU89
- 102:UserAPP/Source/DPPTM.c ****     default:
- 381              		.loc 1 102 9 view .LVU90
- 101:UserAPP/Source/DPPTM.c ****         break;
- 382              		.loc 1 101 26 is_stmt 0 view .LVU91
- 383 0094 4D4B     		ldr	r3, .L48+64
- 384 0096 0993     		str	r3, [sp, #36]	@ float
- 102:UserAPP/Source/DPPTM.c ****     default:
- 385              		.loc 1 102 9 view .LVU92
- 386 0098 C4E7     		b	.L26
- 387              	.LVL32:
- 388              	.L9:
- 104:UserAPP/Source/DPPTM.c ****         return; // 无效索引，直接返回
- 389              		.loc 1 104 9 is_stmt 1 view .LVU93
- 390 009a 0346     		mov	r3, r0
- 391 009c 4C4A     		ldr	r2, .L48+68
- 392 009e 0021     		movs	r1, #0
- 393 00a0 3C48     		ldr	r0, .L48+8
- 394              	.LVL33:
- 104:UserAPP/Source/DPPTM.c ****         return; // 无效索引，直接返回
- 395              		.loc 1 104 9 is_stmt 0 view .LVU94
- 396 00a2 0068     		ldr	r0, [r0]
- 397 00a4 FFF7FEFF 		bl	QueueSendfmt
- 398              	.LVL34:
- 105:UserAPP/Source/DPPTM.c ****     }
- 399              		.loc 1 105 9 is_stmt 1 view .LVU95
- 400 00a8 0CE0     		b	.L8
- 401              	.LVL35:
- 402              	.L27:
-  50:UserAPP/Source/DPPTM.c ****     {
- 403              		.loc 1 50 5 is_stmt 0 view .LVU96
- 404 00aa 4FF08043 		mov	r3, #1073741824
- 405 00ae 0993     		str	r3, [sp, #36]	@ float
- 406 00b0 B8E7     		b	.L26
- 407              	.L37:
-  56:UserAPP/Source/DPPTM.c ****         break;
- 408              		.loc 1 56 26 view .LVU97
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccaGO8vK.s 			page 13
-
-
- 409 00b2 484B     		ldr	r3, .L48+72
- 410 00b4 0993     		str	r3, [sp, #36]	@ float
- 411 00b6 B5E7     		b	.L26
- 412              	.LVL36:
- 413              	.L46:
- 414              	.LBB2:
- 121:UserAPP/Source/DPPTM.c ****     {
- 122:UserAPP/Source/DPPTM.c ****         iteration++; // 迭代次数加1
- 123:UserAPP/Source/DPPTM.c ****         
- 124:UserAPP/Source/DPPTM.c ****         // 获取当前VDD电压
- 125:UserAPP/Source/DPPTM.c ****         float currentVoltage = get_current_vdd_voltage(); // 从ADC获取当前电压
- 126:UserAPP/Source/DPPTM.c ****         
- 127:UserAPP/Source/DPPTM.c ****         // 检查读取是否成功
- 128:UserAPP/Source/DPPTM.c ****         if (currentVoltage < 0.0f)
- 129:UserAPP/Source/DPPTM.c ****         {
- 130:UserAPP/Source/DPPTM.c ****             QueueSendfmt(xReceiveLogQueue, 0, "ADC读取失败,中止调整\r\n"); // 记录读取�
- 415              		.loc 1 130 13 is_stmt 1 view .LVU98
- 416 00b8 474A     		ldr	r2, .L48+76
- 417 00ba 0021     		movs	r1, #0
- 418 00bc 354B     		ldr	r3, .L48+8
- 419 00be 1868     		ldr	r0, [r3]
- 420 00c0 FFF7FEFF 		bl	QueueSendfmt
- 421              	.LVL37:
- 131:UserAPP/Source/DPPTM.c ****             return; // ADC读取失败，退出
- 422              		.loc 1 131 13 view .LVU99
- 423              	.L8:
- 424              		.loc 1 131 13 is_stmt 0 view .LVU100
- 425              	.LBE2:
- 132:UserAPP/Source/DPPTM.c ****         }
- 133:UserAPP/Source/DPPTM.c ****         
- 134:UserAPP/Source/DPPTM.c ****         // 计算误差
- 135:UserAPP/Source/DPPTM.c ****         float error = TargetVDDVoltage - currentVoltage; // 计算目标值与当前值的差
- 136:UserAPP/Source/DPPTM.c ****         
- 137:UserAPP/Source/DPPTM.c ****         QueueSendfmt(xReceiveLogQueue, 0, "第%u次调整: 当前=%.2fV, 目标=%.2fV, 误差=%.2fV
- 138:UserAPP/Source/DPPTM.c ****             iteration, currentVoltage, TargetVDDVoltage, error, currentDPPTM); // 记录调整信�
- 139:UserAPP/Source/DPPTM.c ****         
- 140:UserAPP/Source/DPPTM.c ****         // 判断是否达到目标（在容差范围内）
- 141:UserAPP/Source/DPPTM.c ****         if (error >= -VOLTAGE_TOLERANCE && error <= VOLTAGE_TOLERANCE)
- 142:UserAPP/Source/DPPTM.c ****         {
- 143:UserAPP/Source/DPPTM.c ****             QueueSendfmt(xReceiveLogQueue, 0, "VDD电压调整成功: %.2fV (目标: %.2fV)\r\n", 
- 144:UserAPP/Source/DPPTM.c ****                 currentVoltage, TargetVDDVoltage); // 记录调整成功
- 145:UserAPP/Source/DPPTM.c ****             return; // 达到目标，退出
- 146:UserAPP/Source/DPPTM.c ****         }
- 147:UserAPP/Source/DPPTM.c ****         
- 148:UserAPP/Source/DPPTM.c ****         // 计算调整量（比例控制）
- 149:UserAPP/Source/DPPTM.c ****         // error > 0 表示当前电压低于目标，需要增大电压，即减小DPPTM值
- 150:UserAPP/Source/DPPTM.c ****         // error < 0 表示当前电压高于目标，需要减小电压，即增大DPPTM值
- 151:UserAPP/Source/DPPTM.c ****         int16_t adjustment = (int16_t)(-error * 30.0f); // 比例系数30（可根据实际情况�
- 152:UserAPP/Source/DPPTM.c ****         
- 153:UserAPP/Source/DPPTM.c ****         // 更新DPPTM值
- 154:UserAPP/Source/DPPTM.c ****         int16_t newDPPTM = (int16_t)currentDPPTM + adjustment; // 计算新的DPPTM值
- 155:UserAPP/Source/DPPTM.c ****         
- 156:UserAPP/Source/DPPTM.c ****         // 边界限制
- 157:UserAPP/Source/DPPTM.c ****         if (newDPPTM < DPPTM_MIN)
- 158:UserAPP/Source/DPPTM.c ****         {
- 159:UserAPP/Source/DPPTM.c ****             newDPPTM = DPPTM_MIN; // 限制在最小值
- 160:UserAPP/Source/DPPTM.c ****         }
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccaGO8vK.s 			page 14
-
-
- 161:UserAPP/Source/DPPTM.c ****         if (newDPPTM > DPPTM_MAX)
- 162:UserAPP/Source/DPPTM.c ****         {
- 163:UserAPP/Source/DPPTM.c ****             newDPPTM = DPPTM_MAX; // 限制在最大值
- 164:UserAPP/Source/DPPTM.c ****         }
- 165:UserAPP/Source/DPPTM.c ****         
- 166:UserAPP/Source/DPPTM.c ****         currentDPPTM = (uint8_t)newDPPTM; // 更新当前DPPTM值
- 167:UserAPP/Source/DPPTM.c ****         
- 168:UserAPP/Source/DPPTM.c ****         // 控制数字电位器
- 169:UserAPP/Source/DPPTM.c ****         ControlDPPTM(currentDPPTM); // 发送新的DPPTM值
- 170:UserAPP/Source/DPPTM.c ****         
- 171:UserAPP/Source/DPPTM.c ****         // 等待电压稳定
- 172:UserAPP/Source/DPPTM.c ****         vTaskDelay(pdMS_TO_TICKS(100)); // 延迟100ms等待电压稳定
- 173:UserAPP/Source/DPPTM.c ****     }
- 174:UserAPP/Source/DPPTM.c ****     
- 175:UserAPP/Source/DPPTM.c ****     // 达到最大迭代次数仍未收敛
- 176:UserAPP/Source/DPPTM.c ****     QueueSendfmt(xReceiveLogQueue, 0, "VDD电压调整超时,未能达到目标值\r\n"); // 记录
- 177:UserAPP/Source/DPPTM.c **** }
- 426              		.loc 1 177 1 view .LVU101
- 427 00c4 0BB0     		add	sp, sp, #44
- 428              	.LCFI3:
- 429              		.cfi_remember_state
- 430              		.cfi_def_cfa_offset 36
- 431              		@ sp needed
- 432 00c6 BDE8F08F 		pop	{r4, r5, r6, r7, r8, r9, r10, fp, pc}
- 433              	.LVL38:
- 434              	.L47:
- 435              	.LCFI4:
- 436              		.cfi_restore_state
- 437              	.LBB3:
- 143:UserAPP/Source/DPPTM.c ****                 currentVoltage, TargetVDDVoltage); // 记录调整成功
- 438              		.loc 1 143 13 is_stmt 1 view .LVU102
- 439 00ca CDE90289 		strd	r8, [sp, #8]
- 440 00ce CDE90067 		strd	r6, [sp]
- 441 00d2 424A     		ldr	r2, .L48+80
- 442 00d4 0021     		movs	r1, #0
- 443 00d6 2F4B     		ldr	r3, .L48+8
- 444 00d8 1868     		ldr	r0, [r3]
- 445 00da FFF7FEFF 		bl	QueueSendfmt
- 446              	.LVL39:
- 145:UserAPP/Source/DPPTM.c ****         }
- 447              		.loc 1 145 13 view .LVU103
- 448 00de F1E7     		b	.L8
- 449              	.LVL40:
- 450              	.L38:
- 159:UserAPP/Source/DPPTM.c ****         }
- 451              		.loc 1 159 22 is_stmt 0 view .LVU104
- 452 00e0 0020     		movs	r0, #0
- 453              	.LVL41:
- 454              	.L35:
- 166:UserAPP/Source/DPPTM.c ****         
- 455              		.loc 1 166 9 is_stmt 1 view .LVU105
- 166:UserAPP/Source/DPPTM.c ****         
- 456              		.loc 1 166 22 is_stmt 0 view .LVU106
- 457 00e2 5FFA80FA 		uxtb	r10, r0
- 458              	.LVL42:
- 169:UserAPP/Source/DPPTM.c ****         
- 459              		.loc 1 169 9 is_stmt 1 view .LVU107
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccaGO8vK.s 			page 15
-
-
- 460 00e6 5046     		mov	r0, r10
- 461              	.LVL43:
- 169:UserAPP/Source/DPPTM.c ****         
- 462              		.loc 1 169 9 is_stmt 0 view .LVU108
- 463 00e8 FFF7FEFF 		bl	ControlDPPTM
- 464              	.LVL44:
- 172:UserAPP/Source/DPPTM.c ****     }
- 465              		.loc 1 172 9 is_stmt 1 view .LVU109
- 466 00ec C820     		movs	r0, #200
- 467 00ee FFF7FEFF 		bl	vTaskDelay
- 468              	.LVL45:
- 469              	.L29:
- 172:UserAPP/Source/DPPTM.c ****     }
- 470              		.loc 1 172 9 is_stmt 0 view .LVU110
- 471              	.LBE3:
- 120:UserAPP/Source/DPPTM.c ****     {
- 472              		.loc 1 120 22 is_stmt 1 view .LVU111
- 473 00f2 312D     		cmp	r5, #49
- 474 00f4 42D8     		bhi	.L45
- 475              	.LBB4:
- 122:UserAPP/Source/DPPTM.c ****         
- 476              		.loc 1 122 9 view .LVU112
- 122:UserAPP/Source/DPPTM.c ****         
- 477              		.loc 1 122 18 is_stmt 0 view .LVU113
- 478 00f6 0135     		adds	r5, r5, #1
- 479              	.LVL46:
- 122:UserAPP/Source/DPPTM.c ****         
- 480              		.loc 1 122 18 view .LVU114
- 481 00f8 EDB2     		uxtb	r5, r5
- 482              	.LVL47:
- 125:UserAPP/Source/DPPTM.c ****         
- 483              		.loc 1 125 9 is_stmt 1 view .LVU115
- 125:UserAPP/Source/DPPTM.c ****         
- 484              		.loc 1 125 32 is_stmt 0 view .LVU116
- 485 00fa FFF7FEFF 		bl	get_current_vdd_voltage
- 486              	.LVL48:
- 487 00fe 0646     		mov	r6, r0
- 488              	.LVL49:
- 128:UserAPP/Source/DPPTM.c ****         {
- 489              		.loc 1 128 9 is_stmt 1 view .LVU117
- 128:UserAPP/Source/DPPTM.c ****         {
- 490              		.loc 1 128 12 is_stmt 0 view .LVU118
- 491 0100 0021     		movs	r1, #0
- 492 0102 FFF7FEFF 		bl	__aeabi_fcmplt
- 493              	.LVL50:
- 128:UserAPP/Source/DPPTM.c ****         {
- 494              		.loc 1 128 12 view .LVU119
- 495 0106 0028     		cmp	r0, #0
- 496 0108 D6D1     		bne	.L46
- 135:UserAPP/Source/DPPTM.c ****         
- 497              		.loc 1 135 9 is_stmt 1 view .LVU120
- 135:UserAPP/Source/DPPTM.c ****         
- 498              		.loc 1 135 15 is_stmt 0 view .LVU121
- 499 010a 3146     		mov	r1, r6
- 500 010c 0998     		ldr	r0, [sp, #36]	@ float
- 501 010e FFF7FEFF 		bl	__aeabi_fsub
- 502              	.LVL51:
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccaGO8vK.s 			page 16
-
-
- 503 0112 0446     		mov	r4, r0
- 504              	.LVL52:
- 137:UserAPP/Source/DPPTM.c ****             iteration, currentVoltage, TargetVDDVoltage, error, currentDPPTM); // 记录调整信�
- 505              		.loc 1 137 9 is_stmt 1 view .LVU122
- 506 0114 3046     		mov	r0, r6
- 507              	.LVL53:
- 137:UserAPP/Source/DPPTM.c ****             iteration, currentVoltage, TargetVDDVoltage, error, currentDPPTM); // 记录调整信�
- 508              		.loc 1 137 9 is_stmt 0 view .LVU123
- 509 0116 FFF7FEFF 		bl	__aeabi_f2d
- 510              	.LVL54:
- 511 011a 0646     		mov	r6, r0
- 512              	.LVL55:
- 137:UserAPP/Source/DPPTM.c ****             iteration, currentVoltage, TargetVDDVoltage, error, currentDPPTM); // 记录调整信�
- 513              		.loc 1 137 9 view .LVU124
- 514 011c 0F46     		mov	r7, r1
- 515 011e 1D4B     		ldr	r3, .L48+8
- 516 0120 D3F800B0 		ldr	fp, [r3]
- 517 0124 CDF818A0 		str	r10, [sp, #24]
- 518 0128 2046     		mov	r0, r4
- 519 012a FFF7FEFF 		bl	__aeabi_f2d
- 520              	.LVL56:
- 521 012e CDE90401 		strd	r0, [sp, #16]
- 522 0132 CDE90289 		strd	r8, [sp, #8]
- 523 0136 CDE90067 		strd	r6, [sp]
- 524 013a 2B46     		mov	r3, r5
- 525 013c 284A     		ldr	r2, .L48+84
- 526 013e 0021     		movs	r1, #0
- 527 0140 5846     		mov	r0, fp
- 528 0142 FFF7FEFF 		bl	QueueSendfmt
- 529              	.LVL57:
- 141:UserAPP/Source/DPPTM.c ****         {
- 530              		.loc 1 141 9 is_stmt 1 view .LVU125
- 141:UserAPP/Source/DPPTM.c ****         {
- 531              		.loc 1 141 12 is_stmt 0 view .LVU126
- 532 0146 0021     		movs	r1, #0
- 533 0148 2046     		mov	r0, r4
- 534 014a FFF7FEFF 		bl	__aeabi_fcmpge
- 535              	.LVL58:
- 536 014e 28B1     		cbz	r0, .L32
- 141:UserAPP/Source/DPPTM.c ****         {
- 537              		.loc 1 141 41 discriminator 1 view .LVU127
- 538 0150 0021     		movs	r1, #0
- 539 0152 2046     		mov	r0, r4
- 540 0154 FFF7FEFF 		bl	__aeabi_fcmple
- 541              	.LVL59:
- 542 0158 0028     		cmp	r0, #0
- 543 015a B6D1     		bne	.L47
- 544              	.L32:
- 151:UserAPP/Source/DPPTM.c ****         
- 545              		.loc 1 151 9 is_stmt 1 view .LVU128
- 151:UserAPP/Source/DPPTM.c ****         
- 546              		.loc 1 151 40 is_stmt 0 view .LVU129
- 547 015c 04F10040 		add	r0, r4, #-2147483648
- 151:UserAPP/Source/DPPTM.c ****         
- 548              		.loc 1 151 47 view .LVU130
- 549 0160 2049     		ldr	r1, .L48+88
- 550 0162 FFF7FEFF 		bl	__aeabi_fmul
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccaGO8vK.s 			page 17
-
-
- 551              	.LVL60:
- 151:UserAPP/Source/DPPTM.c ****         
- 552              		.loc 1 151 17 view .LVU131
- 553 0166 FFF7FEFF 		bl	__aeabi_f2iz
- 554              	.LVL61:
- 555 016a 00B2     		sxth	r0, r0
- 556              	.LVL62:
+ 299 0070 4749     		ldr	r1, .L53+12
+ 300 0072 FFF7FEFF 		bl	__aeabi_fcmpge
+ 301              	.LVL34:
+ 302              		.loc 1 145 8 view .LVU70
+ 303 0076 28B1     		cbz	r0, .L24
+ 304              		.loc 1 145 33 discriminator 1 view .LVU71
+ 305 0078 4649     		ldr	r1, .L53+16
+ 306 007a 2046     		mov	r0, r4
+ 307 007c FFF7FEFF 		bl	__aeabi_fcmple
+ 308              	.LVL35:
+ 309 0080 0028     		cmp	r0, #0
+ 310 0082 65D1     		bne	.L52
+ 311              	.L24:
+ 146:UserAPP/Source/DPPTM.c ****     {
+ 147:UserAPP/Source/DPPTM.c ****         pid_locked = 1;
+ 148:UserAPP/Source/DPPTM.c **** 
+ 149:UserAPP/Source/DPPTM.c ****         #if TEST_MODE
+ 150:UserAPP/Source/DPPTM.c ****         QueueSendfmt(xSendDataQueue, 0,
+ 151:UserAPP/Source/DPPTM.c ****                      "PID锁定: %.2fV, DPPTM=0x%02X(%u)\r\n",
+ 152:UserAPP/Source/DPPTM.c ****                      currentV, pid_dpptm, pid_dpptm);
+ 153:UserAPP/Source/DPPTM.c ****         #endif
  154:UserAPP/Source/DPPTM.c ****         
- 557              		.loc 1 154 9 is_stmt 1 view .LVU132
- 154:UserAPP/Source/DPPTM.c ****         
- 558              		.loc 1 154 50 is_stmt 0 view .LVU133
- 559 016c 5044     		add	r0, r0, r10
- 560              	.LVL63:
- 154:UserAPP/Source/DPPTM.c ****         
- 561              		.loc 1 154 17 view .LVU134
- 562 016e 00B2     		sxth	r0, r0
- 563              	.LVL64:
- 157:UserAPP/Source/DPPTM.c ****         {
- 564              		.loc 1 157 9 is_stmt 1 view .LVU135
- 157:UserAPP/Source/DPPTM.c ****         {
- 565              		.loc 1 157 12 is_stmt 0 view .LVU136
- 566 0170 0028     		cmp	r0, #0
- 567 0172 B5DB     		blt	.L38
- 161:UserAPP/Source/DPPTM.c ****         {
- 568              		.loc 1 161 9 is_stmt 1 view .LVU137
- 161:UserAPP/Source/DPPTM.c ****         {
- 569              		.loc 1 161 12 is_stmt 0 view .LVU138
- 570 0174 FE28     		cmp	r0, #254
- 571 0176 B4DD     		ble	.L35
- 163:UserAPP/Source/DPPTM.c ****         }
- 572              		.loc 1 163 22 view .LVU139
- 573 0178 FE20     		movs	r0, #254
- 574              	.LVL65:
- 163:UserAPP/Source/DPPTM.c ****         }
- 575              		.loc 1 163 22 view .LVU140
- 576 017a B2E7     		b	.L35
- 577              	.LVL66:
- 578              	.L45:
- 163:UserAPP/Source/DPPTM.c ****         }
- 579              		.loc 1 163 22 view .LVU141
- 580              	.LBE4:
- 176:UserAPP/Source/DPPTM.c **** }
- 581              		.loc 1 176 5 is_stmt 1 view .LVU142
- 582 017c 1A4A     		ldr	r2, .L48+92
- 583 017e 0021     		movs	r1, #0
- 584 0180 044B     		ldr	r3, .L48+8
- 585 0182 1868     		ldr	r0, [r3]
- 586 0184 FFF7FEFF 		bl	QueueSendfmt
- 587              	.LVL67:
- 588 0188 9CE7     		b	.L8
- 589              	.L49:
- 590 018a 00BF     		.align	2
- 591              	.L48:
- 592 018c CDCC0C40 		.word	1074580685
- 593 0190 1C000000 		.word	.LC5
- 594 0194 00000000 		.word	xReceiveLogQueue
- 595 0198 33331340 		.word	1075000115
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccaGO8vK.s 			page 18
+ 155:UserAPP/Source/DPPTM.c ****         return;
+ 156:UserAPP/Source/DPPTM.c ****     }
+ 157:UserAPP/Source/DPPTM.c **** 
+ 158:UserAPP/Source/DPPTM.c ****     // PID计算
+ 159:UserAPP/Source/DPPTM.c ****     pid_integral += error;
+ 312              		.loc 1 159 5 is_stmt 1 view .LVU72
+ 313              		.loc 1 159 18 is_stmt 0 view .LVU73
+ 314 0084 454D     		ldr	r5, .L53+24
+ 315              	.LVL36:
+ 316              		.loc 1 159 18 view .LVU74
+ 317 0086 2968     		ldr	r1, [r5]	@ float
+ 318 0088 2046     		mov	r0, r4
+ 319 008a FFF7FEFF 		bl	__aeabi_fadd
+ 320              	.LVL37:
+ 321 008e 2860     		str	r0, [r5]	@ float
+ 160:UserAPP/Source/DPPTM.c ****     if (pid_integral > PID_INTEGRAL_MAX) pid_integral = PID_INTEGRAL_MAX;
+ 322              		.loc 1 160 5 is_stmt 1 view .LVU75
+ 323              		.loc 1 160 8 is_stmt 0 view .LVU76
+ 324 0090 4349     		ldr	r1, .L53+28
+ 325 0092 FFF7FEFF 		bl	__aeabi_fcmpgt
+ 326              	.LVL38:
+ 327 0096 08B1     		cbz	r0, .L27
+ 328              		.loc 1 160 42 is_stmt 1 discriminator 1 view .LVU77
+ 329              		.loc 1 160 55 is_stmt 0 discriminator 1 view .LVU78
+ 330 0098 414A     		ldr	r2, .L53+28
+ 331 009a 2A60     		str	r2, [r5]	@ float
+ 332              	.L27:
+ 161:UserAPP/Source/DPPTM.c ****     if (pid_integral < -PID_INTEGRAL_MAX) pid_integral = -PID_INTEGRAL_MAX;
+ 333              		.loc 1 161 5 is_stmt 1 view .LVU79
+ 334              		.loc 1 161 8 is_stmt 0 view .LVU80
+ 335 009c 4149     		ldr	r1, .L53+32
+ 336 009e 3F4B     		ldr	r3, .L53+24
+ 337 00a0 1868     		ldr	r0, [r3]	@ float
+ 338 00a2 FFF7FEFF 		bl	__aeabi_fcmplt
+ 339              	.LVL39:
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccrwf7hg.s 			page 10
 
 
- 596 019c 9A991940 		.word	1075419546
- 597 01a0 00002040 		.word	1075838976
- 598 01a4 66662640 		.word	1076258406
- 599 01a8 CDCC2C40 		.word	1076677837
- 600 01ac 33333340 		.word	1077097267
- 601 01b0 9A993940 		.word	1077516698
- 602 01b4 00004040 		.word	1077936128
- 603 01b8 66664640 		.word	1078355558
- 604 01bc CDCC4C40 		.word	1078774989
- 605 01c0 33335340 		.word	1079194419
- 606 01c4 9A995940 		.word	1079613850
- 607 01c8 00006040 		.word	1080033280
- 608 01cc 66666640 		.word	1080452710
- 609 01d0 00000000 		.word	.LC4
- 610 01d4 66660640 		.word	1074161254
- 611 01d8 44000000 		.word	.LC6
- 612 01dc AC000000 		.word	.LC8
- 613 01e0 64000000 		.word	.LC7
- 614 01e4 0000F041 		.word	1106247680
- 615 01e8 DC000000 		.word	.LC9
- 616              		.cfi_endproc
- 617              	.LFE80:
- 619              		.text
- 620              	.Letext0:
- 621              		.file 2 "D:/gcc-arm/14.3 rel1/arm-none-eabi/include/machine/_default_types.h"
- 622              		.file 3 "D:/gcc-arm/14.3 rel1/arm-none-eabi/include/sys/_stdint.h"
- 623              		.file 4 "Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h"
- 624              		.file 5 "Middlewares/Third_Party/FreeRTOS/Source/include/queue.h"
- 625              		.file 6 "UserAPP/Include/SendDataProcess.h"
- 626              		.file 7 "UserDriver/Include/DPPTMIIC.h"
- 627              		.file 8 "Middlewares/Third_Party/FreeRTOS/Source/include/task.h"
- 628              		.file 9 "UserAPP/Include/ADCAPP.h"
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccaGO8vK.s 			page 19
+ 340 00a6 10B1     		cbz	r0, .L29
+ 341              		.loc 1 161 43 is_stmt 1 discriminator 1 view .LVU81
+ 342              		.loc 1 161 56 is_stmt 0 discriminator 1 view .LVU82
+ 343 00a8 3C4B     		ldr	r3, .L53+24
+ 344 00aa 3E4A     		ldr	r2, .L53+32
+ 345 00ac 1A60     		str	r2, [r3]	@ float
+ 346              	.L29:
+ 162:UserAPP/Source/DPPTM.c **** 
+ 163:UserAPP/Source/DPPTM.c ****     float derivative = error - pid_lastError;
+ 347              		.loc 1 163 5 is_stmt 1 view .LVU83
+ 348              		.loc 1 163 30 is_stmt 0 view .LVU84
+ 349 00ae 3A4E     		ldr	r6, .L53+20
+ 350              		.loc 1 163 11 view .LVU85
+ 351 00b0 3168     		ldr	r1, [r6]	@ float
+ 352 00b2 2046     		mov	r0, r4
+ 353 00b4 FFF7FEFF 		bl	__aeabi_fsub
+ 354              	.LVL40:
+ 355 00b8 0546     		mov	r5, r0
+ 356              	.LVL41:
+ 164:UserAPP/Source/DPPTM.c ****     pid_lastError = error;
+ 357              		.loc 1 164 5 is_stmt 1 view .LVU86
+ 358              		.loc 1 164 19 is_stmt 0 view .LVU87
+ 359 00ba 3460     		str	r4, [r6]	@ float
+ 165:UserAPP/Source/DPPTM.c **** 
+ 166:UserAPP/Source/DPPTM.c ****     // PID输出（error>0  需增大码值升压  输出为正）
+ 167:UserAPP/Source/DPPTM.c ****     float output = (PID_KP * error + PID_KI * pid_integral + PID_KD * derivative);
+ 360              		.loc 1 167 5 is_stmt 1 view .LVU88
+ 361              		.loc 1 167 28 is_stmt 0 view .LVU89
+ 362 00bc 2146     		mov	r1, r4
+ 363 00be 2046     		mov	r0, r4
+ 364              	.LVL42:
+ 365              		.loc 1 167 28 view .LVU90
+ 366 00c0 FFF7FEFF 		bl	__aeabi_fadd
+ 367              	.LVL43:
+ 368              		.loc 1 167 36 view .LVU91
+ 369 00c4 354B     		ldr	r3, .L53+24
+ 370 00c6 1968     		ldr	r1, [r3]	@ float
+ 371 00c8 FFF7FEFF 		bl	__aeabi_fadd
+ 372              	.LVL44:
+ 373 00cc 0446     		mov	r4, r0
+ 374              	.LVL45:
+ 375              		.loc 1 167 69 view .LVU92
+ 376 00ce 3649     		ldr	r1, .L53+36
+ 377 00d0 2846     		mov	r0, r5
+ 378 00d2 FFF7FEFF 		bl	__aeabi_fmul
+ 379              	.LVL46:
+ 380 00d6 0146     		mov	r1, r0
+ 381              		.loc 1 167 11 view .LVU93
+ 382 00d8 2046     		mov	r0, r4
+ 383 00da FFF7FEFF 		bl	__aeabi_fadd
+ 384              	.LVL47:
+ 385 00de 0446     		mov	r4, r0
+ 386              	.LVL48:
+ 168:UserAPP/Source/DPPTM.c **** 
+ 169:UserAPP/Source/DPPTM.c ****     // 转为整数步进（PID输出不足半步时不调整，避免抖动）
+ 170:UserAPP/Source/DPPTM.c ****     int16_t step = 0;
+ 387              		.loc 1 170 5 is_stmt 1 view .LVU94
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccrwf7hg.s 			page 11
+
+
+ 171:UserAPP/Source/DPPTM.c ****     if (output > 0.5f)       step = (int16_t)(output + 0.5f);                   // 正方向超半�
+ 388              		.loc 1 171 5 view .LVU95
+ 389              		.loc 1 171 8 is_stmt 0 view .LVU96
+ 390 00e0 4FF07C51 		mov	r1, #1056964608
+ 391 00e4 FFF7FEFF 		bl	__aeabi_fcmpgt
+ 392              	.LVL49:
+ 393              		.loc 1 171 8 view .LVU97
+ 394 00e8 0028     		cmp	r0, #0
+ 395 00ea 35D0     		beq	.L49
+ 396              		.loc 1 171 30 is_stmt 1 discriminator 1 view .LVU98
+ 397              		.loc 1 171 54 is_stmt 0 discriminator 1 view .LVU99
+ 398 00ec 4FF07C51 		mov	r1, #1056964608
+ 399 00f0 2046     		mov	r0, r4
+ 400 00f2 FFF7FEFF 		bl	__aeabi_fadd
+ 401              	.LVL50:
+ 402              		.loc 1 171 35 discriminator 1 view .LVU100
+ 403 00f6 FFF7FEFF 		bl	__aeabi_f2iz
+ 404              	.LVL51:
+ 405 00fa 00B2     		sxth	r0, r0
+ 406              	.LVL52:
+ 407              	.L33:
+ 172:UserAPP/Source/DPPTM.c ****     else if (output < -0.5f) step = (int16_t)(output - 0.5f);                   // 负方向超半�
+ 173:UserAPP/Source/DPPTM.c ****     // output在[-0.5, 0.5]之间 → step=0，不调整（查表已精确命中，无需强制步�
+ 174:UserAPP/Source/DPPTM.c **** 
+ 175:UserAPP/Source/DPPTM.c ****     if (step == 0)                                                             // PID认为无需�
+ 408              		.loc 1 175 5 is_stmt 1 view .LVU101
+ 409              		.loc 1 175 8 is_stmt 0 view .LVU102
+ 410 00fc 0028     		cmp	r0, #0
+ 411 00fe 40D0     		beq	.L17
+ 176:UserAPP/Source/DPPTM.c ****         return;                                                                // 跳过本轮
+ 177:UserAPP/Source/DPPTM.c **** 
+ 178:UserAPP/Source/DPPTM.c ****     // 限制在基准码值PID_MAX_TRIM步以内（防止PID跑飞）
+ 179:UserAPP/Source/DPPTM.c ****     int16_t newCode = (int16_t)pid_dpptm + step;
+ 412              		.loc 1 179 5 is_stmt 1 view .LVU103
+ 413              		.loc 1 179 42 is_stmt 0 view .LVU104
+ 414 0100 2A4B     		ldr	r3, .L53+40
+ 415 0102 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 416 0104 0344     		add	r3, r3, r0
+ 417              		.loc 1 179 13 view .LVU105
+ 418 0106 1BB2     		sxth	r3, r3
+ 419              	.LVL53:
+ 180:UserAPP/Source/DPPTM.c ****     int16_t lo = (int16_t)pid_baseCode - PID_MAX_TRIM;                          // 微调下限
+ 420              		.loc 1 180 5 is_stmt 1 view .LVU106
+ 421              		.loc 1 180 40 is_stmt 0 view .LVU107
+ 422 0108 294A     		ldr	r2, .L53+44
+ 423 010a 1078     		ldrb	r0, [r2]	@ zero_extendqisi2
+ 424              	.LVL54:
+ 425              		.loc 1 180 13 view .LVU108
+ 426 010c 021F     		subs	r2, r0, #4
+ 427              	.LVL55:
+ 181:UserAPP/Source/DPPTM.c ****     int16_t hi = (int16_t)pid_baseCode + PID_MAX_TRIM;                          // 微调上限
+ 428              		.loc 1 181 5 is_stmt 1 view .LVU109
+ 429              		.loc 1 181 13 is_stmt 0 view .LVU110
+ 430 010e 0430     		adds	r0, r0, #4
+ 431              	.LVL56:
+ 182:UserAPP/Source/DPPTM.c ****     if (newCode < lo) newCode = lo;
+ 432              		.loc 1 182 5 is_stmt 1 view .LVU111
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccrwf7hg.s 			page 12
+
+
+ 433              		.loc 1 182 8 is_stmt 0 view .LVU112
+ 434 0110 9342     		cmp	r3, r2
+ 435 0112 00DB     		blt	.L35
+ 179:UserAPP/Source/DPPTM.c ****     int16_t lo = (int16_t)pid_baseCode - PID_MAX_TRIM;                          // 微调下限
+ 436              		.loc 1 179 13 view .LVU113
+ 437 0114 1A46     		mov	r2, r3
+ 438              	.LVL57:
+ 439              	.L35:
+ 183:UserAPP/Source/DPPTM.c ****     if (newCode > hi) newCode = hi;
+ 440              		.loc 1 183 5 is_stmt 1 view .LVU114
+ 441              		.loc 1 183 8 is_stmt 0 view .LVU115
+ 442 0116 8242     		cmp	r2, r0
+ 443 0118 00DC     		bgt	.L36
+ 444 011a 1046     		mov	r0, r2
+ 445              	.LVL58:
+ 446              	.L36:
+ 184:UserAPP/Source/DPPTM.c ****     if (newCode < DPPTM_CODE_MIN) newCode = DPPTM_CODE_MIN;                     // 绝对下限（0
+ 447              		.loc 1 184 5 is_stmt 1 view .LVU116
+ 448              		.loc 1 184 8 is_stmt 0 view .LVU117
+ 449 011c 0028     		cmp	r0, #0
+ 450 011e 2ADB     		blt	.L38
+ 185:UserAPP/Source/DPPTM.c ****     if (newCode > DPPTM_CODE_MAX) newCode = DPPTM_CODE_MAX;                     // 绝对上限（0
+ 451              		.loc 1 185 5 is_stmt 1 view .LVU118
+ 452              		.loc 1 185 8 is_stmt 0 view .LVU119
+ 453 0120 7F28     		cmp	r0, #127
+ 454 0122 29DD     		ble	.L37
+ 455              		.loc 1 185 43 discriminator 1 view .LVU120
+ 456 0124 7F20     		movs	r0, #127
+ 457              	.LVL59:
+ 458              		.loc 1 185 43 discriminator 1 view .LVU121
+ 459 0126 27E0     		b	.L37
+ 460              	.LVL60:
+ 461              	.L51:
+ 112:UserAPP/Source/DPPTM.c ****         pid_lastError = 0.0f;                                                  // 重置微分
+ 462              		.loc 1 112 9 is_stmt 1 view .LVU122
+ 112:UserAPP/Source/DPPTM.c ****         pid_lastError = 0.0f;                                                  // 重置微分
+ 463              		.loc 1 112 23 is_stmt 0 view .LVU123
+ 464 0128 0023     		movs	r3, #0
+ 465 012a 1C4A     		ldr	r2, .L53+24
+ 466 012c 1360     		str	r3, [r2]	@ float
+ 113:UserAPP/Source/DPPTM.c ****         pid_lastTarget = TargetVDDVoltage;                                     // 记录新目标
+ 467              		.loc 1 113 9 is_stmt 1 view .LVU124
+ 113:UserAPP/Source/DPPTM.c ****         pid_lastTarget = TargetVDDVoltage;                                     // 记录新目标
+ 468              		.loc 1 113 23 is_stmt 0 view .LVU125
+ 469 012e 1A4A     		ldr	r2, .L53+20
+ 470 0130 1360     		str	r3, [r2]	@ float
+ 114:UserAPP/Source/DPPTM.c ****         pid_locked = 0;                                                        // 解锁
+ 471              		.loc 1 114 9 is_stmt 1 view .LVU126
+ 114:UserAPP/Source/DPPTM.c ****         pid_locked = 0;                                                        // 解锁
+ 472              		.loc 1 114 24 is_stmt 0 view .LVU127
+ 473 0132 154B     		ldr	r3, .L53+4
+ 474 0134 1C60     		str	r4, [r3]	@ float
+ 115:UserAPP/Source/DPPTM.c **** 
+ 475              		.loc 1 115 9 is_stmt 1 view .LVU128
+ 115:UserAPP/Source/DPPTM.c **** 
+ 476              		.loc 1 115 20 is_stmt 0 view .LVU129
+ 477 0136 154B     		ldr	r3, .L53+8
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccrwf7hg.s 			page 13
+
+
+ 478 0138 0022     		movs	r2, #0
+ 479 013a 1A70     		strb	r2, [r3]
+ 117:UserAPP/Source/DPPTM.c ****         pid_dpptm = pid_baseCode;                                              // 设置当前码�
+ 480              		.loc 1 117 9 is_stmt 1 view .LVU130
+ 117:UserAPP/Source/DPPTM.c ****         pid_dpptm = pid_baseCode;                                              // 设置当前码�
+ 481              		.loc 1 117 24 is_stmt 0 view .LVU131
+ 482 013c 2046     		mov	r0, r4
+ 483 013e FFF7FEFF 		bl	voltage_to_code
+ 484              	.LVL61:
+ 117:UserAPP/Source/DPPTM.c ****         pid_dpptm = pid_baseCode;                                              // 设置当前码�
+ 485              		.loc 1 117 22 discriminator 1 view .LVU132
+ 486 0142 1B4A     		ldr	r2, .L53+44
+ 487 0144 1070     		strb	r0, [r2]
+ 118:UserAPP/Source/DPPTM.c ****         ControlDPPTM(pid_dpptm);                                               // 一步写入
+ 488              		.loc 1 118 9 is_stmt 1 view .LVU133
+ 118:UserAPP/Source/DPPTM.c ****         ControlDPPTM(pid_dpptm);                                               // 一步写入
+ 489              		.loc 1 118 19 is_stmt 0 view .LVU134
+ 490 0146 194A     		ldr	r2, .L53+40
+ 491 0148 1070     		strb	r0, [r2]
+ 119:UserAPP/Source/DPPTM.c **** 
+ 492              		.loc 1 119 9 is_stmt 1 view .LVU135
+ 493 014a FFF7FEFF 		bl	ControlDPPTM
+ 494              	.LVL62:
+ 127:UserAPP/Source/DPPTM.c ****     }
+ 495              		.loc 1 127 9 view .LVU136
+ 496 014e 18E0     		b	.L17
+ 497              	.LVL63:
+ 498              	.L52:
+ 147:UserAPP/Source/DPPTM.c **** 
+ 499              		.loc 1 147 9 view .LVU137
+ 147:UserAPP/Source/DPPTM.c **** 
+ 500              		.loc 1 147 20 is_stmt 0 view .LVU138
+ 501 0150 0E4B     		ldr	r3, .L53+8
+ 502 0152 0122     		movs	r2, #1
+ 503 0154 1A70     		strb	r2, [r3]
+ 155:UserAPP/Source/DPPTM.c ****     }
+ 504              		.loc 1 155 9 is_stmt 1 view .LVU139
+ 505 0156 14E0     		b	.L17
+ 506              	.LVL64:
+ 507              	.L49:
+ 172:UserAPP/Source/DPPTM.c ****     // output在[-0.5, 0.5]之间 → step=0，不调整（查表已精确命中，无需强制步�
+ 508              		.loc 1 172 10 view .LVU140
+ 172:UserAPP/Source/DPPTM.c ****     // output在[-0.5, 0.5]之间 → step=0，不调整（查表已精确命中，无需强制步�
+ 509              		.loc 1 172 13 is_stmt 0 view .LVU141
+ 510 0158 4FF03F41 		mov	r1, #-1090519040
+ 511 015c 2046     		mov	r0, r4
+ 512 015e FFF7FEFF 		bl	__aeabi_fcmplt
+ 513              	.LVL65:
+ 514 0162 70B1     		cbz	r0, .L17
+ 172:UserAPP/Source/DPPTM.c ****     // output在[-0.5, 0.5]之间 → step=0，不调整（查表已精确命中，无需强制步�
+ 515              		.loc 1 172 30 is_stmt 1 discriminator 1 view .LVU142
+ 172:UserAPP/Source/DPPTM.c ****     // output在[-0.5, 0.5]之间 → step=0，不调整（查表已精确命中，无需强制步�
+ 516              		.loc 1 172 54 is_stmt 0 discriminator 1 view .LVU143
+ 517 0164 4FF07C51 		mov	r1, #1056964608
+ 518 0168 2046     		mov	r0, r4
+ 519 016a FFF7FEFF 		bl	__aeabi_fsub
+ 520              	.LVL66:
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccrwf7hg.s 			page 14
+
+
+ 172:UserAPP/Source/DPPTM.c ****     // output在[-0.5, 0.5]之间 → step=0，不调整（查表已精确命中，无需强制步�
+ 521              		.loc 1 172 35 discriminator 1 view .LVU144
+ 522 016e FFF7FEFF 		bl	__aeabi_f2iz
+ 523              	.LVL67:
+ 524 0172 00B2     		sxth	r0, r0
+ 525 0174 C2E7     		b	.L33
+ 526              	.LVL68:
+ 527              	.L38:
+ 184:UserAPP/Source/DPPTM.c ****     if (newCode > DPPTM_CODE_MAX) newCode = DPPTM_CODE_MAX;                     // 绝对上限（0
+ 528              		.loc 1 184 43 discriminator 1 view .LVU145
+ 529 0176 0020     		movs	r0, #0
+ 530              	.LVL69:
+ 531              	.L37:
+ 186:UserAPP/Source/DPPTM.c **** 
+ 187:UserAPP/Source/DPPTM.c ****     pid_dpptm = (uint8_t)newCode;
+ 532              		.loc 1 187 5 is_stmt 1 view .LVU146
+ 533              		.loc 1 187 17 is_stmt 0 view .LVU147
+ 534 0178 C0B2     		uxtb	r0, r0
+ 535              	.LVL70:
+ 536              		.loc 1 187 15 view .LVU148
+ 537 017a 0C4B     		ldr	r3, .L53+40
+ 538 017c 1870     		strb	r0, [r3]
+ 188:UserAPP/Source/DPPTM.c ****     ControlDPPTM(pid_dpptm);                                                   // 写入微调码�
+ 539              		.loc 1 188 5 is_stmt 1 view .LVU149
+ 540 017e FFF7FEFF 		bl	ControlDPPTM
+ 541              	.LVL71:
+ 542              	.L17:
+ 189:UserAPP/Source/DPPTM.c **** }...
+ 543              		.loc 1 189 1 is_stmt 0 view .LVU150
+ 544 0182 70BD     		pop	{r4, r5, r6, pc}
+ 545              	.L54:
+ 546              		.align	2
+ 547              	.L53:
+ 548 0184 00000000 		.word	TargetVDDVoltage
+ 549 0188 00000000 		.word	pid_lastTarget
+ 550 018c 00000000 		.word	pid_locked
+ 551 0190 CDCC4CBD 		.word	-1119040307
+ 552 0194 CDCC4C3D 		.word	1028443341
+ 553 0198 00000000 		.word	pid_lastError
+ 554 019c 00000000 		.word	pid_integral
+ 555 01a0 00004040 		.word	1077936128
+ 556 01a4 000040C0 		.word	-1069547520
+ 557 01a8 9A99993E 		.word	1050253722
+ 558 01ac 00000000 		.word	pid_dpptm
+ 559 01b0 00000000 		.word	pid_baseCode
+ 560              		.cfi_endproc
+ 561              	.LFE81:
+ 563              		.section	.bss.pid_locked,"aw",%nobits
+ 566              	pid_locked:
+ 567 0000 00       		.space	1
+ 568              		.section	.data.pid_lastTarget,"aw"
+ 569              		.align	2
+ 572              	pid_lastTarget:
+ 573 0000 000080BF 		.word	-1082130432
+ 574              		.section	.data.pid_baseCode,"aw"
+ 577              	pid_baseCode:
+ 578 0000 40       		.byte	64
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccrwf7hg.s 			page 15
+
+
+ 579              		.section	.data.pid_dpptm,"aw"
+ 582              	pid_dpptm:
+ 583 0000 40       		.byte	64
+ 584              		.section	.bss.pid_lastError,"aw",%nobits
+ 585              		.align	2
+ 588              	pid_lastError:
+ 589 0000 00000000 		.space	4
+ 590              		.section	.bss.pid_integral,"aw",%nobits
+ 591              		.align	2
+ 594              	pid_integral:
+ 595 0000 00000000 		.space	4
+ 596              		.section	.rodata.voltage_code_table,"a"
+ 597              		.align	2
+ 600              	voltage_code_table:
+ 601 0000 0004080C 		.ascii	"\000\004\010\014\017\023\027\033\037#&*.26:>AEIMQUY"
+ 601      0F13171B 
+ 601      1F23262A 
+ 601      2E32363A 
+ 601      3E414549 
+ 602 0018 5C606468 		.ascii	"\\`dhlpsw{\177"
+ 602      6C707377 
+ 602      7B7F
+ 603              		.global	TargetVDDVoltage
+ 604              		.section	.data.TargetVDDVoltage,"aw"
+ 605              		.align	2
+ 608              	TargetVDDVoltage:
+ 609 0000 000080BF 		.word	-1082130432
+ 610              		.text
+ 611              	.Letext0:
+ 612              		.file 2 "D:/gcc-arm/14.3 rel1/arm-none-eabi/include/machine/_default_types.h"
+ 613              		.file 3 "D:/gcc-arm/14.3 rel1/arm-none-eabi/include/sys/_stdint.h"
+ 614              		.file 4 "Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h"
+ 615              		.file 5 "Middlewares/Third_Party/FreeRTOS/Source/include/queue.h"
+ 616              		.file 6 "UserAPP/Include/SendDataProcess.h"
+ 617              		.file 7 "UserAPP/Include/Tasklist.h"
+ 618              		.file 8 "UserDriver/Include/DPPTMIIC.h"
+ 619              		.file 9 "UserAPP/Include/ADCAPP.h"
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccrwf7hg.s 			page 16
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 DPPTM.c
-C:\Users\Administrator\AppData\Local\Temp\ccaGO8vK.s:19     .rodata.ControlDPPTM.str1.4:00000000 $d
-C:\Users\Administrator\AppData\Local\Temp\ccaGO8vK.s:41     .text.ControlDPPTM:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\ccaGO8vK.s:47     .text.ControlDPPTM:00000000 ControlDPPTM
-C:\Users\Administrator\AppData\Local\Temp\ccaGO8vK.s:129    .text.ControlDPPTM:00000060 $d
-C:\Users\Administrator\AppData\Local\Temp\ccaGO8vK.s:138    .rodata.SetESLVDDVoltage.str1.4:00000000 $d
-C:\Users\Administrator\AppData\Local\Temp\ccaGO8vK.s:170    .text.SetESLVDDVoltage:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\ccaGO8vK.s:176    .text.SetESLVDDVoltage:00000000 SetESLVDDVoltage
-C:\Users\Administrator\AppData\Local\Temp\ccaGO8vK.s:206    .text.SetESLVDDVoltage:0000000e $d
-C:\Users\Administrator\AppData\Local\Temp\ccaGO8vK.s:592    .text.SetESLVDDVoltage:0000018c $d
-C:\Users\Administrator\AppData\Local\Temp\ccaGO8vK.s:223    .text.SetESLVDDVoltage:0000001f $d
-C:\Users\Administrator\AppData\Local\Temp\ccaGO8vK.s:223    .text.SetESLVDDVoltage:00000020 $t
+C:\Users\Administrator\AppData\Local\Temp\ccrwf7hg.s:19     .text.voltage_to_code:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\ccrwf7hg.s:24     .text.voltage_to_code:00000000 voltage_to_code
+C:\Users\Administrator\AppData\Local\Temp\ccrwf7hg.s:108    .text.voltage_to_code:00000044 $d
+C:\Users\Administrator\AppData\Local\Temp\ccrwf7hg.s:600    .rodata.voltage_code_table:00000000 voltage_code_table
+C:\Users\Administrator\AppData\Local\Temp\ccrwf7hg.s:115    .rodata.ControlDPPTM.str1.4:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\ccrwf7hg.s:121    .text.ControlDPPTM:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\ccrwf7hg.s:127    .text.ControlDPPTM:00000000 ControlDPPTM
+C:\Users\Administrator\AppData\Local\Temp\ccrwf7hg.s:186    .text.ControlDPPTM:00000038 $d
+C:\Users\Administrator\AppData\Local\Temp\ccrwf7hg.s:192    .text.SetESLVDDVoltage:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\ccrwf7hg.s:198    .text.SetESLVDDVoltage:00000000 SetESLVDDVoltage
+C:\Users\Administrator\AppData\Local\Temp\ccrwf7hg.s:548    .text.SetESLVDDVoltage:00000184 $d
+C:\Users\Administrator\AppData\Local\Temp\ccrwf7hg.s:608    .data.TargetVDDVoltage:00000000 TargetVDDVoltage
+C:\Users\Administrator\AppData\Local\Temp\ccrwf7hg.s:572    .data.pid_lastTarget:00000000 pid_lastTarget
+C:\Users\Administrator\AppData\Local\Temp\ccrwf7hg.s:566    .bss.pid_locked:00000000 pid_locked
+C:\Users\Administrator\AppData\Local\Temp\ccrwf7hg.s:588    .bss.pid_lastError:00000000 pid_lastError
+C:\Users\Administrator\AppData\Local\Temp\ccrwf7hg.s:594    .bss.pid_integral:00000000 pid_integral
+C:\Users\Administrator\AppData\Local\Temp\ccrwf7hg.s:582    .data.pid_dpptm:00000000 pid_dpptm
+C:\Users\Administrator\AppData\Local\Temp\ccrwf7hg.s:577    .data.pid_baseCode:00000000 pid_baseCode
+C:\Users\Administrator\AppData\Local\Temp\ccrwf7hg.s:567    .bss.pid_locked:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\ccrwf7hg.s:569    .data.pid_lastTarget:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\ccrwf7hg.s:585    .bss.pid_lastError:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\ccrwf7hg.s:591    .bss.pid_integral:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\ccrwf7hg.s:597    .rodata.voltage_code_table:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\ccrwf7hg.s:605    .data.TargetVDDVoltage:00000000 $d
 
 UNDEFINED SYMBOLS
+__aeabi_fcmplt
+__aeabi_fcmpgt
+__aeabi_fdiv
+__aeabi_fadd
+__aeabi_f2iz
 Soft_IIC_Start
 Soft_IIC_Write_Byte
 Soft_IIC_Stop
 QueueSendfmt
-xReceiveLogQueue
-__aeabi_f2d
-vTaskDelay
+xSendDataQueue
 get_current_vdd_voltage
-__aeabi_fcmplt
+__aeabi_fcmpeq
 __aeabi_fsub
 __aeabi_fcmpge
 __aeabi_fcmple
 __aeabi_fmul
-__aeabi_f2iz

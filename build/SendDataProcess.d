@@ -54,8 +54,9 @@ build/SendDataProcess.o: UserAPP/Source/SendDataProcess.c \
  Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_def.h \
  UserAPP/Include/SendDataProcess.h UserAPP/Include/TaskList.h \
  UserDriver/Include/HWCIDri.h Core/Inc/gpio.h Core/Inc/main.h \
- UserAPP/Include/ADCAPP.h Core/Inc/adc.h Core/Inc/dma.h \
- UserAPP/Include/TaskList.h
+ UserAPP/Include/ESL.h UserDriver/Include/ESLComDri.h \
+ UserDriver/Include/ESL4SPI.h UserAPP/Include/ADCAPP.h Core/Inc/adc.h \
+ Core/Inc/dma.h
 UserAPP/Include/SendDataProcess.h:
 Core/Inc/main.h:
 Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h:
@@ -119,7 +120,9 @@ UserAPP/Include/TaskList.h:
 UserDriver/Include/HWCIDri.h:
 Core/Inc/gpio.h:
 Core/Inc/main.h:
+UserAPP/Include/ESL.h:
+UserDriver/Include/ESLComDri.h:
+UserDriver/Include/ESL4SPI.h:
 UserAPP/Include/ADCAPP.h:
 Core/Inc/adc.h:
 Core/Inc/dma.h:
-UserAPP/Include/TaskList.h:

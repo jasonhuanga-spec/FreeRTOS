@@ -54,8 +54,9 @@ build/usbd_cdc_if.o: USB_DEVICE/App/usbd_cdc_if.c \
  UserAPP/Include/DPPTM.h UserDriver/Include/DPPTMIIC.h \
  UserAPP/Include/Tasklist.h UserAPP/Include/ReceiveDataProcess.h \
  UserDriver/Include/HWCIDri.h Core/Inc/gpio.h Core/Inc/main.h \
- UserAPP/Include/ADCAPP.h Core/Inc/adc.h Core/Inc/dma.h \
- UserAPP/Include/TaskList.h
+ UserAPP/Include/ESL.h UserDriver/Include/ESLComDri.h \
+ UserDriver/Include/ESL4SPI.h UserAPP/Include/TaskList.h \
+ UserAPP/Include/ADCAPP.h Core/Inc/adc.h Core/Inc/dma.h
 USB_DEVICE/App/usbd_cdc_if.h:
 Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc/usbd_cdc.h:
 Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h:
@@ -119,7 +120,10 @@ UserAPP/Include/ReceiveDataProcess.h:
 UserDriver/Include/HWCIDri.h:
 Core/Inc/gpio.h:
 Core/Inc/main.h:
+UserAPP/Include/ESL.h:
+UserDriver/Include/ESLComDri.h:
+UserDriver/Include/ESL4SPI.h:
+UserAPP/Include/TaskList.h:
 UserAPP/Include/ADCAPP.h:
 Core/Inc/adc.h:
 Core/Inc/dma.h:
-UserAPP/Include/TaskList.h:

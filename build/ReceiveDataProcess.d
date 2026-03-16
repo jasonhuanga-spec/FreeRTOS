@@ -53,8 +53,9 @@ build/ReceiveDataProcess.o: UserAPP/Source/ReceiveDataProcess.c \
  UserAPP/Include/DPPTM.h UserDriver/Include/DPPTMIIC.h \
  UserAPP/Include/Tasklist.h UserAPP/Include/ReceiveDataProcess.h \
  UserDriver/Include/HWCIDri.h Core/Inc/gpio.h Core/Inc/main.h \
- UserAPP/Include/ADCAPP.h Core/Inc/adc.h Core/Inc/dma.h \
- UserAPP/Include/TaskList.h
+ UserAPP/Include/ESL.h UserDriver/Include/ESLComDri.h \
+ UserDriver/Include/ESL4SPI.h UserAPP/Include/TaskList.h \
+ UserAPP/Include/ADCAPP.h Core/Inc/adc.h Core/Inc/dma.h
 UserAPP/Include/ReceiveDataProcess.h:
 Core/Inc/main.h:
 Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h:
@@ -117,7 +118,10 @@ UserAPP/Include/ReceiveDataProcess.h:
 UserDriver/Include/HWCIDri.h:
 Core/Inc/gpio.h:
 Core/Inc/main.h:
+UserAPP/Include/ESL.h:
+UserDriver/Include/ESLComDri.h:
+UserDriver/Include/ESL4SPI.h:
+UserAPP/Include/TaskList.h:
 UserAPP/Include/ADCAPP.h:
 Core/Inc/adc.h:
 Core/Inc/dma.h:
-UserAPP/Include/TaskList.h:

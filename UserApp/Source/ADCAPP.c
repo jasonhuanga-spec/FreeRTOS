@@ -14,6 +14,15 @@ uint8_t adc_dma_complete = 0;
 // 3. 全局电压数组，存储转换后的实际电压值（单位V）
 float voltage_array[11] = {0.0f};
 
+#define ADC_CHANNEL_COUNT 11U // ADC通道数量
+#define CURRENT_AVG_WINDOW 64U // 电流滑动平均窗口长度
+
+// 11路电流滑动平均缓存
+static float current_sum[ADC_CHANNEL_COUNT] = {0.0f}; // 每路窗口内电流累加和
+static float current_hist[ADC_CHANNEL_COUNT][CURRENT_AVG_WINDOW] = {{0.0f}}; // 每路历史电流环形缓存
+static uint16_t current_hist_index = 0U; // 当前写入的窗口索引
+static uint16_t current_hist_count = 0U; // 当前有效样本数（启动阶段小于窗口长度）
+
 /* ADC 任务句柄定义 */ // 每行注释
 TaskHandle_t xADCProcessTaskHandle = NULL; // 定义 ADC 任务句柄
 
@@ -45,6 +54,7 @@ void vADCProcessTask(void *pvParameters) // ADC 任务实现
         vADC_StartConversion();    // 启动ADC DMA采样并等待完成
         SetESLVDDVoltage();        // PID单步调节VDD电压（利用刚采样的数据）
         send_voltage_packet();     // 将电压数据打包发送给上位机
+        send_current_packet();     // 将电流数据打包发送给上位机
 
         vTaskDelay(pdMS_TO_TICKS(10)); // 延迟10ms等待电压稳定（PID控制周期）
     }
@@ -118,6 +128,21 @@ float adc_to_voltage(uint16_t adc_value) // 转换函数实现
     return raw_voltage + ADC_VOLTAGE_OFFSET; 
 }
 
+/**
+ * @brief 电压差分法：由通道电压快速换算电流
+ * @param channel_voltage 通道电压（单位V）
+ * @return float 电流值（单位mA）
+ */
+static float channel_voltage_to_current_diff(float channel_voltage)
+{
+    // 电压差分：相对0A零点偏置做差，减少反推ADC引脚电压的中间步骤
+    float voltage_diff = channel_voltage - ADC_VOLTAGE_OFFSET;
+
+    // 与原链路等价：I = (Vch - OFFSET) * DIV_RATIO / (RL/(RH+RL))
+    static const float current_gain = (VOLTAGE_DIV_RATIO * (RH + RL) / RL);
+    return voltage_diff * current_gain; // 保留正负电流
+}
+
 
 
 /**
@@ -168,6 +193,78 @@ void send_voltage_packet(void) // 发送电压数据包的实现
 
 
 /**
+ * @brief 发送电流数据包给上位机
+ * @note 将11个ADC通道电流做滑动平均后通过BuildReplyPacket构建数据包发送
+ */
+void send_current_packet(void)
+{
+    float current_array[ADC_CHANNEL_COUNT]; // 11路平均电流数据（单位mA）
+    uint16_t sample_count = current_hist_count; // 本轮用于平均的有效样本数
+
+    if (sample_count < CURRENT_AVG_WINDOW) // 启动阶段逐步增加样本数
+    {
+        sample_count++; // 样本数+1
+    }
+
+    for (uint8_t i = 0; i < ADC_CHANNEL_COUNT; i++) // 遍历11个通道
+    {
+        // 基于voltage_array使用电压差分法计算瞬时电流（减少计算步骤，提升速度）
+        float current_inst = channel_voltage_to_current_diff(voltage_array[i]);
+
+        current_sum[i] -= current_hist[i][current_hist_index]; // 移除最旧样本
+        current_hist[i][current_hist_index] = current_inst; // 写入当前样本
+        current_sum[i] += current_inst; // 加入最新样本
+
+        current_array[i] = current_sum[i] / (float)sample_count; // 得到该通道滑动平均电流
+    }
+
+    current_hist_count = sample_count; // 更新有效样本数
+    current_hist_index++; // 环形索引前进
+    if (current_hist_index >= CURRENT_AVG_WINDOW) // 到窗口末尾后回绕
+    {
+        current_hist_index = 0U; // 回到起点
+    }
+
+    /* 将浮点电流数组按内存布局打包为字节流（小端float，44字节） */
+    uint8_t current_data[sizeof(current_array)];
+    memcpy(current_data, current_array, sizeof(current_array));
+
+    /* 使用 BuildReplyPacket 构建数据包 */
+    uint8_t outBuf[PACKET_MAX_SIZE]; // 输出缓冲区
+    uint16_t outLen = 0; // 输出长度
+
+    uint8_t buildRet = BuildReplyPacket((uint8_t)FUNCTION_CODE_DataPacket,
+                                        TASK_ID_SendCurrentPacket,
+                                        current_data,
+                                        (uint8_t)sizeof(current_data),
+                                        outBuf,
+                                        &outLen); // 构建电流数据包
+
+    if (buildRet != 0) // 检查构建结果
+    {
+        if (xSendDataQueue != NULL) {
+            QueueSendfmt(xSendDataQueue, 0, "构建电流数据包失败，错误码=%u\r\n", buildRet);
+        }
+        return;
+    }
+
+    /* 通过统一发送队列串行化发送，避免与应答/日志并发冲突 */
+    if (SendBinaryToHost(outBuf, outLen, pdMS_TO_TICKS(20)) == pdPASS)
+    {
+        if (xSendDataQueue != NULL) {
+            QueueSendfmt(xSendDataQueue, 0, "电流数据包入队成功，长度=%u\r\n", outLen);
+        }
+    }
+    else
+    {
+        if (xSendDataQueue != NULL) {
+            QueueSendfmt(xSendDataQueue, 0, "电流数据包入队失败\r\n");
+        }
+    }
+}
+
+
+/**
  * @brief 获取当前VDD电压值
  * @return float 返回当前VDD电压值（单位V），如果数据无效返回-1.0f
  */
@@ -181,4 +278,20 @@ float get_current_vdd_voltage(void) // 获取当前VDD电压
     
     // 返回voltage_array[0]（VDD电压）
     return voltage_array[0]; // 返回VDD通道的电压值
+}
+
+
+/**
+ * @brief 将ADC电压值转换为对应的电流值
+ * @param adc_voltage ADC转换得到的电压值（单位V）
+ * @return float 返回计算得到的电流值（单位mA），如果输入无效返回-1.0f
+ */
+float adc_voltage_to_current(float adc_voltage)
+{
+    // 分压比例
+    const float k = RL / (RH + RL);   
+
+    // Vadc = (Vin * k + 3.3) / 2
+    // Vin  = (2 * Vadc - 3.3) / k
+    return (2.0f * adc_voltage - 3.3f) / k;
 }

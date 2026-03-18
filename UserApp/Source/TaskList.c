@@ -81,6 +81,7 @@ void vHWCIProcessTask(void *pvParameters) // HWCI 任务入口函数
                             ESLCommands(localPacket.Data[0], localPacket.Data[1], localPacket.Data[2]); // 调用 ESLCommands 函数，传入数据和长度
                         }
                         
+                        ReplyPacket(REPLY_OK); // 发送应答包
                         break; // 退出该 case
 
                     default: // 未知功能码分支处理

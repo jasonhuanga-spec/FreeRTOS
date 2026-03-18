@@ -8,8 +8,6 @@
  */
 void ESLtest(void)
 {
-    ESL_RESET();
-
     ESL4SPI_WriteCMD(0x4D);
     ESL4SPI_WriteDATA(0x78);
 

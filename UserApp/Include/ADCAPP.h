@@ -23,12 +23,19 @@
 // 误差约 -0.6V，故增加 +0.60V 补偿
 #define ADC_VOLTAGE_OFFSET 0.60f
 
+//ADC分压采集网络的上分压电阻
+#define RH 1000000.0f   // 1M
+//ADC分压采集网络的下分压电阻
+#define RL 196000.0f    // 196k
+
 
 uint8_t vADC_StartConversion(void);
 float adc_to_voltage(uint16_t adc_value);
 float get_current_vdd_voltage(void); /* 获取当前VDD电压的函数声明 */ // 每行注释
 void send_voltage_packet(void); /* 发送电压数据包的函数声明 */ // 每行注释
+void send_current_packet(void); /* 发送电流数据包的函数声明 */ // 每行注释
 void vCreateADCTask(void); /* 创建 ADC 处理任务的函数声明 */ // 每行注释
 void vADCProcessTask(void *pvParameters); /* ADC 处理任务的主函数声明 */ // 每行注释
+float adc_voltage_to_current(float adc_voltage); /* 将ADC电压值转换为电流值的函数声明 */ // 每行注释
 
 #endif // ADCAPP_H

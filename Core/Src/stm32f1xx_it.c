@@ -22,6 +22,7 @@
 #include "stm32f1xx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "ReceiveDataProcess.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -55,12 +56,10 @@
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
-extern PCD_HandleTypeDef hpcd_USB_FS;
 extern DMA_HandleTypeDef hdma_adc1;
 extern TIM_HandleTypeDef htim6;
 
 /* USER CODE BEGIN EV */
-
 /* USER CODE END EV */
 
 /******************************************************************************/
@@ -183,7 +182,7 @@ void USB_LP_CAN1_RX0_IRQHandler(void)
   /* USER CODE BEGIN USB_LP_CAN1_RX0_IRQn 0 */
 
   /* USER CODE END USB_LP_CAN1_RX0_IRQn 0 */
-  HAL_PCD_IRQHandler(&hpcd_USB_FS);
+  /* USB communication removed: keep empty handler to satisfy vector table. */
   /* USER CODE BEGIN USB_LP_CAN1_RX0_IRQn 1 */
 
   /* USER CODE END USB_LP_CAN1_RX0_IRQn 1 */
@@ -204,5 +203,41 @@ void TIM6_IRQHandler(void)
 }
 
 /* USER CODE BEGIN 1 */
+/**
+  * @brief This function handles USART1 global interrupt.
+  */
+void USART1_IRQHandler(void)
+{
+  static uint8_t rxBuffer[256];
+  static uint32_t rxIndex = 0;
+  uint32_t sr = USART1->SR;
 
+  if (sr & USART_SR_RXNE)
+  {
+      uint8_t byte = (uint8_t)(USART1->DR & 0xFF);
+      if (rxIndex < sizeof(rxBuffer))
+      {
+          rxBuffer[rxIndex++] = byte;
+      }
+      else
+      {
+        uint32_t flushLen = rxIndex;
+        vReceiveDataQueueSendISRTask(rxBuffer, &flushLen);
+        rxIndex = 0;
+          rxBuffer[rxIndex++] = byte;
+      }
+  }
+
+  if (sr & USART_SR_IDLE)
+  {
+      volatile uint32_t tmp = USART1->DR;
+      (void)tmp;
+
+      if (rxIndex > 0)
+      {
+          vReceiveDataQueueSendISRTask(rxBuffer, &rxIndex);
+          rxIndex = 0;
+      }
+  }
+}
 /* USER CODE END 1 */

@@ -13,7 +13,7 @@
 void VDDSwitch(uint8_t VDDStates)
 {
     //打开VDD
-    if (VDDStates == VDDON) HAL_GPIO_WritePin(VDDSwitchGPIOX, VDDSwitchPINX, GPIO_PIN_RESET);
+    if (VDDStates == VDDON) HAL_GPIO_WritePin(VDDSwitchGPIOX, VDDSwitchPINX, GPIO_PIN_RESET);  
     //关闭VDD
     if (VDDStates == VDDOFF) HAL_GPIO_WritePin(VDDSwitchGPIOX, VDDSwitchPINX, GPIO_PIN_SET);
 }

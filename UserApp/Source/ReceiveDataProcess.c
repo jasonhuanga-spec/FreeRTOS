@@ -7,10 +7,16 @@ TaskHandle_t xCreateReceiveDataTaskHandle = NULL;
 /* 队列句柄，用于接收数据的存储和传递*/
 QueueHandle_t xReceiveDataQueue = NULL;
 // 创建数据结构包含数据和长度信息
-ReceiveDataPacket_t dataPacket;
+// ReceiveDataPacket_t dataPacket; // REMOVED: Global variable causes race condition
 BaseType_t xHigherPriorityTaskWoken = pdFALSE;
 // 拆开接收到的数据包
 ParsedDataPacket_t parsedDataPacket;
+
+static uint8_t rxStreamBuf[MAX_RECEIVE_DATA_SIZE * 4];
+static uint16_t rxStreamLen = 0;
+
+static uint8_t CalculateCRC8(const uint8_t *data, uint16_t length);
+static void vParseReceivedDataStream(const ReceiveDataPacket_t *packet);
 
 
 
@@ -50,12 +56,14 @@ void vReceiveDataProcessTask( void * pvParameters )
     /* 该参数值期望为 1，因为在下面的xTaskCreate() 的调用中，1 作为 pvParameters 传入 */
     configASSERT( ( ( uint32_t ) pvParameters ) == 1 );
     
+    ReceiveDataPacket_t taskDataPacket; // Local variable for task
+
     for (;;)
     {
         if( xReceiveDataQueue != NULL )
         {
             /* 从已创建的队列接收一条消息 */
-            if( xQueueReceive( xReceiveDataQueue, &(dataPacket),(TickType_t) 0 ) == pdPASS )
+            if( xQueueReceive( xReceiveDataQueue, &(taskDataPacket),(TickType_t) 0 ) == pdPASS )
             {
                 /* xReceiveDataQueueRx now contains a copy of xMessage. */
                 
@@ -64,12 +72,12 @@ void vReceiveDataProcessTask( void * pvParameters )
                     char hexStr[256]; // 足够容纳所有数据的十六进制表示
                     int offset = 0;
                     
-                    offset += sprintf(hexStr + offset, "接收到数据[%d字节]: ", dataPacket.length);
+                    offset += sprintf(hexStr + offset, "接收到数据[%d字节]: ", taskDataPacket.length);
                     
                     // 打印所有接收到的数据字节
-                    for (uint16_t i = 0; i < dataPacket.length; i++)
+                    for (uint16_t i = 0; i < taskDataPacket.length; i++)
                     {
-                        offset += sprintf(hexStr + offset, "%02X ", dataPacket.data[i]);
+                        offset += sprintf(hexStr + offset, "%02X ", taskDataPacket.data[i]);
                     }
                     
                     offset += sprintf(hexStr + offset, "\r\n");
@@ -79,8 +87,8 @@ void vReceiveDataProcessTask( void * pvParameters )
                 #endif
                 
                 
-                /* 解析数据包 */
-                vParseReceivedDataPacket();
+                /* 解析数据流（兼容串口粘包/分片） */
+                vParseReceivedDataStream(&taskDataPacket);
             }
         } 
     }
@@ -115,23 +123,144 @@ void vCreateReceiveDataQueueTask( void *pvParameters )
  */
 uint8_t vReceiveDataQueueSendISRTask(uint8_t* Buf, uint32_t *Len)
 {
-    if (*Len <= MAX_RECEIVE_DATA_SIZE && xReceiveDataQueue != NULL)
+    if (Buf == NULL || Len == NULL || xReceiveDataQueue == NULL || *Len == 0)
     {
-        // 先清零接收缓冲区
-        memset(&dataPacket, 0, sizeof(dataPacket));
+        return 0;
+    }
 
-        // 拷贝数据到数据包结构，确保数据持久化
-        memcpy(dataPacket.data, Buf, *Len);
-        dataPacket.length = *Len;
+    uint32_t offset = 0;
+    uint32_t remaining = *Len;
 
-        // 将整个数据包结构发送到接收队列（不只是 data 数组，还包括 length）
-        if (xQueueSendFromISR(xReceiveDataQueue, &dataPacket, &xHigherPriorityTaskWoken) == errQUEUE_FULL) 
-            return (USBD_OK);
+    while (remaining > 0)
+    {
+        uint32_t chunkLen = (remaining > MAX_RECEIVE_DATA_SIZE) ? MAX_RECEIVE_DATA_SIZE : remaining;
+        BaseType_t localTaskWoken = pdFALSE;
+        ReceiveDataPacket_t isrPacket;
 
-        portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+        memset(&isrPacket, 0, sizeof(isrPacket));
+        memcpy(isrPacket.data, &Buf[offset], chunkLen);
+        isrPacket.length = (uint16_t)chunkLen;
+
+        if (xQueueSendFromISR(xReceiveDataQueue, &isrPacket, &localTaskWoken) == errQUEUE_FULL)
+        {
+            return 1;
+        }
+
+        if (localTaskWoken == pdTRUE)
+        {
+            xHigherPriorityTaskWoken = pdTRUE;
+        }
+
+        offset += chunkLen;
+        remaining -= chunkLen;
+    }
+
+    portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+    xHigherPriorityTaskWoken = pdFALSE;
+
+    return 0;
+}
+
+static uint8_t IsHostRequestFunctionCode(uint8_t functionCode)
+{
+    return (functionCode == FUNCTION_CODE_DataPacket) || (functionCode == FUNCTION_CODE_CommandPacket);
+}
+
+static uint16_t FindValidFrameLength(const uint8_t *buf, uint16_t available)
+{
+    if (buf == NULL || available < 5)
+    {
+        return 0;
+    }
+
+    if (buf[0] != 0xAA)
+    {
+        return 0;
+    }
+
+    if (!IsHostRequestFunctionCode(buf[1]))
+    {
+        return 0;
+    }
+
+    uint16_t maxTry = (available < MAX_RECEIVE_DATA_SIZE) ? available : MAX_RECEIVE_DATA_SIZE;
+    for (uint16_t frameLen = 5; frameLen <= maxTry; frameLen++)
+    {
+        uint8_t crc = CalculateCRC8(buf, (uint16_t)(frameLen - 1));
+        if (crc == buf[frameLen - 1])
+        {
+            return frameLen;
+        }
     }
 
     return 0;
+}
+
+static void vParseReceivedDataStream(const ReceiveDataPacket_t *packet)
+{
+    if (packet == NULL || packet->length == 0)
+    {
+        return;
+    }
+
+    uint16_t appendLen = packet->length;
+    if ((uint32_t)rxStreamLen + appendLen > sizeof(rxStreamBuf))
+    {
+        rxStreamLen = 0;
+    }
+
+    if (appendLen > sizeof(rxStreamBuf))
+    {
+        appendLen = (uint16_t)sizeof(rxStreamBuf);
+    }
+
+    memcpy(&rxStreamBuf[rxStreamLen], packet->data, appendLen);
+    rxStreamLen = (uint16_t)(rxStreamLen + appendLen);
+
+    while (rxStreamLen >= 5)
+    {
+        uint16_t start = 0;
+        while (start < rxStreamLen && rxStreamBuf[start] != 0xAA)
+        {
+            start++;
+        }
+
+        if (start > 0)
+        {
+            memmove(rxStreamBuf, &rxStreamBuf[start], rxStreamLen - start);
+            rxStreamLen = (uint16_t)(rxStreamLen - start);
+        }
+
+        if (rxStreamLen < 5)
+        {
+            break;
+        }
+
+        uint16_t frameLen = FindValidFrameLength(rxStreamBuf, rxStreamLen);
+        if (frameLen == 0)
+        {
+            if (rxStreamLen > MAX_RECEIVE_DATA_SIZE)
+            {
+                memmove(rxStreamBuf, &rxStreamBuf[1], rxStreamLen - 1);
+                rxStreamLen = (uint16_t)(rxStreamLen - 1);
+                continue;
+            }
+            break;
+        }
+
+        ReceiveDataPacket_t framePacket;
+        memset(&framePacket, 0, sizeof(framePacket));
+        framePacket.length = frameLen;
+        memcpy(framePacket.data, rxStreamBuf, frameLen);
+
+        vParseReceivedDataPacket(&framePacket);
+
+        if (rxStreamLen > frameLen)
+        {
+            memmove(rxStreamBuf, &rxStreamBuf[frameLen], rxStreamLen - frameLen);
+        }
+        rxStreamLen = (uint16_t)(rxStreamLen - frameLen);
+    }
 }
 
 
@@ -161,12 +290,12 @@ static uint8_t CalculateCRC8(const uint8_t *data, uint16_t length) { /* 封装CR
  * @brief 解析接收到的数据包
  *
  */
-void vParseReceivedDataPacket(void)
+void vParseReceivedDataPacket(const ReceiveDataPacket_t *packet)
 {
     uint8_t computedCRC = 0;                                        /* 计算得到的CRC8 */ // 每行注释
     uint8_t receivedCRC = 0;                                        /* 接收到的 CRC8 */ // 每行注释
-    uint8_t *buf = dataPacket.data;                                 /* 指向接收数据缓冲区的指针 */ // 每行注释
-    uint16_t len = dataPacket.length;                                /* 接收数据的长度 */ // 每行注释
+    const uint8_t *buf = packet->data;                                 /* 指向接收数据缓冲区的指针 */ // 每行注释
+    uint16_t len = packet->length;                                /* 接收数据的长度 */ // 每行注释
 
     /* 检查最小长度：包头(1)+功能码(1)+执行索引(2)+CRC(1) = 5 */ // 每行注释
     if (len < 5)                                                    /* 长度不足，直接返回 */ // 每行注释
@@ -217,7 +346,9 @@ void vParseReceivedDataPacket(void)
         }
         else
         {
+#if TEST_MODE
                 QueueSendfmt(xSendDataQueue, 0, "解析后的数据已发送到 xParsedDataQueue\r\n"); /* 发送成功则记录日志 */ // 每行注释
+#endif
         }
     }
     else
@@ -226,5 +357,7 @@ void vParseReceivedDataPacket(void)
     }
 
     /* 记录解析成功的日志，包括功能码、执行索引和数据长度 */ // 每行注释
+#if TEST_MODE
         QueueSendfmt(xSendDataQueue, 0, "数据包解析成功: Func=0x%02X, ExecIdx=%u, DataLen=%u, CRC=0x%02X\r\n", parsedDataPacket.FunctionCode, parsedDataPacket.ExecIndex, parsedDataPacket.DataLen, parsedDataPacket.CRC8); /* 发送成功日志*/ // 每行注释
+#endif
 }

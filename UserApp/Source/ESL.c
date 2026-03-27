@@ -2,6 +2,8 @@
 #include "SendDataProcess.h"  // 添加SendDataProcess.h以使用BuildReplyPacket等函数
 
 
+uint8_t ESL_RESET_Flag = 1; // 设置复位标志，供其他模块检查
+
 /**
  * @函数名称       测试
  * @说明           验证功能
@@ -157,4 +159,15 @@ void ESLCommands(uint8_t Address, uint8_t RW, uint8_t Number)
 		default:
 			break;
 	}
+}
+
+
+/**
+ * @函数名称      软件复位
+ */
+void SoftwareReset(void)
+{
+	ESL_RESET();
+
+	ESL_RESET_Flag = 1; // 设置复位标志，供其他模块检查
 }

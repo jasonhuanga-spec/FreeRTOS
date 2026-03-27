@@ -1,9 +1,9 @@
 #include "ADCAPP.h"
-#include "SendDataProcess.h" // 包含日志发送模块
-#include "TaskList.h" // 包含功能码定义（FUNCTION_CODE_DataPacket等）
-#include "usbd_cdc_if.h" // 包含USB CDC发送函数
-#include <string.h> // 用于 memcpy 将浮点数组转为字节流
 
+
+#define ADC_CHANNEL_COUNT 11U // ADC通道数量
+#define CURRENT_AVG_WINDOW 64U // 电流滑动平均窗口长度
+#define OFFSET_SAMPLE_COUNT 30U // 校准采样次数
 
 // 1. 改为全局变量（避免局部变量随机值）+ 类型匹配DMA的uint32_t
 uint32_t adcbuf[11] = {0}; 
@@ -13,15 +13,32 @@ uint8_t adc_dma_complete = 0;
 
 // 3. 全局电压数组，存储转换后的实际电压值（单位V）
 float voltage_array[11] = {0.0f};
+// 4. 全局电流数组，存储转换后的实际电流值（单位mA）
+float current_array[11] = {0.0f};
 
-#define ADC_CHANNEL_COUNT 11U // ADC通道数量
-#define CURRENT_AVG_WINDOW 64U // 电流滑动平均窗口长度
+// 全局校准后电压数组，存储每通道校准后的电压值（单位V）
+float calibrated_voltage_array[11] = {0.0f};
+// 每通道校准偏置（默认0，可按通道写入实际标定值）
+static float channel_voltage_offset[ADC_CHANNEL_COUNT] = {0.0f};
 
-// 11路电流滑动平均缓存
-static float current_sum[ADC_CHANNEL_COUNT] = {0.0f}; // 每路窗口内电流累加和
-static float current_hist[ADC_CHANNEL_COUNT][CURRENT_AVG_WINDOW] = {{0.0f}}; // 每路历史电流环形缓存
-static uint16_t current_hist_index = 0U; // 当前写入的窗口索引
-static uint16_t current_hist_count = 0U; // 当前有效样本数（启动阶段小于窗口长度）
+// 全局校准后电流数组，存储每通道校准后的电流值（单位mA）
+float calibrated_current_array[11] = {0.0f};
+// 每通道电流偏置（在VDD打开后采样一次作为0mA基线）
+static float channel_current_offset[ADC_CHANNEL_COUNT] = {0.0f};
+
+// 用于存储电流偏置的中间变量
+float current_offset_sum[ADC_CHANNEL_COUNT] = {0.0f};
+// 用于记录采样次数
+uint8_t current_offset_count = 0;
+// 标记电流偏置是否已准备就绪
+uint8_t current_offset_ready = 0;
+
+// 用于存储电压偏置的中间变量
+float voltage_offset_sum[ADC_CHANNEL_COUNT] = {0.0f};
+// 用于记录电压偏置采样次数
+uint8_t voltage_offset_count = 0;
+// 标记电压偏置是否已准备就绪
+uint8_t voltage_offset_ready = 0;
 
 /* ADC 任务句柄定义 */ // 每行注释
 TaskHandle_t xADCProcessTaskHandle = NULL; // 定义 ADC 任务句柄
@@ -124,8 +141,8 @@ float adc_to_voltage(uint16_t adc_value) // 转换函数实现
     // 原始公式：V_in = (V_pin * LEVEL_SHIFT - V_ref) / DIV_RATIO
     float raw_voltage = ((adc_voltage * LEVEL_SHIFT_RATIO) - ADC_REF_VOLTAGE) / VOLTAGE_DIV_RATIO;
     
-    // 应用线性补偿
-    return raw_voltage + ADC_VOLTAGE_OFFSET; 
+    // 不使用固定静态偏移，直接返回物理换算值。
+    return raw_voltage;
 }
 
 /**
@@ -135,12 +152,12 @@ float adc_to_voltage(uint16_t adc_value) // 转换函数实现
  */
 static float channel_voltage_to_current_diff(float channel_voltage)
 {
-    // 电压差分：相对0A零点偏置做差，减少反推ADC引脚电压的中间步骤
-    float voltage_diff = channel_voltage - ADC_VOLTAGE_OFFSET;
+    // 当前口径不使用固定静态偏移，直接使用通道电压差分。
+    // float voltage_diff = channel_voltage;
 
-    // 与原链路等价：I = (Vch - OFFSET) * DIV_RATIO / (RL/(RH+RL))
-    static const float current_gain = (VOLTAGE_DIV_RATIO * (RH + RL) / RL);
-    return voltage_diff * current_gain; // 保留正负电流
+    // // 与原链路等价：I = (Vch - OFFSET) * DIV_RATIO / (RL/(RH+RL))
+    // static const float current_gain = (VOLTAGE_DIV_RATIO * (RH + RL) / RL);
+    return (channel_voltage / RL) * 1000.0f; // 保留正负电流，单位mA
 }
 
 
@@ -151,15 +168,20 @@ static float channel_voltage_to_current_diff(float channel_voltage)
  */
 void send_voltage_packet(void) // 发送电压数据包的实现
 {
-    /* 创建电压值数组，存储转换后的实际电压值（单位：V，使用float转为uint16_t，精度0.01V） */
-    for (uint8_t i = 0; i < 11; i++) // 遍历11个通道
+    // 校准每个通道的电压（更新全局校准数组
+    calibrate_channel_voltage(); 
+
+    // 每轮都基于最新ADC值更新“原始/校准后”电压，避免发送陈旧校准数组。
+    for (uint8_t i = 0; i < ADC_CHANNEL_COUNT; i++)
     {
-        voltage_array[i] = adc_to_voltage(adcbuf[i]); // 将ADC原始值转换为实际电压
+        float raw_voltage = adc_to_voltage((uint16_t)adcbuf[i]);
+        voltage_array[i] = raw_voltage;
+        calibrated_voltage_array[i] = raw_voltage - channel_voltage_offset[i];
     }
 
     /* 直接将浮点电压数组按内存布局打包为字节流（小端float，44字节） */
-    uint8_t voltage_data[sizeof(voltage_array)];
-    memcpy(voltage_data, voltage_array, sizeof(voltage_array));
+    uint8_t voltage_data[sizeof(calibrated_voltage_array)];
+    memcpy(voltage_data, calibrated_voltage_array, sizeof(calibrated_voltage_array));
 
     /* 使用 BuildReplyPacket 构建数据包 */
     uint8_t outBuf[PACKET_MAX_SIZE]; // 输出缓冲区
@@ -179,15 +201,16 @@ void send_voltage_packet(void) // 发送电压数据包的实现
     /* 通过统一发送队列串行化发送，避免与应答/日志并发冲突 */
     if (SendBinaryToHost(outBuf, outLen, pdMS_TO_TICKS(20)) == pdPASS)
     {
+        #if TEST_MODE
         if (xSendDataQueue != NULL) {
             QueueSendfmt(xSendDataQueue, 0, "电压数据包入队成功，长度=%u\r\n", outLen);
         }
+        #endif
     }
     else
     {
-        if (xSendDataQueue != NULL) {
-            QueueSendfmt(xSendDataQueue, 0, "电压数据包入队失败\r\n");
-        }
+        // 队列满/阻塞时直接串口兜底发送，保证上位机可收到电压包。
+        UART1_SendBlocking(outBuf, outLen);
     }
 }
 
@@ -198,36 +221,25 @@ void send_voltage_packet(void) // 发送电压数据包的实现
  */
 void send_current_packet(void)
 {
-    float current_array[ADC_CHANNEL_COUNT]; // 11路平均电流数据（单位mA）
-    uint16_t sample_count = current_hist_count; // 本轮用于平均的有效样本数
-
-    if (sample_count < CURRENT_AVG_WINDOW) // 启动阶段逐步增加样本数
+    // 校准每个通道的电流（更新全局校准数组）
+    calibrate_channel_current(); 
+    // 每轮都基于最新ADC值更新“原始/校准后”电流，避免发送陈旧校准数组。
+    for (uint8_t i = 0; i < ADC_CHANNEL_COUNT; i++)
     {
-        sample_count++; // 样本数+1
+        // 1) 用“校准后电压”换算瞬时电流，保证电压/电流口径一致。
+        float raw_current = channel_voltage_to_current_diff(calibrated_voltage_array[i]);
+        current_array[i] = raw_current;
+        if (current_offset_ready) {
+            calibrated_current_array[i] = current_array[i] - channel_current_offset[i];
+        } else {
+            calibrated_current_array[i] = current_array[i];
+        }
     }
 
-    for (uint8_t i = 0; i < ADC_CHANNEL_COUNT; i++) // 遍历11个通道
-    {
-        // 基于voltage_array使用电压差分法计算瞬时电流（减少计算步骤，提升速度）
-        float current_inst = channel_voltage_to_current_diff(voltage_array[i]);
 
-        current_sum[i] -= current_hist[i][current_hist_index]; // 移除最旧样本
-        current_hist[i][current_hist_index] = current_inst; // 写入当前样本
-        current_sum[i] += current_inst; // 加入最新样本
-
-        current_array[i] = current_sum[i] / (float)sample_count; // 得到该通道滑动平均电流
-    }
-
-    current_hist_count = sample_count; // 更新有效样本数
-    current_hist_index++; // 环形索引前进
-    if (current_hist_index >= CURRENT_AVG_WINDOW) // 到窗口末尾后回绕
-    {
-        current_hist_index = 0U; // 回到起点
-    }
-
-    /* 将浮点电流数组按内存布局打包为字节流（小端float，44字节） */
-    uint8_t current_data[sizeof(current_array)];
-    memcpy(current_data, current_array, sizeof(current_array));
+    /* 将校准后电流数组按内存布局打包为字节流（小端float，44字节） */
+    uint8_t current_data[sizeof(calibrated_current_array)];
+    memcpy(current_data, calibrated_current_array, sizeof(calibrated_current_array));
 
     /* 使用 BuildReplyPacket 构建数据包 */
     uint8_t outBuf[PACKET_MAX_SIZE]; // 输出缓冲区
@@ -251,35 +263,17 @@ void send_current_packet(void)
     /* 通过统一发送队列串行化发送，避免与应答/日志并发冲突 */
     if (SendBinaryToHost(outBuf, outLen, pdMS_TO_TICKS(20)) == pdPASS)
     {
+        #if TEST_MODE
         if (xSendDataQueue != NULL) {
             QueueSendfmt(xSendDataQueue, 0, "电流数据包入队成功，长度=%u\r\n", outLen);
         }
+        #endif
     }
     else
     {
-        if (xSendDataQueue != NULL) {
-            QueueSendfmt(xSendDataQueue, 0, "电流数据包入队失败\r\n");
-        }
+        UART1_SendBlocking(outBuf, outLen);
     }
 }
-
-
-/**
- * @brief 获取当前VDD电压值
- * @return float 返回当前VDD电压值（单位V），如果数据无效返回-1.0f
- */
-float get_current_vdd_voltage(void) // 获取当前VDD电压
-{
-    // 检查DMA传输是否完成
-    if (adc_dma_complete == 0) // 如果DMA未完成
-    {
-        return -1.0f; // 返回错误值
-    }
-    
-    // 返回voltage_array[0]（VDD电压）
-    return voltage_array[0]; // 返回VDD通道的电压值
-}
-
 
 /**
  * @brief 将ADC电压值转换为对应的电流值
@@ -295,3 +289,98 @@ float adc_voltage_to_current(float adc_voltage)
     // Vin  = (2 * Vadc - 3.3) / k
     return (2.0f * adc_voltage - 3.3f) / k;
 }
+
+
+
+/**
+ * @brief 校准每个通道的电流
+ */
+void calibrate_channel_current(void)
+{
+    if ((HAL_GPIO_ReadPin(VDDSwitchGPIOX, VDDSwitchPINX) == GPIO_PIN_RESET) &&
+        (voltage_offset_ready == 1) &&
+        (current_offset_ready == 0))
+    {
+        osDelay(500);
+
+        for (uint8_t i = 0; i < ADC_CHANNEL_COUNT; i++)
+        {
+            current_offset_sum[i] = 0.0f;
+        }
+
+        float current_min[ADC_CHANNEL_COUNT];
+        float current_max[ADC_CHANNEL_COUNT];
+        for (uint8_t i = 0; i < ADC_CHANNEL_COUNT; i++)
+        {
+            current_min[i] = 1e9f;
+            current_max[i] = -1e9f;
+        }
+
+        for (uint8_t k = 0; k < OFFSET_SAMPLE_COUNT; k++)
+        {
+            if (vADC_StartConversion() != 0U)
+            {
+                return;
+            }
+
+            for (uint8_t i = 0; i < ADC_CHANNEL_COUNT; i++)
+            {
+                float raw_voltage = adc_to_voltage((uint16_t)adcbuf[i]);
+                float channel_voltage = raw_voltage - channel_voltage_offset[i];
+                float raw_current = channel_voltage_to_current_diff(channel_voltage);
+
+                current_offset_sum[i] += raw_current;
+                if (raw_current < current_min[i]) current_min[i] = raw_current;
+                if (raw_current > current_max[i]) current_max[i] = raw_current;
+            }
+
+            osDelay(5);
+        }
+
+        for (uint8_t j = 0; j < ADC_CHANNEL_COUNT; j++)
+        {
+            if (OFFSET_SAMPLE_COUNT > 2U)
+            {
+                channel_current_offset[j] =
+                    (current_offset_sum[j] - current_min[j] - current_max[j]) /
+                    (float)(OFFSET_SAMPLE_COUNT - 2U);
+            }
+            else
+            {
+                channel_current_offset[j] =
+                    current_offset_sum[j] / (float)OFFSET_SAMPLE_COUNT;
+            }
+        }
+
+        current_offset_ready = 1;
+    }
+}
+
+
+/**
+ * @brief 校准每个通道的电压
+ */
+void calibrate_channel_voltage(void)
+{
+    if (HAL_GPIO_ReadPin(VDDSwitchGPIOX, VDDSwitchPINX) == GPIO_PIN_SET)
+    {
+        osDelay(500); // 等待VDD稳定，确保采样数据可靠
+        for (uint8_t k = 0; k < OFFSET_SAMPLE_COUNT; k++)
+        {
+            for (uint8_t i = 0; i < ADC_CHANNEL_COUNT; i++)
+            {
+                float raw_voltage = adc_to_voltage((uint16_t)adcbuf[i]);
+                channel_voltage_offset[i] = raw_voltage + channel_voltage_offset[i];
+            }
+        }
+        
+        for (uint8_t j = 0; j < ADC_CHANNEL_COUNT; j++)
+        {
+            channel_voltage_offset[j] = channel_voltage_offset[j] / (float)OFFSET_SAMPLE_COUNT;
+        }
+        
+        voltage_offset_ready = 1;// 电压偏置准备就绪
+        VDDSwitch(VDDON); // 校准完成后打开VDD，准备校准电流偏置
+    }    
+}
+

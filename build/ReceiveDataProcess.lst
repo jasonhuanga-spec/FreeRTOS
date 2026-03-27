@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckL0fKf.s 			page 1
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s 			page 1
 
 
    1              		.cpu cortex-m3
@@ -18,12 +18,12 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckL0fKf.s 			page 1
   15              	.Ltext0:
   16              		.cfi_sections	.debug_frame
   17              		.file 1 "UserAPP/Source/ReceiveDataProcess.c"
-  18              		.section	.text.CalculateCRC8,"ax",%progbits
+  18              		.section	.text.IsHostRequestFunctionCode,"ax",%progbits
   19              		.align	1
   20              		.syntax unified
   21              		.thumb
   22              		.thumb_func
-  24              	CalculateCRC8:
+  24              	IsHostRequestFunctionCode:
   25              	.LVL0:
   26              	.LFB83:
    1:UserAPP/Source/ReceiveDataProcess.c **** #include "ReceiveDataProcess.h"
@@ -35,1033 +35,1797 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckL0fKf.s 			page 1
    7:UserAPP/Source/ReceiveDataProcess.c **** /* 队列句柄，用于接收数据的存储和传递*/
    8:UserAPP/Source/ReceiveDataProcess.c **** QueueHandle_t xReceiveDataQueue = NULL;
    9:UserAPP/Source/ReceiveDataProcess.c **** // 创建数据结构包含数据和长度信息
-  10:UserAPP/Source/ReceiveDataProcess.c **** ReceiveDataPacket_t dataPacket;
+  10:UserAPP/Source/ReceiveDataProcess.c **** // ReceiveDataPacket_t dataPacket; // REMOVED: Global variable causes race condition
   11:UserAPP/Source/ReceiveDataProcess.c **** BaseType_t xHigherPriorityTaskWoken = pdFALSE;
   12:UserAPP/Source/ReceiveDataProcess.c **** // 拆开接收到的数据包
   13:UserAPP/Source/ReceiveDataProcess.c **** ParsedDataPacket_t parsedDataPacket;
   14:UserAPP/Source/ReceiveDataProcess.c **** 
-  15:UserAPP/Source/ReceiveDataProcess.c **** 
-  16:UserAPP/Source/ReceiveDataProcess.c **** 
-  17:UserAPP/Source/ReceiveDataProcess.c **** /**
-  18:UserAPP/Source/ReceiveDataProcess.c ****  * @brief 创建并启动接收数据处理任务
-  19:UserAPP/Source/ReceiveDataProcess.c ****  *
-  20:UserAPP/Source/ReceiveDataProcess.c ****  * 创建任务并检查返回值；任务实现应为无限循环并在阻塞点等待数据
-  21:UserAPP/Source/ReceiveDataProcess.c ****  */
-  22:UserAPP/Source/ReceiveDataProcess.c **** void vCreateReceiveDataTask(void)
-  23:UserAPP/Source/ReceiveDataProcess.c **** {
-  24:UserAPP/Source/ReceiveDataProcess.c ****     vCreateReceiveDataQueueTask(NULL);
-  25:UserAPP/Source/ReceiveDataProcess.c **** 
-  26:UserAPP/Source/ReceiveDataProcess.c ****     /* Create the task, storing the handle. */
-  27:UserAPP/Source/ReceiveDataProcess.c ****     xCreateReceiveDataTaskReturned = xTaskCreate(
-  28:UserAPP/Source/ReceiveDataProcess.c ****                    vReceiveDataProcessTask,                      /* Function that implements the ta
-  29:UserAPP/Source/ReceiveDataProcess.c ****                     "vReceiveDataProcessTask",                   /* Text name for the task. */
-  30:UserAPP/Source/ReceiveDataProcess.c ****                     256,                                         /* Stack size in words, not bytes.
-  31:UserAPP/Source/ReceiveDataProcess.c ****                     ( void * ) 1,                                /* Parameter passed into the task.
-  32:UserAPP/Source/ReceiveDataProcess.c ****                     tskIDLE_PRIORITY,                            /* Highest possible priority */
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckL0fKf.s 			page 2
+  15:UserAPP/Source/ReceiveDataProcess.c **** static uint8_t rxStreamBuf[MAX_RECEIVE_DATA_SIZE * 4];
+  16:UserAPP/Source/ReceiveDataProcess.c **** static uint16_t rxStreamLen = 0;
+  17:UserAPP/Source/ReceiveDataProcess.c **** 
+  18:UserAPP/Source/ReceiveDataProcess.c **** static uint8_t CalculateCRC8(const uint8_t *data, uint16_t length);
+  19:UserAPP/Source/ReceiveDataProcess.c **** static void vParseReceivedDataStream(const ReceiveDataPacket_t *packet);
+  20:UserAPP/Source/ReceiveDataProcess.c **** 
+  21:UserAPP/Source/ReceiveDataProcess.c **** 
+  22:UserAPP/Source/ReceiveDataProcess.c **** 
+  23:UserAPP/Source/ReceiveDataProcess.c **** /**
+  24:UserAPP/Source/ReceiveDataProcess.c ****  * @brief 创建并启动接收数据处理任务
+  25:UserAPP/Source/ReceiveDataProcess.c ****  *
+  26:UserAPP/Source/ReceiveDataProcess.c ****  * 创建任务并检查返回值；任务实现应为无限循环并在阻塞点等待数据
+  27:UserAPP/Source/ReceiveDataProcess.c ****  */
+  28:UserAPP/Source/ReceiveDataProcess.c **** void vCreateReceiveDataTask(void)
+  29:UserAPP/Source/ReceiveDataProcess.c **** {
+  30:UserAPP/Source/ReceiveDataProcess.c ****     vCreateReceiveDataQueueTask(NULL);
+  31:UserAPP/Source/ReceiveDataProcess.c **** 
+  32:UserAPP/Source/ReceiveDataProcess.c ****     /* Create the task, storing the handle. */
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s 			page 2
 
 
-  33:UserAPP/Source/ReceiveDataProcess.c ****                     &xCreateReceiveDataTaskHandle );             /* Used to pass out the created ta
-  34:UserAPP/Source/ReceiveDataProcess.c **** 
-  35:UserAPP/Source/ReceiveDataProcess.c ****     if( xCreateReceiveDataTaskReturned == pdPASS )
-  36:UserAPP/Source/ReceiveDataProcess.c ****     {
-  37:UserAPP/Source/ReceiveDataProcess.c ****         
-  38:UserAPP/Source/ReceiveDataProcess.c ****     }
-  39:UserAPP/Source/ReceiveDataProcess.c **** }
+  33:UserAPP/Source/ReceiveDataProcess.c ****     xCreateReceiveDataTaskReturned = xTaskCreate(
+  34:UserAPP/Source/ReceiveDataProcess.c ****                    vReceiveDataProcessTask,                      /* Function that implements the ta
+  35:UserAPP/Source/ReceiveDataProcess.c ****                     "vReceiveDataProcessTask",                   /* Text name for the task. */
+  36:UserAPP/Source/ReceiveDataProcess.c ****                     256,                                         /* Stack size in words, not bytes.
+  37:UserAPP/Source/ReceiveDataProcess.c ****                     ( void * ) 1,                                /* Parameter passed into the task.
+  38:UserAPP/Source/ReceiveDataProcess.c ****                     tskIDLE_PRIORITY,                            /* Highest possible priority */
+  39:UserAPP/Source/ReceiveDataProcess.c ****                     &xCreateReceiveDataTaskHandle );             /* Used to pass out the created ta
   40:UserAPP/Source/ReceiveDataProcess.c **** 
-  41:UserAPP/Source/ReceiveDataProcess.c **** 
-  42:UserAPP/Source/ReceiveDataProcess.c **** /**
-  43:UserAPP/Source/ReceiveDataProcess.c ****  * @brief 接收数据处理任务
-  44:UserAPP/Source/ReceiveDataProcess.c ****  *
-  45:UserAPP/Source/ReceiveDataProcess.c ****  * 该任务负责从系统的接收通道（例如UART、SPI、USB 等）获取原始数据包
-  46:UserAPP/Source/ReceiveDataProcess.c ****  * 对数据进行必要的解析与校验，并将处理后的消息/事件分发到应用层
-  47:UserAPP/Source/ReceiveDataProcess.c ****  */
-  48:UserAPP/Source/ReceiveDataProcess.c **** void vReceiveDataProcessTask( void * pvParameters )
-  49:UserAPP/Source/ReceiveDataProcess.c **** {
-  50:UserAPP/Source/ReceiveDataProcess.c ****     /* 该参数值期望为 1，因为在下面的xTaskCreate() 的调用中，1 作为 pvParamete
-  51:UserAPP/Source/ReceiveDataProcess.c ****     configASSERT( ( ( uint32_t ) pvParameters ) == 1 );
-  52:UserAPP/Source/ReceiveDataProcess.c ****     
-  53:UserAPP/Source/ReceiveDataProcess.c ****     for (;;)
-  54:UserAPP/Source/ReceiveDataProcess.c ****     {
-  55:UserAPP/Source/ReceiveDataProcess.c ****         if( xReceiveDataQueue != NULL )
-  56:UserAPP/Source/ReceiveDataProcess.c ****         {
-  57:UserAPP/Source/ReceiveDataProcess.c ****             /* 从已创建的队列接收一条消息 */
-  58:UserAPP/Source/ReceiveDataProcess.c ****             if( xQueueReceive( xReceiveDataQueue, &(dataPacket),(TickType_t) 0 ) == pdPASS )
-  59:UserAPP/Source/ReceiveDataProcess.c ****             {
-  60:UserAPP/Source/ReceiveDataProcess.c ****                 /* xReceiveDataQueueRx now contains a copy of xMessage. */
-  61:UserAPP/Source/ReceiveDataProcess.c ****                 
-  62:UserAPP/Source/ReceiveDataProcess.c ****                 //打印接收到的原始数据（用于调试）
-  63:UserAPP/Source/ReceiveDataProcess.c ****                 #if TEST_MODE 
-  64:UserAPP/Source/ReceiveDataProcess.c ****                     char hexStr[256]; // 足够容纳所有数据的十六进制表示
-  65:UserAPP/Source/ReceiveDataProcess.c ****                     int offset = 0;
-  66:UserAPP/Source/ReceiveDataProcess.c ****                     
-  67:UserAPP/Source/ReceiveDataProcess.c ****                     offset += sprintf(hexStr + offset, "接收到数据[%d字节]: ", dataPacket.le
-  68:UserAPP/Source/ReceiveDataProcess.c ****                     
-  69:UserAPP/Source/ReceiveDataProcess.c ****                     // 打印所有接收到的数据字节
-  70:UserAPP/Source/ReceiveDataProcess.c ****                     for (uint16_t i = 0; i < dataPacket.length; i++)
-  71:UserAPP/Source/ReceiveDataProcess.c ****                     {
-  72:UserAPP/Source/ReceiveDataProcess.c ****                         offset += sprintf(hexStr + offset, "%02X ", dataPacket.data[i]);
-  73:UserAPP/Source/ReceiveDataProcess.c ****                     }
+  41:UserAPP/Source/ReceiveDataProcess.c ****     if( xCreateReceiveDataTaskReturned == pdPASS )
+  42:UserAPP/Source/ReceiveDataProcess.c ****     {
+  43:UserAPP/Source/ReceiveDataProcess.c ****         
+  44:UserAPP/Source/ReceiveDataProcess.c ****     }
+  45:UserAPP/Source/ReceiveDataProcess.c **** }
+  46:UserAPP/Source/ReceiveDataProcess.c **** 
+  47:UserAPP/Source/ReceiveDataProcess.c **** 
+  48:UserAPP/Source/ReceiveDataProcess.c **** /**
+  49:UserAPP/Source/ReceiveDataProcess.c ****  * @brief 接收数据处理任务
+  50:UserAPP/Source/ReceiveDataProcess.c ****  *
+  51:UserAPP/Source/ReceiveDataProcess.c ****  * 该任务负责从系统的接收通道（例如UART、SPI、USB 等）获取原始数据包
+  52:UserAPP/Source/ReceiveDataProcess.c ****  * 对数据进行必要的解析与校验，并将处理后的消息/事件分发到应用层
+  53:UserAPP/Source/ReceiveDataProcess.c ****  */
+  54:UserAPP/Source/ReceiveDataProcess.c **** void vReceiveDataProcessTask( void * pvParameters )
+  55:UserAPP/Source/ReceiveDataProcess.c **** {
+  56:UserAPP/Source/ReceiveDataProcess.c ****     /* 该参数值期望为 1，因为在下面的xTaskCreate() 的调用中，1 作为 pvParamete
+  57:UserAPP/Source/ReceiveDataProcess.c ****     configASSERT( ( ( uint32_t ) pvParameters ) == 1 );
+  58:UserAPP/Source/ReceiveDataProcess.c ****     
+  59:UserAPP/Source/ReceiveDataProcess.c ****     ReceiveDataPacket_t taskDataPacket; // Local variable for task
+  60:UserAPP/Source/ReceiveDataProcess.c **** 
+  61:UserAPP/Source/ReceiveDataProcess.c ****     for (;;)
+  62:UserAPP/Source/ReceiveDataProcess.c ****     {
+  63:UserAPP/Source/ReceiveDataProcess.c ****         if( xReceiveDataQueue != NULL )
+  64:UserAPP/Source/ReceiveDataProcess.c ****         {
+  65:UserAPP/Source/ReceiveDataProcess.c ****             /* 从已创建的队列接收一条消息 */
+  66:UserAPP/Source/ReceiveDataProcess.c ****             if( xQueueReceive( xReceiveDataQueue, &(taskDataPacket),(TickType_t) 0 ) == pdPASS )
+  67:UserAPP/Source/ReceiveDataProcess.c ****             {
+  68:UserAPP/Source/ReceiveDataProcess.c ****                 /* xReceiveDataQueueRx now contains a copy of xMessage. */
+  69:UserAPP/Source/ReceiveDataProcess.c ****                 
+  70:UserAPP/Source/ReceiveDataProcess.c ****                 //打印接收到的原始数据（用于调试）
+  71:UserAPP/Source/ReceiveDataProcess.c ****                 #if TEST_MODE 
+  72:UserAPP/Source/ReceiveDataProcess.c ****                     char hexStr[256]; // 足够容纳所有数据的十六进制表示
+  73:UserAPP/Source/ReceiveDataProcess.c ****                     int offset = 0;
   74:UserAPP/Source/ReceiveDataProcess.c ****                     
-  75:UserAPP/Source/ReceiveDataProcess.c ****                     offset += sprintf(hexStr + offset, "\r\n");
+  75:UserAPP/Source/ReceiveDataProcess.c ****                     offset += sprintf(hexStr + offset, "接收到数据[%d字节]: ", taskDataPacke
   76:UserAPP/Source/ReceiveDataProcess.c ****                     
-  77:UserAPP/Source/ReceiveDataProcess.c ****                     // 一次性发送完整的字符串到日志队列 
-  78:UserAPP/Source/ReceiveDataProcess.c ****                     QueueSendfmt(xSendDataQueue, 0, "%s", hexStr);
-  79:UserAPP/Source/ReceiveDataProcess.c ****                 #endif
-  80:UserAPP/Source/ReceiveDataProcess.c ****                 
-  81:UserAPP/Source/ReceiveDataProcess.c ****                 
-  82:UserAPP/Source/ReceiveDataProcess.c ****                 /* 解析数据包 */
-  83:UserAPP/Source/ReceiveDataProcess.c ****                 vParseReceivedDataPacket();
-  84:UserAPP/Source/ReceiveDataProcess.c ****             }
-  85:UserAPP/Source/ReceiveDataProcess.c ****         } 
-  86:UserAPP/Source/ReceiveDataProcess.c ****     }
-  87:UserAPP/Source/ReceiveDataProcess.c **** }
-  88:UserAPP/Source/ReceiveDataProcess.c **** 
-  89:UserAPP/Source/ReceiveDataProcess.c **** 
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckL0fKf.s 			page 3
+  77:UserAPP/Source/ReceiveDataProcess.c ****                     // 打印所有接收到的数据字节
+  78:UserAPP/Source/ReceiveDataProcess.c ****                     for (uint16_t i = 0; i < taskDataPacket.length; i++)
+  79:UserAPP/Source/ReceiveDataProcess.c ****                     {
+  80:UserAPP/Source/ReceiveDataProcess.c ****                         offset += sprintf(hexStr + offset, "%02X ", taskDataPacket.data[i]);
+  81:UserAPP/Source/ReceiveDataProcess.c ****                     }
+  82:UserAPP/Source/ReceiveDataProcess.c ****                     
+  83:UserAPP/Source/ReceiveDataProcess.c ****                     offset += sprintf(hexStr + offset, "\r\n");
+  84:UserAPP/Source/ReceiveDataProcess.c ****                     
+  85:UserAPP/Source/ReceiveDataProcess.c ****                     // 一次性发送完整的字符串到日志队列 
+  86:UserAPP/Source/ReceiveDataProcess.c ****                     QueueSendfmt(xSendDataQueue, 0, "%s", hexStr);
+  87:UserAPP/Source/ReceiveDataProcess.c ****                 #endif
+  88:UserAPP/Source/ReceiveDataProcess.c ****                 
+  89:UserAPP/Source/ReceiveDataProcess.c ****                 
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s 			page 3
 
 
-  90:UserAPP/Source/ReceiveDataProcess.c **** 
-  91:UserAPP/Source/ReceiveDataProcess.c **** /**
-  92:UserAPP/Source/ReceiveDataProcess.c ****  * @brief 示例任务：创建一个队列用于接收数据
-  93:UserAPP/Source/ReceiveDataProcess.c **** 
-  94:UserAPP/Source/ReceiveDataProcess.c ****  *
-  95:UserAPP/Source/ReceiveDataProcess.c ****  * 该任务创建一个队列以存储接收到的数据。实际应用中
-  96:UserAPP/Source/ReceiveDataProcess.c ****  * 任务应包含从外设接收数据并将其发送到队列的逻辑
-  97:UserAPP/Source/ReceiveDataProcess.c ****  */
-  98:UserAPP/Source/ReceiveDataProcess.c **** void vCreateReceiveDataQueueTask( void *pvParameters )
-  99:UserAPP/Source/ReceiveDataProcess.c **** {
- 100:UserAPP/Source/ReceiveDataProcess.c ****     /* 创建一个用于保存接收数据包（ReceiveDataPacket_t）的队列，最多可容纳 
- 101:UserAPP/Source/ReceiveDataProcess.c ****     xReceiveDataQueue = xQueueCreate( 25, sizeof(ReceiveDataPacket_t) );
- 102:UserAPP/Source/ReceiveDataProcess.c **** 
- 103:UserAPP/Source/ReceiveDataProcess.c ****     if( xReceiveDataQueue == NULL )
- 104:UserAPP/Source/ReceiveDataProcess.c ****     {
- 105:UserAPP/Source/ReceiveDataProcess.c ****         /* Queue was not created and must not be used. */
- 106:UserAPP/Source/ReceiveDataProcess.c ****     }
- 107:UserAPP/Source/ReceiveDataProcess.c ****  }
- 108:UserAPP/Source/ReceiveDataProcess.c **** 
- 109:UserAPP/Source/ReceiveDataProcess.c **** 
+  90:UserAPP/Source/ReceiveDataProcess.c ****                 /* 解析数据流（兼容串口粘包/分片） */
+  91:UserAPP/Source/ReceiveDataProcess.c ****                 vParseReceivedDataStream(&taskDataPacket);
+  92:UserAPP/Source/ReceiveDataProcess.c ****             }
+  93:UserAPP/Source/ReceiveDataProcess.c ****         } 
+  94:UserAPP/Source/ReceiveDataProcess.c ****     }
+  95:UserAPP/Source/ReceiveDataProcess.c **** }
+  96:UserAPP/Source/ReceiveDataProcess.c **** 
+  97:UserAPP/Source/ReceiveDataProcess.c **** 
+  98:UserAPP/Source/ReceiveDataProcess.c **** 
+  99:UserAPP/Source/ReceiveDataProcess.c **** /**
+ 100:UserAPP/Source/ReceiveDataProcess.c ****  * @brief 示例任务：创建一个队列用于接收数据
+ 101:UserAPP/Source/ReceiveDataProcess.c **** 
+ 102:UserAPP/Source/ReceiveDataProcess.c ****  *
+ 103:UserAPP/Source/ReceiveDataProcess.c ****  * 该任务创建一个队列以存储接收到的数据。实际应用中
+ 104:UserAPP/Source/ReceiveDataProcess.c ****  * 任务应包含从外设接收数据并将其发送到队列的逻辑
+ 105:UserAPP/Source/ReceiveDataProcess.c ****  */
+ 106:UserAPP/Source/ReceiveDataProcess.c **** void vCreateReceiveDataQueueTask( void *pvParameters )
+ 107:UserAPP/Source/ReceiveDataProcess.c **** {
+ 108:UserAPP/Source/ReceiveDataProcess.c ****     /* 创建一个用于保存接收数据包（ReceiveDataPacket_t）的队列，最多可容纳 
+ 109:UserAPP/Source/ReceiveDataProcess.c ****     xReceiveDataQueue = xQueueCreate( 25, sizeof(ReceiveDataPacket_t) );
  110:UserAPP/Source/ReceiveDataProcess.c **** 
- 111:UserAPP/Source/ReceiveDataProcess.c **** /** * @brief 在中断服务例程（ISR）中发送接收到的数据到接收队列
- 112:UserAPP/Source/ReceiveDataProcess.c ****  *
- 113:UserAPP/Source/ReceiveDataProcess.c ****  * @param Buf 指向接收到的数据缓冲区的指针
- 114:UserAPP/Source/ReceiveDataProcess.c ****  * @param Len 指向数据长度的指针
- 115:UserAPP/Source/ReceiveDataProcess.c ****  */
- 116:UserAPP/Source/ReceiveDataProcess.c **** uint8_t vReceiveDataQueueSendISRTask(uint8_t* Buf, uint32_t *Len)
- 117:UserAPP/Source/ReceiveDataProcess.c **** {
- 118:UserAPP/Source/ReceiveDataProcess.c ****     if (*Len <= MAX_RECEIVE_DATA_SIZE && xReceiveDataQueue != NULL)
- 119:UserAPP/Source/ReceiveDataProcess.c ****     {
- 120:UserAPP/Source/ReceiveDataProcess.c ****         // 先清零接收缓冲区
- 121:UserAPP/Source/ReceiveDataProcess.c ****         memset(&dataPacket, 0, sizeof(dataPacket));
- 122:UserAPP/Source/ReceiveDataProcess.c **** 
- 123:UserAPP/Source/ReceiveDataProcess.c ****         // 拷贝数据到数据包结构，确保数据持久化
- 124:UserAPP/Source/ReceiveDataProcess.c ****         memcpy(dataPacket.data, Buf, *Len);
- 125:UserAPP/Source/ReceiveDataProcess.c ****         dataPacket.length = *Len;
- 126:UserAPP/Source/ReceiveDataProcess.c **** 
- 127:UserAPP/Source/ReceiveDataProcess.c ****         // 将整个数据包结构发送到接收队列（不只是 data 数组，还包括 length
- 128:UserAPP/Source/ReceiveDataProcess.c ****         if (xQueueSendFromISR(xReceiveDataQueue, &dataPacket, &xHigherPriorityTaskWoken) == errQUEU
- 129:UserAPP/Source/ReceiveDataProcess.c ****             return (USBD_OK);
+ 111:UserAPP/Source/ReceiveDataProcess.c ****     if( xReceiveDataQueue == NULL )
+ 112:UserAPP/Source/ReceiveDataProcess.c ****     {
+ 113:UserAPP/Source/ReceiveDataProcess.c ****         /* Queue was not created and must not be used. */
+ 114:UserAPP/Source/ReceiveDataProcess.c ****     }
+ 115:UserAPP/Source/ReceiveDataProcess.c ****  }
+ 116:UserAPP/Source/ReceiveDataProcess.c **** 
+ 117:UserAPP/Source/ReceiveDataProcess.c **** 
+ 118:UserAPP/Source/ReceiveDataProcess.c **** 
+ 119:UserAPP/Source/ReceiveDataProcess.c **** /** * @brief 在中断服务例程（ISR）中发送接收到的数据到接收队列
+ 120:UserAPP/Source/ReceiveDataProcess.c ****  *
+ 121:UserAPP/Source/ReceiveDataProcess.c ****  * @param Buf 指向接收到的数据缓冲区的指针
+ 122:UserAPP/Source/ReceiveDataProcess.c ****  * @param Len 指向数据长度的指针
+ 123:UserAPP/Source/ReceiveDataProcess.c ****  */
+ 124:UserAPP/Source/ReceiveDataProcess.c **** uint8_t vReceiveDataQueueSendISRTask(uint8_t* Buf, uint32_t *Len)
+ 125:UserAPP/Source/ReceiveDataProcess.c **** {
+ 126:UserAPP/Source/ReceiveDataProcess.c ****     if (Buf == NULL || Len == NULL || xReceiveDataQueue == NULL || *Len == 0)
+ 127:UserAPP/Source/ReceiveDataProcess.c ****     {
+ 128:UserAPP/Source/ReceiveDataProcess.c ****         return 0;
+ 129:UserAPP/Source/ReceiveDataProcess.c ****     }
  130:UserAPP/Source/ReceiveDataProcess.c **** 
- 131:UserAPP/Source/ReceiveDataProcess.c ****         portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
- 132:UserAPP/Source/ReceiveDataProcess.c ****     }
+ 131:UserAPP/Source/ReceiveDataProcess.c ****     uint32_t offset = 0;
+ 132:UserAPP/Source/ReceiveDataProcess.c ****     uint32_t remaining = *Len;
  133:UserAPP/Source/ReceiveDataProcess.c **** 
- 134:UserAPP/Source/ReceiveDataProcess.c ****     return 0;
- 135:UserAPP/Source/ReceiveDataProcess.c **** }
- 136:UserAPP/Source/ReceiveDataProcess.c **** 
- 137:UserAPP/Source/ReceiveDataProcess.c **** 
- 138:UserAPP/Source/ReceiveDataProcess.c **** 
- 139:UserAPP/Source/ReceiveDataProcess.c **** /**
- 140:UserAPP/Source/ReceiveDataProcess.c ****  * @brief 计算 CRC-8 校验值（多项式0x07，初始值0x00）的封装函数
- 141:UserAPP/Source/ReceiveDataProcess.c ****  */
- 142:UserAPP/Source/ReceiveDataProcess.c **** static uint8_t CalculateCRC8(const uint8_t *data, uint16_t length) { /* 封装CRC8 计算函数定�
-  27              		.loc 1 142 68 view -0
+ 134:UserAPP/Source/ReceiveDataProcess.c ****     while (remaining > 0)
+ 135:UserAPP/Source/ReceiveDataProcess.c ****     {
+ 136:UserAPP/Source/ReceiveDataProcess.c ****         uint32_t chunkLen = (remaining > MAX_RECEIVE_DATA_SIZE) ? MAX_RECEIVE_DATA_SIZE : remaining
+ 137:UserAPP/Source/ReceiveDataProcess.c ****         BaseType_t localTaskWoken = pdFALSE;
+ 138:UserAPP/Source/ReceiveDataProcess.c ****         ReceiveDataPacket_t isrPacket;
+ 139:UserAPP/Source/ReceiveDataProcess.c **** 
+ 140:UserAPP/Source/ReceiveDataProcess.c ****         memset(&isrPacket, 0, sizeof(isrPacket));
+ 141:UserAPP/Source/ReceiveDataProcess.c ****         memcpy(isrPacket.data, &Buf[offset], chunkLen);
+ 142:UserAPP/Source/ReceiveDataProcess.c ****         isrPacket.length = (uint16_t)chunkLen;
+ 143:UserAPP/Source/ReceiveDataProcess.c **** 
+ 144:UserAPP/Source/ReceiveDataProcess.c ****         if (xQueueSendFromISR(xReceiveDataQueue, &isrPacket, &localTaskWoken) == errQUEUE_FULL)
+ 145:UserAPP/Source/ReceiveDataProcess.c ****         {
+ 146:UserAPP/Source/ReceiveDataProcess.c ****             return 1;
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s 			page 4
+
+
+ 147:UserAPP/Source/ReceiveDataProcess.c ****         }
+ 148:UserAPP/Source/ReceiveDataProcess.c **** 
+ 149:UserAPP/Source/ReceiveDataProcess.c ****         if (localTaskWoken == pdTRUE)
+ 150:UserAPP/Source/ReceiveDataProcess.c ****         {
+ 151:UserAPP/Source/ReceiveDataProcess.c ****             xHigherPriorityTaskWoken = pdTRUE;
+ 152:UserAPP/Source/ReceiveDataProcess.c ****         }
+ 153:UserAPP/Source/ReceiveDataProcess.c **** 
+ 154:UserAPP/Source/ReceiveDataProcess.c ****         offset += chunkLen;
+ 155:UserAPP/Source/ReceiveDataProcess.c ****         remaining -= chunkLen;
+ 156:UserAPP/Source/ReceiveDataProcess.c ****     }
+ 157:UserAPP/Source/ReceiveDataProcess.c **** 
+ 158:UserAPP/Source/ReceiveDataProcess.c ****     portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+ 159:UserAPP/Source/ReceiveDataProcess.c ****     xHigherPriorityTaskWoken = pdFALSE;
+ 160:UserAPP/Source/ReceiveDataProcess.c **** 
+ 161:UserAPP/Source/ReceiveDataProcess.c ****     return 0;
+ 162:UserAPP/Source/ReceiveDataProcess.c **** }
+ 163:UserAPP/Source/ReceiveDataProcess.c **** 
+ 164:UserAPP/Source/ReceiveDataProcess.c **** static uint8_t IsHostRequestFunctionCode(uint8_t functionCode)
+ 165:UserAPP/Source/ReceiveDataProcess.c **** {
+  27              		.loc 1 165 1 view -0
   28              		.cfi_startproc
   29              		@ args = 0, pretend = 0, frame = 0
   30              		@ frame_needed = 0, uses_anonymous_args = 0
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckL0fKf.s 			page 4
+  31              		@ link register save eliminated.
+ 166:UserAPP/Source/ReceiveDataProcess.c ****     return (functionCode == FUNCTION_CODE_DataPacket) || (functionCode == FUNCTION_CODE_CommandPack
+  32              		.loc 1 166 5 view .LVU1
+  33              		.loc 1 166 55 is_stmt 0 view .LVU2
+  34 0000 0238     		subs	r0, r0, #2
+  35              	.LVL1:
+  36              		.loc 1 166 55 view .LVU3
+  37 0002 C0B2     		uxtb	r0, r0
+  38              	.LVL2:
+ 167:UserAPP/Source/ReceiveDataProcess.c **** }
+  39              		.loc 1 167 1 view .LVU4
+  40 0004 0128     		cmp	r0, #1
+  41 0006 8CBF     		ite	hi
+  42 0008 0020     		movhi	r0, #0
+  43 000a 0120     		movls	r0, #1
+  44 000c 7047     		bx	lr
+  45              		.cfi_endproc
+  46              	.LFE83:
+  48              		.section	.text.CalculateCRC8,"ax",%progbits
+  49              		.align	1
+  50              		.syntax unified
+  51              		.thumb
+  52              		.thumb_func
+  54              	CalculateCRC8:
+  55              	.LVL3:
+  56              	.LFB86:
+ 168:UserAPP/Source/ReceiveDataProcess.c **** 
+ 169:UserAPP/Source/ReceiveDataProcess.c **** static uint16_t FindValidFrameLength(const uint8_t *buf, uint16_t available)
+ 170:UserAPP/Source/ReceiveDataProcess.c **** {
+ 171:UserAPP/Source/ReceiveDataProcess.c ****     if (buf == NULL || available < 5)
+ 172:UserAPP/Source/ReceiveDataProcess.c ****     {
+ 173:UserAPP/Source/ReceiveDataProcess.c ****         return 0;
+ 174:UserAPP/Source/ReceiveDataProcess.c ****     }
+ 175:UserAPP/Source/ReceiveDataProcess.c **** 
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s 			page 5
 
 
-  31              		.loc 1 142 68 is_stmt 0 view .LVU1
-  32 0000 00B5     		push	{lr}
-  33              	.LCFI0:
-  34              		.cfi_def_cfa_offset 4
-  35              		.cfi_offset 14, -4
-  36 0002 8646     		mov	lr, r0
- 143:UserAPP/Source/ReceiveDataProcess.c ****     uint8_t crc = 0x00;                                           /* 初始CRC 值为 0x00 */ // �
-  37              		.loc 1 143 5 is_stmt 1 view .LVU2
-  38              	.LVL1:
- 144:UserAPP/Source/ReceiveDataProcess.c ****     for (uint16_t i = 0; i < length; i++) {                       /* 遍历所有输入字节*/ // 
-  39              		.loc 1 144 5 view .LVU3
-  40              	.LBB4:
-  41              		.loc 1 144 10 view .LVU4
-  42              		.loc 1 144 19 is_stmt 0 view .LVU5
-  43 0004 4FF0000C 		mov	ip, #0
-  44              	.LBE4:
- 143:UserAPP/Source/ReceiveDataProcess.c ****     uint8_t crc = 0x00;                                           /* 初始CRC 值为 0x00 */ // �
-  45              		.loc 1 143 13 view .LVU6
-  46 0008 6046     		mov	r0, ip
-  47              	.LVL2:
-  48              	.LBB7:
-  49              		.loc 1 144 5 view .LVU7
-  50 000a 11E0     		b	.L2
-  51              	.LVL3:
-  52              	.L10:
-  53              	.LBB5:
- 145:UserAPP/Source/ReceiveDataProcess.c ****         crc ^= data[i];                                           /* 与当前字节异或*/ // 每
- 146:UserAPP/Source/ReceiveDataProcess.c ****         for (uint8_t bit = 0; bit < 8; bit++) {                   /* 对每个位进行处理 */ //
- 147:UserAPP/Source/ReceiveDataProcess.c ****             if (crc & 0x80)                                       /* 如果最高位为1 */ // 每�
- 148:UserAPP/Source/ReceiveDataProcess.c ****             {
- 149:UserAPP/Source/ReceiveDataProcess.c ****                 crc = (uint8_t)((crc << 1) ^ 0x07);              /* 左移并按多项式异或*/ /
-  54              		.loc 1 149 17 is_stmt 1 view .LVU8
-  55              		.loc 1 149 44 is_stmt 0 view .LVU9
-  56 000c 5200     		lsls	r2, r2, #1
-  57 000e 82F00702 		eor	r2, r2, #7
-  58              		.loc 1 149 21 view .LVU10
-  59 0012 D0B2     		uxtb	r0, r2
-  60              	.LVL4:
-  61              	.L5:
- 146:UserAPP/Source/ReceiveDataProcess.c ****             if (crc & 0x80)                                       /* 如果最高位为1 */ // 每�
-  62              		.loc 1 146 43 is_stmt 1 discriminator 2 view .LVU11
-  63 0014 0133     		adds	r3, r3, #1
-  64              	.LVL5:
- 146:UserAPP/Source/ReceiveDataProcess.c ****             if (crc & 0x80)                                       /* 如果最高位为1 */ // 每�
-  65              		.loc 1 146 43 is_stmt 0 discriminator 2 view .LVU12
-  66 0016 DBB2     		uxtb	r3, r3
-  67              	.LVL6:
-  68              	.L3:
- 146:UserAPP/Source/ReceiveDataProcess.c ****             if (crc & 0x80)                                       /* 如果最高位为1 */ // 每�
-  69              		.loc 1 146 35 is_stmt 1 discriminator 1 view .LVU13
-  70 0018 072B     		cmp	r3, #7
-  71 001a 05D8     		bhi	.L9
- 147:UserAPP/Source/ReceiveDataProcess.c ****             {
-  72              		.loc 1 147 13 view .LVU14
- 147:UserAPP/Source/ReceiveDataProcess.c ****             {
-  73              		.loc 1 147 17 is_stmt 0 view .LVU15
-  74 001c 42B2     		sxtb	r2, r0
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckL0fKf.s 			page 5
-
-
- 147:UserAPP/Source/ReceiveDataProcess.c ****             {
-  75              		.loc 1 147 16 view .LVU16
-  76 001e 002A     		cmp	r2, #0
-  77 0020 F4DB     		blt	.L10
- 150:UserAPP/Source/ReceiveDataProcess.c ****             }
- 151:UserAPP/Source/ReceiveDataProcess.c ****             else
- 152:UserAPP/Source/ReceiveDataProcess.c ****             {
- 153:UserAPP/Source/ReceiveDataProcess.c ****                 crc <<= 1;                                       /* 仅左移一位*/ // 每行注�
-  78              		.loc 1 153 17 is_stmt 1 view .LVU17
-  79              		.loc 1 153 21 is_stmt 0 view .LVU18
-  80 0022 4000     		lsls	r0, r0, #1
-  81              	.LVL7:
-  82              		.loc 1 153 21 view .LVU19
-  83 0024 C0B2     		uxtb	r0, r0
-  84 0026 F5E7     		b	.L5
-  85              	.LVL8:
-  86              	.L9:
-  87              		.loc 1 153 21 view .LVU20
-  88              	.LBE5:
- 144:UserAPP/Source/ReceiveDataProcess.c ****         crc ^= data[i];                                           /* 与当前字节异或*/ // 每
-  89              		.loc 1 144 39 is_stmt 1 discriminator 2 view .LVU21
-  90 0028 0CF1010C 		add	ip, ip, #1
-  91              	.LVL9:
- 144:UserAPP/Source/ReceiveDataProcess.c ****         crc ^= data[i];                                           /* 与当前字节异或*/ // 每
-  92              		.loc 1 144 39 is_stmt 0 discriminator 2 view .LVU22
-  93 002c 1FFA8CFC 		uxth	ip, ip
-  94              	.LVL10:
-  95              	.L2:
- 144:UserAPP/Source/ReceiveDataProcess.c ****         crc ^= data[i];                                           /* 与当前字节异或*/ // 每
-  96              		.loc 1 144 28 is_stmt 1 discriminator 1 view .LVU23
-  97 0030 8C45     		cmp	ip, r1
-  98 0032 04D2     		bcs	.L11
- 145:UserAPP/Source/ReceiveDataProcess.c ****         for (uint8_t bit = 0; bit < 8; bit++) {                   /* 对每个位进行处理 */ //
-  99              		.loc 1 145 9 view .LVU24
- 145:UserAPP/Source/ReceiveDataProcess.c ****         for (uint8_t bit = 0; bit < 8; bit++) {                   /* 对每个位进行处理 */ //
- 100              		.loc 1 145 20 is_stmt 0 view .LVU25
- 101 0034 1EF80C30 		ldrb	r3, [lr, ip]	@ zero_extendqisi2
- 145:UserAPP/Source/ReceiveDataProcess.c ****         for (uint8_t bit = 0; bit < 8; bit++) {                   /* 对每个位进行处理 */ //
- 102              		.loc 1 145 13 view .LVU26
- 103 0038 5840     		eors	r0, r0, r3
- 104              	.LVL11:
- 146:UserAPP/Source/ReceiveDataProcess.c ****             if (crc & 0x80)                                       /* 如果最高位为1 */ // 每�
- 105              		.loc 1 146 9 is_stmt 1 view .LVU27
- 106              	.LBB6:
- 146:UserAPP/Source/ReceiveDataProcess.c ****             if (crc & 0x80)                                       /* 如果最高位为1 */ // 每�
- 107              		.loc 1 146 14 view .LVU28
- 146:UserAPP/Source/ReceiveDataProcess.c ****             if (crc & 0x80)                                       /* 如果最高位为1 */ // 每�
- 108              		.loc 1 146 22 is_stmt 0 view .LVU29
- 109 003a 0023     		movs	r3, #0
- 146:UserAPP/Source/ReceiveDataProcess.c ****             if (crc & 0x80)                                       /* 如果最高位为1 */ // 每�
- 110              		.loc 1 146 9 view .LVU30
- 111 003c ECE7     		b	.L3
- 112              	.LVL12:
- 113              	.L11:
- 146:UserAPP/Source/ReceiveDataProcess.c ****             if (crc & 0x80)                                       /* 如果最高位为1 */ // 每�
- 114              		.loc 1 146 9 view .LVU31
- 115              	.LBE6:
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckL0fKf.s 			page 6
-
-
- 116              	.LBE7:
- 154:UserAPP/Source/ReceiveDataProcess.c ****             }
- 155:UserAPP/Source/ReceiveDataProcess.c ****         }
- 156:UserAPP/Source/ReceiveDataProcess.c ****     }
- 157:UserAPP/Source/ReceiveDataProcess.c ****     return crc;                                                   /* 返回计算得到的CRC */ //
- 117              		.loc 1 157 5 is_stmt 1 view .LVU32
- 158:UserAPP/Source/ReceiveDataProcess.c **** }
- 118              		.loc 1 158 1 is_stmt 0 view .LVU33
- 119 003e 5DF804FB 		ldr	pc, [sp], #4
- 120              		.cfi_endproc
- 121              	.LFE83:
- 123              		.section	.text.vCreateReceiveDataQueueTask,"ax",%progbits
- 124              		.align	1
- 125              		.global	vCreateReceiveDataQueueTask
- 126              		.syntax unified
- 127              		.thumb
- 128              		.thumb_func
- 130              	vCreateReceiveDataQueueTask:
- 131              	.LVL13:
- 132              	.LFB81:
-  99:UserAPP/Source/ReceiveDataProcess.c ****     /* 创建一个用于保存接收数据包（ReceiveDataPacket_t）的队列，最多可容纳 
- 133              		.loc 1 99 1 is_stmt 1 view -0
- 134              		.cfi_startproc
- 135              		@ args = 0, pretend = 0, frame = 0
- 136              		@ frame_needed = 0, uses_anonymous_args = 0
-  99:UserAPP/Source/ReceiveDataProcess.c ****     /* 创建一个用于保存接收数据包（ReceiveDataPacket_t）的队列，最多可容纳 
- 137              		.loc 1 99 1 is_stmt 0 view .LVU35
- 138 0000 08B5     		push	{r3, lr}
- 139              	.LCFI1:
- 140              		.cfi_def_cfa_offset 8
- 141              		.cfi_offset 3, -8
- 142              		.cfi_offset 14, -4
- 101:UserAPP/Source/ReceiveDataProcess.c **** 
- 143              		.loc 1 101 5 is_stmt 1 view .LVU36
- 101:UserAPP/Source/ReceiveDataProcess.c **** 
- 144              		.loc 1 101 25 is_stmt 0 view .LVU37
- 145 0002 0022     		movs	r2, #0
- 146 0004 4221     		movs	r1, #66
- 147 0006 1920     		movs	r0, #25
- 148              	.LVL14:
- 101:UserAPP/Source/ReceiveDataProcess.c **** 
- 149              		.loc 1 101 25 view .LVU38
- 150 0008 FFF7FEFF 		bl	xQueueGenericCreate
- 151              	.LVL15:
- 101:UserAPP/Source/ReceiveDataProcess.c **** 
- 152              		.loc 1 101 23 discriminator 1 view .LVU39
- 153 000c 014B     		ldr	r3, .L14
- 154 000e 1860     		str	r0, [r3]
- 103:UserAPP/Source/ReceiveDataProcess.c ****     {
- 155              		.loc 1 103 5 is_stmt 1 view .LVU40
- 106:UserAPP/Source/ReceiveDataProcess.c ****  }
- 156              		.loc 1 106 5 view .LVU41
- 107:UserAPP/Source/ReceiveDataProcess.c **** 
- 157              		.loc 1 107 2 is_stmt 0 view .LVU42
- 158 0010 08BD     		pop	{r3, pc}
- 159              	.L15:
- 160 0012 00BF     		.align	2
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckL0fKf.s 			page 7
-
-
- 161              	.L14:
- 162 0014 00000000 		.word	xReceiveDataQueue
- 163              		.cfi_endproc
- 164              	.LFE81:
- 166              		.section	.rodata.vCreateReceiveDataTask.str1.4,"aMS",%progbits,1
- 167              		.align	2
- 168              	.LC0:
- 169 0000 76526563 		.ascii	"vReceiveDataProcessTask\000"
- 169      65697665 
- 169      44617461 
- 169      50726F63 
- 169      65737354 
- 170              		.section	.text.vCreateReceiveDataTask,"ax",%progbits
- 171              		.align	1
- 172              		.global	vCreateReceiveDataTask
- 173              		.syntax unified
- 174              		.thumb
- 175              		.thumb_func
- 177              	vCreateReceiveDataTask:
- 178              	.LFB79:
-  23:UserAPP/Source/ReceiveDataProcess.c ****     vCreateReceiveDataQueueTask(NULL);
- 179              		.loc 1 23 1 is_stmt 1 view -0
- 180              		.cfi_startproc
- 181              		@ args = 0, pretend = 0, frame = 0
- 182              		@ frame_needed = 0, uses_anonymous_args = 0
- 183 0000 00B5     		push	{lr}
- 184              	.LCFI2:
- 185              		.cfi_def_cfa_offset 4
- 186              		.cfi_offset 14, -4
- 187 0002 83B0     		sub	sp, sp, #12
- 188              	.LCFI3:
- 189              		.cfi_def_cfa_offset 16
-  24:UserAPP/Source/ReceiveDataProcess.c **** 
- 190              		.loc 1 24 5 view .LVU44
- 191 0004 0020     		movs	r0, #0
- 192 0006 FFF7FEFF 		bl	vCreateReceiveDataQueueTask
- 193              	.LVL16:
-  27:UserAPP/Source/ReceiveDataProcess.c ****                    vReceiveDataProcessTask,                      /* Function that implements the ta
- 194              		.loc 1 27 5 view .LVU45
-  27:UserAPP/Source/ReceiveDataProcess.c ****                    vReceiveDataProcessTask,                      /* Function that implements the ta
- 195              		.loc 1 27 38 is_stmt 0 view .LVU46
- 196 000a 084B     		ldr	r3, .L18
- 197 000c 0193     		str	r3, [sp, #4]
- 198 000e 0023     		movs	r3, #0
- 199 0010 0093     		str	r3, [sp]
- 200 0012 0123     		movs	r3, #1
- 201 0014 4FF48072 		mov	r2, #256
- 202 0018 0549     		ldr	r1, .L18+4
- 203 001a 0648     		ldr	r0, .L18+8
- 204 001c FFF7FEFF 		bl	xTaskCreate
- 205              	.LVL17:
-  27:UserAPP/Source/ReceiveDataProcess.c ****                    vReceiveDataProcessTask,                      /* Function that implements the ta
- 206              		.loc 1 27 36 discriminator 1 view .LVU47
- 207 0020 054B     		ldr	r3, .L18+12
- 208 0022 1860     		str	r0, [r3]
-  35:UserAPP/Source/ReceiveDataProcess.c ****     {
- 209              		.loc 1 35 5 is_stmt 1 view .LVU48
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckL0fKf.s 			page 8
-
-
-  38:UserAPP/Source/ReceiveDataProcess.c **** }
- 210              		.loc 1 38 5 view .LVU49
-  39:UserAPP/Source/ReceiveDataProcess.c **** 
- 211              		.loc 1 39 1 is_stmt 0 view .LVU50
- 212 0024 03B0     		add	sp, sp, #12
- 213              	.LCFI4:
- 214              		.cfi_def_cfa_offset 4
- 215              		@ sp needed
- 216 0026 5DF804FB 		ldr	pc, [sp], #4
- 217              	.L19:
- 218 002a 00BF     		.align	2
- 219              	.L18:
- 220 002c 00000000 		.word	xCreateReceiveDataTaskHandle
- 221 0030 00000000 		.word	.LC0
- 222 0034 00000000 		.word	vReceiveDataProcessTask
- 223 0038 00000000 		.word	xCreateReceiveDataTaskReturned
- 224              		.cfi_endproc
- 225              	.LFE79:
- 227              		.section	.text.vReceiveDataQueueSendISRTask,"ax",%progbits
- 228              		.align	1
- 229              		.global	vReceiveDataQueueSendISRTask
- 230              		.syntax unified
- 231              		.thumb
- 232              		.thumb_func
- 234              	vReceiveDataQueueSendISRTask:
- 235              	.LVL18:
- 236              	.LFB82:
- 117:UserAPP/Source/ReceiveDataProcess.c ****     if (*Len <= MAX_RECEIVE_DATA_SIZE && xReceiveDataQueue != NULL)
- 237              		.loc 1 117 1 is_stmt 1 view -0
- 238              		.cfi_startproc
- 239              		@ args = 0, pretend = 0, frame = 0
- 240              		@ frame_needed = 0, uses_anonymous_args = 0
- 117:UserAPP/Source/ReceiveDataProcess.c ****     if (*Len <= MAX_RECEIVE_DATA_SIZE && xReceiveDataQueue != NULL)
- 241              		.loc 1 117 1 is_stmt 0 view .LVU52
- 242 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
- 243              	.LCFI5:
- 244              		.cfi_def_cfa_offset 24
- 245              		.cfi_offset 3, -24
- 246              		.cfi_offset 4, -20
- 247              		.cfi_offset 5, -16
- 248              		.cfi_offset 6, -12
- 249              		.cfi_offset 7, -8
- 250              		.cfi_offset 14, -4
- 118:UserAPP/Source/ReceiveDataProcess.c ****     {
- 251              		.loc 1 118 5 is_stmt 1 view .LVU53
- 118:UserAPP/Source/ReceiveDataProcess.c ****     {
- 252              		.loc 1 118 9 is_stmt 0 view .LVU54
- 253 0002 0B68     		ldr	r3, [r1]
- 118:UserAPP/Source/ReceiveDataProcess.c ****     {
- 254              		.loc 1 118 8 view .LVU55
- 255 0004 402B     		cmp	r3, #64
- 256 0006 26D8     		bhi	.L21
- 257 0008 0546     		mov	r5, r0
- 258 000a 0C46     		mov	r4, r1
- 118:UserAPP/Source/ReceiveDataProcess.c ****     {
- 259              		.loc 1 118 60 discriminator 1 view .LVU56
- 260 000c 134B     		ldr	r3, .L23
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckL0fKf.s 			page 9
-
-
- 261 000e 1F68     		ldr	r7, [r3]
- 118:UserAPP/Source/ReceiveDataProcess.c ****     {
- 262              		.loc 1 118 39 discriminator 1 view .LVU57
- 263 0010 0FB3     		cbz	r7, .L21
- 121:UserAPP/Source/ReceiveDataProcess.c **** 
- 264              		.loc 1 121 9 is_stmt 1 view .LVU58
- 265 0012 134E     		ldr	r6, .L23+4
- 266 0014 4222     		movs	r2, #66
- 267 0016 0021     		movs	r1, #0
- 268              	.LVL19:
- 121:UserAPP/Source/ReceiveDataProcess.c **** 
- 269              		.loc 1 121 9 is_stmt 0 view .LVU59
- 270 0018 3046     		mov	r0, r6
- 271              	.LVL20:
- 121:UserAPP/Source/ReceiveDataProcess.c **** 
- 272              		.loc 1 121 9 view .LVU60
- 273 001a FFF7FEFF 		bl	memset
- 274              	.LVL21:
- 124:UserAPP/Source/ReceiveDataProcess.c ****         dataPacket.length = *Len;
- 275              		.loc 1 124 9 is_stmt 1 view .LVU61
- 276 001e 2268     		ldr	r2, [r4]
- 277 0020 2946     		mov	r1, r5
- 278 0022 3046     		mov	r0, r6
- 279 0024 FFF7FEFF 		bl	memcpy
- 280              	.LVL22:
- 125:UserAPP/Source/ReceiveDataProcess.c **** 
- 281              		.loc 1 125 9 view .LVU62
- 125:UserAPP/Source/ReceiveDataProcess.c **** 
- 282              		.loc 1 125 29 is_stmt 0 view .LVU63
- 283 0028 2368     		ldr	r3, [r4]
- 125:UserAPP/Source/ReceiveDataProcess.c **** 
- 284              		.loc 1 125 27 view .LVU64
- 285 002a A6F84030 		strh	r3, [r6, #64]	@ movhi
- 128:UserAPP/Source/ReceiveDataProcess.c ****             return (USBD_OK);
- 286              		.loc 1 128 9 is_stmt 1 view .LVU65
- 128:UserAPP/Source/ReceiveDataProcess.c ****             return (USBD_OK);
- 287              		.loc 1 128 13 is_stmt 0 view .LVU66
- 288 002e 0023     		movs	r3, #0
- 289 0030 0C4A     		ldr	r2, .L23+8
- 290 0032 3146     		mov	r1, r6
- 291 0034 3846     		mov	r0, r7
- 292 0036 FFF7FEFF 		bl	xQueueGenericSendFromISR
- 293              	.LVL23:
- 128:UserAPP/Source/ReceiveDataProcess.c ****             return (USBD_OK);
- 294              		.loc 1 128 12 discriminator 1 view .LVU67
- 295 003a 60B1     		cbz	r0, .L21
- 131:UserAPP/Source/ReceiveDataProcess.c ****     }
- 296              		.loc 1 131 9 is_stmt 1 view .LVU68
- 297 003c 094B     		ldr	r3, .L23+8
- 298 003e 1B68     		ldr	r3, [r3]
- 299 0040 4BB1     		cbz	r3, .L21
- 131:UserAPP/Source/ReceiveDataProcess.c ****     }
- 300              		.loc 1 131 9 discriminator 1 view .LVU69
- 301 0042 4FF0E023 		mov	r3, #-536813568
- 302 0046 4FF08052 		mov	r2, #268435456
- 303 004a C3F8042D 		str	r2, [r3, #3332]
- 131:UserAPP/Source/ReceiveDataProcess.c ****     }
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckL0fKf.s 			page 10
-
-
- 304              		.loc 1 131 9 view .LVU70
- 131:UserAPP/Source/ReceiveDataProcess.c ****     }
- 305              		.loc 1 131 9 is_stmt 0 discriminator 1 view .LVU71
- 306              		.syntax unified
- 307              	@ 131 "UserAPP/Source/ReceiveDataProcess.c" 1
- 308 004e BFF34F8F 		dsb
- 309              	@ 0 "" 2
- 131:UserAPP/Source/ReceiveDataProcess.c ****     }
- 310              		.loc 1 131 9 is_stmt 1 view .LVU72
- 131:UserAPP/Source/ReceiveDataProcess.c ****     }
- 311              		.loc 1 131 9 is_stmt 0 discriminator 1 view .LVU73
- 312              	@ 131 "UserAPP/Source/ReceiveDataProcess.c" 1
- 313 0052 BFF36F8F 		isb
- 314              	@ 0 "" 2
- 315              	.LVL24:
- 316              		.thumb
- 317              		.syntax unified
- 318              	.L21:
- 135:UserAPP/Source/ReceiveDataProcess.c **** 
- 319              		.loc 1 135 1 view .LVU74
- 320 0056 0020     		movs	r0, #0
- 321 0058 F8BD     		pop	{r3, r4, r5, r6, r7, pc}
- 322              	.L24:
- 323 005a 00BF     		.align	2
- 324              	.L23:
- 325 005c 00000000 		.word	xReceiveDataQueue
- 326 0060 00000000 		.word	dataPacket
- 327 0064 00000000 		.word	xHigherPriorityTaskWoken
- 328              		.cfi_endproc
- 329              	.LFE82:
- 331              		.section	.rodata.vParseReceivedDataPacket.str1.4,"aMS",%progbits,1
- 332              		.align	2
- 333              	.LC1:
- 334 0000 E8A7A3E6 		.ascii	"\350\247\243\346\236\220\345\244\261\350\264\245\357"
- 334      9E90E5A4 
- 334      B1E8B4A5 
- 334      EF
- 335 000d BC9AE695 		.ascii	"\274\232\346\225\260\346\215\256\351\225\277\345\272"
- 335      B0E68DAE 
- 335      E995BFE5 
- 335      BA
- 336 001a A6E8BF87 		.ascii	"\246\350\277\207\347\237\255(%d)\015\012\000"
- 336      E79FAD28 
- 336      2564290D 
- 336      0A00
- 337              		.align	2
- 338              	.LC2:
- 339 0028 E8A7A3E6 		.ascii	"\350\247\243\346\236\220\345\244\261\350\264\245\357"
- 339      9E90E5A4 
- 339      B1E8B4A5 
- 339      EF
- 340 0035 BC9AE58C 		.ascii	"\274\232\345\214\205\345\244\264\351\224\231\350\257"
- 340      85E5A4B4 
- 340      E99499E8 
- 340      AF
- 341 0042 AF283078 		.ascii	"\257(0x%02X)\015\012\000"
- 341      25303258 
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckL0fKf.s 			page 11
-
-
- 341      290D0A00 
- 342 004e 0000     		.align	2
- 343              	.LC3:
- 344 0050 E8A7A3E6 		.ascii	"\350\247\243\346\236\220\345\244\261\350\264\245:CR"
- 344      9E90E5A4 
- 344      B1E8B4A5 
- 344      3A4352
- 345 005f 4320E6A0 		.ascii	"C \346\240\241\351\252\214\351\224\231\350\257\257("
- 345      A1E9AA8C 
- 345      E99499E8 
- 345      AFAF28
- 346 006e E8AEA1E7 		.ascii	"\350\256\241\347\256\227=0x%02X, \346\216\245\346\224"
- 346      AE973D30 
- 346      78253032 
- 346      582C20E6 
- 346      8EA5E694 
- 347 0082 B63D3078 		.ascii	"\266=0x%02X)\015\012\000"
- 347      25303258 
- 347      290D0A00 
- 348 008e 0000     		.align	2
- 349              	.LC4:
- 350 0090 E8A7A3E6 		.ascii	"\350\247\243\346\236\220\345\220\216\347\232\204\346"
- 350      9E90E590 
- 350      8EE79A84 
- 350      E6
- 351 009d 95B0E68D 		.ascii	"\225\260\346\215\256\345\217\221\351\200\201\345\210"
- 351      AEE58F91 
- 351      E98081E5 
- 351      88
- 352 00aa B0207850 		.ascii	"\260 xParsedDataQueue \345\244\261\350\264\245\015\012"
- 352      61727365 
- 352      64446174 
- 352      61517565 
- 352      756520E5 
- 353 00c5 00       		.ascii	"\000"
- 354 00c6 0000     		.align	2
- 355              	.LC5:
- 356 00c8 E8A7A3E6 		.ascii	"\350\247\243\346\236\220\345\220\216\347\232\204\346"
- 356      9E90E590 
- 356      8EE79A84 
- 356      E6
- 357 00d5 95B0E68D 		.ascii	"\225\260\346\215\256\345\267\262\345\217\221\351\200"
- 357      AEE5B7B2 
- 357      E58F91E9 
- 357      80
- 358 00e2 81E588B0 		.ascii	"\201\345\210\260 xParsedDataQueue\015\012\000"
- 358      20785061 
- 358      72736564 
- 358      44617461 
- 358      51756575 
- 359 00fa 0000     		.align	2
- 360              	.LC6:
- 361 00fc E8A7A3E6 		.ascii	"\350\247\243\346\236\220\345\220\216\347\232\204\346"
- 361      9E90E590 
- 361      8EE79A84 
- 361      E6
- 362 0109 95B0E68D 		.ascii	"\225\260\346\215\256\351\230\237\345\210\227 xParse"
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckL0fKf.s 			page 12
-
-
- 362      AEE9989F 
- 362      E5889720 
- 362      78506172 
- 362      7365
- 363 011b 64446174 		.ascii	"dDataQueue \346\234\252\345\210\233\345\273\272\015"
- 363      61517565 
- 363      756520E6 
- 363      9CAAE588 
- 363      9BE5BBBA 
- 364 0130 0A00     		.ascii	"\012\000"
- 365 0132 0000     		.align	2
- 366              	.LC7:
- 367 0134 E695B0E6 		.ascii	"\346\225\260\346\215\256\345\214\205\350\247\243\346"
- 367      8DAEE58C 
- 367      85E8A7A3 
- 367      E6
- 368 0141 9E90E688 		.ascii	"\236\220\346\210\220\345\212\237: Func=0x%02X, Exec"
- 368      90E58A9F 
- 368      3A204675 
- 368      6E633D30 
- 368      78253032 
- 369 015c 4964783D 		.ascii	"Idx=%u, DataLen=%u, CRC=0x%02X\015\012\000"
- 369      25752C20 
- 369      44617461 
- 369      4C656E3D 
- 369      25752C20 
- 370              		.section	.text.vParseReceivedDataPacket,"ax",%progbits
- 371              		.align	1
- 372              		.global	vParseReceivedDataPacket
- 373              		.syntax unified
- 374              		.thumb
- 375              		.thumb_func
- 377              	vParseReceivedDataPacket:
- 378              	.LFB84:
- 159:UserAPP/Source/ReceiveDataProcess.c **** 
- 160:UserAPP/Source/ReceiveDataProcess.c **** /**
- 161:UserAPP/Source/ReceiveDataProcess.c ****  * @brief 解析接收到的数据包
- 162:UserAPP/Source/ReceiveDataProcess.c ****  *
- 163:UserAPP/Source/ReceiveDataProcess.c ****  */
- 164:UserAPP/Source/ReceiveDataProcess.c **** void vParseReceivedDataPacket(void)
- 165:UserAPP/Source/ReceiveDataProcess.c **** {
- 379              		.loc 1 165 1 is_stmt 1 view -0
- 380              		.cfi_startproc
- 381              		@ args = 0, pretend = 0, frame = 0
- 382              		@ frame_needed = 0, uses_anonymous_args = 0
- 383 0000 F0B5     		push	{r4, r5, r6, r7, lr}
- 384              	.LCFI6:
- 385              		.cfi_def_cfa_offset 20
- 386              		.cfi_offset 4, -20
- 387              		.cfi_offset 5, -16
- 388              		.cfi_offset 6, -12
- 389              		.cfi_offset 7, -8
- 390              		.cfi_offset 14, -4
- 391 0002 85B0     		sub	sp, sp, #20
- 392              	.LCFI7:
- 393              		.cfi_def_cfa_offset 40
- 166:UserAPP/Source/ReceiveDataProcess.c ****     uint8_t computedCRC = 0;                                        /* 计算得到的CRC8 */ // �
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckL0fKf.s 			page 13
-
-
- 394              		.loc 1 166 5 view .LVU76
- 395              	.LVL25:
- 167:UserAPP/Source/ReceiveDataProcess.c ****     uint8_t receivedCRC = 0;                                        /* 接收到的 CRC8 */ // 每�
- 396              		.loc 1 167 5 view .LVU77
- 168:UserAPP/Source/ReceiveDataProcess.c ****     uint8_t *buf = dataPacket.data;                                 /* 指向接收数据缓冲区�
- 397              		.loc 1 168 5 view .LVU78
- 169:UserAPP/Source/ReceiveDataProcess.c ****     uint16_t len = dataPacket.length;                                /* 接收数据的长度 */ //
- 398              		.loc 1 169 5 view .LVU79
- 399              		.loc 1 169 14 is_stmt 0 view .LVU80
- 400 0004 3B4B     		ldr	r3, .L41
- 401 0006 B3F84040 		ldrh	r4, [r3, #64]
- 402              	.LVL26:
- 170:UserAPP/Source/ReceiveDataProcess.c **** 
- 171:UserAPP/Source/ReceiveDataProcess.c ****     /* 检查最小长度：包头(1)+功能码(1)+执行索引(2)+CRC(1) = 5 */ // 每行注释
- 172:UserAPP/Source/ReceiveDataProcess.c ****     if (len < 5)                                                    /* 长度不足，直接返回 
- 403              		.loc 1 172 5 is_stmt 1 view .LVU81
- 404              		.loc 1 172 8 is_stmt 0 view .LVU82
- 405 000a 042C     		cmp	r4, #4
- 406 000c 44D9     		bls	.L37
- 173:UserAPP/Source/ReceiveDataProcess.c ****     {
- 174:UserAPP/Source/ReceiveDataProcess.c ****             QueueSendfmt(xSendDataQueue, 0, "解析失败：数据长度过短(%d)\r\n", len); /* �
- 175:UserAPP/Source/ReceiveDataProcess.c ****         return;                                                      /* 退出函数*/ // 每行注
- 176:UserAPP/Source/ReceiveDataProcess.c ****     }
- 177:UserAPP/Source/ReceiveDataProcess.c **** 
- 178:UserAPP/Source/ReceiveDataProcess.c ****     /* 验证包头是否�?0xAA */ // 每行注释
- 179:UserAPP/Source/ReceiveDataProcess.c ****     if (buf[0] != 0xAA)                                              /* 包头错误，记录并返
- 407              		.loc 1 179 5 is_stmt 1 view .LVU83
- 408              		.loc 1 179 12 is_stmt 0 view .LVU84
- 409 000e 394B     		ldr	r3, .L41
- 410 0010 1E78     		ldrb	r6, [r3]	@ zero_extendqisi2
- 411              		.loc 1 179 8 view .LVU85
- 412 0012 AA2E     		cmp	r6, #170
- 413 0014 48D1     		bne	.L38
- 180:UserAPP/Source/ReceiveDataProcess.c ****     {
- 181:UserAPP/Source/ReceiveDataProcess.c ****             QueueSendfmt(xSendDataQueue, 0, "解析失败：包头错误(0x%02X)\r\n", buf[0]); /* 
- 182:UserAPP/Source/ReceiveDataProcess.c ****         return;                                                      /* 退出函数*/ // 每行注
- 183:UserAPP/Source/ReceiveDataProcess.c ****     }
- 184:UserAPP/Source/ReceiveDataProcess.c **** 
- 185:UserAPP/Source/ReceiveDataProcess.c ****     /* 计算 CRC8：调用封装的 CalculateCRC8 函数，计算除最后一字节之外的CRC */
- 186:UserAPP/Source/ReceiveDataProcess.c ****     computedCRC = CalculateCRC8(buf, (uint16_t)(len - 1));          /* 通过封装函数计算 CRC
- 414              		.loc 1 186 5 is_stmt 1 view .LVU86
- 415              		.loc 1 186 19 is_stmt 0 view .LVU87
- 416 0016 651E     		subs	r5, r4, #1
- 417 0018 364F     		ldr	r7, .L41
- 418 001a A9B2     		uxth	r1, r5
- 419 001c 3846     		mov	r0, r7
- 420 001e FFF7FEFF 		bl	CalculateCRC8
- 421              	.LVL27:
- 187:UserAPP/Source/ReceiveDataProcess.c **** 
- 188:UserAPP/Source/ReceiveDataProcess.c ****     receivedCRC = buf[len - 1];                                      /* 取出接收到的 CRC8 */ 
- 422              		.loc 1 188 5 is_stmt 1 view .LVU88
- 423              		.loc 1 188 17 is_stmt 0 view .LVU89
- 424 0022 7D5D     		ldrb	r5, [r7, r5]	@ zero_extendqisi2
- 425              	.LVL28:
- 189:UserAPP/Source/ReceiveDataProcess.c **** 
- 190:UserAPP/Source/ReceiveDataProcess.c ****     if (computedCRC != receivedCRC)                                  /* CRC 校验失败时记录�
- 426              		.loc 1 190 5 is_stmt 1 view .LVU90
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckL0fKf.s 			page 14
-
-
- 427              		.loc 1 190 8 is_stmt 0 view .LVU91
- 428 0024 A842     		cmp	r0, r5
- 429 0026 47D1     		bne	.L39
- 191:UserAPP/Source/ReceiveDataProcess.c ****     {
- 192:UserAPP/Source/ReceiveDataProcess.c ****             QueueSendfmt(xSendDataQueue, 0, "解析失败:CRC 校验错误(计算=0x%02X, 接收=0x
- 193:UserAPP/Source/ReceiveDataProcess.c ****         return;                                                      /* 退出函数*/ // 每行注
+ 176:UserAPP/Source/ReceiveDataProcess.c ****     if (buf[0] != 0xAA)
+ 177:UserAPP/Source/ReceiveDataProcess.c ****     {
+ 178:UserAPP/Source/ReceiveDataProcess.c ****         return 0;
+ 179:UserAPP/Source/ReceiveDataProcess.c ****     }
+ 180:UserAPP/Source/ReceiveDataProcess.c **** 
+ 181:UserAPP/Source/ReceiveDataProcess.c ****     if (!IsHostRequestFunctionCode(buf[1]))
+ 182:UserAPP/Source/ReceiveDataProcess.c ****     {
+ 183:UserAPP/Source/ReceiveDataProcess.c ****         return 0;
+ 184:UserAPP/Source/ReceiveDataProcess.c ****     }
+ 185:UserAPP/Source/ReceiveDataProcess.c **** 
+ 186:UserAPP/Source/ReceiveDataProcess.c ****     uint16_t maxTry = (available < MAX_RECEIVE_DATA_SIZE) ? available : MAX_RECEIVE_DATA_SIZE;
+ 187:UserAPP/Source/ReceiveDataProcess.c ****     for (uint16_t frameLen = 5; frameLen <= maxTry; frameLen++)
+ 188:UserAPP/Source/ReceiveDataProcess.c ****     {
+ 189:UserAPP/Source/ReceiveDataProcess.c ****         uint8_t crc = CalculateCRC8(buf, (uint16_t)(frameLen - 1));
+ 190:UserAPP/Source/ReceiveDataProcess.c ****         if (crc == buf[frameLen - 1])
+ 191:UserAPP/Source/ReceiveDataProcess.c ****         {
+ 192:UserAPP/Source/ReceiveDataProcess.c ****             return frameLen;
+ 193:UserAPP/Source/ReceiveDataProcess.c ****         }
  194:UserAPP/Source/ReceiveDataProcess.c ****     }
  195:UserAPP/Source/ReceiveDataProcess.c **** 
- 196:UserAPP/Source/ReceiveDataProcess.c ****     /* CRC 校验通过，填充parsedDataPacket 结构体*/ // 每行注释
- 197:UserAPP/Source/ReceiveDataProcess.c ****     parsedDataPacket.Header = buf[0];                                /* 填充包头 */ // 每行�
- 430              		.loc 1 197 5 is_stmt 1 view .LVU92
- 431              		.loc 1 197 29 is_stmt 0 view .LVU93
- 432 0028 334B     		ldr	r3, .L41+4
- 433 002a 1E70     		strb	r6, [r3]
- 198:UserAPP/Source/ReceiveDataProcess.c ****     parsedDataPacket.FunctionCode = buf[1];                          /* 填充功能码 */ // 每�
- 434              		.loc 1 198 5 is_stmt 1 view .LVU94
- 435              		.loc 1 198 35 is_stmt 0 view .LVU95
- 436 002c 314A     		ldr	r2, .L41
- 437 002e 5178     		ldrb	r1, [r2, #1]	@ zero_extendqisi2
- 438 0030 5970     		strb	r1, [r3, #1]
- 199:UserAPP/Source/ReceiveDataProcess.c ****     parsedDataPacket.ExecIndex = (uint16_t)((buf[2] << 8) | buf[3]);  /* 填充执行索引（按�
- 439              		.loc 1 199 5 is_stmt 1 view .LVU96
- 440              		.loc 1 199 49 is_stmt 0 view .LVU97
- 441 0032 9178     		ldrb	r1, [r2, #2]	@ zero_extendqisi2
- 442              		.loc 1 199 64 view .LVU98
- 443 0034 D278     		ldrb	r2, [r2, #3]	@ zero_extendqisi2
- 444              		.loc 1 199 34 view .LVU99
- 445 0036 42EA0122 		orr	r2, r2, r1, lsl #8
- 446              		.loc 1 199 32 view .LVU100
- 447 003a 5A80     		strh	r2, [r3, #2]	@ movhi
- 200:UserAPP/Source/ReceiveDataProcess.c **** 
- 201:UserAPP/Source/ReceiveDataProcess.c ****     /* 计算数据段长度：总长度 - (包头1 + 功能码1 + 执行索引2 + CRC1) = len - 5 
- 202:UserAPP/Source/ReceiveDataProcess.c ****     parsedDataPacket.DataLen = (uint8_t)((len > 5) ? (len - 5) : 0);  /* 填充数据长度 */ // �
- 448              		.loc 1 202 5 is_stmt 1 view .LVU101
- 449              		.loc 1 202 32 is_stmt 0 view .LVU102
- 450 003c 052C     		cmp	r4, #5
- 451 003e 44D9     		bls	.L35
- 452              		.loc 1 202 59 discriminator 1 view .LVU103
- 453 0040 E2B2     		uxtb	r2, r4
- 454              		.loc 1 202 32 discriminator 1 view .LVU104
- 455 0042 053A     		subs	r2, r2, #5
- 456 0044 D2B2     		uxtb	r2, r2
- 457              	.L30:
- 458              		.loc 1 202 30 discriminator 4 view .LVU105
- 459 0046 2C4B     		ldr	r3, .L41+4
- 460 0048 1A71     		strb	r2, [r3, #4]
- 203:UserAPP/Source/ReceiveDataProcess.c **** 
- 204:UserAPP/Source/ReceiveDataProcess.c ****     if (parsedDataPacket.DataLen > 0)                                /* 如果有数据则拷贝数
- 461              		.loc 1 204 5 is_stmt 1 view .LVU106
- 462              		.loc 1 204 8 is_stmt 0 view .LVU107
- 463 004a 002A     		cmp	r2, #0
- 464 004c 3FD1     		bne	.L40
- 465              	.LVL29:
- 466              	.L31:
- 205:UserAPP/Source/ReceiveDataProcess.c ****     {
- 206:UserAPP/Source/ReceiveDataProcess.c ****         memcpy(parsedDataPacket.Data, &buf[4], parsedDataPacket.DataLen); /* 将数据段复制到�
- 207:UserAPP/Source/ReceiveDataProcess.c ****     }
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckL0fKf.s 			page 15
-
-
- 208:UserAPP/Source/ReceiveDataProcess.c **** 
- 209:UserAPP/Source/ReceiveDataProcess.c ****     parsedDataPacket.CRC8 = receivedCRC;                             /* 填充 CRC8 字段 */ // �
- 467              		.loc 1 209 5 is_stmt 1 view .LVU108
- 468              		.loc 1 209 27 is_stmt 0 view .LVU109
- 469 004e 2A4B     		ldr	r3, .L41+4
- 470 0050 83F84050 		strb	r5, [r3, #64]
- 210:UserAPP/Source/ReceiveDataProcess.c **** 
- 211:UserAPP/Source/ReceiveDataProcess.c ****     /* 将解析后的数据包发送到 xParsedDataQueue，以供 HWCI 任务处理 */ // 每行�
- 212:UserAPP/Source/ReceiveDataProcess.c ****     if (xParsedDataQueue != NULL)                                     /* 检查解析队列是否�
- 471              		.loc 1 212 5 is_stmt 1 view .LVU110
- 472              		.loc 1 212 26 is_stmt 0 view .LVU111
- 473 0054 294B     		ldr	r3, .L41+8
- 474 0056 1868     		ldr	r0, [r3]
- 475              		.loc 1 212 8 view .LVU112
- 476 0058 0028     		cmp	r0, #0
- 477 005a 44D0     		beq	.L32
+ 196:UserAPP/Source/ReceiveDataProcess.c ****     return 0;
+ 197:UserAPP/Source/ReceiveDataProcess.c **** }
+ 198:UserAPP/Source/ReceiveDataProcess.c **** 
+ 199:UserAPP/Source/ReceiveDataProcess.c **** static void vParseReceivedDataStream(const ReceiveDataPacket_t *packet)
+ 200:UserAPP/Source/ReceiveDataProcess.c **** {
+ 201:UserAPP/Source/ReceiveDataProcess.c ****     if (packet == NULL || packet->length == 0)
+ 202:UserAPP/Source/ReceiveDataProcess.c ****     {
+ 203:UserAPP/Source/ReceiveDataProcess.c ****         return;
+ 204:UserAPP/Source/ReceiveDataProcess.c ****     }
+ 205:UserAPP/Source/ReceiveDataProcess.c **** 
+ 206:UserAPP/Source/ReceiveDataProcess.c ****     uint16_t appendLen = packet->length;
+ 207:UserAPP/Source/ReceiveDataProcess.c ****     if ((uint32_t)rxStreamLen + appendLen > sizeof(rxStreamBuf))
+ 208:UserAPP/Source/ReceiveDataProcess.c ****     {
+ 209:UserAPP/Source/ReceiveDataProcess.c ****         rxStreamLen = 0;
+ 210:UserAPP/Source/ReceiveDataProcess.c ****     }
+ 211:UserAPP/Source/ReceiveDataProcess.c **** 
+ 212:UserAPP/Source/ReceiveDataProcess.c ****     if (appendLen > sizeof(rxStreamBuf))
  213:UserAPP/Source/ReceiveDataProcess.c ****     {
- 214:UserAPP/Source/ReceiveDataProcess.c ****         if (xQueueSend(xParsedDataQueue, &parsedDataPacket, (TickType_t)10) != pdPASS) /* 尝试发
- 478              		.loc 1 214 9 is_stmt 1 view .LVU113
- 479              		.loc 1 214 13 is_stmt 0 view .LVU114
- 480 005c 0023     		movs	r3, #0
- 481 005e 0A22     		movs	r2, #10
- 482 0060 2549     		ldr	r1, .L41+4
- 483 0062 FFF7FEFF 		bl	xQueueGenericSend
- 484              	.LVL30:
- 485              		.loc 1 214 12 discriminator 1 view .LVU115
- 486 0066 0128     		cmp	r0, #1
- 487 0068 36D0     		beq	.L33
- 215:UserAPP/Source/ReceiveDataProcess.c ****         {
- 216:UserAPP/Source/ReceiveDataProcess.c ****                 QueueSendfmt(xSendDataQueue, 0, "解析后的数据发送到 xParsedDataQueue 失�
- 488              		.loc 1 216 17 is_stmt 1 view .LVU116
- 489 006a 254A     		ldr	r2, .L41+12
- 490 006c 0021     		movs	r1, #0
- 491 006e 254B     		ldr	r3, .L41+16
- 492 0070 1868     		ldr	r0, [r3]
- 493 0072 FFF7FEFF 		bl	QueueSendfmt
- 494              	.LVL31:
- 495              	.L34:
- 217:UserAPP/Source/ReceiveDataProcess.c ****         }
- 218:UserAPP/Source/ReceiveDataProcess.c ****         else
- 219:UserAPP/Source/ReceiveDataProcess.c ****         {
- 220:UserAPP/Source/ReceiveDataProcess.c ****                 QueueSendfmt(xSendDataQueue, 0, "解析后的数据已发送到 xParsedDataQueue\r\
- 221:UserAPP/Source/ReceiveDataProcess.c ****         }
- 222:UserAPP/Source/ReceiveDataProcess.c ****     }
- 223:UserAPP/Source/ReceiveDataProcess.c ****     else
- 224:UserAPP/Source/ReceiveDataProcess.c ****     {
- 225:UserAPP/Source/ReceiveDataProcess.c ****             QueueSendfmt(xSendDataQueue, 0, "解析后的数据队列 xParsedDataQueue 未创建\r\
- 226:UserAPP/Source/ReceiveDataProcess.c ****     }
+ 214:UserAPP/Source/ReceiveDataProcess.c ****         appendLen = (uint16_t)sizeof(rxStreamBuf);
+ 215:UserAPP/Source/ReceiveDataProcess.c ****     }
+ 216:UserAPP/Source/ReceiveDataProcess.c **** 
+ 217:UserAPP/Source/ReceiveDataProcess.c ****     memcpy(&rxStreamBuf[rxStreamLen], packet->data, appendLen);
+ 218:UserAPP/Source/ReceiveDataProcess.c ****     rxStreamLen = (uint16_t)(rxStreamLen + appendLen);
+ 219:UserAPP/Source/ReceiveDataProcess.c **** 
+ 220:UserAPP/Source/ReceiveDataProcess.c ****     while (rxStreamLen >= 5)
+ 221:UserAPP/Source/ReceiveDataProcess.c ****     {
+ 222:UserAPP/Source/ReceiveDataProcess.c ****         uint16_t start = 0;
+ 223:UserAPP/Source/ReceiveDataProcess.c ****         while (start < rxStreamLen && rxStreamBuf[start] != 0xAA)
+ 224:UserAPP/Source/ReceiveDataProcess.c ****         {
+ 225:UserAPP/Source/ReceiveDataProcess.c ****             start++;
+ 226:UserAPP/Source/ReceiveDataProcess.c ****         }
  227:UserAPP/Source/ReceiveDataProcess.c **** 
- 228:UserAPP/Source/ReceiveDataProcess.c ****     /* 记录解析成功的日志，包括功能码、执行索引和数据长度 */ // 每行注�
- 229:UserAPP/Source/ReceiveDataProcess.c ****         QueueSendfmt(xSendDataQueue, 0, "数据包解析成功: Func=0x%02X, ExecIdx=%u, DataLen=%u
- 496              		.loc 1 229 9 view .LVU117
- 497              		.loc 1 229 135 is_stmt 0 view .LVU118
- 498 0076 204B     		ldr	r3, .L41+4
- 499              		.loc 1 229 166 view .LVU119
- 500 0078 5A88     		ldrh	r2, [r3, #2]
- 501              		.loc 1 229 194 view .LVU120
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckL0fKf.s 			page 16
+ 228:UserAPP/Source/ReceiveDataProcess.c ****         if (start > 0)
+ 229:UserAPP/Source/ReceiveDataProcess.c ****         {
+ 230:UserAPP/Source/ReceiveDataProcess.c ****             memmove(rxStreamBuf, &rxStreamBuf[start], rxStreamLen - start);
+ 231:UserAPP/Source/ReceiveDataProcess.c ****             rxStreamLen = (uint16_t)(rxStreamLen - start);
+ 232:UserAPP/Source/ReceiveDataProcess.c ****         }
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s 			page 6
 
 
- 502 007a 1979     		ldrb	r1, [r3, #4]	@ zero_extendqisi2
- 503              		.loc 1 229 220 view .LVU121
- 504 007c 93F84000 		ldrb	r0, [r3, #64]	@ zero_extendqisi2
- 505              		.loc 1 229 9 view .LVU122
- 506 0080 0290     		str	r0, [sp, #8]
- 507 0082 0191     		str	r1, [sp, #4]
- 508 0084 0092     		str	r2, [sp]
- 509 0086 5B78     		ldrb	r3, [r3, #1]	@ zero_extendqisi2
- 510 0088 1F4A     		ldr	r2, .L41+20
- 511 008a 0021     		movs	r1, #0
- 512 008c 1D48     		ldr	r0, .L41+16
- 513 008e 0068     		ldr	r0, [r0]
- 514 0090 FFF7FEFF 		bl	QueueSendfmt
- 515              	.LVL32:
- 516              	.L25:
- 230:UserAPP/Source/ReceiveDataProcess.c **** }
- 517              		.loc 1 230 1 view .LVU123
- 518 0094 05B0     		add	sp, sp, #20
- 519              	.LCFI8:
- 520              		.cfi_remember_state
- 521              		.cfi_def_cfa_offset 20
- 522              		@ sp needed
- 523 0096 F0BD     		pop	{r4, r5, r6, r7, pc}
- 524              	.LVL33:
- 525              	.L37:
- 526              	.LCFI9:
- 527              		.cfi_restore_state
- 174:UserAPP/Source/ReceiveDataProcess.c ****         return;                                                      /* 退出函数*/ // 每行注
- 528              		.loc 1 174 13 is_stmt 1 view .LVU124
- 529 0098 2346     		mov	r3, r4
- 530 009a 1C4A     		ldr	r2, .L41+24
- 531 009c 0021     		movs	r1, #0
- 532 009e 1948     		ldr	r0, .L41+16
- 533 00a0 0068     		ldr	r0, [r0]
- 534 00a2 FFF7FEFF 		bl	QueueSendfmt
- 535              	.LVL34:
- 175:UserAPP/Source/ReceiveDataProcess.c ****     }
- 536              		.loc 1 175 9 view .LVU125
- 537 00a6 F5E7     		b	.L25
- 538              	.L38:
- 181:UserAPP/Source/ReceiveDataProcess.c ****         return;                                                      /* 退出函数*/ // 每行注
- 539              		.loc 1 181 13 view .LVU126
- 540 00a8 3346     		mov	r3, r6
- 541 00aa 194A     		ldr	r2, .L41+28
- 542 00ac 0021     		movs	r1, #0
- 543 00ae 1548     		ldr	r0, .L41+16
- 544 00b0 0068     		ldr	r0, [r0]
- 545 00b2 FFF7FEFF 		bl	QueueSendfmt
- 546              	.LVL35:
- 182:UserAPP/Source/ReceiveDataProcess.c ****     }
- 547              		.loc 1 182 9 view .LVU127
- 548 00b6 EDE7     		b	.L25
- 549              	.LVL36:
- 550              	.L39:
- 192:UserAPP/Source/ReceiveDataProcess.c ****         return;                                                      /* 退出函数*/ // 每行注
- 551              		.loc 1 192 13 view .LVU128
- 552 00b8 0095     		str	r5, [sp]
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckL0fKf.s 			page 17
+ 233:UserAPP/Source/ReceiveDataProcess.c **** 
+ 234:UserAPP/Source/ReceiveDataProcess.c ****         if (rxStreamLen < 5)
+ 235:UserAPP/Source/ReceiveDataProcess.c ****         {
+ 236:UserAPP/Source/ReceiveDataProcess.c ****             break;
+ 237:UserAPP/Source/ReceiveDataProcess.c ****         }
+ 238:UserAPP/Source/ReceiveDataProcess.c **** 
+ 239:UserAPP/Source/ReceiveDataProcess.c ****         uint16_t frameLen = FindValidFrameLength(rxStreamBuf, rxStreamLen);
+ 240:UserAPP/Source/ReceiveDataProcess.c ****         if (frameLen == 0)
+ 241:UserAPP/Source/ReceiveDataProcess.c ****         {
+ 242:UserAPP/Source/ReceiveDataProcess.c ****             if (rxStreamLen > MAX_RECEIVE_DATA_SIZE)
+ 243:UserAPP/Source/ReceiveDataProcess.c ****             {
+ 244:UserAPP/Source/ReceiveDataProcess.c ****                 memmove(rxStreamBuf, &rxStreamBuf[1], rxStreamLen - 1);
+ 245:UserAPP/Source/ReceiveDataProcess.c ****                 rxStreamLen = (uint16_t)(rxStreamLen - 1);
+ 246:UserAPP/Source/ReceiveDataProcess.c ****                 continue;
+ 247:UserAPP/Source/ReceiveDataProcess.c ****             }
+ 248:UserAPP/Source/ReceiveDataProcess.c ****             break;
+ 249:UserAPP/Source/ReceiveDataProcess.c ****         }
+ 250:UserAPP/Source/ReceiveDataProcess.c **** 
+ 251:UserAPP/Source/ReceiveDataProcess.c ****         ReceiveDataPacket_t framePacket;
+ 252:UserAPP/Source/ReceiveDataProcess.c ****         memset(&framePacket, 0, sizeof(framePacket));
+ 253:UserAPP/Source/ReceiveDataProcess.c ****         framePacket.length = frameLen;
+ 254:UserAPP/Source/ReceiveDataProcess.c ****         memcpy(framePacket.data, rxStreamBuf, frameLen);
+ 255:UserAPP/Source/ReceiveDataProcess.c **** 
+ 256:UserAPP/Source/ReceiveDataProcess.c ****         vParseReceivedDataPacket(&framePacket);
+ 257:UserAPP/Source/ReceiveDataProcess.c **** 
+ 258:UserAPP/Source/ReceiveDataProcess.c ****         if (rxStreamLen > frameLen)
+ 259:UserAPP/Source/ReceiveDataProcess.c ****         {
+ 260:UserAPP/Source/ReceiveDataProcess.c ****             memmove(rxStreamBuf, &rxStreamBuf[frameLen], rxStreamLen - frameLen);
+ 261:UserAPP/Source/ReceiveDataProcess.c ****         }
+ 262:UserAPP/Source/ReceiveDataProcess.c ****         rxStreamLen = (uint16_t)(rxStreamLen - frameLen);
+ 263:UserAPP/Source/ReceiveDataProcess.c ****     }
+ 264:UserAPP/Source/ReceiveDataProcess.c **** }
+ 265:UserAPP/Source/ReceiveDataProcess.c **** 
+ 266:UserAPP/Source/ReceiveDataProcess.c **** 
+ 267:UserAPP/Source/ReceiveDataProcess.c **** 
+ 268:UserAPP/Source/ReceiveDataProcess.c **** /**
+ 269:UserAPP/Source/ReceiveDataProcess.c ****  * @brief 计算 CRC-8 校验值（多项式0x07，初始值0x00）的封装函数
+ 270:UserAPP/Source/ReceiveDataProcess.c ****  */
+ 271:UserAPP/Source/ReceiveDataProcess.c **** static uint8_t CalculateCRC8(const uint8_t *data, uint16_t length) { /* 封装CRC8 计算函数定�
+  57              		.loc 1 271 68 is_stmt 1 view -0
+  58              		.cfi_startproc
+  59              		@ args = 0, pretend = 0, frame = 0
+  60              		@ frame_needed = 0, uses_anonymous_args = 0
+  61              		.loc 1 271 68 is_stmt 0 view .LVU6
+  62 0000 00B5     		push	{lr}
+  63              	.LCFI0:
+  64              		.cfi_def_cfa_offset 4
+  65              		.cfi_offset 14, -4
+  66 0002 8646     		mov	lr, r0
+ 272:UserAPP/Source/ReceiveDataProcess.c ****     uint8_t crc = 0x00;                                           /* 初始CRC 值为 0x00 */ // �
+  67              		.loc 1 272 5 is_stmt 1 view .LVU7
+  68              	.LVL4:
+ 273:UserAPP/Source/ReceiveDataProcess.c ****     for (uint16_t i = 0; i < length; i++) {                       /* 遍历所有输入字节*/ // 
+  69              		.loc 1 273 5 view .LVU8
+  70              	.LBB4:
+  71              		.loc 1 273 10 view .LVU9
+  72              		.loc 1 273 19 is_stmt 0 view .LVU10
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s 			page 7
 
 
- 553 00ba 0346     		mov	r3, r0
- 554 00bc 154A     		ldr	r2, .L41+32
- 555 00be 0021     		movs	r1, #0
- 556 00c0 1048     		ldr	r0, .L41+16
- 557              	.LVL37:
- 192:UserAPP/Source/ReceiveDataProcess.c ****         return;                                                      /* 退出函数*/ // 每行注
- 558              		.loc 1 192 13 is_stmt 0 view .LVU129
- 559 00c2 0068     		ldr	r0, [r0]
- 560 00c4 FFF7FEFF 		bl	QueueSendfmt
- 561              	.LVL38:
- 193:UserAPP/Source/ReceiveDataProcess.c ****     }
- 562              		.loc 1 193 9 is_stmt 1 view .LVU130
- 563 00c8 E4E7     		b	.L25
- 564              	.LVL39:
- 565              	.L35:
- 202:UserAPP/Source/ReceiveDataProcess.c **** 
- 566              		.loc 1 202 32 is_stmt 0 discriminator 2 view .LVU131
- 567 00ca 0022     		movs	r2, #0
- 568 00cc BBE7     		b	.L30
- 569              	.L40:
- 206:UserAPP/Source/ReceiveDataProcess.c ****     }
- 570              		.loc 1 206 9 is_stmt 1 view .LVU132
- 571 00ce 1249     		ldr	r1, .L41+36
- 572 00d0 581D     		adds	r0, r3, #5
- 573              	.LVL40:
- 206:UserAPP/Source/ReceiveDataProcess.c ****     }
- 574              		.loc 1 206 9 is_stmt 0 view .LVU133
- 575 00d2 FFF7FEFF 		bl	memcpy
- 576              	.LVL41:
- 577 00d6 BAE7     		b	.L31
- 578              	.L33:
- 220:UserAPP/Source/ReceiveDataProcess.c ****         }
- 579              		.loc 1 220 17 is_stmt 1 view .LVU134
- 580 00d8 104A     		ldr	r2, .L41+40
- 581 00da 0021     		movs	r1, #0
- 582 00dc 094B     		ldr	r3, .L41+16
- 583 00de 1868     		ldr	r0, [r3]
- 584 00e0 FFF7FEFF 		bl	QueueSendfmt
- 585              	.LVL42:
- 586 00e4 C7E7     		b	.L34
- 587              	.L32:
- 225:UserAPP/Source/ReceiveDataProcess.c ****     }
- 588              		.loc 1 225 13 view .LVU135
- 589 00e6 0E4A     		ldr	r2, .L41+44
- 590 00e8 0021     		movs	r1, #0
- 591 00ea 064B     		ldr	r3, .L41+16
- 592 00ec 1868     		ldr	r0, [r3]
- 593 00ee FFF7FEFF 		bl	QueueSendfmt
- 594              	.LVL43:
- 595 00f2 C0E7     		b	.L34
- 596              	.L42:
- 597              		.align	2
- 598              	.L41:
- 599 00f4 00000000 		.word	dataPacket
- 600 00f8 00000000 		.word	parsedDataPacket
- 601 00fc 00000000 		.word	xParsedDataQueue
- 602 0100 90000000 		.word	.LC4
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckL0fKf.s 			page 18
+  73 0004 4FF0000C 		mov	ip, #0
+  74              	.LBE4:
+ 272:UserAPP/Source/ReceiveDataProcess.c ****     uint8_t crc = 0x00;                                           /* 初始CRC 值为 0x00 */ // �
+  75              		.loc 1 272 13 view .LVU11
+  76 0008 6046     		mov	r0, ip
+  77              	.LVL5:
+  78              	.LBB7:
+  79              		.loc 1 273 5 view .LVU12
+  80 000a 11E0     		b	.L3
+  81              	.LVL6:
+  82              	.L11:
+  83              	.LBB5:
+ 274:UserAPP/Source/ReceiveDataProcess.c ****         crc ^= data[i];                                           /* 与当前字节异或*/ // 每
+ 275:UserAPP/Source/ReceiveDataProcess.c ****         for (uint8_t bit = 0; bit < 8; bit++) {                   /* 对每个位进行处理 */ //
+ 276:UserAPP/Source/ReceiveDataProcess.c ****             if (crc & 0x80)                                       /* 如果最高位为1 */ // 每�
+ 277:UserAPP/Source/ReceiveDataProcess.c ****             {
+ 278:UserAPP/Source/ReceiveDataProcess.c ****                 crc = (uint8_t)((crc << 1) ^ 0x07);              /* 左移并按多项式异或*/ /
+  84              		.loc 1 278 17 is_stmt 1 view .LVU13
+  85              		.loc 1 278 44 is_stmt 0 view .LVU14
+  86 000c 5200     		lsls	r2, r2, #1
+  87 000e 82F00702 		eor	r2, r2, #7
+  88              		.loc 1 278 21 view .LVU15
+  89 0012 D0B2     		uxtb	r0, r2
+  90              	.LVL7:
+  91              	.L6:
+ 275:UserAPP/Source/ReceiveDataProcess.c ****             if (crc & 0x80)                                       /* 如果最高位为1 */ // 每�
+  92              		.loc 1 275 43 is_stmt 1 discriminator 2 view .LVU16
+  93 0014 0133     		adds	r3, r3, #1
+  94              	.LVL8:
+ 275:UserAPP/Source/ReceiveDataProcess.c ****             if (crc & 0x80)                                       /* 如果最高位为1 */ // 每�
+  95              		.loc 1 275 43 is_stmt 0 discriminator 2 view .LVU17
+  96 0016 DBB2     		uxtb	r3, r3
+  97              	.LVL9:
+  98              	.L4:
+ 275:UserAPP/Source/ReceiveDataProcess.c ****             if (crc & 0x80)                                       /* 如果最高位为1 */ // 每�
+  99              		.loc 1 275 35 is_stmt 1 discriminator 1 view .LVU18
+ 100 0018 072B     		cmp	r3, #7
+ 101 001a 05D8     		bhi	.L10
+ 276:UserAPP/Source/ReceiveDataProcess.c ****             {
+ 102              		.loc 1 276 13 view .LVU19
+ 276:UserAPP/Source/ReceiveDataProcess.c ****             {
+ 103              		.loc 1 276 17 is_stmt 0 view .LVU20
+ 104 001c 42B2     		sxtb	r2, r0
+ 276:UserAPP/Source/ReceiveDataProcess.c ****             {
+ 105              		.loc 1 276 16 view .LVU21
+ 106 001e 002A     		cmp	r2, #0
+ 107 0020 F4DB     		blt	.L11
+ 279:UserAPP/Source/ReceiveDataProcess.c ****             }
+ 280:UserAPP/Source/ReceiveDataProcess.c ****             else
+ 281:UserAPP/Source/ReceiveDataProcess.c ****             {
+ 282:UserAPP/Source/ReceiveDataProcess.c ****                 crc <<= 1;                                       /* 仅左移一位*/ // 每行注�
+ 108              		.loc 1 282 17 is_stmt 1 view .LVU22
+ 109              		.loc 1 282 21 is_stmt 0 view .LVU23
+ 110 0022 4000     		lsls	r0, r0, #1
+ 111              	.LVL10:
+ 112              		.loc 1 282 21 view .LVU24
+ 113 0024 C0B2     		uxtb	r0, r0
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s 			page 8
 
 
- 603 0104 00000000 		.word	xSendDataQueue
- 604 0108 34010000 		.word	.LC7
- 605 010c 00000000 		.word	.LC1
- 606 0110 28000000 		.word	.LC2
- 607 0114 50000000 		.word	.LC3
- 608 0118 04000000 		.word	dataPacket+4
- 609 011c C8000000 		.word	.LC5
- 610 0120 FC000000 		.word	.LC6
- 611              		.cfi_endproc
- 612              	.LFE84:
- 614              		.section	.text.vReceiveDataProcessTask,"ax",%progbits
- 615              		.align	1
- 616              		.global	vReceiveDataProcessTask
- 617              		.syntax unified
- 618              		.thumb
- 619              		.thumb_func
- 621              	vReceiveDataProcessTask:
- 622              	.LVL44:
- 623              	.LFB80:
-  49:UserAPP/Source/ReceiveDataProcess.c ****     /* 该参数值期望为 1，因为在下面的xTaskCreate() 的调用中，1 作为 pvParamete
- 624              		.loc 1 49 1 view -0
- 625              		.cfi_startproc
- 626              		@ Volatile: function does not return.
- 627              		@ args = 0, pretend = 0, frame = 0
- 628              		@ frame_needed = 0, uses_anonymous_args = 0
-  49:UserAPP/Source/ReceiveDataProcess.c ****     /* 该参数值期望为 1，因为在下面的xTaskCreate() 的调用中，1 作为 pvParamete
- 629              		.loc 1 49 1 is_stmt 0 view .LVU137
- 630 0000 08B5     		push	{r3, lr}
- 631              	.LCFI10:
- 632              		.cfi_def_cfa_offset 8
- 633              		.cfi_offset 3, -8
- 634              		.cfi_offset 14, -4
-  51:UserAPP/Source/ReceiveDataProcess.c ****     
- 635              		.loc 1 51 5 is_stmt 1 view .LVU138
- 636 0002 0128     		cmp	r0, #1
- 637 0004 08D0     		beq	.L46
-  51:UserAPP/Source/ReceiveDataProcess.c ****     
- 638              		.loc 1 51 5 discriminator 1 view .LVU139
- 639              	.LBB8:
- 640              	.LBI8:
- 641              		.file 2 "Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h"
+ 114 0026 F5E7     		b	.L6
+ 115              	.LVL11:
+ 116              	.L10:
+ 117              		.loc 1 282 21 view .LVU25
+ 118              	.LBE5:
+ 273:UserAPP/Source/ReceiveDataProcess.c ****         crc ^= data[i];                                           /* 与当前字节异或*/ // 每
+ 119              		.loc 1 273 39 is_stmt 1 discriminator 2 view .LVU26
+ 120 0028 0CF1010C 		add	ip, ip, #1
+ 121              	.LVL12:
+ 273:UserAPP/Source/ReceiveDataProcess.c ****         crc ^= data[i];                                           /* 与当前字节异或*/ // 每
+ 122              		.loc 1 273 39 is_stmt 0 discriminator 2 view .LVU27
+ 123 002c 1FFA8CFC 		uxth	ip, ip
+ 124              	.LVL13:
+ 125              	.L3:
+ 273:UserAPP/Source/ReceiveDataProcess.c ****         crc ^= data[i];                                           /* 与当前字节异或*/ // 每
+ 126              		.loc 1 273 28 is_stmt 1 discriminator 1 view .LVU28
+ 127 0030 8C45     		cmp	ip, r1
+ 128 0032 04D2     		bcs	.L12
+ 274:UserAPP/Source/ReceiveDataProcess.c ****         for (uint8_t bit = 0; bit < 8; bit++) {                   /* 对每个位进行处理 */ //
+ 129              		.loc 1 274 9 view .LVU29
+ 274:UserAPP/Source/ReceiveDataProcess.c ****         for (uint8_t bit = 0; bit < 8; bit++) {                   /* 对每个位进行处理 */ //
+ 130              		.loc 1 274 20 is_stmt 0 view .LVU30
+ 131 0034 1EF80C30 		ldrb	r3, [lr, ip]	@ zero_extendqisi2
+ 274:UserAPP/Source/ReceiveDataProcess.c ****         for (uint8_t bit = 0; bit < 8; bit++) {                   /* 对每个位进行处理 */ //
+ 132              		.loc 1 274 13 view .LVU31
+ 133 0038 5840     		eors	r0, r0, r3
+ 134              	.LVL14:
+ 275:UserAPP/Source/ReceiveDataProcess.c ****             if (crc & 0x80)                                       /* 如果最高位为1 */ // 每�
+ 135              		.loc 1 275 9 is_stmt 1 view .LVU32
+ 136              	.LBB6:
+ 275:UserAPP/Source/ReceiveDataProcess.c ****             if (crc & 0x80)                                       /* 如果最高位为1 */ // 每�
+ 137              		.loc 1 275 14 view .LVU33
+ 275:UserAPP/Source/ReceiveDataProcess.c ****             if (crc & 0x80)                                       /* 如果最高位为1 */ // 每�
+ 138              		.loc 1 275 22 is_stmt 0 view .LVU34
+ 139 003a 0023     		movs	r3, #0
+ 275:UserAPP/Source/ReceiveDataProcess.c ****             if (crc & 0x80)                                       /* 如果最高位为1 */ // 每�
+ 140              		.loc 1 275 9 view .LVU35
+ 141 003c ECE7     		b	.L4
+ 142              	.LVL15:
+ 143              	.L12:
+ 275:UserAPP/Source/ReceiveDataProcess.c ****             if (crc & 0x80)                                       /* 如果最高位为1 */ // 每�
+ 144              		.loc 1 275 9 view .LVU36
+ 145              	.LBE6:
+ 146              	.LBE7:
+ 283:UserAPP/Source/ReceiveDataProcess.c ****             }
+ 284:UserAPP/Source/ReceiveDataProcess.c ****         }
+ 285:UserAPP/Source/ReceiveDataProcess.c ****     }
+ 286:UserAPP/Source/ReceiveDataProcess.c ****     return crc;                                                   /* 返回计算得到的CRC */ //
+ 147              		.loc 1 286 5 is_stmt 1 view .LVU37
+ 287:UserAPP/Source/ReceiveDataProcess.c **** }
+ 148              		.loc 1 287 1 is_stmt 0 view .LVU38
+ 149 003e 5DF804FB 		ldr	pc, [sp], #4
+ 150              		.cfi_endproc
+ 151              	.LFE86:
+ 153              		.section	.text.FindValidFrameLength,"ax",%progbits
+ 154              		.align	1
+ 155              		.syntax unified
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s 			page 9
+
+
+ 156              		.thumb
+ 157              		.thumb_func
+ 159              	FindValidFrameLength:
+ 160              	.LVL16:
+ 161              	.LFB84:
+ 170:UserAPP/Source/ReceiveDataProcess.c ****     if (buf == NULL || available < 5)
+ 162              		.loc 1 170 1 is_stmt 1 view -0
+ 163              		.cfi_startproc
+ 164              		@ args = 0, pretend = 0, frame = 0
+ 165              		@ frame_needed = 0, uses_anonymous_args = 0
+ 170:UserAPP/Source/ReceiveDataProcess.c ****     if (buf == NULL || available < 5)
+ 166              		.loc 1 170 1 is_stmt 0 view .LVU40
+ 167 0000 70B5     		push	{r4, r5, r6, lr}
+ 168              	.LCFI1:
+ 169              		.cfi_def_cfa_offset 16
+ 170              		.cfi_offset 4, -16
+ 171              		.cfi_offset 5, -12
+ 172              		.cfi_offset 6, -8
+ 173              		.cfi_offset 14, -4
+ 171:UserAPP/Source/ReceiveDataProcess.c ****     {
+ 174              		.loc 1 171 5 is_stmt 1 view .LVU41
+ 171:UserAPP/Source/ReceiveDataProcess.c ****     {
+ 175              		.loc 1 171 8 is_stmt 0 view .LVU42
+ 176 0002 F8B1     		cbz	r0, .L17
+ 177 0004 0D46     		mov	r5, r1
+ 178 0006 0646     		mov	r6, r0
+ 171:UserAPP/Source/ReceiveDataProcess.c ****     {
+ 179              		.loc 1 171 21 discriminator 1 view .LVU43
+ 180 0008 0429     		cmp	r1, #4
+ 181 000a 1DD9     		bls	.L18
+ 176:UserAPP/Source/ReceiveDataProcess.c ****     {
+ 182              		.loc 1 176 5 is_stmt 1 view .LVU44
+ 176:UserAPP/Source/ReceiveDataProcess.c ****     {
+ 183              		.loc 1 176 12 is_stmt 0 view .LVU45
+ 184 000c 0378     		ldrb	r3, [r0]	@ zero_extendqisi2
+ 176:UserAPP/Source/ReceiveDataProcess.c ****     {
+ 185              		.loc 1 176 8 view .LVU46
+ 186 000e AA2B     		cmp	r3, #170
+ 187 0010 1DD1     		bne	.L19
+ 181:UserAPP/Source/ReceiveDataProcess.c ****     {
+ 188              		.loc 1 181 5 is_stmt 1 view .LVU47
+ 181:UserAPP/Source/ReceiveDataProcess.c ****     {
+ 189              		.loc 1 181 10 is_stmt 0 view .LVU48
+ 190 0012 4078     		ldrb	r0, [r0, #1]	@ zero_extendqisi2
+ 191              	.LVL17:
+ 181:UserAPP/Source/ReceiveDataProcess.c ****     {
+ 192              		.loc 1 181 10 view .LVU49
+ 193 0014 FFF7FEFF 		bl	IsHostRequestFunctionCode
+ 194              	.LVL18:
+ 181:UserAPP/Source/ReceiveDataProcess.c ****     {
+ 195              		.loc 1 181 8 discriminator 1 view .LVU50
+ 196 0018 D8B1     		cbz	r0, .L20
+ 186:UserAPP/Source/ReceiveDataProcess.c ****     for (uint16_t frameLen = 5; frameLen <= maxTry; frameLen++)
+ 197              		.loc 1 186 5 is_stmt 1 view .LVU51
+ 186:UserAPP/Source/ReceiveDataProcess.c ****     for (uint16_t frameLen = 5; frameLen <= maxTry; frameLen++)
+ 198              		.loc 1 186 14 is_stmt 0 view .LVU52
+ 199 001a 402D     		cmp	r5, #64
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s 			page 10
+
+
+ 200 001c 28BF     		it	cs
+ 201 001e 4025     		movcs	r5, #64
+ 202              	.LVL19:
+ 187:UserAPP/Source/ReceiveDataProcess.c ****     {
+ 203              		.loc 1 187 5 is_stmt 1 view .LVU53
+ 204              	.LBB8:
+ 187:UserAPP/Source/ReceiveDataProcess.c ****     {
+ 205              		.loc 1 187 10 view .LVU54
+ 187:UserAPP/Source/ReceiveDataProcess.c ****     {
+ 206              		.loc 1 187 19 is_stmt 0 view .LVU55
+ 207 0020 0524     		movs	r4, #5
+ 208              	.LVL20:
+ 209              	.L15:
+ 187:UserAPP/Source/ReceiveDataProcess.c ****     {
+ 210              		.loc 1 187 42 is_stmt 1 discriminator 1 view .LVU56
+ 211 0022 AC42     		cmp	r4, r5
+ 212 0024 0CD8     		bhi	.L22
+ 213              	.LBB9:
+ 189:UserAPP/Source/ReceiveDataProcess.c ****         if (crc == buf[frameLen - 1])
+ 214              		.loc 1 189 9 view .LVU57
+ 189:UserAPP/Source/ReceiveDataProcess.c ****         if (crc == buf[frameLen - 1])
+ 215              		.loc 1 189 23 is_stmt 0 view .LVU58
+ 216 0026 611E     		subs	r1, r4, #1
+ 217 0028 89B2     		uxth	r1, r1
+ 218 002a 3046     		mov	r0, r6
+ 219 002c FFF7FEFF 		bl	CalculateCRC8
+ 220              	.LVL21:
+ 190:UserAPP/Source/ReceiveDataProcess.c ****         {
+ 221              		.loc 1 190 9 is_stmt 1 view .LVU59
+ 190:UserAPP/Source/ReceiveDataProcess.c ****         {
+ 222              		.loc 1 190 23 is_stmt 0 view .LVU60
+ 223 0030 3319     		adds	r3, r6, r4
+ 224 0032 13F8013C 		ldrb	r3, [r3, #-1]	@ zero_extendqisi2
+ 190:UserAPP/Source/ReceiveDataProcess.c ****         {
+ 225              		.loc 1 190 12 view .LVU61
+ 226 0036 8342     		cmp	r3, r0
+ 227 0038 07D0     		beq	.L14
+ 228              	.LBE9:
+ 187:UserAPP/Source/ReceiveDataProcess.c ****     {
+ 229              		.loc 1 187 61 is_stmt 1 discriminator 2 view .LVU62
+ 230 003a 0134     		adds	r4, r4, #1
+ 231              	.LVL22:
+ 187:UserAPP/Source/ReceiveDataProcess.c ****     {
+ 232              		.loc 1 187 61 is_stmt 0 discriminator 2 view .LVU63
+ 233 003c A4B2     		uxth	r4, r4
+ 234              	.LVL23:
+ 187:UserAPP/Source/ReceiveDataProcess.c ****     {
+ 235              		.loc 1 187 61 discriminator 2 view .LVU64
+ 236 003e F0E7     		b	.L15
+ 237              	.LVL24:
+ 238              	.L22:
+ 187:UserAPP/Source/ReceiveDataProcess.c ****     {
+ 239              		.loc 1 187 61 discriminator 2 view .LVU65
+ 240              	.LBE8:
+ 196:UserAPP/Source/ReceiveDataProcess.c **** }
+ 241              		.loc 1 196 12 view .LVU66
+ 242 0040 0024     		movs	r4, #0
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s 			page 11
+
+
+ 243              	.LVL25:
+ 244              	.LBB10:
+ 196:UserAPP/Source/ReceiveDataProcess.c **** }
+ 245              		.loc 1 196 12 view .LVU67
+ 246 0042 02E0     		b	.L14
+ 247              	.LVL26:
+ 248              	.L17:
+ 196:UserAPP/Source/ReceiveDataProcess.c **** }
+ 249              		.loc 1 196 12 view .LVU68
+ 250              	.LBE10:
+ 173:UserAPP/Source/ReceiveDataProcess.c ****     }
+ 251              		.loc 1 173 16 view .LVU69
+ 252 0044 0024     		movs	r4, #0
+ 253 0046 00E0     		b	.L14
+ 254              	.L18:
+ 173:UserAPP/Source/ReceiveDataProcess.c ****     }
+ 255              		.loc 1 173 16 view .LVU70
+ 256 0048 0024     		movs	r4, #0
+ 257              	.LVL27:
+ 258              	.L14:
+ 197:UserAPP/Source/ReceiveDataProcess.c **** 
+ 259              		.loc 1 197 1 view .LVU71
+ 260 004a 2046     		mov	r0, r4
+ 261 004c 70BD     		pop	{r4, r5, r6, pc}
+ 262              	.LVL28:
+ 263              	.L19:
+ 178:UserAPP/Source/ReceiveDataProcess.c ****     }
+ 264              		.loc 1 178 16 view .LVU72
+ 265 004e 0024     		movs	r4, #0
+ 266 0050 FBE7     		b	.L14
+ 267              	.LVL29:
+ 268              	.L20:
+ 183:UserAPP/Source/ReceiveDataProcess.c ****     }
+ 269              		.loc 1 183 16 view .LVU73
+ 270 0052 0024     		movs	r4, #0
+ 271 0054 F9E7     		b	.L14
+ 272              		.cfi_endproc
+ 273              	.LFE84:
+ 275              		.section	.text.vCreateReceiveDataQueueTask,"ax",%progbits
+ 276              		.align	1
+ 277              		.global	vCreateReceiveDataQueueTask
+ 278              		.syntax unified
+ 279              		.thumb
+ 280              		.thumb_func
+ 282              	vCreateReceiveDataQueueTask:
+ 283              	.LVL30:
+ 284              	.LFB81:
+ 107:UserAPP/Source/ReceiveDataProcess.c ****     /* 创建一个用于保存接收数据包（ReceiveDataPacket_t）的队列，最多可容纳 
+ 285              		.loc 1 107 1 is_stmt 1 view -0
+ 286              		.cfi_startproc
+ 287              		@ args = 0, pretend = 0, frame = 0
+ 288              		@ frame_needed = 0, uses_anonymous_args = 0
+ 107:UserAPP/Source/ReceiveDataProcess.c ****     /* 创建一个用于保存接收数据包（ReceiveDataPacket_t）的队列，最多可容纳 
+ 289              		.loc 1 107 1 is_stmt 0 view .LVU75
+ 290 0000 08B5     		push	{r3, lr}
+ 291              	.LCFI2:
+ 292              		.cfi_def_cfa_offset 8
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s 			page 12
+
+
+ 293              		.cfi_offset 3, -8
+ 294              		.cfi_offset 14, -4
+ 109:UserAPP/Source/ReceiveDataProcess.c **** 
+ 295              		.loc 1 109 5 is_stmt 1 view .LVU76
+ 109:UserAPP/Source/ReceiveDataProcess.c **** 
+ 296              		.loc 1 109 25 is_stmt 0 view .LVU77
+ 297 0002 0022     		movs	r2, #0
+ 298 0004 4221     		movs	r1, #66
+ 299 0006 1920     		movs	r0, #25
+ 300              	.LVL31:
+ 109:UserAPP/Source/ReceiveDataProcess.c **** 
+ 301              		.loc 1 109 25 view .LVU78
+ 302 0008 FFF7FEFF 		bl	xQueueGenericCreate
+ 303              	.LVL32:
+ 109:UserAPP/Source/ReceiveDataProcess.c **** 
+ 304              		.loc 1 109 23 discriminator 1 view .LVU79
+ 305 000c 014B     		ldr	r3, .L25
+ 306 000e 1860     		str	r0, [r3]
+ 111:UserAPP/Source/ReceiveDataProcess.c ****     {
+ 307              		.loc 1 111 5 is_stmt 1 view .LVU80
+ 114:UserAPP/Source/ReceiveDataProcess.c ****  }
+ 308              		.loc 1 114 5 view .LVU81
+ 115:UserAPP/Source/ReceiveDataProcess.c **** 
+ 309              		.loc 1 115 2 is_stmt 0 view .LVU82
+ 310 0010 08BD     		pop	{r3, pc}
+ 311              	.L26:
+ 312 0012 00BF     		.align	2
+ 313              	.L25:
+ 314 0014 00000000 		.word	xReceiveDataQueue
+ 315              		.cfi_endproc
+ 316              	.LFE81:
+ 318              		.section	.rodata.vCreateReceiveDataTask.str1.4,"aMS",%progbits,1
+ 319              		.align	2
+ 320              	.LC0:
+ 321 0000 76526563 		.ascii	"vReceiveDataProcessTask\000"
+ 321      65697665 
+ 321      44617461 
+ 321      50726F63 
+ 321      65737354 
+ 322              		.section	.text.vCreateReceiveDataTask,"ax",%progbits
+ 323              		.align	1
+ 324              		.global	vCreateReceiveDataTask
+ 325              		.syntax unified
+ 326              		.thumb
+ 327              		.thumb_func
+ 329              	vCreateReceiveDataTask:
+ 330              	.LFB79:
+  29:UserAPP/Source/ReceiveDataProcess.c ****     vCreateReceiveDataQueueTask(NULL);
+ 331              		.loc 1 29 1 is_stmt 1 view -0
+ 332              		.cfi_startproc
+ 333              		@ args = 0, pretend = 0, frame = 0
+ 334              		@ frame_needed = 0, uses_anonymous_args = 0
+ 335 0000 00B5     		push	{lr}
+ 336              	.LCFI3:
+ 337              		.cfi_def_cfa_offset 4
+ 338              		.cfi_offset 14, -4
+ 339 0002 83B0     		sub	sp, sp, #12
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s 			page 13
+
+
+ 340              	.LCFI4:
+ 341              		.cfi_def_cfa_offset 16
+  30:UserAPP/Source/ReceiveDataProcess.c **** 
+ 342              		.loc 1 30 5 view .LVU84
+ 343 0004 0020     		movs	r0, #0
+ 344 0006 FFF7FEFF 		bl	vCreateReceiveDataQueueTask
+ 345              	.LVL33:
+  33:UserAPP/Source/ReceiveDataProcess.c ****                    vReceiveDataProcessTask,                      /* Function that implements the ta
+ 346              		.loc 1 33 5 view .LVU85
+  33:UserAPP/Source/ReceiveDataProcess.c ****                    vReceiveDataProcessTask,                      /* Function that implements the ta
+ 347              		.loc 1 33 38 is_stmt 0 view .LVU86
+ 348 000a 084B     		ldr	r3, .L29
+ 349 000c 0193     		str	r3, [sp, #4]
+ 350 000e 0023     		movs	r3, #0
+ 351 0010 0093     		str	r3, [sp]
+ 352 0012 0123     		movs	r3, #1
+ 353 0014 4FF48072 		mov	r2, #256
+ 354 0018 0549     		ldr	r1, .L29+4
+ 355 001a 0648     		ldr	r0, .L29+8
+ 356 001c FFF7FEFF 		bl	xTaskCreate
+ 357              	.LVL34:
+  33:UserAPP/Source/ReceiveDataProcess.c ****                    vReceiveDataProcessTask,                      /* Function that implements the ta
+ 358              		.loc 1 33 36 discriminator 1 view .LVU87
+ 359 0020 054B     		ldr	r3, .L29+12
+ 360 0022 1860     		str	r0, [r3]
+  41:UserAPP/Source/ReceiveDataProcess.c ****     {
+ 361              		.loc 1 41 5 is_stmt 1 view .LVU88
+  44:UserAPP/Source/ReceiveDataProcess.c **** }
+ 362              		.loc 1 44 5 view .LVU89
+  45:UserAPP/Source/ReceiveDataProcess.c **** 
+ 363              		.loc 1 45 1 is_stmt 0 view .LVU90
+ 364 0024 03B0     		add	sp, sp, #12
+ 365              	.LCFI5:
+ 366              		.cfi_def_cfa_offset 4
+ 367              		@ sp needed
+ 368 0026 5DF804FB 		ldr	pc, [sp], #4
+ 369              	.L30:
+ 370 002a 00BF     		.align	2
+ 371              	.L29:
+ 372 002c 00000000 		.word	xCreateReceiveDataTaskHandle
+ 373 0030 00000000 		.word	.LC0
+ 374 0034 00000000 		.word	vReceiveDataProcessTask
+ 375 0038 00000000 		.word	xCreateReceiveDataTaskReturned
+ 376              		.cfi_endproc
+ 377              	.LFE79:
+ 379              		.section	.text.vReceiveDataQueueSendISRTask,"ax",%progbits
+ 380              		.align	1
+ 381              		.global	vReceiveDataQueueSendISRTask
+ 382              		.syntax unified
+ 383              		.thumb
+ 384              		.thumb_func
+ 386              	vReceiveDataQueueSendISRTask:
+ 387              	.LVL35:
+ 388              	.LFB82:
+ 125:UserAPP/Source/ReceiveDataProcess.c ****     if (Buf == NULL || Len == NULL || xReceiveDataQueue == NULL || *Len == 0)
+ 389              		.loc 1 125 1 is_stmt 1 view -0
+ 390              		.cfi_startproc
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s 			page 14
+
+
+ 391              		@ args = 0, pretend = 0, frame = 72
+ 392              		@ frame_needed = 0, uses_anonymous_args = 0
+ 126:UserAPP/Source/ReceiveDataProcess.c ****     {
+ 393              		.loc 1 126 5 view .LVU92
+ 126:UserAPP/Source/ReceiveDataProcess.c ****     {
+ 394              		.loc 1 126 8 is_stmt 0 view .LVU93
+ 395 0000 0028     		cmp	r0, #0
+ 396 0002 49D0     		beq	.L38
+ 125:UserAPP/Source/ReceiveDataProcess.c ****     if (Buf == NULL || Len == NULL || xReceiveDataQueue == NULL || *Len == 0)
+ 397              		.loc 1 125 1 view .LVU94
+ 398 0004 2DE9F043 		push	{r4, r5, r6, r7, r8, r9, lr}
+ 399              	.LCFI6:
+ 400              		.cfi_def_cfa_offset 28
+ 401              		.cfi_offset 4, -28
+ 402              		.cfi_offset 5, -24
+ 403              		.cfi_offset 6, -20
+ 404              		.cfi_offset 7, -16
+ 405              		.cfi_offset 8, -12
+ 406              		.cfi_offset 9, -8
+ 407              		.cfi_offset 14, -4
+ 408 0008 93B0     		sub	sp, sp, #76
+ 409              	.LCFI7:
+ 410              		.cfi_def_cfa_offset 104
+ 411 000a 8146     		mov	r9, r0
+ 126:UserAPP/Source/ReceiveDataProcess.c ****     {
+ 412              		.loc 1 126 21 discriminator 1 view .LVU95
+ 413 000c 0029     		cmp	r1, #0
+ 414 000e 45D0     		beq	.L39
+ 126:UserAPP/Source/ReceiveDataProcess.c ****     {
+ 415              		.loc 1 126 57 discriminator 2 view .LVU96
+ 416 0010 264B     		ldr	r3, .L48
+ 417 0012 1B68     		ldr	r3, [r3]
+ 126:UserAPP/Source/ReceiveDataProcess.c ****     {
+ 418              		.loc 1 126 36 discriminator 2 view .LVU97
+ 419 0014 002B     		cmp	r3, #0
+ 420 0016 43D0     		beq	.L40
+ 126:UserAPP/Source/ReceiveDataProcess.c ****     {
+ 421              		.loc 1 126 68 discriminator 3 view .LVU98
+ 422 0018 0D68     		ldr	r5, [r1]
+ 126:UserAPP/Source/ReceiveDataProcess.c ****     {
+ 423              		.loc 1 126 65 discriminator 3 view .LVU99
+ 424 001a 002D     		cmp	r5, #0
+ 425 001c 42D0     		beq	.L41
+ 131:UserAPP/Source/ReceiveDataProcess.c ****     uint32_t remaining = *Len;
+ 426              		.loc 1 131 14 view .LVU100
+ 427 001e 4FF00008 		mov	r8, #0
+ 428 0022 03E0     		b	.L33
+ 429              	.LVL36:
+ 430              	.L47:
+ 431              	.LBB11:
+ 146:UserAPP/Source/ReceiveDataProcess.c ****         }
+ 432              		.loc 1 146 13 is_stmt 1 view .LVU101
+ 146:UserAPP/Source/ReceiveDataProcess.c ****         }
+ 433              		.loc 1 146 20 is_stmt 0 view .LVU102
+ 434 0024 0120     		movs	r0, #1
+ 435 0026 3EE0     		b	.L32
+ 436              	.L35:
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s 			page 15
+
+
+ 154:UserAPP/Source/ReceiveDataProcess.c ****         remaining -= chunkLen;
+ 437              		.loc 1 154 9 is_stmt 1 view .LVU103
+ 154:UserAPP/Source/ReceiveDataProcess.c ****         remaining -= chunkLen;
+ 438              		.loc 1 154 16 is_stmt 0 view .LVU104
+ 439 0028 A044     		add	r8, r8, r4
+ 440              	.LVL37:
+ 155:UserAPP/Source/ReceiveDataProcess.c ****     }
+ 441              		.loc 1 155 9 is_stmt 1 view .LVU105
+ 155:UserAPP/Source/ReceiveDataProcess.c ****     }
+ 442              		.loc 1 155 19 is_stmt 0 view .LVU106
+ 443 002a 2D1B     		subs	r5, r5, r4
+ 444              	.LVL38:
+ 445              	.L33:
+ 155:UserAPP/Source/ReceiveDataProcess.c ****     }
+ 446              		.loc 1 155 19 view .LVU107
+ 447              	.LBE11:
+ 134:UserAPP/Source/ReceiveDataProcess.c ****     {
+ 448              		.loc 1 134 22 is_stmt 1 view .LVU108
+ 449 002c 1DB3     		cbz	r5, .L46
+ 450              	.LBB12:
+ 136:UserAPP/Source/ReceiveDataProcess.c ****         BaseType_t localTaskWoken = pdFALSE;
+ 451              		.loc 1 136 9 view .LVU109
+ 136:UserAPP/Source/ReceiveDataProcess.c ****         BaseType_t localTaskWoken = pdFALSE;
+ 452              		.loc 1 136 18 is_stmt 0 view .LVU110
+ 453 002e 2C46     		mov	r4, r5
+ 454 0030 402D     		cmp	r5, #64
+ 455 0032 28BF     		it	cs
+ 456 0034 4024     		movcs	r4, #64
+ 457              	.LVL39:
+ 137:UserAPP/Source/ReceiveDataProcess.c ****         ReceiveDataPacket_t isrPacket;
+ 458              		.loc 1 137 9 is_stmt 1 view .LVU111
+ 137:UserAPP/Source/ReceiveDataProcess.c ****         ReceiveDataPacket_t isrPacket;
+ 459              		.loc 1 137 20 is_stmt 0 view .LVU112
+ 460 0036 0027     		movs	r7, #0
+ 461 0038 0097     		str	r7, [sp]
+ 138:UserAPP/Source/ReceiveDataProcess.c **** 
+ 462              		.loc 1 138 9 is_stmt 1 view .LVU113
+ 140:UserAPP/Source/ReceiveDataProcess.c ****         memcpy(isrPacket.data, &Buf[offset], chunkLen);
+ 463              		.loc 1 140 9 view .LVU114
+ 464 003a 01AE     		add	r6, sp, #4
+ 465 003c 4222     		movs	r2, #66
+ 466 003e 3946     		mov	r1, r7
+ 467 0040 3046     		mov	r0, r6
+ 468 0042 FFF7FEFF 		bl	memset
+ 469              	.LVL40:
+ 141:UserAPP/Source/ReceiveDataProcess.c ****         isrPacket.length = (uint16_t)chunkLen;
+ 470              		.loc 1 141 9 view .LVU115
+ 471 0046 2246     		mov	r2, r4
+ 472 0048 09EB0801 		add	r1, r9, r8
+ 473 004c 3046     		mov	r0, r6
+ 474 004e FFF7FEFF 		bl	memcpy
+ 475              	.LVL41:
+ 142:UserAPP/Source/ReceiveDataProcess.c **** 
+ 476              		.loc 1 142 9 view .LVU116
+ 142:UserAPP/Source/ReceiveDataProcess.c **** 
+ 477              		.loc 1 142 26 is_stmt 0 view .LVU117
+ 478 0052 ADF84440 		strh	r4, [sp, #68]	@ movhi
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s 			page 16
+
+
+ 144:UserAPP/Source/ReceiveDataProcess.c ****         {
+ 479              		.loc 1 144 9 is_stmt 1 view .LVU118
+ 144:UserAPP/Source/ReceiveDataProcess.c ****         {
+ 480              		.loc 1 144 13 is_stmt 0 view .LVU119
+ 481 0056 3B46     		mov	r3, r7
+ 482 0058 6A46     		mov	r2, sp
+ 483 005a 3146     		mov	r1, r6
+ 484 005c 1348     		ldr	r0, .L48
+ 485 005e 0068     		ldr	r0, [r0]
+ 486 0060 FFF7FEFF 		bl	xQueueGenericSendFromISR
+ 487              	.LVL42:
+ 144:UserAPP/Source/ReceiveDataProcess.c ****         {
+ 488              		.loc 1 144 12 discriminator 1 view .LVU120
+ 489 0064 0028     		cmp	r0, #0
+ 490 0066 DDD0     		beq	.L47
+ 149:UserAPP/Source/ReceiveDataProcess.c ****         {
+ 491              		.loc 1 149 9 is_stmt 1 view .LVU121
+ 149:UserAPP/Source/ReceiveDataProcess.c ****         {
+ 492              		.loc 1 149 28 is_stmt 0 view .LVU122
+ 493 0068 009B     		ldr	r3, [sp]
+ 149:UserAPP/Source/ReceiveDataProcess.c ****         {
+ 494              		.loc 1 149 12 view .LVU123
+ 495 006a 012B     		cmp	r3, #1
+ 496 006c DCD1     		bne	.L35
+ 151:UserAPP/Source/ReceiveDataProcess.c ****         }
+ 497              		.loc 1 151 13 is_stmt 1 view .LVU124
+ 151:UserAPP/Source/ReceiveDataProcess.c ****         }
+ 498              		.loc 1 151 38 is_stmt 0 view .LVU125
+ 499 006e 104B     		ldr	r3, .L48+4
+ 500 0070 0122     		movs	r2, #1
+ 501 0072 1A60     		str	r2, [r3]
+ 502 0074 D8E7     		b	.L35
+ 503              	.LVL43:
+ 504              	.L46:
+ 151:UserAPP/Source/ReceiveDataProcess.c ****         }
+ 505              		.loc 1 151 38 view .LVU126
+ 506              	.LBE12:
+ 158:UserAPP/Source/ReceiveDataProcess.c ****     xHigherPriorityTaskWoken = pdFALSE;
+ 507              		.loc 1 158 5 is_stmt 1 view .LVU127
+ 508 0076 0E4B     		ldr	r3, .L48+4
+ 509 0078 1B68     		ldr	r3, [r3]
+ 510 007a 4BB1     		cbz	r3, .L37
+ 158:UserAPP/Source/ReceiveDataProcess.c ****     xHigherPriorityTaskWoken = pdFALSE;
+ 511              		.loc 1 158 5 discriminator 1 view .LVU128
+ 512 007c 4FF0E023 		mov	r3, #-536813568
+ 513 0080 4FF08052 		mov	r2, #268435456
+ 514 0084 C3F8042D 		str	r2, [r3, #3332]
+ 158:UserAPP/Source/ReceiveDataProcess.c ****     xHigherPriorityTaskWoken = pdFALSE;
+ 515              		.loc 1 158 5 view .LVU129
+ 158:UserAPP/Source/ReceiveDataProcess.c ****     xHigherPriorityTaskWoken = pdFALSE;
+ 516              		.loc 1 158 5 is_stmt 0 discriminator 1 view .LVU130
+ 517              		.syntax unified
+ 518              	@ 158 "UserAPP/Source/ReceiveDataProcess.c" 1
+ 519 0088 BFF34F8F 		dsb
+ 520              	@ 0 "" 2
+ 158:UserAPP/Source/ReceiveDataProcess.c ****     xHigherPriorityTaskWoken = pdFALSE;
+ 521              		.loc 1 158 5 is_stmt 1 view .LVU131
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s 			page 17
+
+
+ 158:UserAPP/Source/ReceiveDataProcess.c ****     xHigherPriorityTaskWoken = pdFALSE;
+ 522              		.loc 1 158 5 is_stmt 0 discriminator 1 view .LVU132
+ 523              	@ 158 "UserAPP/Source/ReceiveDataProcess.c" 1
+ 524 008c BFF36F8F 		isb
+ 525              	@ 0 "" 2
+ 526              		.thumb
+ 527              		.syntax unified
+ 528              	.L37:
+ 158:UserAPP/Source/ReceiveDataProcess.c ****     xHigherPriorityTaskWoken = pdFALSE;
+ 529              		.loc 1 158 49 is_stmt 1 view .LVU133
+ 159:UserAPP/Source/ReceiveDataProcess.c **** 
+ 530              		.loc 1 159 5 view .LVU134
+ 159:UserAPP/Source/ReceiveDataProcess.c **** 
+ 531              		.loc 1 159 30 is_stmt 0 view .LVU135
+ 532 0090 0020     		movs	r0, #0
+ 533 0092 074B     		ldr	r3, .L48+4
+ 534 0094 1860     		str	r0, [r3]
+ 161:UserAPP/Source/ReceiveDataProcess.c **** }
+ 535              		.loc 1 161 5 is_stmt 1 view .LVU136
+ 161:UserAPP/Source/ReceiveDataProcess.c **** }
+ 536              		.loc 1 161 12 is_stmt 0 view .LVU137
+ 537 0096 06E0     		b	.L32
+ 538              	.LVL44:
+ 539              	.L38:
+ 540              	.LCFI8:
+ 541              		.cfi_def_cfa_offset 0
+ 542              		.cfi_restore 4
+ 543              		.cfi_restore 5
+ 544              		.cfi_restore 6
+ 545              		.cfi_restore 7
+ 546              		.cfi_restore 8
+ 547              		.cfi_restore 9
+ 548              		.cfi_restore 14
+ 128:UserAPP/Source/ReceiveDataProcess.c ****     }
+ 549              		.loc 1 128 16 view .LVU138
+ 550 0098 0020     		movs	r0, #0
+ 551              	.LVL45:
+ 162:UserAPP/Source/ReceiveDataProcess.c **** 
+ 552              		.loc 1 162 1 view .LVU139
+ 553 009a 7047     		bx	lr
+ 554              	.LVL46:
+ 555              	.L39:
+ 556              	.LCFI9:
+ 557              		.cfi_def_cfa_offset 104
+ 558              		.cfi_offset 4, -28
+ 559              		.cfi_offset 5, -24
+ 560              		.cfi_offset 6, -20
+ 561              		.cfi_offset 7, -16
+ 562              		.cfi_offset 8, -12
+ 563              		.cfi_offset 9, -8
+ 564              		.cfi_offset 14, -4
+ 128:UserAPP/Source/ReceiveDataProcess.c ****     }
+ 565              		.loc 1 128 16 view .LVU140
+ 566 009c 0020     		movs	r0, #0
+ 567              	.LVL47:
+ 128:UserAPP/Source/ReceiveDataProcess.c ****     }
+ 568              		.loc 1 128 16 view .LVU141
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s 			page 18
+
+
+ 569 009e 02E0     		b	.L32
+ 570              	.LVL48:
+ 571              	.L40:
+ 128:UserAPP/Source/ReceiveDataProcess.c ****     }
+ 572              		.loc 1 128 16 view .LVU142
+ 573 00a0 0020     		movs	r0, #0
+ 574              	.LVL49:
+ 128:UserAPP/Source/ReceiveDataProcess.c ****     }
+ 575              		.loc 1 128 16 view .LVU143
+ 576 00a2 00E0     		b	.L32
+ 577              	.LVL50:
+ 578              	.L41:
+ 128:UserAPP/Source/ReceiveDataProcess.c ****     }
+ 579              		.loc 1 128 16 view .LVU144
+ 580 00a4 0020     		movs	r0, #0
+ 581              	.LVL51:
+ 582              	.L32:
+ 162:UserAPP/Source/ReceiveDataProcess.c **** 
+ 583              		.loc 1 162 1 view .LVU145
+ 584 00a6 13B0     		add	sp, sp, #76
+ 585              	.LCFI10:
+ 586              		.cfi_def_cfa_offset 28
+ 587              		@ sp needed
+ 588 00a8 BDE8F083 		pop	{r4, r5, r6, r7, r8, r9, pc}
+ 589              	.LVL52:
+ 590              	.L49:
+ 162:UserAPP/Source/ReceiveDataProcess.c **** 
+ 591              		.loc 1 162 1 view .LVU146
+ 592              		.align	2
+ 593              	.L48:
+ 594 00ac 00000000 		.word	xReceiveDataQueue
+ 595 00b0 00000000 		.word	xHigherPriorityTaskWoken
+ 596              		.cfi_endproc
+ 597              	.LFE82:
+ 599              		.section	.rodata.vParseReceivedDataPacket.str1.4,"aMS",%progbits,1
+ 600              		.align	2
+ 601              	.LC1:
+ 602 0000 E8A7A3E6 		.ascii	"\350\247\243\346\236\220\345\244\261\350\264\245\357"
+ 602      9E90E5A4 
+ 602      B1E8B4A5 
+ 602      EF
+ 603 000d BC9AE695 		.ascii	"\274\232\346\225\260\346\215\256\351\225\277\345\272"
+ 603      B0E68DAE 
+ 603      E995BFE5 
+ 603      BA
+ 604 001a A6E8BF87 		.ascii	"\246\350\277\207\347\237\255(%d)\015\012\000"
+ 604      E79FAD28 
+ 604      2564290D 
+ 604      0A00
+ 605              		.align	2
+ 606              	.LC2:
+ 607 0028 E8A7A3E6 		.ascii	"\350\247\243\346\236\220\345\244\261\350\264\245\357"
+ 607      9E90E5A4 
+ 607      B1E8B4A5 
+ 607      EF
+ 608 0035 BC9AE58C 		.ascii	"\274\232\345\214\205\345\244\264\351\224\231\350\257"
+ 608      85E5A4B4 
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s 			page 19
+
+
+ 608      E99499E8 
+ 608      AF
+ 609 0042 AF283078 		.ascii	"\257(0x%02X)\015\012\000"
+ 609      25303258 
+ 609      290D0A00 
+ 610 004e 0000     		.align	2
+ 611              	.LC3:
+ 612 0050 E8A7A3E6 		.ascii	"\350\247\243\346\236\220\345\244\261\350\264\245:CR"
+ 612      9E90E5A4 
+ 612      B1E8B4A5 
+ 612      3A4352
+ 613 005f 4320E6A0 		.ascii	"C \346\240\241\351\252\214\351\224\231\350\257\257("
+ 613      A1E9AA8C 
+ 613      E99499E8 
+ 613      AFAF28
+ 614 006e E8AEA1E7 		.ascii	"\350\256\241\347\256\227=0x%02X, \346\216\245\346\224"
+ 614      AE973D30 
+ 614      78253032 
+ 614      582C20E6 
+ 614      8EA5E694 
+ 615 0082 B63D3078 		.ascii	"\266=0x%02X)\015\012\000"
+ 615      25303258 
+ 615      290D0A00 
+ 616 008e 0000     		.align	2
+ 617              	.LC4:
+ 618 0090 E8A7A3E6 		.ascii	"\350\247\243\346\236\220\345\220\216\347\232\204\346"
+ 618      9E90E590 
+ 618      8EE79A84 
+ 618      E6
+ 619 009d 95B0E68D 		.ascii	"\225\260\346\215\256\345\217\221\351\200\201\345\210"
+ 619      AEE58F91 
+ 619      E98081E5 
+ 619      88
+ 620 00aa B0207850 		.ascii	"\260 xParsedDataQueue \345\244\261\350\264\245\015\012"
+ 620      61727365 
+ 620      64446174 
+ 620      61517565 
+ 620      756520E5 
+ 621 00c5 00       		.ascii	"\000"
+ 622 00c6 0000     		.align	2
+ 623              	.LC5:
+ 624 00c8 E8A7A3E6 		.ascii	"\350\247\243\346\236\220\345\220\216\347\232\204\346"
+ 624      9E90E590 
+ 624      8EE79A84 
+ 624      E6
+ 625 00d5 95B0E68D 		.ascii	"\225\260\346\215\256\351\230\237\345\210\227 xParse"
+ 625      AEE9989F 
+ 625      E5889720 
+ 625      78506172 
+ 625      7365
+ 626 00e7 64446174 		.ascii	"dDataQueue \346\234\252\345\210\233\345\273\272\015"
+ 626      61517565 
+ 626      756520E6 
+ 626      9CAAE588 
+ 626      9BE5BBBA 
+ 627 00fc 0A00     		.ascii	"\012\000"
+ 628              		.section	.text.vParseReceivedDataPacket,"ax",%progbits
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s 			page 20
+
+
+ 629              		.align	1
+ 630              		.global	vParseReceivedDataPacket
+ 631              		.syntax unified
+ 632              		.thumb
+ 633              		.thumb_func
+ 635              	vParseReceivedDataPacket:
+ 636              	.LVL53:
+ 637              	.LFB87:
+ 288:UserAPP/Source/ReceiveDataProcess.c **** 
+ 289:UserAPP/Source/ReceiveDataProcess.c **** /**
+ 290:UserAPP/Source/ReceiveDataProcess.c ****  * @brief 解析接收到的数据包
+ 291:UserAPP/Source/ReceiveDataProcess.c ****  *
+ 292:UserAPP/Source/ReceiveDataProcess.c ****  */
+ 293:UserAPP/Source/ReceiveDataProcess.c **** void vParseReceivedDataPacket(const ReceiveDataPacket_t *packet)
+ 294:UserAPP/Source/ReceiveDataProcess.c **** {
+ 638              		.loc 1 294 1 is_stmt 1 view -0
+ 639              		.cfi_startproc
+ 640              		@ args = 0, pretend = 0, frame = 0
+ 641              		@ frame_needed = 0, uses_anonymous_args = 0
+ 642              		.loc 1 294 1 is_stmt 0 view .LVU148
+ 643 0000 F0B5     		push	{r4, r5, r6, r7, lr}
+ 644              	.LCFI11:
+ 645              		.cfi_def_cfa_offset 20
+ 646              		.cfi_offset 4, -20
+ 647              		.cfi_offset 5, -16
+ 648              		.cfi_offset 6, -12
+ 649              		.cfi_offset 7, -8
+ 650              		.cfi_offset 14, -4
+ 651 0002 83B0     		sub	sp, sp, #12
+ 652              	.LCFI12:
+ 653              		.cfi_def_cfa_offset 32
+ 295:UserAPP/Source/ReceiveDataProcess.c ****     uint8_t computedCRC = 0;                                        /* 计算得到的CRC8 */ // �
+ 654              		.loc 1 295 5 is_stmt 1 view .LVU149
+ 655              	.LVL54:
+ 296:UserAPP/Source/ReceiveDataProcess.c ****     uint8_t receivedCRC = 0;                                        /* 接收到的 CRC8 */ // 每�
+ 656              		.loc 1 296 5 view .LVU150
+ 297:UserAPP/Source/ReceiveDataProcess.c ****     const uint8_t *buf = packet->data;                                 /* 指向接收数据缓冲�
+ 657              		.loc 1 297 5 view .LVU151
+ 298:UserAPP/Source/ReceiveDataProcess.c ****     uint16_t len = packet->length;                                /* 接收数据的长度 */ // �
+ 658              		.loc 1 298 5 view .LVU152
+ 659              		.loc 1 298 14 is_stmt 0 view .LVU153
+ 660 0004 B0F84050 		ldrh	r5, [r0, #64]
+ 661              	.LVL55:
+ 299:UserAPP/Source/ReceiveDataProcess.c **** 
+ 300:UserAPP/Source/ReceiveDataProcess.c ****     /* 检查最小长度：包头(1)+功能码(1)+执行索引(2)+CRC(1) = 5 */ // 每行注释
+ 301:UserAPP/Source/ReceiveDataProcess.c ****     if (len < 5)                                                    /* 长度不足，直接返回 
+ 662              		.loc 1 301 5 is_stmt 1 view .LVU154
+ 663              		.loc 1 301 8 is_stmt 0 view .LVU155
+ 664 0008 042D     		cmp	r5, #4
+ 665 000a 30D9     		bls	.L60
+ 666 000c 0446     		mov	r4, r0
+ 302:UserAPP/Source/ReceiveDataProcess.c ****     {
+ 303:UserAPP/Source/ReceiveDataProcess.c ****             QueueSendfmt(xSendDataQueue, 0, "解析失败：数据长度过短(%d)\r\n", len); /* �
+ 304:UserAPP/Source/ReceiveDataProcess.c ****         return;                                                      /* 退出函数*/ // 每行注
+ 305:UserAPP/Source/ReceiveDataProcess.c ****     }
+ 306:UserAPP/Source/ReceiveDataProcess.c **** 
+ 307:UserAPP/Source/ReceiveDataProcess.c ****     /* 验证包头是否�?0xAA */ // 每行注释
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s 			page 21
+
+
+ 308:UserAPP/Source/ReceiveDataProcess.c ****     if (buf[0] != 0xAA)                                              /* 包头错误，记录并返
+ 667              		.loc 1 308 5 is_stmt 1 view .LVU156
+ 668              		.loc 1 308 12 is_stmt 0 view .LVU157
+ 669 000e 0678     		ldrb	r6, [r0]	@ zero_extendqisi2
+ 670              		.loc 1 308 8 view .LVU158
+ 671 0010 AA2E     		cmp	r6, #170
+ 672 0012 34D1     		bne	.L61
+ 309:UserAPP/Source/ReceiveDataProcess.c ****     {
+ 310:UserAPP/Source/ReceiveDataProcess.c ****             QueueSendfmt(xSendDataQueue, 0, "解析失败：包头错误(0x%02X)\r\n", buf[0]); /* 
+ 311:UserAPP/Source/ReceiveDataProcess.c ****         return;                                                      /* 退出函数*/ // 每行注
+ 312:UserAPP/Source/ReceiveDataProcess.c ****     }
+ 313:UserAPP/Source/ReceiveDataProcess.c **** 
+ 314:UserAPP/Source/ReceiveDataProcess.c ****     /* 计算 CRC8：调用封装的 CalculateCRC8 函数，计算除最后一字节之外的CRC */
+ 315:UserAPP/Source/ReceiveDataProcess.c ****     computedCRC = CalculateCRC8(buf, (uint16_t)(len - 1));          /* 通过封装函数计算 CRC
+ 673              		.loc 1 315 5 is_stmt 1 view .LVU159
+ 674              		.loc 1 315 19 is_stmt 0 view .LVU160
+ 675 0014 6F1E     		subs	r7, r5, #1
+ 676 0016 B9B2     		uxth	r1, r7
+ 677 0018 FFF7FEFF 		bl	CalculateCRC8
+ 678              	.LVL56:
+ 316:UserAPP/Source/ReceiveDataProcess.c **** 
+ 317:UserAPP/Source/ReceiveDataProcess.c ****     receivedCRC = buf[len - 1];                                      /* 取出接收到的 CRC8 */ 
+ 679              		.loc 1 317 5 is_stmt 1 view .LVU161
+ 680              		.loc 1 317 17 is_stmt 0 view .LVU162
+ 681 001c E75D     		ldrb	r7, [r4, r7]	@ zero_extendqisi2
+ 682              	.LVL57:
+ 318:UserAPP/Source/ReceiveDataProcess.c **** 
+ 319:UserAPP/Source/ReceiveDataProcess.c ****     if (computedCRC != receivedCRC)                                  /* CRC 校验失败时记录�
+ 683              		.loc 1 319 5 is_stmt 1 view .LVU163
+ 684              		.loc 1 319 8 is_stmt 0 view .LVU164
+ 685 001e B842     		cmp	r0, r7
+ 686 0020 36D1     		bne	.L62
+ 320:UserAPP/Source/ReceiveDataProcess.c ****     {
+ 321:UserAPP/Source/ReceiveDataProcess.c ****             QueueSendfmt(xSendDataQueue, 0, "解析失败:CRC 校验错误(计算=0x%02X, 接收=0x
+ 322:UserAPP/Source/ReceiveDataProcess.c ****         return;                                                      /* 退出函数*/ // 每行注
+ 323:UserAPP/Source/ReceiveDataProcess.c ****     }
+ 324:UserAPP/Source/ReceiveDataProcess.c **** 
+ 325:UserAPP/Source/ReceiveDataProcess.c ****     /* CRC 校验通过，填充parsedDataPacket 结构体*/ // 每行注释
+ 326:UserAPP/Source/ReceiveDataProcess.c ****     parsedDataPacket.Header = buf[0];                                /* 填充包头 */ // 每行�
+ 687              		.loc 1 326 5 is_stmt 1 view .LVU165
+ 688              		.loc 1 326 29 is_stmt 0 view .LVU166
+ 689 0022 274B     		ldr	r3, .L64
+ 690 0024 1E70     		strb	r6, [r3]
+ 327:UserAPP/Source/ReceiveDataProcess.c ****     parsedDataPacket.FunctionCode = buf[1];                          /* 填充功能码 */ // 每�
+ 691              		.loc 1 327 5 is_stmt 1 view .LVU167
+ 692              		.loc 1 327 40 is_stmt 0 view .LVU168
+ 693 0026 6278     		ldrb	r2, [r4, #1]	@ zero_extendqisi2
+ 694              		.loc 1 327 35 view .LVU169
+ 695 0028 5A70     		strb	r2, [r3, #1]
+ 328:UserAPP/Source/ReceiveDataProcess.c ****     parsedDataPacket.ExecIndex = (uint16_t)((buf[2] << 8) | buf[3]);  /* 填充执行索引（按�
+ 696              		.loc 1 328 5 is_stmt 1 view .LVU170
+ 697              		.loc 1 328 49 is_stmt 0 view .LVU171
+ 698 002a A178     		ldrb	r1, [r4, #2]	@ zero_extendqisi2
+ 699              		.loc 1 328 64 view .LVU172
+ 700 002c E278     		ldrb	r2, [r4, #3]	@ zero_extendqisi2
+ 701              		.loc 1 328 34 view .LVU173
+ 702 002e 42EA0122 		orr	r2, r2, r1, lsl #8
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s 			page 22
+
+
+ 703              		.loc 1 328 32 view .LVU174
+ 704 0032 5A80     		strh	r2, [r3, #2]	@ movhi
+ 329:UserAPP/Source/ReceiveDataProcess.c **** 
+ 330:UserAPP/Source/ReceiveDataProcess.c ****     /* 计算数据段长度：总长度 - (包头1 + 功能码1 + 执行索引2 + CRC1) = len - 5 
+ 331:UserAPP/Source/ReceiveDataProcess.c ****     parsedDataPacket.DataLen = (uint8_t)((len > 5) ? (len - 5) : 0);  /* 填充数据长度 */ // �
+ 705              		.loc 1 331 5 is_stmt 1 view .LVU175
+ 706              		.loc 1 331 32 is_stmt 0 view .LVU176
+ 707 0034 052D     		cmp	r5, #5
+ 708 0036 34D9     		bls	.L58
+ 709              		.loc 1 331 59 discriminator 1 view .LVU177
+ 710 0038 EAB2     		uxtb	r2, r5
+ 711              		.loc 1 331 32 discriminator 1 view .LVU178
+ 712 003a 053A     		subs	r2, r2, #5
+ 713 003c D2B2     		uxtb	r2, r2
+ 714              	.L55:
+ 715              		.loc 1 331 30 discriminator 4 view .LVU179
+ 716 003e 204B     		ldr	r3, .L64
+ 717 0040 1A71     		strb	r2, [r3, #4]
+ 332:UserAPP/Source/ReceiveDataProcess.c **** 
+ 333:UserAPP/Source/ReceiveDataProcess.c ****     if (parsedDataPacket.DataLen > 0)                                /* 如果有数据则拷贝数
+ 718              		.loc 1 333 5 is_stmt 1 view .LVU180
+ 719              		.loc 1 333 8 is_stmt 0 view .LVU181
+ 720 0042 002A     		cmp	r2, #0
+ 721 0044 2FD1     		bne	.L63
+ 722              	.LVL58:
+ 723              	.L56:
+ 334:UserAPP/Source/ReceiveDataProcess.c ****     {
+ 335:UserAPP/Source/ReceiveDataProcess.c ****         memcpy(parsedDataPacket.Data, &buf[4], parsedDataPacket.DataLen); /* 将数据段复制到�
+ 336:UserAPP/Source/ReceiveDataProcess.c ****     }
+ 337:UserAPP/Source/ReceiveDataProcess.c **** 
+ 338:UserAPP/Source/ReceiveDataProcess.c ****     parsedDataPacket.CRC8 = receivedCRC;                             /* 填充 CRC8 字段 */ // �
+ 724              		.loc 1 338 5 is_stmt 1 view .LVU182
+ 725              		.loc 1 338 27 is_stmt 0 view .LVU183
+ 726 0046 1E4B     		ldr	r3, .L64
+ 727 0048 83F84070 		strb	r7, [r3, #64]
+ 339:UserAPP/Source/ReceiveDataProcess.c **** 
+ 340:UserAPP/Source/ReceiveDataProcess.c ****     /* 将解析后的数据包发送到 xParsedDataQueue，以供 HWCI 任务处理 */ // 每行�
+ 341:UserAPP/Source/ReceiveDataProcess.c ****     if (xParsedDataQueue != NULL)                                     /* 检查解析队列是否�
+ 728              		.loc 1 341 5 is_stmt 1 view .LVU184
+ 729              		.loc 1 341 26 is_stmt 0 view .LVU185
+ 730 004c 1D4B     		ldr	r3, .L64+4
+ 731 004e 1868     		ldr	r0, [r3]
+ 732              		.loc 1 341 8 view .LVU186
+ 733 0050 70B3     		cbz	r0, .L57
+ 342:UserAPP/Source/ReceiveDataProcess.c ****     {
+ 343:UserAPP/Source/ReceiveDataProcess.c ****         if (xQueueSend(xParsedDataQueue, &parsedDataPacket, (TickType_t)10) != pdPASS) /* 尝试发
+ 734              		.loc 1 343 9 is_stmt 1 view .LVU187
+ 735              		.loc 1 343 13 is_stmt 0 view .LVU188
+ 736 0052 0023     		movs	r3, #0
+ 737 0054 0A22     		movs	r2, #10
+ 738 0056 1A49     		ldr	r1, .L64
+ 739 0058 FFF7FEFF 		bl	xQueueGenericSend
+ 740              	.LVL59:
+ 741              		.loc 1 343 12 discriminator 1 view .LVU189
+ 742 005c 0128     		cmp	r0, #1
+ 743 005e 15D0     		beq	.L50
+ 344:UserAPP/Source/ReceiveDataProcess.c ****         {
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s 			page 23
+
+
+ 345:UserAPP/Source/ReceiveDataProcess.c ****                 QueueSendfmt(xSendDataQueue, 0, "解析后的数据发送到 xParsedDataQueue 失�
+ 744              		.loc 1 345 17 is_stmt 1 view .LVU190
+ 745 0060 194A     		ldr	r2, .L64+8
+ 746 0062 0021     		movs	r1, #0
+ 747 0064 194B     		ldr	r3, .L64+12
+ 748 0066 1868     		ldr	r0, [r3]
+ 749 0068 FFF7FEFF 		bl	QueueSendfmt
+ 750              	.LVL60:
+ 751 006c 0EE0     		b	.L50
+ 752              	.LVL61:
+ 753              	.L60:
+ 303:UserAPP/Source/ReceiveDataProcess.c ****         return;                                                      /* 退出函数*/ // 每行注
+ 754              		.loc 1 303 13 view .LVU191
+ 755 006e 2B46     		mov	r3, r5
+ 756 0070 174A     		ldr	r2, .L64+16
+ 757 0072 0021     		movs	r1, #0
+ 758 0074 1548     		ldr	r0, .L64+12
+ 759              	.LVL62:
+ 303:UserAPP/Source/ReceiveDataProcess.c ****         return;                                                      /* 退出函数*/ // 每行注
+ 760              		.loc 1 303 13 is_stmt 0 view .LVU192
+ 761 0076 0068     		ldr	r0, [r0]
+ 762 0078 FFF7FEFF 		bl	QueueSendfmt
+ 763              	.LVL63:
+ 304:UserAPP/Source/ReceiveDataProcess.c ****     }
+ 764              		.loc 1 304 9 is_stmt 1 view .LVU193
+ 765 007c 06E0     		b	.L50
+ 766              	.LVL64:
+ 767              	.L61:
+ 310:UserAPP/Source/ReceiveDataProcess.c ****         return;                                                      /* 退出函数*/ // 每行注
+ 768              		.loc 1 310 13 view .LVU194
+ 769 007e 3346     		mov	r3, r6
+ 770 0080 144A     		ldr	r2, .L64+20
+ 771 0082 0021     		movs	r1, #0
+ 772 0084 1148     		ldr	r0, .L64+12
+ 773              	.LVL65:
+ 310:UserAPP/Source/ReceiveDataProcess.c ****         return;                                                      /* 退出函数*/ // 每行注
+ 774              		.loc 1 310 13 is_stmt 0 view .LVU195
+ 775 0086 0068     		ldr	r0, [r0]
+ 776 0088 FFF7FEFF 		bl	QueueSendfmt
+ 777              	.LVL66:
+ 311:UserAPP/Source/ReceiveDataProcess.c ****     }
+ 778              		.loc 1 311 9 is_stmt 1 view .LVU196
+ 779              	.L50:
+ 346:UserAPP/Source/ReceiveDataProcess.c ****         }
+ 347:UserAPP/Source/ReceiveDataProcess.c ****         else
+ 348:UserAPP/Source/ReceiveDataProcess.c ****         {
+ 349:UserAPP/Source/ReceiveDataProcess.c ****     #if TEST_MODE
+ 350:UserAPP/Source/ReceiveDataProcess.c ****                 QueueSendfmt(xSendDataQueue, 0, "解析后的数据已发送到 xParsedDataQueue\r\
+ 351:UserAPP/Source/ReceiveDataProcess.c ****     #endif
+ 352:UserAPP/Source/ReceiveDataProcess.c ****         }
+ 353:UserAPP/Source/ReceiveDataProcess.c ****     }
+ 354:UserAPP/Source/ReceiveDataProcess.c ****     else
+ 355:UserAPP/Source/ReceiveDataProcess.c ****     {
+ 356:UserAPP/Source/ReceiveDataProcess.c ****             QueueSendfmt(xSendDataQueue, 0, "解析后的数据队列 xParsedDataQueue 未创建\r\
+ 357:UserAPP/Source/ReceiveDataProcess.c ****     }
+ 358:UserAPP/Source/ReceiveDataProcess.c **** 
+ 359:UserAPP/Source/ReceiveDataProcess.c ****     /* 记录解析成功的日志，包括功能码、执行索引和数据长度 */ // 每行注�
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s 			page 24
+
+
+ 360:UserAPP/Source/ReceiveDataProcess.c **** #if TEST_MODE
+ 361:UserAPP/Source/ReceiveDataProcess.c ****         QueueSendfmt(xSendDataQueue, 0, "数据包解析成功: Func=0x%02X, ExecIdx=%u, DataLen=%u
+ 362:UserAPP/Source/ReceiveDataProcess.c **** #endif
+ 363:UserAPP/Source/ReceiveDataProcess.c **** }
+ 780              		.loc 1 363 1 is_stmt 0 view .LVU197
+ 781 008c 03B0     		add	sp, sp, #12
+ 782              	.LCFI13:
+ 783              		.cfi_remember_state
+ 784              		.cfi_def_cfa_offset 20
+ 785              		@ sp needed
+ 786 008e F0BD     		pop	{r4, r5, r6, r7, pc}
+ 787              	.LVL67:
+ 788              	.L62:
+ 789              	.LCFI14:
+ 790              		.cfi_restore_state
+ 321:UserAPP/Source/ReceiveDataProcess.c ****         return;                                                      /* 退出函数*/ // 每行注
+ 791              		.loc 1 321 13 is_stmt 1 view .LVU198
+ 792 0090 0097     		str	r7, [sp]
+ 793 0092 0346     		mov	r3, r0
+ 794 0094 104A     		ldr	r2, .L64+24
+ 795 0096 0021     		movs	r1, #0
+ 796 0098 0C48     		ldr	r0, .L64+12
+ 797              	.LVL68:
+ 321:UserAPP/Source/ReceiveDataProcess.c ****         return;                                                      /* 退出函数*/ // 每行注
+ 798              		.loc 1 321 13 is_stmt 0 view .LVU199
+ 799 009a 0068     		ldr	r0, [r0]
+ 800 009c FFF7FEFF 		bl	QueueSendfmt
+ 801              	.LVL69:
+ 322:UserAPP/Source/ReceiveDataProcess.c ****     }
+ 802              		.loc 1 322 9 is_stmt 1 view .LVU200
+ 803 00a0 F4E7     		b	.L50
+ 804              	.LVL70:
+ 805              	.L58:
+ 331:UserAPP/Source/ReceiveDataProcess.c **** 
+ 806              		.loc 1 331 32 is_stmt 0 discriminator 2 view .LVU201
+ 807 00a2 0022     		movs	r2, #0
+ 808 00a4 CBE7     		b	.L55
+ 809              	.L63:
+ 335:UserAPP/Source/ReceiveDataProcess.c ****     }
+ 810              		.loc 1 335 9 is_stmt 1 view .LVU202
+ 811 00a6 211D     		adds	r1, r4, #4
+ 812 00a8 581D     		adds	r0, r3, #5
+ 813              	.LVL71:
+ 335:UserAPP/Source/ReceiveDataProcess.c ****     }
+ 814              		.loc 1 335 9 is_stmt 0 view .LVU203
+ 815 00aa FFF7FEFF 		bl	memcpy
+ 816              	.LVL72:
+ 817 00ae CAE7     		b	.L56
+ 818              	.L57:
+ 356:UserAPP/Source/ReceiveDataProcess.c ****     }
+ 819              		.loc 1 356 13 is_stmt 1 view .LVU204
+ 820 00b0 0A4A     		ldr	r2, .L64+28
+ 821 00b2 0021     		movs	r1, #0
+ 822 00b4 054B     		ldr	r3, .L64+12
+ 823 00b6 1868     		ldr	r0, [r3]
+ 824 00b8 FFF7FEFF 		bl	QueueSendfmt
+ 825              	.LVL73:
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s 			page 25
+
+
+ 826 00bc E6E7     		b	.L50
+ 827              	.L65:
+ 828 00be 00BF     		.align	2
+ 829              	.L64:
+ 830 00c0 00000000 		.word	parsedDataPacket
+ 831 00c4 00000000 		.word	xParsedDataQueue
+ 832 00c8 90000000 		.word	.LC4
+ 833 00cc 00000000 		.word	xSendDataQueue
+ 834 00d0 00000000 		.word	.LC1
+ 835 00d4 28000000 		.word	.LC2
+ 836 00d8 50000000 		.word	.LC3
+ 837 00dc C8000000 		.word	.LC5
+ 838              		.cfi_endproc
+ 839              	.LFE87:
+ 841              		.section	.text.vParseReceivedDataStream,"ax",%progbits
+ 842              		.align	1
+ 843              		.syntax unified
+ 844              		.thumb
+ 845              		.thumb_func
+ 847              	vParseReceivedDataStream:
+ 848              	.LVL74:
+ 849              	.LFB85:
+ 200:UserAPP/Source/ReceiveDataProcess.c ****     if (packet == NULL || packet->length == 0)
+ 850              		.loc 1 200 1 view -0
+ 851              		.cfi_startproc
+ 852              		@ args = 0, pretend = 0, frame = 72
+ 853              		@ frame_needed = 0, uses_anonymous_args = 0
+ 201:UserAPP/Source/ReceiveDataProcess.c ****     {
+ 854              		.loc 1 201 5 view .LVU206
+ 201:UserAPP/Source/ReceiveDataProcess.c ****     {
+ 855              		.loc 1 201 8 is_stmt 0 view .LVU207
+ 856 0000 0028     		cmp	r0, #0
+ 857 0002 6AD0     		beq	.L81
+ 200:UserAPP/Source/ReceiveDataProcess.c ****     if (packet == NULL || packet->length == 0)
+ 858              		.loc 1 200 1 view .LVU208
+ 859 0004 70B5     		push	{r4, r5, r6, lr}
+ 860              	.LCFI15:
+ 861              		.cfi_def_cfa_offset 16
+ 862              		.cfi_offset 4, -16
+ 863              		.cfi_offset 5, -12
+ 864              		.cfi_offset 6, -8
+ 865              		.cfi_offset 14, -4
+ 866 0006 92B0     		sub	sp, sp, #72
+ 867              	.LCFI16:
+ 868              		.cfi_def_cfa_offset 88
+ 869 0008 0146     		mov	r1, r0
+ 201:UserAPP/Source/ReceiveDataProcess.c ****     {
+ 870              		.loc 1 201 33 discriminator 1 view .LVU209
+ 871 000a B0F84040 		ldrh	r4, [r0, #64]
+ 201:UserAPP/Source/ReceiveDataProcess.c ****     {
+ 872              		.loc 1 201 24 discriminator 1 view .LVU210
+ 873 000e 002C     		cmp	r4, #0
+ 874 0010 31D0     		beq	.L66
+ 206:UserAPP/Source/ReceiveDataProcess.c ****     if ((uint32_t)rxStreamLen + appendLen > sizeof(rxStreamBuf))
+ 875              		.loc 1 206 5 is_stmt 1 view .LVU211
+ 876              	.LVL75:
+ 207:UserAPP/Source/ReceiveDataProcess.c ****     {
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s 			page 26
+
+
+ 877              		.loc 1 207 5 view .LVU212
+ 207:UserAPP/Source/ReceiveDataProcess.c ****     {
+ 878              		.loc 1 207 9 is_stmt 0 view .LVU213
+ 879 0012 324B     		ldr	r3, .L87
+ 880 0014 1B88     		ldrh	r3, [r3]
+ 207:UserAPP/Source/ReceiveDataProcess.c ****     {
+ 881              		.loc 1 207 31 view .LVU214
+ 882 0016 2344     		add	r3, r3, r4
+ 207:UserAPP/Source/ReceiveDataProcess.c ****     {
+ 883              		.loc 1 207 8 view .LVU215
+ 884 0018 B3F5807F 		cmp	r3, #256
+ 885 001c 07D9     		bls	.L68
+ 209:UserAPP/Source/ReceiveDataProcess.c ****     }
+ 886              		.loc 1 209 9 is_stmt 1 view .LVU216
+ 209:UserAPP/Source/ReceiveDataProcess.c ****     }
+ 887              		.loc 1 209 21 is_stmt 0 view .LVU217
+ 888 001e 2F4B     		ldr	r3, .L87
+ 889 0020 0022     		movs	r2, #0
+ 890 0022 1A80     		strh	r2, [r3]	@ movhi
+ 212:UserAPP/Source/ReceiveDataProcess.c ****     {
+ 891              		.loc 1 212 5 is_stmt 1 view .LVU218
+ 212:UserAPP/Source/ReceiveDataProcess.c ****     {
+ 892              		.loc 1 212 8 is_stmt 0 view .LVU219
+ 893 0024 B4F5807F 		cmp	r4, #256
+ 894 0028 01D9     		bls	.L68
+ 214:UserAPP/Source/ReceiveDataProcess.c ****     }
+ 895              		.loc 1 214 19 view .LVU220
+ 896 002a 4FF48074 		mov	r4, #256
+ 897              	.LVL76:
+ 898              	.L68:
+ 217:UserAPP/Source/ReceiveDataProcess.c ****     rxStreamLen = (uint16_t)(rxStreamLen + appendLen);
+ 899              		.loc 1 217 5 is_stmt 1 view .LVU221
+ 217:UserAPP/Source/ReceiveDataProcess.c ****     rxStreamLen = (uint16_t)(rxStreamLen + appendLen);
+ 900              		.loc 1 217 24 is_stmt 0 view .LVU222
+ 901 002e 2B4E     		ldr	r6, .L87
+ 902 0030 3588     		ldrh	r5, [r6]
+ 217:UserAPP/Source/ReceiveDataProcess.c ****     rxStreamLen = (uint16_t)(rxStreamLen + appendLen);
+ 903              		.loc 1 217 5 view .LVU223
+ 904 0032 2246     		mov	r2, r4
+ 905 0034 2A48     		ldr	r0, .L87+4
+ 906              	.LVL77:
+ 217:UserAPP/Source/ReceiveDataProcess.c ****     rxStreamLen = (uint16_t)(rxStreamLen + appendLen);
+ 907              		.loc 1 217 5 view .LVU224
+ 908 0036 2844     		add	r0, r0, r5
+ 909 0038 FFF7FEFF 		bl	memcpy
+ 910              	.LVL78:
+ 218:UserAPP/Source/ReceiveDataProcess.c **** 
+ 911              		.loc 1 218 5 is_stmt 1 view .LVU225
+ 218:UserAPP/Source/ReceiveDataProcess.c **** 
+ 912              		.loc 1 218 19 is_stmt 0 view .LVU226
+ 913 003c 2544     		add	r5, r5, r4
+ 218:UserAPP/Source/ReceiveDataProcess.c **** 
+ 914              		.loc 1 218 17 view .LVU227
+ 915 003e 3580     		strh	r5, [r6]	@ movhi
+ 220:UserAPP/Source/ReceiveDataProcess.c ****     {
+ 916              		.loc 1 220 5 is_stmt 1 view .LVU228
+ 917              	.LVL79:
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s 			page 27
+
+
+ 918              	.L69:
+ 220:UserAPP/Source/ReceiveDataProcess.c ****     {
+ 919              		.loc 1 220 24 view .LVU229
+ 920 0040 264B     		ldr	r3, .L87
+ 921 0042 1A88     		ldrh	r2, [r3]
+ 922 0044 042A     		cmp	r2, #4
+ 923 0046 16D9     		bls	.L66
+ 924              	.LBB13:
+ 222:UserAPP/Source/ReceiveDataProcess.c ****         while (start < rxStreamLen && rxStreamBuf[start] != 0xAA)
+ 925              		.loc 1 222 18 is_stmt 0 view .LVU230
+ 926 0048 0021     		movs	r1, #0
+ 927 004a 01E0     		b	.L77
+ 928              	.LVL80:
+ 929              	.L71:
+ 225:UserAPP/Source/ReceiveDataProcess.c ****         }
+ 930              		.loc 1 225 13 is_stmt 1 view .LVU231
+ 225:UserAPP/Source/ReceiveDataProcess.c ****         }
+ 931              		.loc 1 225 18 is_stmt 0 view .LVU232
+ 932 004c 0131     		adds	r1, r1, #1
+ 933              	.LVL81:
+ 225:UserAPP/Source/ReceiveDataProcess.c ****         }
+ 934              		.loc 1 225 18 view .LVU233
+ 935 004e 89B2     		uxth	r1, r1
+ 936              	.LVL82:
+ 937              	.L77:
+ 223:UserAPP/Source/ReceiveDataProcess.c ****         {
+ 938              		.loc 1 223 36 is_stmt 1 view .LVU234
+ 939 0050 8A42     		cmp	r2, r1
+ 940 0052 03D9     		bls	.L70
+ 223:UserAPP/Source/ReceiveDataProcess.c ****         {
+ 941              		.loc 1 223 50 is_stmt 0 discriminator 1 view .LVU235
+ 942 0054 224B     		ldr	r3, .L87+4
+ 943 0056 5B5C     		ldrb	r3, [r3, r1]	@ zero_extendqisi2
+ 223:UserAPP/Source/ReceiveDataProcess.c ****         {
+ 944              		.loc 1 223 36 discriminator 1 view .LVU236
+ 945 0058 AA2B     		cmp	r3, #170
+ 946 005a F7D1     		bne	.L71
+ 947              	.L70:
+ 228:UserAPP/Source/ReceiveDataProcess.c ****         {
+ 948              		.loc 1 228 9 is_stmt 1 view .LVU237
+ 228:UserAPP/Source/ReceiveDataProcess.c ****         {
+ 949              		.loc 1 228 12 is_stmt 0 view .LVU238
+ 950 005c 69B9     		cbnz	r1, .L84
+ 951              	.LVL83:
+ 952              	.L72:
+ 234:UserAPP/Source/ReceiveDataProcess.c ****         {
+ 953              		.loc 1 234 9 is_stmt 1 view .LVU239
+ 234:UserAPP/Source/ReceiveDataProcess.c ****         {
+ 954              		.loc 1 234 25 is_stmt 0 view .LVU240
+ 955 005e 1F4B     		ldr	r3, .L87
+ 956 0060 1C88     		ldrh	r4, [r3]
+ 234:UserAPP/Source/ReceiveDataProcess.c ****         {
+ 957              		.loc 1 234 12 view .LVU241
+ 958 0062 042C     		cmp	r4, #4
+ 959 0064 07D9     		bls	.L66
+ 239:UserAPP/Source/ReceiveDataProcess.c ****         if (frameLen == 0)
+ 960              		.loc 1 239 9 is_stmt 1 view .LVU242
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s 			page 28
+
+
+ 239:UserAPP/Source/ReceiveDataProcess.c ****         if (frameLen == 0)
+ 961              		.loc 1 239 29 is_stmt 0 view .LVU243
+ 962 0066 2146     		mov	r1, r4
+ 963 0068 1D48     		ldr	r0, .L87+4
+ 964 006a FFF7FEFF 		bl	FindValidFrameLength
+ 965              	.LVL84:
+ 240:UserAPP/Source/ReceiveDataProcess.c ****         {
+ 966              		.loc 1 240 9 is_stmt 1 view .LVU244
+ 240:UserAPP/Source/ReceiveDataProcess.c ****         {
+ 967              		.loc 1 240 12 is_stmt 0 view .LVU245
+ 968 006e 0546     		mov	r5, r0
+ 969 0070 A8B9     		cbnz	r0, .L74
+ 242:UserAPP/Source/ReceiveDataProcess.c ****             {
+ 970              		.loc 1 242 13 is_stmt 1 view .LVU246
+ 242:UserAPP/Source/ReceiveDataProcess.c ****             {
+ 971              		.loc 1 242 16 is_stmt 0 view .LVU247
+ 972 0072 402C     		cmp	r4, #64
+ 973 0074 0AD8     		bhi	.L85
+ 974              	.LVL85:
+ 975              	.L66:
+ 242:UserAPP/Source/ReceiveDataProcess.c ****             {
+ 976              		.loc 1 242 16 view .LVU248
+ 977              	.LBE13:
+ 264:UserAPP/Source/ReceiveDataProcess.c **** 
+ 978              		.loc 1 264 1 view .LVU249
+ 979 0076 12B0     		add	sp, sp, #72
+ 980              	.LCFI17:
+ 981              		.cfi_remember_state
+ 982              		.cfi_def_cfa_offset 16
+ 983              		@ sp needed
+ 984 0078 70BD     		pop	{r4, r5, r6, pc}
+ 985              	.LVL86:
+ 986              	.L84:
+ 987              	.LCFI18:
+ 988              		.cfi_restore_state
+ 989              	.LBB14:
+ 230:UserAPP/Source/ReceiveDataProcess.c ****             rxStreamLen = (uint16_t)(rxStreamLen - start);
+ 990              		.loc 1 230 13 is_stmt 1 view .LVU250
+ 230:UserAPP/Source/ReceiveDataProcess.c ****             rxStreamLen = (uint16_t)(rxStreamLen - start);
+ 991              		.loc 1 230 34 is_stmt 0 view .LVU251
+ 992 007a 1948     		ldr	r0, .L87+4
+ 230:UserAPP/Source/ReceiveDataProcess.c ****             rxStreamLen = (uint16_t)(rxStreamLen - start);
+ 993              		.loc 1 230 67 view .LVU252
+ 994 007c 541A     		subs	r4, r2, r1
+ 230:UserAPP/Source/ReceiveDataProcess.c ****             rxStreamLen = (uint16_t)(rxStreamLen - start);
+ 995              		.loc 1 230 13 view .LVU253
+ 996 007e 2246     		mov	r2, r4
+ 997 0080 0144     		add	r1, r1, r0
+ 998              	.LVL87:
+ 230:UserAPP/Source/ReceiveDataProcess.c ****             rxStreamLen = (uint16_t)(rxStreamLen - start);
+ 999              		.loc 1 230 13 view .LVU254
+ 1000 0082 FFF7FEFF 		bl	memmove
+ 1001              	.LVL88:
+ 231:UserAPP/Source/ReceiveDataProcess.c ****         }
+ 1002              		.loc 1 231 13 is_stmt 1 view .LVU255
+ 231:UserAPP/Source/ReceiveDataProcess.c ****         }
+ 1003              		.loc 1 231 25 is_stmt 0 view .LVU256
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s 			page 29
+
+
+ 1004 0086 154B     		ldr	r3, .L87
+ 1005 0088 1C80     		strh	r4, [r3]	@ movhi
+ 1006 008a E8E7     		b	.L72
+ 1007              	.LVL89:
+ 1008              	.L85:
+ 244:UserAPP/Source/ReceiveDataProcess.c ****                 rxStreamLen = (uint16_t)(rxStreamLen - 1);
+ 1009              		.loc 1 244 17 is_stmt 1 view .LVU257
+ 244:UserAPP/Source/ReceiveDataProcess.c ****                 rxStreamLen = (uint16_t)(rxStreamLen - 1);
+ 1010              		.loc 1 244 67 is_stmt 0 view .LVU258
+ 1011 008c 013C     		subs	r4, r4, #1
+ 244:UserAPP/Source/ReceiveDataProcess.c ****                 rxStreamLen = (uint16_t)(rxStreamLen - 1);
+ 1012              		.loc 1 244 17 view .LVU259
+ 1013 008e 1549     		ldr	r1, .L87+8
+ 1014 0090 2246     		mov	r2, r4
+ 1015 0092 481E     		subs	r0, r1, #1
+ 1016              	.LVL90:
+ 244:UserAPP/Source/ReceiveDataProcess.c ****                 rxStreamLen = (uint16_t)(rxStreamLen - 1);
+ 1017              		.loc 1 244 17 view .LVU260
+ 1018 0094 FFF7FEFF 		bl	memmove
+ 1019              	.LVL91:
+ 245:UserAPP/Source/ReceiveDataProcess.c ****                 continue;
+ 1020              		.loc 1 245 17 is_stmt 1 view .LVU261
+ 245:UserAPP/Source/ReceiveDataProcess.c ****                 continue;
+ 1021              		.loc 1 245 29 is_stmt 0 view .LVU262
+ 1022 0098 104B     		ldr	r3, .L87
+ 1023 009a 1C80     		strh	r4, [r3]	@ movhi
+ 246:UserAPP/Source/ReceiveDataProcess.c ****             }
+ 1024              		.loc 1 246 17 is_stmt 1 view .LVU263
+ 1025 009c D0E7     		b	.L69
+ 1026              	.LVL92:
+ 1027              	.L74:
+ 251:UserAPP/Source/ReceiveDataProcess.c ****         memset(&framePacket, 0, sizeof(framePacket));
+ 1028              		.loc 1 251 9 view .LVU264
+ 252:UserAPP/Source/ReceiveDataProcess.c ****         framePacket.length = frameLen;
+ 1029              		.loc 1 252 9 view .LVU265
+ 1030 009e 01AC     		add	r4, sp, #4
+ 1031 00a0 4222     		movs	r2, #66
+ 1032 00a2 0021     		movs	r1, #0
+ 1033 00a4 2046     		mov	r0, r4
+ 1034              	.LVL93:
+ 252:UserAPP/Source/ReceiveDataProcess.c ****         framePacket.length = frameLen;
+ 1035              		.loc 1 252 9 is_stmt 0 view .LVU266
+ 1036 00a6 FFF7FEFF 		bl	memset
+ 1037              	.LVL94:
+ 253:UserAPP/Source/ReceiveDataProcess.c ****         memcpy(framePacket.data, rxStreamBuf, frameLen);
+ 1038              		.loc 1 253 9 is_stmt 1 view .LVU267
+ 253:UserAPP/Source/ReceiveDataProcess.c ****         memcpy(framePacket.data, rxStreamBuf, frameLen);
+ 1039              		.loc 1 253 28 is_stmt 0 view .LVU268
+ 1040 00aa ADF84450 		strh	r5, [sp, #68]	@ movhi
+ 254:UserAPP/Source/ReceiveDataProcess.c **** 
+ 1041              		.loc 1 254 9 is_stmt 1 view .LVU269
+ 1042 00ae 2A46     		mov	r2, r5
+ 1043 00b0 0B49     		ldr	r1, .L87+4
+ 1044 00b2 2046     		mov	r0, r4
+ 1045 00b4 FFF7FEFF 		bl	memcpy
+ 1046              	.LVL95:
+ 256:UserAPP/Source/ReceiveDataProcess.c **** 
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s 			page 30
+
+
+ 1047              		.loc 1 256 9 view .LVU270
+ 1048 00b8 2046     		mov	r0, r4
+ 1049 00ba FFF7FEFF 		bl	vParseReceivedDataPacket
+ 1050              	.LVL96:
+ 258:UserAPP/Source/ReceiveDataProcess.c ****         {
+ 1051              		.loc 1 258 9 view .LVU271
+ 258:UserAPP/Source/ReceiveDataProcess.c ****         {
+ 1052              		.loc 1 258 25 is_stmt 0 view .LVU272
+ 1053 00be 074B     		ldr	r3, .L87
+ 1054 00c0 1C88     		ldrh	r4, [r3]
+ 258:UserAPP/Source/ReceiveDataProcess.c ****         {
+ 1055              		.loc 1 258 12 view .LVU273
+ 1056 00c2 AC42     		cmp	r4, r5
+ 1057 00c4 03D8     		bhi	.L86
+ 1058              	.L76:
+ 262:UserAPP/Source/ReceiveDataProcess.c ****     }
+ 1059              		.loc 1 262 9 is_stmt 1 view .LVU274
+ 262:UserAPP/Source/ReceiveDataProcess.c ****     }
+ 1060              		.loc 1 262 23 is_stmt 0 view .LVU275
+ 1061 00c6 641B     		subs	r4, r4, r5
+ 262:UserAPP/Source/ReceiveDataProcess.c ****     }
+ 1062              		.loc 1 262 21 view .LVU276
+ 1063 00c8 044B     		ldr	r3, .L87
+ 1064 00ca 1C80     		strh	r4, [r3]	@ movhi
+ 1065 00cc B8E7     		b	.L69
+ 1066              	.L86:
+ 260:UserAPP/Source/ReceiveDataProcess.c ****         }
+ 1067              		.loc 1 260 13 is_stmt 1 view .LVU277
+ 260:UserAPP/Source/ReceiveDataProcess.c ****         }
+ 1068              		.loc 1 260 34 is_stmt 0 view .LVU278
+ 1069 00ce 0448     		ldr	r0, .L87+4
+ 260:UserAPP/Source/ReceiveDataProcess.c ****         }
+ 1070              		.loc 1 260 13 view .LVU279
+ 1071 00d0 621B     		subs	r2, r4, r5
+ 1072 00d2 4119     		adds	r1, r0, r5
+ 1073 00d4 FFF7FEFF 		bl	memmove
+ 1074              	.LVL97:
+ 1075 00d8 F5E7     		b	.L76
+ 1076              	.LVL98:
+ 1077              	.L81:
+ 1078              	.LCFI19:
+ 1079              		.cfi_def_cfa_offset 0
+ 1080              		.cfi_restore 4
+ 1081              		.cfi_restore 5
+ 1082              		.cfi_restore 6
+ 1083              		.cfi_restore 14
+ 260:UserAPP/Source/ReceiveDataProcess.c ****         }
+ 1084              		.loc 1 260 13 view .LVU280
+ 1085 00da 7047     		bx	lr
+ 1086              	.L88:
+ 1087              		.align	2
+ 1088              	.L87:
+ 1089 00dc 00000000 		.word	rxStreamLen
+ 1090 00e0 00000000 		.word	rxStreamBuf
+ 1091 00e4 01000000 		.word	rxStreamBuf+1
+ 1092              	.LBE14:
+ 1093              		.cfi_endproc
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s 			page 31
+
+
+ 1094              	.LFE85:
+ 1096              		.section	.text.vReceiveDataProcessTask,"ax",%progbits
+ 1097              		.align	1
+ 1098              		.global	vReceiveDataProcessTask
+ 1099              		.syntax unified
+ 1100              		.thumb
+ 1101              		.thumb_func
+ 1103              	vReceiveDataProcessTask:
+ 1104              	.LVL99:
+ 1105              	.LFB80:
+  55:UserAPP/Source/ReceiveDataProcess.c ****     /* 该参数值期望为 1，因为在下面的xTaskCreate() 的调用中，1 作为 pvParamete
+ 1106              		.loc 1 55 1 is_stmt 1 view -0
+ 1107              		.cfi_startproc
+ 1108              		@ Volatile: function does not return.
+ 1109              		@ args = 0, pretend = 0, frame = 72
+ 1110              		@ frame_needed = 0, uses_anonymous_args = 0
+  57:UserAPP/Source/ReceiveDataProcess.c ****     
+ 1111              		.loc 1 57 5 view .LVU282
+ 1112 0000 0128     		cmp	r0, #1
+ 1113 0002 08D0     		beq	.L95
+  57:UserAPP/Source/ReceiveDataProcess.c ****     
+ 1114              		.loc 1 57 5 discriminator 1 view .LVU283
+ 1115              	.LBB15:
+ 1116              	.LBI15:
+ 1117              		.file 2 "Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h"
    1:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /*
    2:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * FreeRTOS Kernel V10.3.1
    3:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * Copyright (C) 2020 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
@@ -1078,9 +1842,6 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckL0fKf.s 			page 1
   14:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  *
   15:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
   16:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckL0fKf.s 			page 19
-
-
   17:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
   18:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
   19:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
@@ -1097,6 +1858,9 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckL0fKf.s 			page 1
   30:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define PORTMACRO_H
   31:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
   32:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #ifdef __cplusplus
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s 			page 32
+
+
   33:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** extern "C" {
   34:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #endif
   35:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
@@ -1138,9 +1902,6 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckL0fKf.s 			page 1
   71:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
   72:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /* Architecture specifics. */
   73:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define portSTACK_GROWTH			( -1 )
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckL0fKf.s 			page 20
-
-
   74:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define portTICK_PERIOD_MS			( ( TickType_t ) 1000 / configTICK_RATE_HZ )
   75:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define portBYTE_ALIGNMENT			8
   76:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /*-----------------------------------------------------------*/
@@ -1157,6 +1918,9 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckL0fKf.s 			page 1
   87:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	__asm volatile( "isb" );													\
   88:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** }
   89:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s 			page 33
+
+
   90:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define portNVIC_INT_CTRL_REG		( * ( ( volatile uint32_t * ) 0xe000ed04 ) )
   91:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define portNVIC_PENDSVSET_BIT		( 1UL << 28UL )
   92:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define portEND_SWITCHING_ISR( xSwitchRequired ) if( xSwitchRequired != pdFALSE ) portYIELD()
@@ -1198,9 +1962,6 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckL0fKf.s 			page 1
  128:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
  129:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	/* Generic helper function. */
  130:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	__attribute__( ( always_inline ) ) static inline uint8_t ucPortCountLeadingZeros( uint32_t ulBitma
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckL0fKf.s 			page 21
-
-
  131:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	{
  132:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	uint8_t ucReturn;
  133:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
@@ -1217,6 +1978,9 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckL0fKf.s 			page 1
  144:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	#define portRECORD_READY_PRIORITY( uxPriority, uxReadyPriorities ) ( uxReadyPriorities ) |= ( 1UL 
  145:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	#define portRESET_READY_PRIORITY( uxPriority, uxReadyPriorities ) ( uxReadyPriorities ) &= ~( 1UL 
  146:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s 			page 34
+
+
  147:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	/*-----------------------------------------------------------*/
  148:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
  149:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	#define portGET_HIGHEST_PRIORITY( uxTopPriority, uxReadyPriorities ) uxTopPriority = ( 31UL - ( ui
@@ -1258,174 +2022,197 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckL0fKf.s 			page 1
  185:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 		xReturn = pdTRUE;
  186:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	}
  187:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckL0fKf.s 			page 22
-
-
  188:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	return xReturn;
  189:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** }
  190:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
  191:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /*-----------------------------------------------------------*/
  192:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
  193:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** portFORCE_INLINE static void vPortRaiseBASEPRI( void )
- 642              		.loc 2 193 30 view .LVU140
- 643              	.LBB9:
+ 1118              		.loc 2 193 30 view .LVU284
+ 1119              	.LBB16:
  194:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** {
  195:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** uint32_t ulNewBASEPRI;
- 644              		.loc 2 195 1 view .LVU141
+ 1120              		.loc 2 195 1 view .LVU285
  196:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
  197:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	__asm volatile
- 645              		.loc 2 197 2 view .LVU142
- 646              		.syntax unified
- 647              	@ 197 "Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h" 1
- 648 0006 4FF05003 			mov r3, #80												
- 649 000a 83F31188 		msr basepri, r3											
- 650 000e BFF36F8F 		isb														
- 651 0012 BFF34F8F 		dsb														
- 652              	
- 653              	@ 0 "" 2
- 654              		.thumb
- 655              		.syntax unified
- 656              	.L45:
- 657              	.LBE9:
- 658              	.LBE8:
-  51:UserAPP/Source/ReceiveDataProcess.c ****     
- 659              		.loc 1 51 5 view .LVU143
-  51:UserAPP/Source/ReceiveDataProcess.c ****     
- 660              		.loc 1 51 5 view .LVU144
- 661 0016 FEE7     		b	.L45
- 662              	.LVL45:
- 663              	.L46:
-  51:UserAPP/Source/ReceiveDataProcess.c ****     
- 664              		.loc 1 51 55 view .LVU145
-  53:UserAPP/Source/ReceiveDataProcess.c ****     {
- 665              		.loc 1 53 5 view .LVU146
-  55:UserAPP/Source/ReceiveDataProcess.c ****         {
- 666              		.loc 1 55 9 view .LVU147
-  55:UserAPP/Source/ReceiveDataProcess.c ****         {
- 667              		.loc 1 55 31 is_stmt 0 view .LVU148
- 668 0018 064B     		ldr	r3, .L49
- 669 001a 1868     		ldr	r0, [r3]
-  55:UserAPP/Source/ReceiveDataProcess.c ****         {
- 670              		.loc 1 55 11 view .LVU149
- 671 001c 0028     		cmp	r0, #0
- 672 001e FBD0     		beq	.L46
-  58:UserAPP/Source/ReceiveDataProcess.c ****             {
- 673              		.loc 1 58 13 is_stmt 1 view .LVU150
-  58:UserAPP/Source/ReceiveDataProcess.c ****             {
- 674              		.loc 1 58 17 is_stmt 0 view .LVU151
- 675 0020 0022     		movs	r2, #0
- 676 0022 0549     		ldr	r1, .L49+4
- 677 0024 FFF7FEFF 		bl	xQueueReceive
- 678              	.LVL46:
-  58:UserAPP/Source/ReceiveDataProcess.c ****             {
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckL0fKf.s 			page 23
+ 1121              		.loc 2 197 2 view .LVU286
+ 1122              		.syntax unified
+ 1123              	@ 197 "Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h" 1
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s 			page 35
 
 
- 679              		.loc 1 58 15 discriminator 1 view .LVU152
- 680 0028 0128     		cmp	r0, #1
- 681 002a F5D1     		bne	.L46
-  83:UserAPP/Source/ReceiveDataProcess.c ****             }
- 682              		.loc 1 83 17 is_stmt 1 view .LVU153
- 683 002c FFF7FEFF 		bl	vParseReceivedDataPacket
- 684              	.LVL47:
- 685 0030 F2E7     		b	.L46
- 686              	.L50:
- 687 0032 00BF     		.align	2
- 688              	.L49:
- 689 0034 00000000 		.word	xReceiveDataQueue
- 690 0038 00000000 		.word	dataPacket
- 691              		.cfi_endproc
- 692              	.LFE80:
- 694              		.global	parsedDataPacket
- 695              		.section	.bss.parsedDataPacket,"aw",%nobits
- 696              		.align	2
- 699              	parsedDataPacket:
- 700 0000 00000000 		.space	66
- 700      00000000 
- 700      00000000 
- 700      00000000 
- 700      00000000 
- 701              		.global	xHigherPriorityTaskWoken
- 702              		.section	.bss.xHigherPriorityTaskWoken,"aw",%nobits
- 703              		.align	2
- 706              	xHigherPriorityTaskWoken:
- 707 0000 00000000 		.space	4
- 708              		.global	dataPacket
- 709              		.section	.bss.dataPacket,"aw",%nobits
- 710              		.align	2
- 713              	dataPacket:
- 714 0000 00000000 		.space	66
- 714      00000000 
- 714      00000000 
- 714      00000000 
- 714      00000000 
- 715              		.global	xReceiveDataQueue
- 716              		.section	.bss.xReceiveDataQueue,"aw",%nobits
- 717              		.align	2
- 720              	xReceiveDataQueue:
- 721 0000 00000000 		.space	4
- 722              		.global	xCreateReceiveDataTaskHandle
- 723              		.section	.bss.xCreateReceiveDataTaskHandle,"aw",%nobits
- 724              		.align	2
- 727              	xCreateReceiveDataTaskHandle:
- 728 0000 00000000 		.space	4
- 729              		.global	xCreateReceiveDataTaskReturned
- 730              		.section	.bss.xCreateReceiveDataTaskReturned,"aw",%nobits
- 731              		.align	2
- 734              	xCreateReceiveDataTaskReturned:
- 735 0000 00000000 		.space	4
- 736              		.text
- 737              	.Letext0:
- 738              		.file 3 "D:/gcc-arm/14.3 rel1/arm-none-eabi/include/machine/_default_types.h"
- 739              		.file 4 "D:/gcc-arm/14.3 rel1/arm-none-eabi/include/sys/_stdint.h"
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckL0fKf.s 			page 24
+ 1124 0004 4FF05003 			mov r3, #80												
+ 1125 0008 83F31188 		msr basepri, r3											
+ 1126 000c BFF36F8F 		isb														
+ 1127 0010 BFF34F8F 		dsb														
+ 1128              	
+ 1129              	@ 0 "" 2
+ 1130              		.thumb
+ 1131              		.syntax unified
+ 1132              	.L91:
+ 1133              	.LBE16:
+ 1134              	.LBE15:
+  57:UserAPP/Source/ReceiveDataProcess.c ****     
+ 1135              		.loc 1 57 5 view .LVU287
+  57:UserAPP/Source/ReceiveDataProcess.c ****     
+ 1136              		.loc 1 57 5 view .LVU288
+ 1137 0014 FEE7     		b	.L91
+ 1138              	.L95:
+  55:UserAPP/Source/ReceiveDataProcess.c ****     /* 该参数值期望为 1，因为在下面的xTaskCreate() 的调用中，1 作为 pvParamete
+ 1139              		.loc 1 55 1 is_stmt 0 view .LVU289
+ 1140 0016 00B5     		push	{lr}
+ 1141              	.LCFI20:
+ 1142              		.cfi_def_cfa_offset 4
+ 1143              		.cfi_offset 14, -4
+ 1144 0018 93B0     		sub	sp, sp, #76
+ 1145              	.LCFI21:
+ 1146              		.cfi_def_cfa_offset 80
+ 1147              	.LVL100:
+ 1148              	.L92:
+  57:UserAPP/Source/ReceiveDataProcess.c ****     
+ 1149              		.loc 1 57 55 is_stmt 1 view .LVU290
+  59:UserAPP/Source/ReceiveDataProcess.c **** 
+ 1150              		.loc 1 59 5 view .LVU291
+  61:UserAPP/Source/ReceiveDataProcess.c ****     {
+ 1151              		.loc 1 61 5 view .LVU292
+  63:UserAPP/Source/ReceiveDataProcess.c ****         {
+ 1152              		.loc 1 63 9 view .LVU293
+  63:UserAPP/Source/ReceiveDataProcess.c ****         {
+ 1153              		.loc 1 63 31 is_stmt 0 view .LVU294
+ 1154 001a 074B     		ldr	r3, .L96
+ 1155 001c 1868     		ldr	r0, [r3]
+  63:UserAPP/Source/ReceiveDataProcess.c ****         {
+ 1156              		.loc 1 63 11 view .LVU295
+ 1157 001e 0028     		cmp	r0, #0
+ 1158 0020 FBD0     		beq	.L92
+  66:UserAPP/Source/ReceiveDataProcess.c ****             {
+ 1159              		.loc 1 66 13 is_stmt 1 view .LVU296
+  66:UserAPP/Source/ReceiveDataProcess.c ****             {
+ 1160              		.loc 1 66 17 is_stmt 0 view .LVU297
+ 1161 0022 0022     		movs	r2, #0
+ 1162 0024 01A9     		add	r1, sp, #4
+ 1163 0026 FFF7FEFF 		bl	xQueueReceive
+ 1164              	.LVL101:
+  66:UserAPP/Source/ReceiveDataProcess.c ****             {
+ 1165              		.loc 1 66 15 discriminator 1 view .LVU298
+ 1166 002a 0128     		cmp	r0, #1
+ 1167 002c F5D1     		bne	.L92
+  91:UserAPP/Source/ReceiveDataProcess.c ****             }
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s 			page 36
 
 
- 740              		.file 5 "Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h"
- 741              		.file 6 "Middlewares/Third_Party/FreeRTOS/Source/include/task.h"
- 742              		.file 7 "Middlewares/Third_Party/FreeRTOS/Source/include/queue.h"
- 743              		.file 8 "UserAPP/Include/Tasklist.h"
- 744              		.file 9 "UserAPP/Include/SendDataProcess.h"
- 745              		.file 10 "UserAPP/Include/ReceiveDataProcess.h"
- 746              		.file 11 "D:/gcc-arm/14.3 rel1/arm-none-eabi/include/string.h"
- 747              		.file 12 "<built-in>"
- 748              		.file 13 "Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_def.h"
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckL0fKf.s 			page 25
+ 1168              		.loc 1 91 17 is_stmt 1 view .LVU299
+ 1169 002e 01A8     		add	r0, sp, #4
+ 1170 0030 FFF7FEFF 		bl	vParseReceivedDataStream
+ 1171              	.LVL102:
+ 1172 0034 F1E7     		b	.L92
+ 1173              	.L97:
+ 1174 0036 00BF     		.align	2
+ 1175              	.L96:
+ 1176 0038 00000000 		.word	xReceiveDataQueue
+ 1177              		.cfi_endproc
+ 1178              	.LFE80:
+ 1180              		.section	.bss.rxStreamLen,"aw",%nobits
+ 1181              		.align	1
+ 1184              	rxStreamLen:
+ 1185 0000 0000     		.space	2
+ 1186              		.section	.bss.rxStreamBuf,"aw",%nobits
+ 1187              		.align	2
+ 1190              	rxStreamBuf:
+ 1191 0000 00000000 		.space	256
+ 1191      00000000 
+ 1191      00000000 
+ 1191      00000000 
+ 1191      00000000 
+ 1192              		.global	parsedDataPacket
+ 1193              		.section	.bss.parsedDataPacket,"aw",%nobits
+ 1194              		.align	2
+ 1197              	parsedDataPacket:
+ 1198 0000 00000000 		.space	66
+ 1198      00000000 
+ 1198      00000000 
+ 1198      00000000 
+ 1198      00000000 
+ 1199              		.global	xHigherPriorityTaskWoken
+ 1200              		.section	.bss.xHigherPriorityTaskWoken,"aw",%nobits
+ 1201              		.align	2
+ 1204              	xHigherPriorityTaskWoken:
+ 1205 0000 00000000 		.space	4
+ 1206              		.global	xReceiveDataQueue
+ 1207              		.section	.bss.xReceiveDataQueue,"aw",%nobits
+ 1208              		.align	2
+ 1211              	xReceiveDataQueue:
+ 1212 0000 00000000 		.space	4
+ 1213              		.global	xCreateReceiveDataTaskHandle
+ 1214              		.section	.bss.xCreateReceiveDataTaskHandle,"aw",%nobits
+ 1215              		.align	2
+ 1218              	xCreateReceiveDataTaskHandle:
+ 1219 0000 00000000 		.space	4
+ 1220              		.global	xCreateReceiveDataTaskReturned
+ 1221              		.section	.bss.xCreateReceiveDataTaskReturned,"aw",%nobits
+ 1222              		.align	2
+ 1225              	xCreateReceiveDataTaskReturned:
+ 1226 0000 00000000 		.space	4
+ 1227              		.text
+ 1228              	.Letext0:
+ 1229              		.file 3 "D:/gcc-arm/14.3 rel1/arm-none-eabi/include/machine/_default_types.h"
+ 1230              		.file 4 "D:/gcc-arm/14.3 rel1/arm-none-eabi/include/sys/_stdint.h"
+ 1231              		.file 5 "Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h"
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s 			page 37
+
+
+ 1232              		.file 6 "Middlewares/Third_Party/FreeRTOS/Source/include/task.h"
+ 1233              		.file 7 "Middlewares/Third_Party/FreeRTOS/Source/include/queue.h"
+ 1234              		.file 8 "UserAPP/Include/Tasklist.h"
+ 1235              		.file 9 "UserAPP/Include/SendDataProcess.h"
+ 1236              		.file 10 "UserAPP/Include/ReceiveDataProcess.h"
+ 1237              		.file 11 "D:/gcc-arm/14.3 rel1/arm-none-eabi/include/string.h"
+ 1238              		.file 12 "<built-in>"
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s 			page 38
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 ReceiveDataProcess.c
-C:\Users\Administrator\AppData\Local\Temp\cckL0fKf.s:19     .text.CalculateCRC8:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\cckL0fKf.s:24     .text.CalculateCRC8:00000000 CalculateCRC8
-C:\Users\Administrator\AppData\Local\Temp\cckL0fKf.s:124    .text.vCreateReceiveDataQueueTask:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\cckL0fKf.s:130    .text.vCreateReceiveDataQueueTask:00000000 vCreateReceiveDataQueueTask
-C:\Users\Administrator\AppData\Local\Temp\cckL0fKf.s:162    .text.vCreateReceiveDataQueueTask:00000014 $d
-C:\Users\Administrator\AppData\Local\Temp\cckL0fKf.s:720    .bss.xReceiveDataQueue:00000000 xReceiveDataQueue
-C:\Users\Administrator\AppData\Local\Temp\cckL0fKf.s:167    .rodata.vCreateReceiveDataTask.str1.4:00000000 $d
-C:\Users\Administrator\AppData\Local\Temp\cckL0fKf.s:171    .text.vCreateReceiveDataTask:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\cckL0fKf.s:177    .text.vCreateReceiveDataTask:00000000 vCreateReceiveDataTask
-C:\Users\Administrator\AppData\Local\Temp\cckL0fKf.s:220    .text.vCreateReceiveDataTask:0000002c $d
-C:\Users\Administrator\AppData\Local\Temp\cckL0fKf.s:727    .bss.xCreateReceiveDataTaskHandle:00000000 xCreateReceiveDataTaskHandle
-C:\Users\Administrator\AppData\Local\Temp\cckL0fKf.s:621    .text.vReceiveDataProcessTask:00000000 vReceiveDataProcessTask
-C:\Users\Administrator\AppData\Local\Temp\cckL0fKf.s:734    .bss.xCreateReceiveDataTaskReturned:00000000 xCreateReceiveDataTaskReturned
-C:\Users\Administrator\AppData\Local\Temp\cckL0fKf.s:228    .text.vReceiveDataQueueSendISRTask:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\cckL0fKf.s:234    .text.vReceiveDataQueueSendISRTask:00000000 vReceiveDataQueueSendISRTask
-C:\Users\Administrator\AppData\Local\Temp\cckL0fKf.s:325    .text.vReceiveDataQueueSendISRTask:0000005c $d
-C:\Users\Administrator\AppData\Local\Temp\cckL0fKf.s:713    .bss.dataPacket:00000000 dataPacket
-C:\Users\Administrator\AppData\Local\Temp\cckL0fKf.s:706    .bss.xHigherPriorityTaskWoken:00000000 xHigherPriorityTaskWoken
-C:\Users\Administrator\AppData\Local\Temp\cckL0fKf.s:332    .rodata.vParseReceivedDataPacket.str1.4:00000000 $d
-C:\Users\Administrator\AppData\Local\Temp\cckL0fKf.s:371    .text.vParseReceivedDataPacket:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\cckL0fKf.s:377    .text.vParseReceivedDataPacket:00000000 vParseReceivedDataPacket
-C:\Users\Administrator\AppData\Local\Temp\cckL0fKf.s:599    .text.vParseReceivedDataPacket:000000f4 $d
-C:\Users\Administrator\AppData\Local\Temp\cckL0fKf.s:699    .bss.parsedDataPacket:00000000 parsedDataPacket
-C:\Users\Administrator\AppData\Local\Temp\cckL0fKf.s:615    .text.vReceiveDataProcessTask:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\cckL0fKf.s:689    .text.vReceiveDataProcessTask:00000034 $d
-C:\Users\Administrator\AppData\Local\Temp\cckL0fKf.s:696    .bss.parsedDataPacket:00000000 $d
-C:\Users\Administrator\AppData\Local\Temp\cckL0fKf.s:703    .bss.xHigherPriorityTaskWoken:00000000 $d
-C:\Users\Administrator\AppData\Local\Temp\cckL0fKf.s:710    .bss.dataPacket:00000000 $d
-C:\Users\Administrator\AppData\Local\Temp\cckL0fKf.s:717    .bss.xReceiveDataQueue:00000000 $d
-C:\Users\Administrator\AppData\Local\Temp\cckL0fKf.s:724    .bss.xCreateReceiveDataTaskHandle:00000000 $d
-C:\Users\Administrator\AppData\Local\Temp\cckL0fKf.s:731    .bss.xCreateReceiveDataTaskReturned:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s:19     .text.IsHostRequestFunctionCode:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s:24     .text.IsHostRequestFunctionCode:00000000 IsHostRequestFunctionCode
+C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s:49     .text.CalculateCRC8:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s:54     .text.CalculateCRC8:00000000 CalculateCRC8
+C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s:154    .text.FindValidFrameLength:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s:159    .text.FindValidFrameLength:00000000 FindValidFrameLength
+C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s:276    .text.vCreateReceiveDataQueueTask:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s:282    .text.vCreateReceiveDataQueueTask:00000000 vCreateReceiveDataQueueTask
+C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s:314    .text.vCreateReceiveDataQueueTask:00000014 $d
+C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s:1211   .bss.xReceiveDataQueue:00000000 xReceiveDataQueue
+C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s:319    .rodata.vCreateReceiveDataTask.str1.4:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s:323    .text.vCreateReceiveDataTask:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s:329    .text.vCreateReceiveDataTask:00000000 vCreateReceiveDataTask
+C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s:372    .text.vCreateReceiveDataTask:0000002c $d
+C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s:1218   .bss.xCreateReceiveDataTaskHandle:00000000 xCreateReceiveDataTaskHandle
+C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s:1103   .text.vReceiveDataProcessTask:00000000 vReceiveDataProcessTask
+C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s:1225   .bss.xCreateReceiveDataTaskReturned:00000000 xCreateReceiveDataTaskReturned
+C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s:380    .text.vReceiveDataQueueSendISRTask:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s:386    .text.vReceiveDataQueueSendISRTask:00000000 vReceiveDataQueueSendISRTask
+C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s:594    .text.vReceiveDataQueueSendISRTask:000000ac $d
+C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s:1204   .bss.xHigherPriorityTaskWoken:00000000 xHigherPriorityTaskWoken
+C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s:600    .rodata.vParseReceivedDataPacket.str1.4:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s:629    .text.vParseReceivedDataPacket:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s:635    .text.vParseReceivedDataPacket:00000000 vParseReceivedDataPacket
+C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s:830    .text.vParseReceivedDataPacket:000000c0 $d
+C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s:1197   .bss.parsedDataPacket:00000000 parsedDataPacket
+C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s:842    .text.vParseReceivedDataStream:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s:847    .text.vParseReceivedDataStream:00000000 vParseReceivedDataStream
+C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s:1089   .text.vParseReceivedDataStream:000000dc $d
+C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s:1184   .bss.rxStreamLen:00000000 rxStreamLen
+C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s:1190   .bss.rxStreamBuf:00000000 rxStreamBuf
+C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s:1097   .text.vReceiveDataProcessTask:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s:1176   .text.vReceiveDataProcessTask:00000038 $d
+C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s:1181   .bss.rxStreamLen:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s:1187   .bss.rxStreamBuf:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s:1194   .bss.parsedDataPacket:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s:1201   .bss.xHigherPriorityTaskWoken:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s:1208   .bss.xReceiveDataQueue:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s:1215   .bss.xCreateReceiveDataTaskHandle:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\cc4lrULS.s:1222   .bss.xCreateReceiveDataTaskReturned:00000000 $d
 
 UNDEFINED SYMBOLS
 xQueueGenericCreate
@@ -1437,4 +2224,5 @@ xQueueGenericSend
 QueueSendfmt
 xParsedDataQueue
 xSendDataQueue
+memmove
 xQueueReceive

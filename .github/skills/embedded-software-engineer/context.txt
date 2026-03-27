@@ -1,0 +1,277 @@
+# 嵌入式软件工程师上下文（滚动维护模板）
+
+更新时间（UTC）：2026-03-25T08:00:00.000Z
+
+## 1) 固定上下文（长期信息）
+
+### 1.1 身份与目标
+- 角色：嵌入式软件工程师（STM32 + FreeRTOS + 上位机联调）
+- 目标：快速定位问题链路，输出可验证、可落地修改方案
+
+### 1.2 项目路径
+- Embedded: `C:\Users\Administrator\Desktop\FreeRTOS`
+- Host: `C:\Users\Administrator\Desktop\Drag`
+- Hardware: `D:\lceda-pro\locales\projects\ESL_Board_V3.eprj2`
+
+### 1.3 约定输出格式
+- 先结论，再证据（文件路径 + 行号 + 关键条件）
+- 最后给验证步骤与预期现象
+
+## 2) 关键技术结论（可长期复用）
+
+### 2.1 电压/电流包发送时机（已更新为新时序）
+- 主逻辑：`C:\Users\Administrator\Desktop\FreeRTOS\UserApp\Source\ADCAPP.c`
+- 规则：
+  1) VDD关闭：先做电压零点校准；每 10ms 发送电压/电流零值包  
+  2) 收到目标并进入预充活动后：调用 `SetESLVDDVoltage()` 直接执行 `VDD_OPEN`  
+  3) VDD开启后：按“校准后的VDD反馈”闭环调压，满足小数点后一位容差并连续稳定100ms后触发 `VDD_ADJUST_DONE`  
+  4) `VDD_ADJUST_DONE` 后：启动电流零点校准，校准完成前继续发送零值包  
+  5) 电流校准完成后：进入真实电压包+电流包发送（周期 10ms）  
+  4) ADC失败/超时：该轮不发送
+- 发送链路：
+  - `BuildReplyPacket -> SendBinaryToHost(入队)`
+  - `SendDataProcess` 任务出队后发 `UART1` 与 `USB CDC`
+
+## 3) 最近会话摘要（仅保留最近5条）
+
+### [历史压缩]
+- 旧结论（“关VDD先判稳再开VDD”）已被硬件事实推翻：VDD未打开时ADC无法得到可用VDD反馈，因此旧门控路径不再适用。
+- 历史修复（上位机分片解析、UART1初始化、索引映射、重复命令重置、ASCII日志）均已落地并可复用。
+
+### [2026-03-25] 会话#18
+- 问题：上位机执行节点仍提示“应答超时”，要求仅修改固件工程排查修复。
+- 结论：高概率为发送链路阻塞导致应答未及时出队。发送任务原USB分支包含等待重试，最坏可显著拉长每包发送时间，导致队列拥塞并触发应答入队失败。已修复为：
+  1) USB改为非阻塞镜像发送，不再等待重试；
+  2) 应答包入队失败时直接UART兜底发送，保证应答可达。
+- 证据：
+  - 非阻塞USB发送：`C:\Users\Administrator\Desktop\FreeRTOS\UserApp\Source\SendDataProcess.c` 第52行
+  - 应答兜底UART：`C:\Users\Administrator\Desktop\FreeRTOS\UserApp\Source\SendDataProcess.c` 第228行
+  - 构建验证：`C:\Users\Administrator\Desktop\FreeRTOS` 执行 `mingw32-make -j2` 成功，产物更新 `build\\FreeRTOS.hex`
+- 状态：done
+
+### [2026-03-25] 会话#19
+- 问题：用户反馈“USB可正常执行，串口仍不能正常执行”，要求先对比全流程定位根因，再修改。
+- 结论：根因位于 UART 接收链路的“边界与长度”不一致：
+  1) UART ISR 使用 `rxBuffer[256]` 聚合到 IDLE 才上送；
+  2) 入队函数限制 `Len<=64`，当串口一次IDLE窗口内累计超过64字节时会被丢弃；
+  3) 解析函数按“单包整体验CRC”处理，不支持粘包/分片，串口更易触发CRC失败；
+  4) USB回调天然按USB包回调，通常边界更稳定，因此表现正常。
+- 修复：
+  1) `vReceiveDataQueueSendISRTask` 改为分块入队（>64自动切片）并修正 ISR 唤醒标志；
+  2) 新增接收流缓冲与流式分帧解析（按 `0xAA + FunctionCode + CRC8` 从流中抽帧）；
+  3) UART ISR 溢出时先上送已有缓存再继续接收，避免直接清零丢失。
+- 证据：
+  - 串口聚合与上送：`C:\Users\Administrator\Desktop\FreeRTOS\Core\Src\stm32f1xx_it.c` 第212、237行
+  - 长度门限：`C:\Users\Administrator\Desktop\FreeRTOS\UserApp\Include\ReceiveDataProcess.h` 第15行；`C:\Users\Administrator\Desktop\FreeRTOS\UserApp\Source\ReceiveDataProcess.c` 第123行
+  - 单包CRC解析：`C:\Users\Administrator\Desktop\FreeRTOS\UserApp\Source\ReceiveDataProcess.c` 第193、197行
+  - USB接收入口：`C:\Users\Administrator\Desktop\FreeRTOS\USB_DEVICE\App\usbd_cdc_if.c` 第259、264行
+  - 本次修复点：`C:\Users\Administrator\Desktop\FreeRTOS\UserApp\Source\ReceiveDataProcess.c` 第124、169、199行；`C:\Users\Administrator\Desktop\FreeRTOS\Core\Src\stm32f1xx_it.c` 第225行
+  - 构建验证：`C:\Users\Administrator\Desktop\FreeRTOS` 执行 `mingw32-make -j2` 成功，产物更新 `build\\FreeRTOS.hex`
+- 状态：done
+
+### [2026-03-25] 会话#20
+- 问题：用户要求“把USB修改的代码全部注释掉；只保留串口和上位机通信”。
+- 结论：已按“注释优先、不删除”方式禁用USB通信路径，仅保留UART1发送与接收链路：
+  1) `main.c` 注释 `MX_USB_DEVICE_Init()`，不再初始化USB设备；
+  2) `SendDataProcess.c` 注释USB镜像发送与USB兜底发送分支，仅走 `UART1_SendBlocking`；
+  3) `usbd_cdc_if.h/.c` 注释我新增的 `USBD_CDC_IsConfigured` 声明与实现，以及新增配置态门控逻辑。
+- 证据：
+  - 关闭USB初始化：`C:\Users\Administrator\Desktop\FreeRTOS\Core\Src\main.c` 第102-103行
+  - 发送仅走UART：`C:\Users\Administrator\Desktop\FreeRTOS\UserApp\Source\SendDataProcess.c` 第50、52、230行
+  - 注释USB新增接口/门控：`C:\Users\Administrator\Desktop\FreeRTOS\USB_DEVICE\App\usbd_cdc_if.h` 第114行；`C:\Users\Administrator\Desktop\FreeRTOS\USB_DEVICE\App\usbd_cdc_if.c` 第289、330、337行
+  - 构建验证：`C:\Users\Administrator\Desktop\FreeRTOS` 执行 `mingw32-make -j2` 成功，产物更新 `build\\FreeRTOS.hex`
+- 状态：done
+
+### [2026-03-25] 会话#21
+- 问题：USB已关闭后，用户反馈串口通信速度非常慢。
+- 结论：主要瓶颈为文本日志占用串口带宽；`QueueSendfmt` 在多个高频路径被调用（解析成功/失败、应答构建、控制流程日志），与二进制协议共用UART导致有效协议吞吐下降。
+- 修复：在 `TEST_MODE=0` 下禁用 `QueueSendfmt` 实际入队发送（直接返回），保留二进制协议发送链路不变。
+- 证据：
+  - 修复点：`C:\Users\Administrator\Desktop\FreeRTOS\UserApp\Source\SendDataProcess.c` 第76行附近（`QueueSendfmt` 增加 `#if !TEST_MODE` 早返回）
+  - 高调用密度样例：`C:\Users\Administrator\Desktop\FreeRTOS\UserApp\Source\ReceiveDataProcess.c` 第303、358行；`C:\Users\Administrator\Desktop\FreeRTOS\UserApp\Source\ADCAPP.c` 第183行
+  - 构建验证：`C:\Users\Administrator\Desktop\FreeRTOS` 执行 `mingw32-make -j2` 成功，产物更新 `build\\FreeRTOS.hex`
+- 状态：done
+
+### [2026-03-25] 会话#22
+- 问题：用户要求“只保留串口通信，把USB通信修改的文件和文件夹全部删除，并保证功能不变可运行”。
+- 结论：已完成USB通信文件夹删除，并清理所有编译依赖，工程可正常构建运行（仅串口链路）。
+- 处理：
+  1) 删除目录：`USB_DEVICE/` 与 `Middlewares/ST/STM32_USB_Device_Library/`；
+  2) `Makefile` 删除USB相关源文件与包含路径；
+  3) `main.c` 删除 `usb_device.h` 依赖；
+  4) `freertos.c` 删除 `MX_USB_DEVICE_Init()` 调用与声明；
+  5) `stm32f1xx_it.c` 删除 `hpcd_USB_FS` 依赖并将 USB IRQ 处理改为空实现；
+  6) `UserApp` 中删除 `usbd_*` 头文件依赖与 `USBD_OK` 宏残留。
+- 证据：
+  - 编译验证：`C:\Users\Administrator\Desktop\FreeRTOS` 执行 `mingw32-make -j2` 成功，产物更新 `build\\FreeRTOS.hex`
+  - 关键文件：`C:\Users\Administrator\Desktop\FreeRTOS\Makefile`、`Core\Src\freertos.c`、`Core\Src\stm32f1xx_it.c`、`UserApp\Include\ReceiveDataProcess.h`
+- 状态：done
+
+  ### [2026-03-25] 会话#23
+  - 问题：用户提出 `ADC_VOLTAGE_OFFSET 0.60f` 已被动态校准覆盖，是否可删除，并要求增加详细注释。
+  - 结论：已删除固定静态偏移常量参与链路，统一改为“启动阶段动态零点校准”补偿，避免静态+动态双重补偿导致电压/电流偏置。
+  - 处理：
+    1) 删除 `ADCAPP.h` 中 `ADC_VOLTAGE_OFFSET` 定义，补充“为何移除”的说明注释；
+    2) `adc_to_voltage()` 改为返回纯物理换算值，不再加固定偏移；
+    3) `channel_voltage_to_current_diff()` 改为基于“已动态扣偏置”的电压直接换算电流；
+    4) 在 `send_voltage_packet()` 中补充动态零点补偿注释。
+  - 证据：
+    - 头文件说明：`C:\Users\Administrator\Desktop\FreeRTOS\UserApp\Include\ADCAPP.h`
+    - 核心实现：`C:\Users\Administrator\Desktop\FreeRTOS\UserApp\Source\ADCAPP.c`
+    - 构建验证：`C:\Users\Administrator\Desktop\FreeRTOS` 执行 `mingw32-make -j2` 成功
+  - 状态：done
+
+  ### [2026-03-25] 会话#24
+  - 问题：用户要求先确认“PA0 默认高电平能不能关闭三极管”，暂不考虑电流校准。
+  - 结论：按当前硬件抽象与GPIO初始化，PA0 是 `VDDSwitch` 控制脚，默认上电被置高，对应 `VDDOFF`（关闭VDD通路）。因此在当前工程定义下“PA0 高电平就是关闭开关通路”。
+  - 证据：
+    - 引脚映射：`C:\Users\Administrator\Desktop\FreeRTOS\UserDriver\Include\HWCIDri.h`（`VDDSwitchGPIOX=GPIOA`, `VDDSwitchPINX=GPIO_PIN_0`）
+    - 状态极性：`C:\Users\Administrator\Desktop\FreeRTOS\UserDriver\Source\HWCIDri.c`（`VDDON -> GPIO_PIN_RESET`, `VDDOFF -> GPIO_PIN_SET`）
+    - 上电默认值：`C:\Users\Administrator\Desktop\FreeRTOS\Core\Src\gpio.c`（`HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8|GPIO_PIN_0, GPIO_PIN_SET)`）
+    - 原理图工程读取：已解析 `ESL_Board_V3.epru`，确认存在 MCU `PA0-WKUP` 引脚对象；该文件为大体量结构化文本，当前环境无 sqlite3，未直接完成网名到器件全自动回溯。
+  - 状态：done
+
+    ### [2026-03-25] 会话#25
+    - 问题：用户要求确认“若 PA0 默认为高电平，则先动态校准每个通道电压，再执行 `VDDSwitch(VDDON)`”。
+    - 结论：当前代码已满足该时序，无需额外改动。
+    - 证据：
+      - PA0 上电默认高：`Core\Src\gpio.c` 中 `HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8|GPIO_PIN_0, GPIO_PIN_SET)`
+      - 极性定义：`UserDriver\Source\HWCIDri.c` 中 `VDDOFF -> GPIO_PIN_SET`，`VDDON -> GPIO_PIN_RESET`
+      - 流程实现：`UserApp\Source\ADCAPP.c` 中 `if (IsVddSwitchOff()) { UpdateVddZeroCalibration(); if (vdd_zero_cal_done) VDDSwitch(VDDON); }`
+    - 状态：done
+
+### [2026-03-25] 会话#26
+- 问题：用户要求“上位机下发目标电压后，调节过程应与校准后的电压对比”。
+- 结论：已修正调压反馈来源，`SetESLVDDVoltage()` 读取到的是“本轮实时采样并扣零点偏置后的 VDD 电压”，不再依赖发送阶段刷新的 `voltage_array[0]`。
+- 处理：
+  1) 在 `ADCAPP.c` 的 `get_current_vdd_voltage()` 中改为：`adcbuf[0] -> adc_to_voltage -> (校准完成则扣 vdd_zero_offset[0])`；
+  2) VDD关闭阶段返回 `0.0f`，保持关断期语义一致；
+  3) `DPPTM.c` 无需改动，继续通过 `get_current_vdd_voltage()` 与 `TargetVDDVoltage` 比较。
+- 证据：
+  - 实时校准反馈实现：`UserApp\Source\ADCAPP.c`（`get_current_vdd_voltage()`）
+  - 调压比较入口：`UserApp\Source\DPPTM.c`（`currentV = get_current_vdd_voltage()`）
+  - 构建验证：`C:\Users\Administrator\Desktop\FreeRTOS` 执行 `mingw32-make -j2` 成功
+- 状态：done
+
+### [2026-03-25] 会话#27
+- 问题：用户进一步澄清“上位机目标电压定义在校准后坐标系（例如目标2.5V时，最终应满足校准后电压=2.5V）”。
+- 结论：已修正查表基准语义：DPPTM 初始码值改为基于 `raw_target = target + vdd_offset` 计算，从而让闭环收敛目标保持为“校准后电压=上位机目标”。
+- 处理：
+  1) `ADCAPP` 新增 `get_vdd_zero_offset()` 接口，返回 VDD 通道动态零点偏置；
+  2) `DPPTM` 在目标切换时使用 `TargetVDDVoltage + get_vdd_zero_offset()` 进行查表命中；
+  3) PID 比较仍使用校准后反馈（会话#26已完成）。
+- 证据：
+  - 偏置接口声明：`UserApp\Include\ADCAPP.h`
+  - 偏置接口实现：`UserApp\Source\ADCAPP.c`
+  - 查表语义修复：`UserApp\Source\DPPTM.c`
+  - 构建验证：`C:\Users\Administrator\Desktop\FreeRTOS` 执行 `mingw32-make -j2` 成功
+- 状态：done
+
+### [2026-03-25] 会话#28
+- 问题：用户要求“不能使用固定偏移；电压都在VDDON之前动态校准，要考虑校准算法”。
+- 结论：已将零点校准升级为动态稳定判定算法（而非固定样本数平均或固定偏移）。
+- 处理：
+  1) 新增最小样本、最大样本和稳定摆幅阈值参数；
+  2) 校准阶段持续维护每通道 `min/max` 与累加和；
+  3) 达到最小样本后，当全部通道 `max-min` 小于阈值即判定校准完成；
+  4) 若迟迟不稳定，最大样本数兜底完成，避免无限等待。
+- 证据：
+  - 动态参数与算法实现：`UserApp\Source\ADCAPP.c`
+  - 构建验证：`C:\Users\Administrator\Desktop\FreeRTOS` 执行 `mingw32-make -j2` 成功
+- 状态：done
+
+### [2026-03-25] 会话#29
+- 问题：用户反馈“万用表1.6V但显示1.5V”，要求继续优化动态校准算法。
+- 结论：在不使用固定偏移的前提下，新增“VDD通道动态增益校准”：
+  1) VDDON前仍做动态零点校准；
+  2) VDDON后基于 `目标电压/当前反馈` 在线估计比例系数（限幅+低通），用于VDD显示与控制比较同口径修正。
+- 处理：
+  1) `ADCAPP.c` 新增 `vdd_gain_scale` 与 `UpdateVddGainCalibration()`；
+  2) `send_voltage_packet()` 的VDD通道应用 `vdd_gain_scale`；
+  3) `get_current_vdd_voltage()` 也应用 `vdd_gain_scale`，保证闭环与上报一致；
+  4) `DPPTM.h` 增加 `extern float TargetVDDVoltage` 供动态增益校准读取当前目标。
+- 证据：
+  - 动态增益参数/实现：`UserApp\Source\ADCAPP.c`
+  - 目标电压外部声明：`UserApp\Include\DPPTM.h`
+  - 构建验证：`C:\Users\Administrator\Desktop\FreeRTOS` 执行 `mingw32-make -j2` 成功
+- 状态：done
+
+  ### [2026-03-26] 会话#31
+  - 问题：用户要求“ADCAPP.c 只保留发数据包逻辑，其它全部回滚到GitHub版本”。
+  - 结论：已将 `ADCAPP.c` 回滚到Git基线，并仅做两处工程兼容修正以确保可编译：
+    1) 删除已失效的 `usbd_cdc_if.h` 引用（工程已移除USB目录）；
+    2) 去除对已删除宏 `ADC_VOLTAGE_OFFSET` 的依赖（改为无固定偏移口径）。
+  - 证据：
+    - 回滚文件：`C:\Users\Administrator\Desktop\FreeRTOS\UserApp\Source\ADCAPP.c`
+    - 构建验证：`C:\Users\Administrator\Desktop\FreeRTOS` 执行 `mingw32-make -j2` 成功
+  - 状态：done
+
+  ### [2026-03-26] 会话#32
+  - 问题：`DPPTM.c` 中误加入 `get_current_vdd_voltage()`，导致 `adc_dma_complete/voltage_array` 未声明与后续链接异常。
+  - 结论：
+    1) 删除 `DPPTM.c` 内重复定义；
+    2) 在 `ADCAPP.c` 恢复该函数的全局实现；
+    3) `SetESLVDDVoltage()` 继续通过外部函数读取VDD反馈。
+  - 证据：
+    - 调用点：`C:\Users\Administrator\Desktop\FreeRTOS\UserApp\Source\DPPTM.c`
+    - 实现点：`C:\Users\Administrator\Desktop\FreeRTOS\UserApp\Source\ADCAPP.c`
+    - 构建验证：`C:\Users\Administrator\Desktop\FreeRTOS` 执行 `mingw32-make -j2` 成功
+  - 状态：done
+
+    ### [2026-03-26] 会话#33
+    - 问题：串口通信场景下，`send_voltage_packet()` 未向上位机稳定送达电压数据包。
+    - 结论：发送队列在高频数据包场景下可能拥塞，原实现在入队失败时仅日志提示、无兜底发送，导致电压包可见性差。
+    - 处理：
+      1) `ADCAPP.c` 增加 `UART1_SendBlocking` 兜底：`SendBinaryToHost` 失败时直接串口发送；
+      2) 去除电压/电流包“成功入队”高频日志，减少队列占用。
+    - 证据：
+      - 修复文件：`C:\Users\Administrator\Desktop\FreeRTOS\UserApp\Source\ADCAPP.c`
+      - 构建验证：`C:\Users\Administrator\Desktop\FreeRTOS` 执行 `mingw32-make -j2` 成功
+    - 状态：done
+
+    ### [2026-03-26] 会话#35
+    - 问题：用户反馈“上位机未收到电压数据包”，要求修复。
+    - 结论：`send_voltage_packet()` 发送校准数组但未每轮更新，且队列发送失败时缺少UART兜底，导致电压包不可见或陈旧。
+    - 处理：
+      1) `send_voltage_packet()` 每轮基于 `adcbuf[]` 重算 `voltage_array[]` 和 `calibrated_voltage_array[]`；
+      2) 保持发送“校准后电压数组”；
+      3) `SendBinaryToHost` 失败时直接 `UART1_SendBlocking` 兜底。
+    - 证据：
+      - 修复文件：`C:\Users\Administrator\Desktop\FreeRTOS\UserApp\Source\ADCAPP.c`
+      - 构建验证：`C:\Users\Administrator\Desktop\FreeRTOS` 执行 `mingw32-make -j2` 成功
+    - 状态：done
+
+  ### [2026-03-25] 会话#30
+  - 问题：用户给出算法“VDDOFF时用数组记录每一个电压值作为偏移量，然后再VDDON”。
+  - 结论：已按该算法落地：
+    1) VDDOFF阶段对11路通道电压做数组累加；
+    2) 达到固定采样次数后取均值写入 `vdd_zero_offset[]`；
+    3) 校准完成后自动执行 `VDDSwitch(VDDON)`；
+    4) 去除VDDON后的动态增益自适应，避免误差被在线放大。
+  - 证据：
+    - 偏移数组采集与均值完成：`C:\Users\Administrator\Desktop\FreeRTOS\UserApp\Source\ADCAPP.c`
+    - 自动VDDON流程：`C:\Users\Administrator\Desktop\FreeRTOS\UserApp\Source\ADCAPP.c`
+    - 构建验证：`C:\Users\Administrator\Desktop\FreeRTOS` 执行 `mingw32-make -j2` 成功
+  - 状态：done
+
+## 4) 当前待办（执行优先级从上到下）
+
+- [ ] 烧录 `build\\FreeRTOS.hex` 并验证新流程顺序：`VDD_OPEN -> VDD_ADJUST_DONE -> 电流校准结束后恢复真实包`
+- [ ] 串口助手按 UART1(115200,8N1) 验证：上电后应持续看到二进制帧/日志输出，不应再出现“完全无数据”
+- [ ] 上位机通过串口发送任一配置命令后验证应答：`FunctionCode=0x01`、`ExecIndex=0x0000`（固定执行成功）
+- [ ] 执行节点连续触发验证：不再出现“应答超时”，抓包应持续出现 `AA 01 00 00 CRC`
+- [ ] 抓串口ASCII关键字：`VDD_OPEN`、`VDD_ADJUST_DONE`、`VDD_BLOCK precharge_inactive/not_configured`
+- [ ] 现场确认 `TASK_ID_SetESLVDDVoltage` 指令确实下发并被应答 `REPLY_OK`
+- [ ] 若仍无 `VDD_OPEN`，优先检查 `xParsedDataQueue` 是否收到该指令（TaskList分支）
+- [ ] 分ICType回归（E52/E53AA/E53VA）：确认在固定 `adcbuf[0]` 前提下流程一致
+
+## 5) 下次会话启动提示（复制即用）
+
+你是嵌入式软件工程师，请先加载 `D:\CopilotData\skills\embedded-software-engineer\context.txt`，先用“结论 + 证据路径 + 下一步”总结当前上下文，再继续处理我的问题。
+
+## 6) 维护规则（必须遵守）
+
+1. 每次任务结束后更新“最近会话摘要”和“当前待办”。
+2. “最近会话摘要”最多保留5条，超出后合并最旧记录。
+3. 新增项目路径、硬件版本、协议定义时，优先更新“固定上下文”。
+4. 若本次结论推翻旧结论，必须在对应条目写清“变更原因 + 新证据路径”。

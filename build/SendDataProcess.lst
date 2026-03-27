@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cccDmnZi.s 			page 1
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc2eVAD3.s 			page 1
 
 
    1              		.cpu cortex-m3
@@ -25,299 +25,301 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cccDmnZi.s 			page 1
   22              		.thumb_func
   24              	Packet_CRC8:
   25              	.LVL0:
-  26              	.LFB84:
+  26              	.LFB85:
    1:UserAPP/Source/SendDataProcess.c **** #include "SendDataProcess.h" // 数据发送与封包模块
-   2:UserAPP/Source/SendDataProcess.c **** 
-   3:UserAPP/Source/SendDataProcess.c **** 
-   4:UserAPP/Source/SendDataProcess.c **** // 全局变量定义
-   5:UserAPP/Source/SendDataProcess.c **** BaseType_t xCreateSendDataTaskReturned;
-   6:UserAPP/Source/SendDataProcess.c **** TaskHandle_t xCreateSendDataTaskHandle = NULL;
-   7:UserAPP/Source/SendDataProcess.c **** QueueHandle_t xSendDataQueue = NULL; // 统一发送队列句柄
-   8:UserAPP/Source/SendDataProcess.c **** 
-   9:UserAPP/Source/SendDataProcess.c **** // 待发送项（文本或二进制）
-  10:UserAPP/Source/SendDataProcess.c **** typedef struct
-  11:UserAPP/Source/SendDataProcess.c **** {
-  12:UserAPP/Source/SendDataProcess.c ****     uint16_t len;              // 实际数据长度
-  13:UserAPP/Source/SendDataProcess.c ****     uint8_t  buf[PRINT_QUEUE_ITEM_SIZE]; // 数据内容
-  14:UserAPP/Source/SendDataProcess.c **** } SendDataItem_t;
-  15:UserAPP/Source/SendDataProcess.c **** 
-  16:UserAPP/Source/SendDataProcess.c **** /**
-  17:UserAPP/Source/SendDataProcess.c ****  * @brief 创建并启动发送数据任务（统一串行化 CDC 发送）
-  18:UserAPP/Source/SendDataProcess.c ****  */
-  19:UserAPP/Source/SendDataProcess.c **** void vCreateSendDataTask(void)
-  20:UserAPP/Source/SendDataProcess.c **** {
-  21:UserAPP/Source/SendDataProcess.c ****     vCreateSendDataQueueTask(NULL);
-  22:UserAPP/Source/SendDataProcess.c **** 
-  23:UserAPP/Source/SendDataProcess.c ****     xCreateSendDataTaskReturned = xTaskCreate(
-  24:UserAPP/Source/SendDataProcess.c ****         vSendDataProcessTask,
-  25:UserAPP/Source/SendDataProcess.c ****         "vSendDataProcessTask",
-  26:UserAPP/Source/SendDataProcess.c ****         256,
-  27:UserAPP/Source/SendDataProcess.c ****         (void *)1,
-  28:UserAPP/Source/SendDataProcess.c ****         tskIDLE_PRIORITY,
-  29:UserAPP/Source/SendDataProcess.c ****         &xCreateSendDataTaskHandle);
-  30:UserAPP/Source/SendDataProcess.c **** }
-  31:UserAPP/Source/SendDataProcess.c **** 
-  32:UserAPP/Source/SendDataProcess.c **** /**
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cccDmnZi.s 			page 2
+   2:UserAPP/Source/SendDataProcess.c **** #include "main.h"
+   3:UserAPP/Source/SendDataProcess.c **** #include "uart1.h"
+   4:UserAPP/Source/SendDataProcess.c **** 
+   5:UserAPP/Source/SendDataProcess.c **** 
+   6:UserAPP/Source/SendDataProcess.c **** // 全局变量定义
+   7:UserAPP/Source/SendDataProcess.c **** BaseType_t xCreateSendDataTaskReturned;
+   8:UserAPP/Source/SendDataProcess.c **** TaskHandle_t xCreateSendDataTaskHandle = NULL;
+   9:UserAPP/Source/SendDataProcess.c **** QueueHandle_t xSendDataQueue = NULL; // 统一发送队列句柄
+  10:UserAPP/Source/SendDataProcess.c **** 
+  11:UserAPP/Source/SendDataProcess.c **** // 待发送项（文本或二进制）
+  12:UserAPP/Source/SendDataProcess.c **** typedef struct
+  13:UserAPP/Source/SendDataProcess.c **** {
+  14:UserAPP/Source/SendDataProcess.c ****     uint16_t len;              // 实际数据长度
+  15:UserAPP/Source/SendDataProcess.c ****     uint8_t  buf[PRINT_QUEUE_ITEM_SIZE]; // 数据内容
+  16:UserAPP/Source/SendDataProcess.c **** } SendDataItem_t;
+  17:UserAPP/Source/SendDataProcess.c **** 
+  18:UserAPP/Source/SendDataProcess.c **** /**
+  19:UserAPP/Source/SendDataProcess.c ****  * @brief 创建并启动发送数据任务（统一串行化 CDC 发送）
+  20:UserAPP/Source/SendDataProcess.c ****  */
+  21:UserAPP/Source/SendDataProcess.c **** void vCreateSendDataTask(void)
+  22:UserAPP/Source/SendDataProcess.c **** {
+  23:UserAPP/Source/SendDataProcess.c ****     vCreateSendDataQueueTask(NULL);
+  24:UserAPP/Source/SendDataProcess.c **** 
+  25:UserAPP/Source/SendDataProcess.c ****     xCreateSendDataTaskReturned = xTaskCreate(
+  26:UserAPP/Source/SendDataProcess.c ****         vSendDataProcessTask,
+  27:UserAPP/Source/SendDataProcess.c ****         "vSendDataProcessTask",
+  28:UserAPP/Source/SendDataProcess.c ****         256,
+  29:UserAPP/Source/SendDataProcess.c ****         (void *)1,
+  30:UserAPP/Source/SendDataProcess.c ****         tskIDLE_PRIORITY,
+  31:UserAPP/Source/SendDataProcess.c ****         &xCreateSendDataTaskHandle);
+  32:UserAPP/Source/SendDataProcess.c **** }
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc2eVAD3.s 			page 2
 
 
-  33:UserAPP/Source/SendDataProcess.c ****  * @brief 发送数据任务：从队列取数据并串行调用 CDC_Transmit_FS
-  34:UserAPP/Source/SendDataProcess.c ****  */
-  35:UserAPP/Source/SendDataProcess.c **** void vSendDataProcessTask(void *pvParameters)
-  36:UserAPP/Source/SendDataProcess.c **** {
-  37:UserAPP/Source/SendDataProcess.c ****     configASSERT(((uint32_t)pvParameters) == 1);
-  38:UserAPP/Source/SendDataProcess.c **** 
-  39:UserAPP/Source/SendDataProcess.c ****     SendDataItem_t item;
+  33:UserAPP/Source/SendDataProcess.c **** 
+  34:UserAPP/Source/SendDataProcess.c **** /**
+  35:UserAPP/Source/SendDataProcess.c ****  * @brief 发送数据任务：从队列取数据并串行调用 CDC_Transmit_FS
+  36:UserAPP/Source/SendDataProcess.c ****  */
+  37:UserAPP/Source/SendDataProcess.c **** void vSendDataProcessTask(void *pvParameters)
+  38:UserAPP/Source/SendDataProcess.c **** {
+  39:UserAPP/Source/SendDataProcess.c ****     configASSERT(((uint32_t)pvParameters) == 1);
   40:UserAPP/Source/SendDataProcess.c **** 
-  41:UserAPP/Source/SendDataProcess.c ****     for (;;)
-  42:UserAPP/Source/SendDataProcess.c ****     {
-  43:UserAPP/Source/SendDataProcess.c ****         if (xSendDataQueue != NULL)
-  44:UserAPP/Source/SendDataProcess.c ****         {
-  45:UserAPP/Source/SendDataProcess.c ****             if (xQueueReceive(xSendDataQueue, &item, portMAX_DELAY) == pdPASS)
-  46:UserAPP/Source/SendDataProcess.c ****             {
-  47:UserAPP/Source/SendDataProcess.c ****                 /* 等待 USB 空闲再发送，避免并发 BUSY */
-  48:UserAPP/Source/SendDataProcess.c ****                 for (int attempt = 0; attempt < 5; ++attempt)
-  49:UserAPP/Source/SendDataProcess.c ****                 {
-  50:UserAPP/Source/SendDataProcess.c ****                     uint32_t waitLoops = 0;
-  51:UserAPP/Source/SendDataProcess.c ****                     while (USBD_CDC_GetTxState() != 0 && waitLoops < 40)
-  52:UserAPP/Source/SendDataProcess.c ****                     {
-  53:UserAPP/Source/SendDataProcess.c ****                         vTaskDelay(pdMS_TO_TICKS(5));
-  54:UserAPP/Source/SendDataProcess.c ****                         waitLoops++;
-  55:UserAPP/Source/SendDataProcess.c ****                     }
-  56:UserAPP/Source/SendDataProcess.c **** 
-  57:UserAPP/Source/SendDataProcess.c ****                     if (USBD_CDC_GetTxState() != 0)
-  58:UserAPP/Source/SendDataProcess.c ****                     {
-  59:UserAPP/Source/SendDataProcess.c ****                         continue; // 继续下一次尝试
-  60:UserAPP/Source/SendDataProcess.c ****                     }
-  61:UserAPP/Source/SendDataProcess.c **** 
-  62:UserAPP/Source/SendDataProcess.c ****                     uint8_t txRet = CDC_Transmit_FS(item.buf, item.len);
-  63:UserAPP/Source/SendDataProcess.c ****                     if (txRet == USBD_OK)
-  64:UserAPP/Source/SendDataProcess.c ****                     {
-  65:UserAPP/Source/SendDataProcess.c ****                         break; // 发送成功
-  66:UserAPP/Source/SendDataProcess.c ****                     }
-  67:UserAPP/Source/SendDataProcess.c **** 
-  68:UserAPP/Source/SendDataProcess.c ****                     vTaskDelay(pdMS_TO_TICKS(5)); // 短暂等待再试
-  69:UserAPP/Source/SendDataProcess.c ****                 }
-  70:UserAPP/Source/SendDataProcess.c ****             }
-  71:UserAPP/Source/SendDataProcess.c ****         }
+  41:UserAPP/Source/SendDataProcess.c ****     SendDataItem_t item;
+  42:UserAPP/Source/SendDataProcess.c **** 
+  43:UserAPP/Source/SendDataProcess.c ****     for (;;)
+  44:UserAPP/Source/SendDataProcess.c ****     {
+  45:UserAPP/Source/SendDataProcess.c ****         if (xSendDataQueue != NULL)
+  46:UserAPP/Source/SendDataProcess.c ****         {
+  47:UserAPP/Source/SendDataProcess.c ****             if (xQueueReceive(xSendDataQueue, &item, portMAX_DELAY) == pdPASS)
+  48:UserAPP/Source/SendDataProcess.c ****             {
+  49:UserAPP/Source/SendDataProcess.c ****                 /* 发送至串口 USART1 */
+  50:UserAPP/Source/SendDataProcess.c ****                 UART1_SendBlocking(item.buf, item.len);
+  51:UserAPP/Source/SendDataProcess.c ****             }
+  52:UserAPP/Source/SendDataProcess.c ****         }
+  53:UserAPP/Source/SendDataProcess.c ****     }
+  54:UserAPP/Source/SendDataProcess.c **** }
+  55:UserAPP/Source/SendDataProcess.c **** 
+  56:UserAPP/Source/SendDataProcess.c **** /**
+  57:UserAPP/Source/SendDataProcess.c ****  * @brief 创建待发送数据队列
+  58:UserAPP/Source/SendDataProcess.c ****  */
+  59:UserAPP/Source/SendDataProcess.c **** void vCreateSendDataQueueTask(void *pvParameters)
+  60:UserAPP/Source/SendDataProcess.c **** {
+  61:UserAPP/Source/SendDataProcess.c ****     (void)pvParameters;
+  62:UserAPP/Source/SendDataProcess.c ****     xSendDataQueue = xQueueCreate(20, sizeof(SendDataItem_t));
+  63:UserAPP/Source/SendDataProcess.c **** }
+  64:UserAPP/Source/SendDataProcess.c **** 
+  65:UserAPP/Source/SendDataProcess.c **** /**
+  66:UserAPP/Source/SendDataProcess.c ****  * @brief 格式化字符串并入统一发送队列
+  67:UserAPP/Source/SendDataProcess.c ****  */
+  68:UserAPP/Source/SendDataProcess.c **** BaseType_t QueueSendfmt(QueueHandle_t xQueue, TickType_t xTicksToWait, const char *fmt, ...)
+  69:UserAPP/Source/SendDataProcess.c **** {
+  70:UserAPP/Source/SendDataProcess.c ****     if (xQueue == NULL || fmt == NULL) {
+  71:UserAPP/Source/SendDataProcess.c ****         return pdFAIL;
   72:UserAPP/Source/SendDataProcess.c ****     }
-  73:UserAPP/Source/SendDataProcess.c **** }
-  74:UserAPP/Source/SendDataProcess.c **** 
-  75:UserAPP/Source/SendDataProcess.c **** /**
-  76:UserAPP/Source/SendDataProcess.c ****  * @brief 创建待发送数据队列
-  77:UserAPP/Source/SendDataProcess.c ****  */
-  78:UserAPP/Source/SendDataProcess.c **** void vCreateSendDataQueueTask(void *pvParameters)
-  79:UserAPP/Source/SendDataProcess.c **** {
-  80:UserAPP/Source/SendDataProcess.c ****     (void)pvParameters;
-  81:UserAPP/Source/SendDataProcess.c ****     xSendDataQueue = xQueueCreate(20, sizeof(SendDataItem_t));
-  82:UserAPP/Source/SendDataProcess.c **** }
-  83:UserAPP/Source/SendDataProcess.c **** 
-  84:UserAPP/Source/SendDataProcess.c **** /**
-  85:UserAPP/Source/SendDataProcess.c ****  * @brief 格式化字符串并入统一发送队列
-  86:UserAPP/Source/SendDataProcess.c ****  */
-  87:UserAPP/Source/SendDataProcess.c **** BaseType_t QueueSendfmt(QueueHandle_t xQueue, TickType_t xTicksToWait, const char *fmt, ...)
-  88:UserAPP/Source/SendDataProcess.c **** {
-  89:UserAPP/Source/SendDataProcess.c ****     if (xQueue == NULL || fmt == NULL) {
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cccDmnZi.s 			page 3
+  73:UserAPP/Source/SendDataProcess.c **** 
+  74:UserAPP/Source/SendDataProcess.c ****     SendDataItem_t item;
+  75:UserAPP/Source/SendDataProcess.c ****     memset(&item, 0, sizeof(item));
+  76:UserAPP/Source/SendDataProcess.c **** 
+  77:UserAPP/Source/SendDataProcess.c ****     va_list ap;
+  78:UserAPP/Source/SendDataProcess.c ****     va_start(ap, fmt);
+  79:UserAPP/Source/SendDataProcess.c ****     int len = vsnprintf((char*)item.buf, sizeof(item.buf), fmt, ap);
+  80:UserAPP/Source/SendDataProcess.c ****     va_end(ap);
+  81:UserAPP/Source/SendDataProcess.c **** 
+  82:UserAPP/Source/SendDataProcess.c ****     if (len <= 0) {
+  83:UserAPP/Source/SendDataProcess.c ****         return pdFAIL;
+  84:UserAPP/Source/SendDataProcess.c ****     }
+  85:UserAPP/Source/SendDataProcess.c **** 
+  86:UserAPP/Source/SendDataProcess.c ****     item.len = (len > (int)sizeof(item.buf)) ? (uint16_t)sizeof(item.buf) : (uint16_t)len;
+  87:UserAPP/Source/SendDataProcess.c **** 
+  88:UserAPP/Source/SendDataProcess.c ****     return xQueueSend(xQueue, &item, xTicksToWait);
+  89:UserAPP/Source/SendDataProcess.c **** }
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc2eVAD3.s 			page 3
 
 
-  90:UserAPP/Source/SendDataProcess.c ****         return pdFAIL;
-  91:UserAPP/Source/SendDataProcess.c ****     }
-  92:UserAPP/Source/SendDataProcess.c **** 
-  93:UserAPP/Source/SendDataProcess.c ****     SendDataItem_t item;
-  94:UserAPP/Source/SendDataProcess.c ****     memset(&item, 0, sizeof(item));
-  95:UserAPP/Source/SendDataProcess.c **** 
-  96:UserAPP/Source/SendDataProcess.c ****     va_list ap;
-  97:UserAPP/Source/SendDataProcess.c ****     va_start(ap, fmt);
-  98:UserAPP/Source/SendDataProcess.c ****     int len = vsnprintf((char*)item.buf, sizeof(item.buf), fmt, ap);
-  99:UserAPP/Source/SendDataProcess.c ****     va_end(ap);
- 100:UserAPP/Source/SendDataProcess.c **** 
- 101:UserAPP/Source/SendDataProcess.c ****     if (len <= 0) {
- 102:UserAPP/Source/SendDataProcess.c ****         return pdFAIL;
- 103:UserAPP/Source/SendDataProcess.c ****     }
- 104:UserAPP/Source/SendDataProcess.c **** 
- 105:UserAPP/Source/SendDataProcess.c ****     item.len = (len > (int)sizeof(item.buf)) ? (uint16_t)sizeof(item.buf) : (uint16_t)len;
- 106:UserAPP/Source/SendDataProcess.c **** 
- 107:UserAPP/Source/SendDataProcess.c ****     return xQueueSend(xQueue, &item, xTicksToWait);
- 108:UserAPP/Source/SendDataProcess.c **** }
- 109:UserAPP/Source/SendDataProcess.c **** 
- 110:UserAPP/Source/SendDataProcess.c **** /**
- 111:UserAPP/Source/SendDataProcess.c ****  * @brief 将二进制数据入统一发送队列
- 112:UserAPP/Source/SendDataProcess.c ****  */
- 113:UserAPP/Source/SendDataProcess.c **** BaseType_t SendBinaryToHost(const uint8_t *data, uint16_t len, TickType_t xTicksToWait)
- 114:UserAPP/Source/SendDataProcess.c **** {
- 115:UserAPP/Source/SendDataProcess.c ****     if (xSendDataQueue == NULL || data == NULL || len == 0) {
- 116:UserAPP/Source/SendDataProcess.c ****         return pdFAIL;
- 117:UserAPP/Source/SendDataProcess.c ****     }
- 118:UserAPP/Source/SendDataProcess.c **** 
- 119:UserAPP/Source/SendDataProcess.c ****     if (len > PRINT_QUEUE_ITEM_SIZE) {
- 120:UserAPP/Source/SendDataProcess.c ****         return pdFAIL; // 数据过长，避免溢出
- 121:UserAPP/Source/SendDataProcess.c ****     }
- 122:UserAPP/Source/SendDataProcess.c **** 
- 123:UserAPP/Source/SendDataProcess.c ****     SendDataItem_t item;
- 124:UserAPP/Source/SendDataProcess.c ****     item.len = len;
- 125:UserAPP/Source/SendDataProcess.c ****     memcpy(item.buf, data, len);
- 126:UserAPP/Source/SendDataProcess.c **** 
- 127:UserAPP/Source/SendDataProcess.c ****     return xQueueSend(xSendDataQueue, &item, xTicksToWait);
- 128:UserAPP/Source/SendDataProcess.c **** }
- 129:UserAPP/Source/SendDataProcess.c **** 
- 130:UserAPP/Source/SendDataProcess.c **** /* @brief 计算数据包的 CRC8 校验 */
- 131:UserAPP/Source/SendDataProcess.c **** static uint8_t Packet_CRC8(const uint8_t *data, size_t length)
- 132:UserAPP/Source/SendDataProcess.c **** {
-  27              		.loc 1 132 1 view -0
+  90:UserAPP/Source/SendDataProcess.c **** 
+  91:UserAPP/Source/SendDataProcess.c **** /**
+  92:UserAPP/Source/SendDataProcess.c ****  * @brief 将二进制数据入统一发送队列
+  93:UserAPP/Source/SendDataProcess.c ****  */
+  94:UserAPP/Source/SendDataProcess.c **** BaseType_t SendBinaryToHost(const uint8_t *data, uint16_t len, TickType_t xTicksToWait)
+  95:UserAPP/Source/SendDataProcess.c **** {
+  96:UserAPP/Source/SendDataProcess.c ****     if (xSendDataQueue == NULL || data == NULL || len == 0) {
+  97:UserAPP/Source/SendDataProcess.c ****         return pdFAIL;
+  98:UserAPP/Source/SendDataProcess.c ****     }
+  99:UserAPP/Source/SendDataProcess.c **** 
+ 100:UserAPP/Source/SendDataProcess.c ****     if (len > PRINT_QUEUE_ITEM_SIZE) {
+ 101:UserAPP/Source/SendDataProcess.c ****         return pdFAIL; // 数据过长，避免溢出
+ 102:UserAPP/Source/SendDataProcess.c ****     }
+ 103:UserAPP/Source/SendDataProcess.c **** 
+ 104:UserAPP/Source/SendDataProcess.c ****     SendDataItem_t item;
+ 105:UserAPP/Source/SendDataProcess.c ****     item.len = len;
+ 106:UserAPP/Source/SendDataProcess.c ****     memcpy(item.buf, data, len);
+ 107:UserAPP/Source/SendDataProcess.c **** 
+ 108:UserAPP/Source/SendDataProcess.c ****     return xQueueSend(xSendDataQueue, &item, xTicksToWait);
+ 109:UserAPP/Source/SendDataProcess.c **** }
+ 110:UserAPP/Source/SendDataProcess.c **** 
+ 111:UserAPP/Source/SendDataProcess.c **** /**
+ 112:UserAPP/Source/SendDataProcess.c ****  * @brief 将应答类二进制数据优先入发送队列（入队到队列头部）
+ 113:UserAPP/Source/SendDataProcess.c ****  */
+ 114:UserAPP/Source/SendDataProcess.c **** BaseType_t SendBinaryToHostFront(const uint8_t *data, uint16_t len, TickType_t xTicksToWait)
+ 115:UserAPP/Source/SendDataProcess.c **** {
+ 116:UserAPP/Source/SendDataProcess.c ****     if (xSendDataQueue == NULL || data == NULL || len == 0) {
+ 117:UserAPP/Source/SendDataProcess.c ****         return pdFAIL;
+ 118:UserAPP/Source/SendDataProcess.c ****     }
+ 119:UserAPP/Source/SendDataProcess.c **** 
+ 120:UserAPP/Source/SendDataProcess.c ****     if (len > PRINT_QUEUE_ITEM_SIZE) {
+ 121:UserAPP/Source/SendDataProcess.c ****         return pdFAIL; // 数据过长，避免溢出
+ 122:UserAPP/Source/SendDataProcess.c ****     }
+ 123:UserAPP/Source/SendDataProcess.c **** 
+ 124:UserAPP/Source/SendDataProcess.c ****     SendDataItem_t item;
+ 125:UserAPP/Source/SendDataProcess.c ****     item.len = len;
+ 126:UserAPP/Source/SendDataProcess.c ****     memcpy(item.buf, data, len);
+ 127:UserAPP/Source/SendDataProcess.c **** 
+ 128:UserAPP/Source/SendDataProcess.c ****     return xQueueSendToFront(xSendDataQueue, &item, xTicksToWait);
+ 129:UserAPP/Source/SendDataProcess.c **** }
+ 130:UserAPP/Source/SendDataProcess.c **** 
+ 131:UserAPP/Source/SendDataProcess.c **** /* @brief 计算数据包的 CRC8 校验 */
+ 132:UserAPP/Source/SendDataProcess.c **** static uint8_t Packet_CRC8(const uint8_t *data, size_t length)
+ 133:UserAPP/Source/SendDataProcess.c **** {
+  27              		.loc 1 133 1 view -0
   28              		.cfi_startproc
   29              		@ args = 0, pretend = 0, frame = 0
   30              		@ frame_needed = 0, uses_anonymous_args = 0
-  31              		.loc 1 132 1 is_stmt 0 view .LVU1
+  31              		.loc 1 133 1 is_stmt 0 view .LVU1
   32 0000 00B5     		push	{lr}
   33              	.LCFI0:
   34              		.cfi_def_cfa_offset 4
   35              		.cfi_offset 14, -4
   36 0002 8646     		mov	lr, r0
- 133:UserAPP/Source/SendDataProcess.c ****     uint8_t crc = 0x00;
-  37              		.loc 1 133 5 is_stmt 1 view .LVU2
+ 134:UserAPP/Source/SendDataProcess.c ****     uint8_t crc = 0x00;
+  37              		.loc 1 134 5 is_stmt 1 view .LVU2
   38              	.LVL1:
- 134:UserAPP/Source/SendDataProcess.c ****     for (size_t i = 0; i < length; ++i) {
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cccDmnZi.s 			page 4
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc2eVAD3.s 			page 4
 
 
-  39              		.loc 1 134 5 view .LVU3
-  40              	.LBB6:
-  41              		.loc 1 134 10 view .LVU4
-  42              		.loc 1 134 17 is_stmt 0 view .LVU5
+ 135:UserAPP/Source/SendDataProcess.c ****     for (size_t i = 0; i < length; ++i) {
+  39              		.loc 1 135 5 view .LVU3
+  40              	.LBB4:
+  41              		.loc 1 135 10 view .LVU4
+  42              		.loc 1 135 17 is_stmt 0 view .LVU5
   43 0004 4FF0000C 		mov	ip, #0
-  44              	.LBE6:
- 133:UserAPP/Source/SendDataProcess.c ****     uint8_t crc = 0x00;
-  45              		.loc 1 133 13 view .LVU6
+  44              	.LBE4:
+ 134:UserAPP/Source/SendDataProcess.c ****     uint8_t crc = 0x00;
+  45              		.loc 1 134 13 view .LVU6
   46 0008 6046     		mov	r0, ip
   47              	.LVL2:
-  48              	.LBB9:
-  49              		.loc 1 134 5 view .LVU7
+  48              	.LBB7:
+  49              		.loc 1 135 5 view .LVU7
   50 000a 0FE0     		b	.L2
   51              	.LVL3:
   52              	.L10:
-  53              	.LBB7:
- 135:UserAPP/Source/SendDataProcess.c ****         crc ^= data[i];
- 136:UserAPP/Source/SendDataProcess.c ****         for (uint8_t bit = 0; bit < 8; ++bit) {
- 137:UserAPP/Source/SendDataProcess.c ****             if (crc & 0x80) {
- 138:UserAPP/Source/SendDataProcess.c ****                 crc = (uint8_t)((crc << 1) ^ 0x07);
-  54              		.loc 1 138 17 is_stmt 1 view .LVU8
-  55              		.loc 1 138 44 is_stmt 0 view .LVU9
+  53              	.LBB5:
+ 136:UserAPP/Source/SendDataProcess.c ****         crc ^= data[i];
+ 137:UserAPP/Source/SendDataProcess.c ****         for (uint8_t bit = 0; bit < 8; ++bit) {
+ 138:UserAPP/Source/SendDataProcess.c ****             if (crc & 0x80) {
+ 139:UserAPP/Source/SendDataProcess.c ****                 crc = (uint8_t)((crc << 1) ^ 0x07);
+  54              		.loc 1 139 17 is_stmt 1 view .LVU8
+  55              		.loc 1 139 44 is_stmt 0 view .LVU9
   56 000c 5200     		lsls	r2, r2, #1
   57 000e 82F00702 		eor	r2, r2, #7
-  58              		.loc 1 138 21 view .LVU10
+  58              		.loc 1 139 21 view .LVU10
   59 0012 D0B2     		uxtb	r0, r2
   60              	.LVL4:
   61              	.L5:
- 136:UserAPP/Source/SendDataProcess.c ****             if (crc & 0x80) {
-  62              		.loc 1 136 40 is_stmt 1 discriminator 2 view .LVU11
+ 137:UserAPP/Source/SendDataProcess.c ****             if (crc & 0x80) {
+  62              		.loc 1 137 40 is_stmt 1 discriminator 2 view .LVU11
   63 0014 0133     		adds	r3, r3, #1
   64              	.LVL5:
- 136:UserAPP/Source/SendDataProcess.c ****             if (crc & 0x80) {
-  65              		.loc 1 136 40 is_stmt 0 discriminator 2 view .LVU12
+ 137:UserAPP/Source/SendDataProcess.c ****             if (crc & 0x80) {
+  65              		.loc 1 137 40 is_stmt 0 discriminator 2 view .LVU12
   66 0016 DBB2     		uxtb	r3, r3
   67              	.LVL6:
   68              	.L3:
- 136:UserAPP/Source/SendDataProcess.c ****             if (crc & 0x80) {
-  69              		.loc 1 136 35 is_stmt 1 discriminator 1 view .LVU13
+ 137:UserAPP/Source/SendDataProcess.c ****             if (crc & 0x80) {
+  69              		.loc 1 137 35 is_stmt 1 discriminator 1 view .LVU13
   70 0018 072B     		cmp	r3, #7
   71 001a 05D8     		bhi	.L9
- 137:UserAPP/Source/SendDataProcess.c ****                 crc = (uint8_t)((crc << 1) ^ 0x07);
-  72              		.loc 1 137 13 view .LVU14
- 137:UserAPP/Source/SendDataProcess.c ****                 crc = (uint8_t)((crc << 1) ^ 0x07);
-  73              		.loc 1 137 17 is_stmt 0 view .LVU15
+ 138:UserAPP/Source/SendDataProcess.c ****                 crc = (uint8_t)((crc << 1) ^ 0x07);
+  72              		.loc 1 138 13 view .LVU14
+ 138:UserAPP/Source/SendDataProcess.c ****                 crc = (uint8_t)((crc << 1) ^ 0x07);
+  73              		.loc 1 138 17 is_stmt 0 view .LVU15
   74 001c 42B2     		sxtb	r2, r0
- 137:UserAPP/Source/SendDataProcess.c ****                 crc = (uint8_t)((crc << 1) ^ 0x07);
-  75              		.loc 1 137 16 view .LVU16
+ 138:UserAPP/Source/SendDataProcess.c ****                 crc = (uint8_t)((crc << 1) ^ 0x07);
+  75              		.loc 1 138 16 view .LVU16
   76 001e 002A     		cmp	r2, #0
   77 0020 F4DB     		blt	.L10
- 139:UserAPP/Source/SendDataProcess.c ****             } else {
- 140:UserAPP/Source/SendDataProcess.c ****                 crc <<= 1;
-  78              		.loc 1 140 17 is_stmt 1 view .LVU17
-  79              		.loc 1 140 21 is_stmt 0 view .LVU18
+ 140:UserAPP/Source/SendDataProcess.c ****             } else {
+ 141:UserAPP/Source/SendDataProcess.c ****                 crc <<= 1;
+  78              		.loc 1 141 17 is_stmt 1 view .LVU17
+  79              		.loc 1 141 21 is_stmt 0 view .LVU18
   80 0022 4000     		lsls	r0, r0, #1
   81              	.LVL7:
-  82              		.loc 1 140 21 view .LVU19
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cccDmnZi.s 			page 5
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc2eVAD3.s 			page 5
 
 
+  82              		.loc 1 141 21 view .LVU19
   83 0024 C0B2     		uxtb	r0, r0
   84 0026 F5E7     		b	.L5
   85              	.LVL8:
   86              	.L9:
-  87              		.loc 1 140 21 view .LVU20
-  88              	.LBE7:
- 134:UserAPP/Source/SendDataProcess.c ****         crc ^= data[i];
-  89              		.loc 1 134 36 is_stmt 1 discriminator 2 view .LVU21
+  87              		.loc 1 141 21 view .LVU20
+  88              	.LBE5:
+ 135:UserAPP/Source/SendDataProcess.c ****         crc ^= data[i];
+  89              		.loc 1 135 36 is_stmt 1 discriminator 2 view .LVU21
   90 0028 0CF1010C 		add	ip, ip, #1
   91              	.LVL9:
   92              	.L2:
- 134:UserAPP/Source/SendDataProcess.c ****         crc ^= data[i];
-  93              		.loc 1 134 26 discriminator 1 view .LVU22
+ 135:UserAPP/Source/SendDataProcess.c ****         crc ^= data[i];
+  93              		.loc 1 135 26 discriminator 1 view .LVU22
   94 002c 8C45     		cmp	ip, r1
   95 002e 04D2     		bcs	.L11
- 135:UserAPP/Source/SendDataProcess.c ****         for (uint8_t bit = 0; bit < 8; ++bit) {
-  96              		.loc 1 135 9 view .LVU23
- 135:UserAPP/Source/SendDataProcess.c ****         for (uint8_t bit = 0; bit < 8; ++bit) {
-  97              		.loc 1 135 20 is_stmt 0 view .LVU24
+ 136:UserAPP/Source/SendDataProcess.c ****         for (uint8_t bit = 0; bit < 8; ++bit) {
+  96              		.loc 1 136 9 view .LVU23
+ 136:UserAPP/Source/SendDataProcess.c ****         for (uint8_t bit = 0; bit < 8; ++bit) {
+  97              		.loc 1 136 20 is_stmt 0 view .LVU24
   98 0030 1EF80C30 		ldrb	r3, [lr, ip]	@ zero_extendqisi2
- 135:UserAPP/Source/SendDataProcess.c ****         for (uint8_t bit = 0; bit < 8; ++bit) {
-  99              		.loc 1 135 13 view .LVU25
+ 136:UserAPP/Source/SendDataProcess.c ****         for (uint8_t bit = 0; bit < 8; ++bit) {
+  99              		.loc 1 136 13 view .LVU25
  100 0034 5840     		eors	r0, r0, r3
  101              	.LVL10:
- 136:UserAPP/Source/SendDataProcess.c ****             if (crc & 0x80) {
- 102              		.loc 1 136 9 is_stmt 1 view .LVU26
- 103              	.LBB8:
- 136:UserAPP/Source/SendDataProcess.c ****             if (crc & 0x80) {
- 104              		.loc 1 136 14 view .LVU27
- 136:UserAPP/Source/SendDataProcess.c ****             if (crc & 0x80) {
- 105              		.loc 1 136 22 is_stmt 0 view .LVU28
+ 137:UserAPP/Source/SendDataProcess.c ****             if (crc & 0x80) {
+ 102              		.loc 1 137 9 is_stmt 1 view .LVU26
+ 103              	.LBB6:
+ 137:UserAPP/Source/SendDataProcess.c ****             if (crc & 0x80) {
+ 104              		.loc 1 137 14 view .LVU27
+ 137:UserAPP/Source/SendDataProcess.c ****             if (crc & 0x80) {
+ 105              		.loc 1 137 22 is_stmt 0 view .LVU28
  106 0036 0023     		movs	r3, #0
- 136:UserAPP/Source/SendDataProcess.c ****             if (crc & 0x80) {
- 107              		.loc 1 136 9 view .LVU29
+ 137:UserAPP/Source/SendDataProcess.c ****             if (crc & 0x80) {
+ 107              		.loc 1 137 9 view .LVU29
  108 0038 EEE7     		b	.L3
  109              	.LVL11:
  110              	.L11:
- 136:UserAPP/Source/SendDataProcess.c ****             if (crc & 0x80) {
- 111              		.loc 1 136 9 view .LVU30
- 112              	.LBE8:
- 113              	.LBE9:
- 141:UserAPP/Source/SendDataProcess.c ****             }
- 142:UserAPP/Source/SendDataProcess.c ****         }
- 143:UserAPP/Source/SendDataProcess.c ****     }
- 144:UserAPP/Source/SendDataProcess.c ****     return crc;
- 114              		.loc 1 144 5 is_stmt 1 view .LVU31
- 145:UserAPP/Source/SendDataProcess.c **** }
- 115              		.loc 1 145 1 is_stmt 0 view .LVU32
+ 137:UserAPP/Source/SendDataProcess.c ****             if (crc & 0x80) {
+ 111              		.loc 1 137 9 view .LVU30
+ 112              	.LBE6:
+ 113              	.LBE7:
+ 142:UserAPP/Source/SendDataProcess.c ****             }
+ 143:UserAPP/Source/SendDataProcess.c ****         }
+ 144:UserAPP/Source/SendDataProcess.c ****     }
+ 145:UserAPP/Source/SendDataProcess.c ****     return crc;
+ 114              		.loc 1 145 5 is_stmt 1 view .LVU31
+ 146:UserAPP/Source/SendDataProcess.c **** }
+ 115              		.loc 1 146 1 is_stmt 0 view .LVU32
  116 003a 5DF804FB 		ldr	pc, [sp], #4
  117              		.cfi_endproc
- 118              	.LFE84:
+ 118              	.LFE85:
  120              		.section	.text.vSendDataProcessTask,"ax",%progbits
  121              		.align	1
  122              		.global	vSendDataProcessTask
  123              		.syntax unified
  124              		.thumb
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc2eVAD3.s 			page 6
+
+
  125              		.thumb_func
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cccDmnZi.s 			page 6
-
-
  127              	vSendDataProcessTask:
  128              	.LVL12:
  129              	.LFB80:
-  36:UserAPP/Source/SendDataProcess.c ****     configASSERT(((uint32_t)pvParameters) == 1);
- 130              		.loc 1 36 1 is_stmt 1 view -0
+  38:UserAPP/Source/SendDataProcess.c ****     configASSERT(((uint32_t)pvParameters) == 1);
+ 130              		.loc 1 38 1 is_stmt 1 view -0
  131              		.cfi_startproc
- 132              		@ args = 0, pretend = 0, frame = 136
- 133              		@ frame_needed = 0, uses_anonymous_args = 0
-  37:UserAPP/Source/SendDataProcess.c **** 
- 134              		.loc 1 37 5 view .LVU34
- 135 0000 0128     		cmp	r0, #1
- 136 0002 24D0     		beq	.L26
-  37:UserAPP/Source/SendDataProcess.c **** 
- 137              		.loc 1 37 5 discriminator 1 view .LVU35
- 138              	.LBB10:
- 139              	.LBI10:
- 140              		.file 2 "Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h"
+ 132              		@ Volatile: function does not return.
+ 133              		@ args = 0, pretend = 0, frame = 136
+ 134              		@ frame_needed = 0, uses_anonymous_args = 0
+  39:UserAPP/Source/SendDataProcess.c **** 
+ 135              		.loc 1 39 5 view .LVU34
+ 136 0000 0128     		cmp	r0, #1
+ 137 0002 08D0     		beq	.L18
+  39:UserAPP/Source/SendDataProcess.c **** 
+ 138              		.loc 1 39 5 discriminator 1 view .LVU35
+ 139              	.LBB8:
+ 140              	.LBI8:
+ 141              		.file 2 "Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h"
    1:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /*
    2:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * FreeRTOS Kernel V10.3.1
    3:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * Copyright (C) 2020 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
@@ -356,11 +358,11 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cccDmnZi.s 			page 1
   36:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /*-----------------------------------------------------------
   37:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * Port specific definitions.
   38:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  *
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc2eVAD3.s 			page 7
+
+
   39:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * The settings in this file configure FreeRTOS correctly for the
   40:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * given hardware and compiler.
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cccDmnZi.s 			page 7
-
-
   41:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  *
   42:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  * These settings should not be altered.
   43:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h ****  *-----------------------------------------------------------
@@ -416,11 +418,11 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cccDmnZi.s 			page 1
   93:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define portYIELD_FROM_ISR( x ) portEND_SWITCHING_ISR( x )
   94:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /*-----------------------------------------------------------*/
   95:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc2eVAD3.s 			page 8
+
+
   96:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /* Critical section management. */
   97:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** extern void vPortEnterCritical( void );
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cccDmnZi.s 			page 8
-
-
   98:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** extern void vPortExitCritical( void );
   99:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define portSET_INTERRUPT_MASK_FROM_ISR()		ulPortRaiseBASEPRI()
  100:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #define portCLEAR_INTERRUPT_MASK_FROM_ISR(x)	vPortSetBASEPRI(x)
@@ -476,11 +478,11 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cccDmnZi.s 			page 1
  150:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
  151:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #endif /* configUSE_PORT_OPTIMISED_TASK_SELECTION */
  152:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc2eVAD3.s 			page 9
+
+
  153:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /*-----------------------------------------------------------*/
  154:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cccDmnZi.s 			page 9
-
-
  155:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** #ifdef configASSERT
  156:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	void vPortValidateInterruptPriority( void );
  157:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	#define portASSERT_IF_INTERRUPT_PRIORITY_INVALID() 	vPortValidateInterruptPriority()
@@ -520,1205 +522,1128 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cccDmnZi.s 			page 1
  191:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** /*-----------------------------------------------------------*/
  192:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
  193:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** portFORCE_INLINE static void vPortRaiseBASEPRI( void )
- 141              		.loc 2 193 30 view .LVU36
- 142              	.LBB11:
+ 142              		.loc 2 193 30 view .LVU36
+ 143              	.LBB9:
  194:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** {
  195:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** uint32_t ulNewBASEPRI;
- 143              		.loc 2 195 1 view .LVU37
+ 144              		.loc 2 195 1 view .LVU37
  196:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 
  197:Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h **** 	__asm volatile
- 144              		.loc 2 197 2 view .LVU38
- 145              		.syntax unified
- 146              	@ 197 "Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h" 1
- 147 0004 4FF05003 			mov r3, #80												
- 148 0008 83F31188 		msr basepri, r3											
- 149 000c BFF36F8F 		isb														
- 150 0010 BFF34F8F 		dsb														
- 151              	
- 152              	@ 0 "" 2
- 153              		.thumb
- 154              		.syntax unified
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cccDmnZi.s 			page 10
+ 145              		.loc 2 197 2 view .LVU38
+ 146              		.syntax unified
+ 147              	@ 197 "Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h" 1
+ 148 0004 4FF05003 			mov r3, #80												
+ 149 0008 83F31188 		msr basepri, r3											
+ 150 000c BFF36F8F 		isb														
+ 151 0010 BFF34F8F 		dsb														
+ 152              	
+ 153              	@ 0 "" 2
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc2eVAD3.s 			page 10
 
 
- 155              	.L14:
- 156              	.LBE11:
- 157              	.LBE10:
-  37:UserAPP/Source/SendDataProcess.c **** 
- 158              		.loc 1 37 5 view .LVU39
-  37:UserAPP/Source/SendDataProcess.c **** 
- 159              		.loc 1 37 5 view .LVU40
- 160 0014 FEE7     		b	.L14
- 161              	.LVL13:
- 162              	.L18:
- 163              	.LCFI1:
- 164              		.cfi_def_cfa_offset 152
- 165              		.cfi_offset 4, -12
- 166              		.cfi_offset 5, -8
- 167              		.cfi_offset 14, -4
- 168              	.LBB12:
- 169              	.LBB13:
-  57:UserAPP/Source/SendDataProcess.c ****                     {
- 170              		.loc 1 57 21 view .LVU41
-  57:UserAPP/Source/SendDataProcess.c ****                     {
- 171              		.loc 1 57 25 is_stmt 0 view .LVU42
- 172 0016 FFF7FEFF 		bl	USBD_CDC_GetTxState
- 173              	.LVL14:
-  57:UserAPP/Source/SendDataProcess.c ****                     {
- 174              		.loc 1 57 24 discriminator 1 view .LVU43
- 175 001a 48B9     		cbnz	r0, .L20
-  62:UserAPP/Source/SendDataProcess.c ****                     if (txRet == USBD_OK)
- 176              		.loc 1 62 21 is_stmt 1 view .LVU44
-  62:UserAPP/Source/SendDataProcess.c ****                     if (txRet == USBD_OK)
- 177              		.loc 1 62 37 is_stmt 0 view .LVU45
- 178 001c BDF80410 		ldrh	r1, [sp, #4]
- 179 0020 0DF10600 		add	r0, sp, #6
- 180 0024 FFF7FEFF 		bl	CDC_Transmit_FS
- 181              	.LVL15:
-  63:UserAPP/Source/SendDataProcess.c ****                     {
- 182              		.loc 1 63 21 is_stmt 1 view .LVU46
-  63:UserAPP/Source/SendDataProcess.c ****                     {
- 183              		.loc 1 63 24 is_stmt 0 view .LVU47
- 184 0028 98B1     		cbz	r0, .L15
-  68:UserAPP/Source/SendDataProcess.c ****                 }
- 185              		.loc 1 68 21 is_stmt 1 view .LVU48
- 186 002a 3220     		movs	r0, #50
- 187              	.LVL16:
-  68:UserAPP/Source/SendDataProcess.c ****                 }
- 188              		.loc 1 68 21 is_stmt 0 view .LVU49
- 189 002c FFF7FEFF 		bl	vTaskDelay
- 190              	.LVL17:
- 191              	.L20:
-  68:UserAPP/Source/SendDataProcess.c ****                 }
- 192              		.loc 1 68 21 view .LVU50
- 193              	.LBE13:
-  48:UserAPP/Source/SendDataProcess.c ****                 {
- 194              		.loc 1 48 52 is_stmt 1 discriminator 2 view .LVU51
- 195 0030 0135     		adds	r5, r5, #1
- 196              	.LVL18:
- 197              	.L16:
-  48:UserAPP/Source/SendDataProcess.c ****                 {
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cccDmnZi.s 			page 11
-
-
- 198              		.loc 1 48 47 discriminator 1 view .LVU52
- 199 0032 042D     		cmp	r5, #4
- 200 0034 0DDC     		bgt	.L15
- 201              	.LBB14:
-  50:UserAPP/Source/SendDataProcess.c ****                     while (USBD_CDC_GetTxState() != 0 && waitLoops < 40)
- 202              		.loc 1 50 30 is_stmt 0 view .LVU53
- 203 0036 0024     		movs	r4, #0
- 204              	.L21:
- 205              	.LVL19:
-  51:UserAPP/Source/SendDataProcess.c ****                     {
- 206              		.loc 1 51 55 is_stmt 1 view .LVU54
-  51:UserAPP/Source/SendDataProcess.c ****                     {
- 207              		.loc 1 51 28 is_stmt 0 view .LVU55
- 208 0038 FFF7FEFF 		bl	USBD_CDC_GetTxState
- 209              	.LVL20:
-  51:UserAPP/Source/SendDataProcess.c ****                     {
- 210              		.loc 1 51 55 discriminator 1 view .LVU56
- 211 003c 0028     		cmp	r0, #0
- 212 003e EAD0     		beq	.L18
- 213 0040 272C     		cmp	r4, #39
- 214 0042 E8D8     		bhi	.L18
-  53:UserAPP/Source/SendDataProcess.c ****                         waitLoops++;
- 215              		.loc 1 53 25 is_stmt 1 view .LVU57
- 216 0044 3220     		movs	r0, #50
- 217 0046 FFF7FEFF 		bl	vTaskDelay
- 218              	.LVL21:
-  54:UserAPP/Source/SendDataProcess.c ****                     }
- 219              		.loc 1 54 25 view .LVU58
-  54:UserAPP/Source/SendDataProcess.c ****                     }
- 220              		.loc 1 54 34 is_stmt 0 view .LVU59
- 221 004a 0134     		adds	r4, r4, #1
- 222              	.LVL22:
-  54:UserAPP/Source/SendDataProcess.c ****                     }
- 223              		.loc 1 54 34 view .LVU60
- 224 004c F4E7     		b	.L21
- 225              	.LVL23:
- 226              	.L26:
- 227              	.LCFI2:
- 228              		.cfi_def_cfa_offset 0
- 229              		.cfi_restore 4
- 230              		.cfi_restore 5
- 231              		.cfi_restore 14
-  54:UserAPP/Source/SendDataProcess.c ****                     }
- 232              		.loc 1 54 34 view .LVU61
- 233              	.LBE14:
- 234              	.LBE12:
-  36:UserAPP/Source/SendDataProcess.c ****     configASSERT(((uint32_t)pvParameters) == 1);
- 235              		.loc 1 36 1 view .LVU62
- 236 004e 30B5     		push	{r4, r5, lr}
- 237              	.LCFI3:
- 238              		.cfi_def_cfa_offset 12
- 239              		.cfi_offset 4, -12
- 240              		.cfi_offset 5, -8
- 241              		.cfi_offset 14, -4
- 242 0050 A3B0     		sub	sp, sp, #140
- 243              	.LCFI4:
- 244              		.cfi_def_cfa_offset 152
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cccDmnZi.s 			page 12
-
-
- 245              	.LVL24:
- 246              	.L15:
-  37:UserAPP/Source/SendDataProcess.c **** 
- 247              		.loc 1 37 48 is_stmt 1 view .LVU63
+ 154              		.thumb
+ 155              		.syntax unified
+ 156              	.L14:
+ 157              	.LBE9:
+ 158              	.LBE8:
   39:UserAPP/Source/SendDataProcess.c **** 
- 248              		.loc 1 39 5 view .LVU64
-  41:UserAPP/Source/SendDataProcess.c ****     {
- 249              		.loc 1 41 5 view .LVU65
-  43:UserAPP/Source/SendDataProcess.c ****         {
- 250              		.loc 1 43 9 view .LVU66
-  43:UserAPP/Source/SendDataProcess.c ****         {
- 251              		.loc 1 43 28 is_stmt 0 view .LVU67
- 252 0052 064B     		ldr	r3, .L27
- 253 0054 1868     		ldr	r0, [r3]
-  43:UserAPP/Source/SendDataProcess.c ****         {
- 254              		.loc 1 43 12 view .LVU68
- 255 0056 0028     		cmp	r0, #0
- 256 0058 FBD0     		beq	.L15
-  45:UserAPP/Source/SendDataProcess.c ****             {
- 257              		.loc 1 45 13 is_stmt 1 view .LVU69
-  45:UserAPP/Source/SendDataProcess.c ****             {
- 258              		.loc 1 45 17 is_stmt 0 view .LVU70
- 259 005a 4FF0FF32 		mov	r2, #-1
- 260 005e 01A9     		add	r1, sp, #4
- 261 0060 FFF7FEFF 		bl	xQueueReceive
- 262              	.LVL25:
-  45:UserAPP/Source/SendDataProcess.c ****             {
- 263              		.loc 1 45 16 discriminator 1 view .LVU71
- 264 0064 0128     		cmp	r0, #1
- 265 0066 F4D1     		bne	.L15
- 266              	.LBB15:
-  48:UserAPP/Source/SendDataProcess.c ****                 {
- 267              		.loc 1 48 26 view .LVU72
- 268 0068 0025     		movs	r5, #0
- 269 006a E2E7     		b	.L16
- 270              	.L28:
- 271              		.align	2
- 272              	.L27:
- 273 006c 00000000 		.word	xSendDataQueue
- 274              	.LBE15:
- 275              		.cfi_endproc
- 276              	.LFE80:
- 278              		.section	.text.vCreateSendDataQueueTask,"ax",%progbits
- 279              		.align	1
- 280              		.global	vCreateSendDataQueueTask
- 281              		.syntax unified
- 282              		.thumb
- 283              		.thumb_func
- 285              	vCreateSendDataQueueTask:
- 286              	.LVL26:
- 287              	.LFB81:
-  79:UserAPP/Source/SendDataProcess.c ****     (void)pvParameters;
- 288              		.loc 1 79 1 is_stmt 1 view -0
- 289              		.cfi_startproc
- 290              		@ args = 0, pretend = 0, frame = 0
- 291              		@ frame_needed = 0, uses_anonymous_args = 0
-  79:UserAPP/Source/SendDataProcess.c ****     (void)pvParameters;
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cccDmnZi.s 			page 13
+ 159              		.loc 1 39 5 view .LVU39
+  39:UserAPP/Source/SendDataProcess.c **** 
+ 160              		.loc 1 39 5 view .LVU40
+ 161 0014 FEE7     		b	.L14
+ 162              	.L18:
+  38:UserAPP/Source/SendDataProcess.c ****     configASSERT(((uint32_t)pvParameters) == 1);
+ 163              		.loc 1 38 1 is_stmt 0 view .LVU41
+ 164 0016 00B5     		push	{lr}
+ 165              	.LCFI1:
+ 166              		.cfi_def_cfa_offset 4
+ 167              		.cfi_offset 14, -4
+ 168 0018 A3B0     		sub	sp, sp, #140
+ 169              	.LCFI2:
+ 170              		.cfi_def_cfa_offset 144
+ 171              	.LVL13:
+ 172              	.L15:
+  39:UserAPP/Source/SendDataProcess.c **** 
+ 173              		.loc 1 39 48 is_stmt 1 view .LVU42
+  41:UserAPP/Source/SendDataProcess.c **** 
+ 174              		.loc 1 41 5 view .LVU43
+  43:UserAPP/Source/SendDataProcess.c ****     {
+ 175              		.loc 1 43 5 view .LVU44
+  45:UserAPP/Source/SendDataProcess.c ****         {
+ 176              		.loc 1 45 9 view .LVU45
+  45:UserAPP/Source/SendDataProcess.c ****         {
+ 177              		.loc 1 45 28 is_stmt 0 view .LVU46
+ 178 001a 094B     		ldr	r3, .L19
+ 179 001c 1868     		ldr	r0, [r3]
+  45:UserAPP/Source/SendDataProcess.c ****         {
+ 180              		.loc 1 45 12 view .LVU47
+ 181 001e 0028     		cmp	r0, #0
+ 182 0020 FBD0     		beq	.L15
+  47:UserAPP/Source/SendDataProcess.c ****             {
+ 183              		.loc 1 47 13 is_stmt 1 view .LVU48
+  47:UserAPP/Source/SendDataProcess.c ****             {
+ 184              		.loc 1 47 17 is_stmt 0 view .LVU49
+ 185 0022 4FF0FF32 		mov	r2, #-1
+ 186 0026 01A9     		add	r1, sp, #4
+ 187 0028 FFF7FEFF 		bl	xQueueReceive
+ 188              	.LVL14:
+  47:UserAPP/Source/SendDataProcess.c ****             {
+ 189              		.loc 1 47 16 discriminator 1 view .LVU50
+ 190 002c 0128     		cmp	r0, #1
+ 191 002e F4D1     		bne	.L15
+  50:UserAPP/Source/SendDataProcess.c ****             }
+ 192              		.loc 1 50 17 is_stmt 1 view .LVU51
+ 193 0030 BDF80410 		ldrh	r1, [sp, #4]
+ 194 0034 0DF10600 		add	r0, sp, #6
+ 195 0038 FFF7FEFF 		bl	UART1_SendBlocking
+ 196              	.LVL15:
+ 197 003c EDE7     		b	.L15
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc2eVAD3.s 			page 11
 
 
- 292              		.loc 1 79 1 is_stmt 0 view .LVU74
- 293 0000 08B5     		push	{r3, lr}
- 294              	.LCFI5:
- 295              		.cfi_def_cfa_offset 8
- 296              		.cfi_offset 3, -8
- 297              		.cfi_offset 14, -4
-  80:UserAPP/Source/SendDataProcess.c ****     xSendDataQueue = xQueueCreate(20, sizeof(SendDataItem_t));
- 298              		.loc 1 80 5 is_stmt 1 view .LVU75
-  81:UserAPP/Source/SendDataProcess.c **** }
- 299              		.loc 1 81 5 view .LVU76
-  81:UserAPP/Source/SendDataProcess.c **** }
- 300              		.loc 1 81 22 is_stmt 0 view .LVU77
- 301 0002 0022     		movs	r2, #0
- 302 0004 8221     		movs	r1, #130
- 303 0006 1420     		movs	r0, #20
- 304              	.LVL27:
-  81:UserAPP/Source/SendDataProcess.c **** }
- 305              		.loc 1 81 22 view .LVU78
- 306 0008 FFF7FEFF 		bl	xQueueGenericCreate
- 307              	.LVL28:
-  81:UserAPP/Source/SendDataProcess.c **** }
- 308              		.loc 1 81 20 discriminator 1 view .LVU79
- 309 000c 014B     		ldr	r3, .L31
- 310 000e 1860     		str	r0, [r3]
-  82:UserAPP/Source/SendDataProcess.c **** 
- 311              		.loc 1 82 1 view .LVU80
- 312 0010 08BD     		pop	{r3, pc}
- 313              	.L32:
- 314 0012 00BF     		.align	2
- 315              	.L31:
- 316 0014 00000000 		.word	xSendDataQueue
- 317              		.cfi_endproc
- 318              	.LFE81:
- 320              		.section	.rodata.vCreateSendDataTask.str1.4,"aMS",%progbits,1
- 321              		.align	2
- 322              	.LC0:
- 323 0000 7653656E 		.ascii	"vSendDataProcessTask\000"
- 323      64446174 
- 323      6150726F 
- 323      63657373 
- 323      5461736B 
- 324              		.section	.text.vCreateSendDataTask,"ax",%progbits
- 325              		.align	1
- 326              		.global	vCreateSendDataTask
- 327              		.syntax unified
- 328              		.thumb
- 329              		.thumb_func
- 331              	vCreateSendDataTask:
- 332              	.LFB79:
-  20:UserAPP/Source/SendDataProcess.c ****     vCreateSendDataQueueTask(NULL);
- 333              		.loc 1 20 1 is_stmt 1 view -0
- 334              		.cfi_startproc
- 335              		@ args = 0, pretend = 0, frame = 0
- 336              		@ frame_needed = 0, uses_anonymous_args = 0
- 337 0000 00B5     		push	{lr}
- 338              	.LCFI6:
- 339              		.cfi_def_cfa_offset 4
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cccDmnZi.s 			page 14
+ 198              	.L20:
+ 199 003e 00BF     		.align	2
+ 200              	.L19:
+ 201 0040 00000000 		.word	xSendDataQueue
+ 202              		.cfi_endproc
+ 203              	.LFE80:
+ 205              		.section	.text.vCreateSendDataQueueTask,"ax",%progbits
+ 206              		.align	1
+ 207              		.global	vCreateSendDataQueueTask
+ 208              		.syntax unified
+ 209              		.thumb
+ 210              		.thumb_func
+ 212              	vCreateSendDataQueueTask:
+ 213              	.LVL16:
+ 214              	.LFB81:
+  60:UserAPP/Source/SendDataProcess.c ****     (void)pvParameters;
+ 215              		.loc 1 60 1 view -0
+ 216              		.cfi_startproc
+ 217              		@ args = 0, pretend = 0, frame = 0
+ 218              		@ frame_needed = 0, uses_anonymous_args = 0
+  60:UserAPP/Source/SendDataProcess.c ****     (void)pvParameters;
+ 219              		.loc 1 60 1 is_stmt 0 view .LVU53
+ 220 0000 08B5     		push	{r3, lr}
+ 221              	.LCFI3:
+ 222              		.cfi_def_cfa_offset 8
+ 223              		.cfi_offset 3, -8
+ 224              		.cfi_offset 14, -4
+  61:UserAPP/Source/SendDataProcess.c ****     xSendDataQueue = xQueueCreate(20, sizeof(SendDataItem_t));
+ 225              		.loc 1 61 5 is_stmt 1 view .LVU54
+  62:UserAPP/Source/SendDataProcess.c **** }
+ 226              		.loc 1 62 5 view .LVU55
+  62:UserAPP/Source/SendDataProcess.c **** }
+ 227              		.loc 1 62 22 is_stmt 0 view .LVU56
+ 228 0002 0022     		movs	r2, #0
+ 229 0004 8221     		movs	r1, #130
+ 230 0006 1420     		movs	r0, #20
+ 231              	.LVL17:
+  62:UserAPP/Source/SendDataProcess.c **** }
+ 232              		.loc 1 62 22 view .LVU57
+ 233 0008 FFF7FEFF 		bl	xQueueGenericCreate
+ 234              	.LVL18:
+  62:UserAPP/Source/SendDataProcess.c **** }
+ 235              		.loc 1 62 20 discriminator 1 view .LVU58
+ 236 000c 014B     		ldr	r3, .L23
+ 237 000e 1860     		str	r0, [r3]
+  63:UserAPP/Source/SendDataProcess.c **** 
+ 238              		.loc 1 63 1 view .LVU59
+ 239 0010 08BD     		pop	{r3, pc}
+ 240              	.L24:
+ 241 0012 00BF     		.align	2
+ 242              	.L23:
+ 243 0014 00000000 		.word	xSendDataQueue
+ 244              		.cfi_endproc
+ 245              	.LFE81:
+ 247              		.section	.rodata.vCreateSendDataTask.str1.4,"aMS",%progbits,1
+ 248              		.align	2
+ 249              	.LC0:
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc2eVAD3.s 			page 12
 
 
- 340              		.cfi_offset 14, -4
- 341 0002 83B0     		sub	sp, sp, #12
- 342              	.LCFI7:
- 343              		.cfi_def_cfa_offset 16
-  21:UserAPP/Source/SendDataProcess.c **** 
- 344              		.loc 1 21 5 view .LVU82
- 345 0004 0020     		movs	r0, #0
- 346 0006 FFF7FEFF 		bl	vCreateSendDataQueueTask
- 347              	.LVL29:
-  23:UserAPP/Source/SendDataProcess.c ****         vSendDataProcessTask,
- 348              		.loc 1 23 5 view .LVU83
-  23:UserAPP/Source/SendDataProcess.c ****         vSendDataProcessTask,
- 349              		.loc 1 23 35 is_stmt 0 view .LVU84
- 350 000a 084B     		ldr	r3, .L35
- 351 000c 0193     		str	r3, [sp, #4]
- 352 000e 0023     		movs	r3, #0
- 353 0010 0093     		str	r3, [sp]
- 354 0012 0123     		movs	r3, #1
- 355 0014 4FF48072 		mov	r2, #256
- 356 0018 0549     		ldr	r1, .L35+4
- 357 001a 0648     		ldr	r0, .L35+8
- 358 001c FFF7FEFF 		bl	xTaskCreate
- 359              	.LVL30:
-  23:UserAPP/Source/SendDataProcess.c ****         vSendDataProcessTask,
- 360              		.loc 1 23 33 discriminator 1 view .LVU85
- 361 0020 054B     		ldr	r3, .L35+12
- 362 0022 1860     		str	r0, [r3]
-  30:UserAPP/Source/SendDataProcess.c **** 
- 363              		.loc 1 30 1 view .LVU86
- 364 0024 03B0     		add	sp, sp, #12
- 365              	.LCFI8:
- 366              		.cfi_def_cfa_offset 4
- 367              		@ sp needed
- 368 0026 5DF804FB 		ldr	pc, [sp], #4
- 369              	.L36:
- 370 002a 00BF     		.align	2
- 371              	.L35:
- 372 002c 00000000 		.word	xCreateSendDataTaskHandle
- 373 0030 00000000 		.word	.LC0
- 374 0034 00000000 		.word	vSendDataProcessTask
- 375 0038 00000000 		.word	xCreateSendDataTaskReturned
- 376              		.cfi_endproc
- 377              	.LFE79:
- 379              		.section	.text.QueueSendfmt,"ax",%progbits
- 380              		.align	1
- 381              		.global	QueueSendfmt
- 382              		.syntax unified
- 383              		.thumb
- 384              		.thumb_func
- 386              	QueueSendfmt:
- 387              	.LVL31:
- 388              	.LFB82:
-  88:UserAPP/Source/SendDataProcess.c ****     if (xQueue == NULL || fmt == NULL) {
- 389              		.loc 1 88 1 is_stmt 1 view -0
- 390              		.cfi_startproc
- 391              		@ args = 4, pretend = 8, frame = 136
- 392              		@ frame_needed = 0, uses_anonymous_args = 1
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cccDmnZi.s 			page 15
+ 250 0000 7653656E 		.ascii	"vSendDataProcessTask\000"
+ 250      64446174 
+ 250      6150726F 
+ 250      63657373 
+ 250      5461736B 
+ 251              		.section	.text.vCreateSendDataTask,"ax",%progbits
+ 252              		.align	1
+ 253              		.global	vCreateSendDataTask
+ 254              		.syntax unified
+ 255              		.thumb
+ 256              		.thumb_func
+ 258              	vCreateSendDataTask:
+ 259              	.LFB79:
+  22:UserAPP/Source/SendDataProcess.c ****     vCreateSendDataQueueTask(NULL);
+ 260              		.loc 1 22 1 is_stmt 1 view -0
+ 261              		.cfi_startproc
+ 262              		@ args = 0, pretend = 0, frame = 0
+ 263              		@ frame_needed = 0, uses_anonymous_args = 0
+ 264 0000 00B5     		push	{lr}
+ 265              	.LCFI4:
+ 266              		.cfi_def_cfa_offset 4
+ 267              		.cfi_offset 14, -4
+ 268 0002 83B0     		sub	sp, sp, #12
+ 269              	.LCFI5:
+ 270              		.cfi_def_cfa_offset 16
+  23:UserAPP/Source/SendDataProcess.c **** 
+ 271              		.loc 1 23 5 view .LVU61
+ 272 0004 0020     		movs	r0, #0
+ 273 0006 FFF7FEFF 		bl	vCreateSendDataQueueTask
+ 274              	.LVL19:
+  25:UserAPP/Source/SendDataProcess.c ****         vSendDataProcessTask,
+ 275              		.loc 1 25 5 view .LVU62
+  25:UserAPP/Source/SendDataProcess.c ****         vSendDataProcessTask,
+ 276              		.loc 1 25 35 is_stmt 0 view .LVU63
+ 277 000a 084B     		ldr	r3, .L27
+ 278 000c 0193     		str	r3, [sp, #4]
+ 279 000e 0023     		movs	r3, #0
+ 280 0010 0093     		str	r3, [sp]
+ 281 0012 0123     		movs	r3, #1
+ 282 0014 4FF48072 		mov	r2, #256
+ 283 0018 0549     		ldr	r1, .L27+4
+ 284 001a 0648     		ldr	r0, .L27+8
+ 285 001c FFF7FEFF 		bl	xTaskCreate
+ 286              	.LVL20:
+  25:UserAPP/Source/SendDataProcess.c ****         vSendDataProcessTask,
+ 287              		.loc 1 25 33 discriminator 1 view .LVU64
+ 288 0020 054B     		ldr	r3, .L27+12
+ 289 0022 1860     		str	r0, [r3]
+  32:UserAPP/Source/SendDataProcess.c **** 
+ 290              		.loc 1 32 1 view .LVU65
+ 291 0024 03B0     		add	sp, sp, #12
+ 292              	.LCFI6:
+ 293              		.cfi_def_cfa_offset 4
+ 294              		@ sp needed
+ 295 0026 5DF804FB 		ldr	pc, [sp], #4
+ 296              	.L28:
+ 297 002a 00BF     		.align	2
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc2eVAD3.s 			page 13
 
 
-  88:UserAPP/Source/SendDataProcess.c ****     if (xQueue == NULL || fmt == NULL) {
- 393              		.loc 1 88 1 is_stmt 0 view .LVU88
- 394 0000 0CB4     		push	{r2, r3}
- 395              	.LCFI9:
- 396              		.cfi_def_cfa_offset 8
- 397              		.cfi_offset 2, -8
- 398              		.cfi_offset 3, -4
- 399 0002 70B5     		push	{r4, r5, r6, lr}
- 400              	.LCFI10:
- 401              		.cfi_def_cfa_offset 24
- 402              		.cfi_offset 4, -24
- 403              		.cfi_offset 5, -20
- 404              		.cfi_offset 6, -16
- 405              		.cfi_offset 14, -12
- 406 0004 A2B0     		sub	sp, sp, #136
- 407              	.LCFI11:
- 408              		.cfi_def_cfa_offset 160
- 409 0006 269D     		ldr	r5, [sp, #152]
-  89:UserAPP/Source/SendDataProcess.c ****         return pdFAIL;
- 410              		.loc 1 89 5 is_stmt 1 view .LVU89
-  89:UserAPP/Source/SendDataProcess.c ****         return pdFAIL;
- 411              		.loc 1 89 8 is_stmt 0 view .LVU90
- 412 0008 18B3     		cbz	r0, .L40
- 413 000a 0C46     		mov	r4, r1
- 414 000c 0646     		mov	r6, r0
-  89:UserAPP/Source/SendDataProcess.c ****         return pdFAIL;
- 415              		.loc 1 89 24 discriminator 1 view .LVU91
- 416 000e 15B3     		cbz	r5, .L41
-  93:UserAPP/Source/SendDataProcess.c ****     memset(&item, 0, sizeof(item));
- 417              		.loc 1 93 5 is_stmt 1 view .LVU92
-  94:UserAPP/Source/SendDataProcess.c **** 
- 418              		.loc 1 94 5 view .LVU93
- 419 0010 8222     		movs	r2, #130
- 420 0012 0021     		movs	r1, #0
- 421              	.LVL32:
-  94:UserAPP/Source/SendDataProcess.c **** 
- 422              		.loc 1 94 5 is_stmt 0 view .LVU94
- 423 0014 01A8     		add	r0, sp, #4
- 424              	.LVL33:
-  94:UserAPP/Source/SendDataProcess.c **** 
- 425              		.loc 1 94 5 view .LVU95
- 426 0016 FFF7FEFF 		bl	memset
- 427              	.LVL34:
-  96:UserAPP/Source/SendDataProcess.c ****     va_start(ap, fmt);
- 428              		.loc 1 96 5 is_stmt 1 view .LVU96
-  97:UserAPP/Source/SendDataProcess.c ****     int len = vsnprintf((char*)item.buf, sizeof(item.buf), fmt, ap);
- 429              		.loc 1 97 5 view .LVU97
- 430 001a 27AB     		add	r3, sp, #156
- 431 001c 0093     		str	r3, [sp]
-  98:UserAPP/Source/SendDataProcess.c ****     va_end(ap);
- 432              		.loc 1 98 5 view .LVU98
-  98:UserAPP/Source/SendDataProcess.c ****     va_end(ap);
- 433              		.loc 1 98 15 is_stmt 0 view .LVU99
- 434 001e 2A46     		mov	r2, r5
- 435 0020 8021     		movs	r1, #128
- 436 0022 0DF10600 		add	r0, sp, #6
- 437 0026 FFF7FEFF 		bl	vsnprintf
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cccDmnZi.s 			page 16
+ 298              	.L27:
+ 299 002c 00000000 		.word	xCreateSendDataTaskHandle
+ 300 0030 00000000 		.word	.LC0
+ 301 0034 00000000 		.word	vSendDataProcessTask
+ 302 0038 00000000 		.word	xCreateSendDataTaskReturned
+ 303              		.cfi_endproc
+ 304              	.LFE79:
+ 306              		.section	.text.QueueSendfmt,"ax",%progbits
+ 307              		.align	1
+ 308              		.global	QueueSendfmt
+ 309              		.syntax unified
+ 310              		.thumb
+ 311              		.thumb_func
+ 313              	QueueSendfmt:
+ 314              	.LVL21:
+ 315              	.LFB82:
+  69:UserAPP/Source/SendDataProcess.c ****     if (xQueue == NULL || fmt == NULL) {
+ 316              		.loc 1 69 1 is_stmt 1 view -0
+ 317              		.cfi_startproc
+ 318              		@ args = 4, pretend = 8, frame = 136
+ 319              		@ frame_needed = 0, uses_anonymous_args = 1
+  69:UserAPP/Source/SendDataProcess.c ****     if (xQueue == NULL || fmt == NULL) {
+ 320              		.loc 1 69 1 is_stmt 0 view .LVU67
+ 321 0000 0CB4     		push	{r2, r3}
+ 322              	.LCFI7:
+ 323              		.cfi_def_cfa_offset 8
+ 324              		.cfi_offset 2, -8
+ 325              		.cfi_offset 3, -4
+ 326 0002 70B5     		push	{r4, r5, r6, lr}
+ 327              	.LCFI8:
+ 328              		.cfi_def_cfa_offset 24
+ 329              		.cfi_offset 4, -24
+ 330              		.cfi_offset 5, -20
+ 331              		.cfi_offset 6, -16
+ 332              		.cfi_offset 14, -12
+ 333 0004 A2B0     		sub	sp, sp, #136
+ 334              	.LCFI9:
+ 335              		.cfi_def_cfa_offset 160
+ 336 0006 269D     		ldr	r5, [sp, #152]
+  70:UserAPP/Source/SendDataProcess.c ****         return pdFAIL;
+ 337              		.loc 1 70 5 is_stmt 1 view .LVU68
+  70:UserAPP/Source/SendDataProcess.c ****         return pdFAIL;
+ 338              		.loc 1 70 8 is_stmt 0 view .LVU69
+ 339 0008 18B3     		cbz	r0, .L32
+ 340 000a 0C46     		mov	r4, r1
+ 341 000c 0646     		mov	r6, r0
+  70:UserAPP/Source/SendDataProcess.c ****         return pdFAIL;
+ 342              		.loc 1 70 24 discriminator 1 view .LVU70
+ 343 000e 15B3     		cbz	r5, .L33
+  74:UserAPP/Source/SendDataProcess.c ****     memset(&item, 0, sizeof(item));
+ 344              		.loc 1 74 5 is_stmt 1 view .LVU71
+  75:UserAPP/Source/SendDataProcess.c **** 
+ 345              		.loc 1 75 5 view .LVU72
+ 346 0010 8222     		movs	r2, #130
+ 347 0012 0021     		movs	r1, #0
+ 348              	.LVL22:
+  75:UserAPP/Source/SendDataProcess.c **** 
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc2eVAD3.s 			page 14
 
 
- 438              	.LVL35:
-  99:UserAPP/Source/SendDataProcess.c **** 
- 439              		.loc 1 99 5 is_stmt 1 view .LVU100
- 101:UserAPP/Source/SendDataProcess.c ****         return pdFAIL;
- 440              		.loc 1 101 5 view .LVU101
- 101:UserAPP/Source/SendDataProcess.c ****         return pdFAIL;
- 441              		.loc 1 101 8 is_stmt 0 view .LVU102
- 442 002a 0028     		cmp	r0, #0
- 101:UserAPP/Source/SendDataProcess.c ****         return pdFAIL;
- 443              		.loc 1 101 8 view .LVU103
- 444 002c 15DD     		ble	.L42
- 105:UserAPP/Source/SendDataProcess.c **** 
- 445              		.loc 1 105 5 is_stmt 1 view .LVU104
- 105:UserAPP/Source/SendDataProcess.c **** 
- 446              		.loc 1 105 14 is_stmt 0 view .LVU105
- 447 002e 8028     		cmp	r0, #128
- 448 0030 0DDC     		bgt	.L43
- 105:UserAPP/Source/SendDataProcess.c **** 
- 449              		.loc 1 105 14 discriminator 1 view .LVU106
- 450 0032 80B2     		uxth	r0, r0
+ 349              		.loc 1 75 5 is_stmt 0 view .LVU73
+ 350 0014 01A8     		add	r0, sp, #4
+ 351              	.LVL23:
+  75:UserAPP/Source/SendDataProcess.c **** 
+ 352              		.loc 1 75 5 view .LVU74
+ 353 0016 FFF7FEFF 		bl	memset
+ 354              	.LVL24:
+  77:UserAPP/Source/SendDataProcess.c ****     va_start(ap, fmt);
+ 355              		.loc 1 77 5 is_stmt 1 view .LVU75
+  78:UserAPP/Source/SendDataProcess.c ****     int len = vsnprintf((char*)item.buf, sizeof(item.buf), fmt, ap);
+ 356              		.loc 1 78 5 view .LVU76
+ 357 001a 27AB     		add	r3, sp, #156
+ 358 001c 0093     		str	r3, [sp]
+  79:UserAPP/Source/SendDataProcess.c ****     va_end(ap);
+ 359              		.loc 1 79 5 view .LVU77
+  79:UserAPP/Source/SendDataProcess.c ****     va_end(ap);
+ 360              		.loc 1 79 15 is_stmt 0 view .LVU78
+ 361 001e 2A46     		mov	r2, r5
+ 362 0020 8021     		movs	r1, #128
+ 363 0022 0DF10600 		add	r0, sp, #6
+ 364 0026 FFF7FEFF 		bl	vsnprintf
+ 365              	.LVL25:
+  80:UserAPP/Source/SendDataProcess.c **** 
+ 366              		.loc 1 80 5 is_stmt 1 view .LVU79
+  82:UserAPP/Source/SendDataProcess.c ****         return pdFAIL;
+ 367              		.loc 1 82 5 view .LVU80
+  82:UserAPP/Source/SendDataProcess.c ****         return pdFAIL;
+ 368              		.loc 1 82 8 is_stmt 0 view .LVU81
+ 369 002a 0028     		cmp	r0, #0
+  82:UserAPP/Source/SendDataProcess.c ****         return pdFAIL;
+ 370              		.loc 1 82 8 view .LVU82
+ 371 002c 15DD     		ble	.L34
+  86:UserAPP/Source/SendDataProcess.c **** 
+ 372              		.loc 1 86 5 is_stmt 1 view .LVU83
+  86:UserAPP/Source/SendDataProcess.c **** 
+ 373              		.loc 1 86 14 is_stmt 0 view .LVU84
+ 374 002e 8028     		cmp	r0, #128
+ 375 0030 0DDC     		bgt	.L35
+  86:UserAPP/Source/SendDataProcess.c **** 
+ 376              		.loc 1 86 14 discriminator 1 view .LVU85
+ 377 0032 80B2     		uxth	r0, r0
+ 378              	.LVL26:
+ 379              	.L31:
+  86:UserAPP/Source/SendDataProcess.c **** 
+ 380              		.loc 1 86 14 discriminator 4 view .LVU86
+ 381 0034 ADF80400 		strh	r0, [sp, #4]	@ movhi
+  88:UserAPP/Source/SendDataProcess.c **** }
+ 382              		.loc 1 88 5 is_stmt 1 view .LVU87
+  88:UserAPP/Source/SendDataProcess.c **** }
+ 383              		.loc 1 88 12 is_stmt 0 view .LVU88
+ 384 0038 0023     		movs	r3, #0
+ 385 003a 2246     		mov	r2, r4
+ 386 003c 01A9     		add	r1, sp, #4
+ 387 003e 3046     		mov	r0, r6
+ 388 0040 FFF7FEFF 		bl	xQueueGenericSend
+ 389              	.LVL27:
+ 390              	.L29:
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc2eVAD3.s 			page 15
+
+
+  89:UserAPP/Source/SendDataProcess.c **** 
+ 391              		.loc 1 89 1 view .LVU89
+ 392 0044 22B0     		add	sp, sp, #136
+ 393              	.LCFI10:
+ 394              		.cfi_remember_state
+ 395              		.cfi_def_cfa_offset 24
+ 396              		@ sp needed
+ 397 0046 BDE87040 		pop	{r4, r5, r6, lr}
+ 398              	.LCFI11:
+ 399              		.cfi_restore 14
+ 400              		.cfi_restore 6
+ 401              		.cfi_restore 5
+ 402              		.cfi_restore 4
+ 403              		.cfi_def_cfa_offset 8
+ 404 004a 02B0     		add	sp, sp, #8
+ 405              	.LCFI12:
+ 406              		.cfi_restore 3
+ 407              		.cfi_restore 2
+ 408              		.cfi_def_cfa_offset 0
+ 409 004c 7047     		bx	lr
+ 410              	.LVL28:
+ 411              	.L35:
+ 412              	.LCFI13:
+ 413              		.cfi_restore_state
+  86:UserAPP/Source/SendDataProcess.c **** 
+ 414              		.loc 1 86 14 discriminator 2 view .LVU90
+ 415 004e 8020     		movs	r0, #128
+ 416              	.LVL29:
+  86:UserAPP/Source/SendDataProcess.c **** 
+ 417              		.loc 1 86 14 discriminator 2 view .LVU91
+ 418 0050 F0E7     		b	.L31
+ 419              	.LVL30:
+ 420              	.L32:
+  71:UserAPP/Source/SendDataProcess.c ****     }
+ 421              		.loc 1 71 16 view .LVU92
+ 422 0052 0020     		movs	r0, #0
+ 423              	.LVL31:
+  71:UserAPP/Source/SendDataProcess.c ****     }
+ 424              		.loc 1 71 16 view .LVU93
+ 425 0054 F6E7     		b	.L29
+ 426              	.LVL32:
+ 427              	.L33:
+  71:UserAPP/Source/SendDataProcess.c ****     }
+ 428              		.loc 1 71 16 view .LVU94
+ 429 0056 0020     		movs	r0, #0
+ 430              	.LVL33:
+  71:UserAPP/Source/SendDataProcess.c ****     }
+ 431              		.loc 1 71 16 view .LVU95
+ 432 0058 F4E7     		b	.L29
+ 433              	.LVL34:
+ 434              	.L34:
+  83:UserAPP/Source/SendDataProcess.c ****     }
+ 435              		.loc 1 83 16 view .LVU96
+ 436 005a 0020     		movs	r0, #0
+ 437              	.LVL35:
+  83:UserAPP/Source/SendDataProcess.c ****     }
+ 438              		.loc 1 83 16 view .LVU97
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc2eVAD3.s 			page 16
+
+
+ 439 005c F2E7     		b	.L29
+ 440              		.cfi_endproc
+ 441              	.LFE82:
+ 443              		.section	.text.SendBinaryToHost,"ax",%progbits
+ 444              		.align	1
+ 445              		.global	SendBinaryToHost
+ 446              		.syntax unified
+ 447              		.thumb
+ 448              		.thumb_func
+ 450              	SendBinaryToHost:
  451              	.LVL36:
- 452              	.L39:
- 105:UserAPP/Source/SendDataProcess.c **** 
- 453              		.loc 1 105 14 discriminator 4 view .LVU107
- 454 0034 ADF80400 		strh	r0, [sp, #4]	@ movhi
- 107:UserAPP/Source/SendDataProcess.c **** }
- 455              		.loc 1 107 5 is_stmt 1 view .LVU108
- 107:UserAPP/Source/SendDataProcess.c **** }
- 456              		.loc 1 107 12 is_stmt 0 view .LVU109
- 457 0038 0023     		movs	r3, #0
- 458 003a 2246     		mov	r2, r4
- 459 003c 01A9     		add	r1, sp, #4
- 460 003e 3046     		mov	r0, r6
- 461 0040 FFF7FEFF 		bl	xQueueGenericSend
- 462              	.LVL37:
- 463              	.L37:
- 108:UserAPP/Source/SendDataProcess.c **** 
- 464              		.loc 1 108 1 view .LVU110
- 465 0044 22B0     		add	sp, sp, #136
- 466              	.LCFI12:
- 467              		.cfi_remember_state
- 468              		.cfi_def_cfa_offset 24
- 469              		@ sp needed
- 470 0046 BDE87040 		pop	{r4, r5, r6, lr}
- 471              	.LCFI13:
- 472              		.cfi_restore 14
- 473              		.cfi_restore 6
- 474              		.cfi_restore 5
- 475              		.cfi_restore 4
- 476              		.cfi_def_cfa_offset 8
- 477 004a 02B0     		add	sp, sp, #8
- 478              	.LCFI14:
- 479              		.cfi_restore 3
- 480              		.cfi_restore 2
- 481              		.cfi_def_cfa_offset 0
- 482 004c 7047     		bx	lr
- 483              	.LVL38:
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cccDmnZi.s 			page 17
+ 452              	.LFB83:
+  95:UserAPP/Source/SendDataProcess.c ****     if (xSendDataQueue == NULL || data == NULL || len == 0) {
+ 453              		.loc 1 95 1 is_stmt 1 view -0
+ 454              		.cfi_startproc
+ 455              		@ args = 0, pretend = 0, frame = 136
+ 456              		@ frame_needed = 0, uses_anonymous_args = 0
+  95:UserAPP/Source/SendDataProcess.c ****     if (xSendDataQueue == NULL || data == NULL || len == 0) {
+ 457              		.loc 1 95 1 is_stmt 0 view .LVU99
+ 458 0000 30B5     		push	{r4, r5, lr}
+ 459              	.LCFI14:
+ 460              		.cfi_def_cfa_offset 12
+ 461              		.cfi_offset 4, -12
+ 462              		.cfi_offset 5, -8
+ 463              		.cfi_offset 14, -4
+ 464 0002 A3B0     		sub	sp, sp, #140
+ 465              	.LCFI15:
+ 466              		.cfi_def_cfa_offset 152
+  96:UserAPP/Source/SendDataProcess.c ****         return pdFAIL;
+ 467              		.loc 1 96 5 is_stmt 1 view .LVU100
+  96:UserAPP/Source/SendDataProcess.c ****         return pdFAIL;
+ 468              		.loc 1 96 24 is_stmt 0 view .LVU101
+ 469 0004 0F4B     		ldr	r3, .L45
+ 470 0006 1D68     		ldr	r5, [r3]
+  96:UserAPP/Source/SendDataProcess.c ****         return pdFAIL;
+ 471              		.loc 1 96 8 view .LVU102
+ 472 0008 ADB1     		cbz	r5, .L39
+ 473 000a 1446     		mov	r4, r2
+  96:UserAPP/Source/SendDataProcess.c ****         return pdFAIL;
+ 474              		.loc 1 96 32 discriminator 1 view .LVU103
+ 475 000c A8B1     		cbz	r0, .L40
+  96:UserAPP/Source/SendDataProcess.c ****         return pdFAIL;
+ 476              		.loc 1 96 48 discriminator 2 view .LVU104
+ 477 000e B1B1     		cbz	r1, .L41
+ 100:UserAPP/Source/SendDataProcess.c ****         return pdFAIL; // 数据过长，避免溢出
+ 478              		.loc 1 100 5 is_stmt 1 view .LVU105
+ 100:UserAPP/Source/SendDataProcess.c ****         return pdFAIL; // 数据过长，避免溢出
+ 479              		.loc 1 100 8 is_stmt 0 view .LVU106
+ 480 0010 8029     		cmp	r1, #128
+ 481 0012 01D9     		bls	.L44
+ 101:UserAPP/Source/SendDataProcess.c ****     }
+ 482              		.loc 1 101 16 view .LVU107
+ 483 0014 0020     		movs	r0, #0
+ 484              	.LVL37:
+ 101:UserAPP/Source/SendDataProcess.c ****     }
+ 485              		.loc 1 101 16 view .LVU108
+ 486 0016 13E0     		b	.L37
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc2eVAD3.s 			page 17
 
 
- 484              	.L43:
- 485              	.LCFI15:
- 486              		.cfi_restore_state
- 105:UserAPP/Source/SendDataProcess.c **** 
- 487              		.loc 1 105 14 discriminator 2 view .LVU111
- 488 004e 8020     		movs	r0, #128
- 489              	.LVL39:
- 105:UserAPP/Source/SendDataProcess.c **** 
- 490              		.loc 1 105 14 discriminator 2 view .LVU112
- 491 0050 F0E7     		b	.L39
- 492              	.LVL40:
- 493              	.L40:
-  90:UserAPP/Source/SendDataProcess.c ****     }
- 494              		.loc 1 90 16 view .LVU113
- 495 0052 0020     		movs	r0, #0
- 496              	.LVL41:
-  90:UserAPP/Source/SendDataProcess.c ****     }
- 497              		.loc 1 90 16 view .LVU114
- 498 0054 F6E7     		b	.L37
- 499              	.LVL42:
- 500              	.L41:
-  90:UserAPP/Source/SendDataProcess.c ****     }
- 501              		.loc 1 90 16 view .LVU115
- 502 0056 0020     		movs	r0, #0
- 503              	.LVL43:
-  90:UserAPP/Source/SendDataProcess.c ****     }
- 504              		.loc 1 90 16 view .LVU116
- 505 0058 F4E7     		b	.L37
- 506              	.LVL44:
- 507              	.L42:
- 102:UserAPP/Source/SendDataProcess.c ****     }
- 508              		.loc 1 102 16 view .LVU117
- 509 005a 0020     		movs	r0, #0
- 510              	.LVL45:
- 102:UserAPP/Source/SendDataProcess.c ****     }
- 511              		.loc 1 102 16 view .LVU118
- 512 005c F2E7     		b	.L37
- 513              		.cfi_endproc
- 514              	.LFE82:
- 516              		.section	.text.SendBinaryToHost,"ax",%progbits
- 517              		.align	1
- 518              		.global	SendBinaryToHost
- 519              		.syntax unified
- 520              		.thumb
- 521              		.thumb_func
- 523              	SendBinaryToHost:
- 524              	.LVL46:
- 525              	.LFB83:
- 114:UserAPP/Source/SendDataProcess.c ****     if (xSendDataQueue == NULL || data == NULL || len == 0) {
- 526              		.loc 1 114 1 is_stmt 1 view -0
- 527              		.cfi_startproc
- 528              		@ args = 0, pretend = 0, frame = 136
- 529              		@ frame_needed = 0, uses_anonymous_args = 0
- 114:UserAPP/Source/SendDataProcess.c ****     if (xSendDataQueue == NULL || data == NULL || len == 0) {
- 530              		.loc 1 114 1 is_stmt 0 view .LVU120
- 531 0000 30B5     		push	{r4, r5, lr}
- 532              	.LCFI16:
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cccDmnZi.s 			page 18
+ 487              	.LVL38:
+ 488              	.L44:
+ 104:UserAPP/Source/SendDataProcess.c ****     item.len = len;
+ 489              		.loc 1 104 5 is_stmt 1 view .LVU109
+ 105:UserAPP/Source/SendDataProcess.c ****     memcpy(item.buf, data, len);
+ 490              		.loc 1 105 5 view .LVU110
+ 105:UserAPP/Source/SendDataProcess.c ****     memcpy(item.buf, data, len);
+ 491              		.loc 1 105 14 is_stmt 0 view .LVU111
+ 492 0018 ADF80410 		strh	r1, [sp, #4]	@ movhi
+ 106:UserAPP/Source/SendDataProcess.c **** 
+ 493              		.loc 1 106 5 is_stmt 1 view .LVU112
+ 494 001c 0A46     		mov	r2, r1
+ 495              	.LVL39:
+ 106:UserAPP/Source/SendDataProcess.c **** 
+ 496              		.loc 1 106 5 is_stmt 0 view .LVU113
+ 497 001e 0146     		mov	r1, r0
+ 498              	.LVL40:
+ 106:UserAPP/Source/SendDataProcess.c **** 
+ 499              		.loc 1 106 5 view .LVU114
+ 500 0020 0DF10600 		add	r0, sp, #6
+ 501              	.LVL41:
+ 106:UserAPP/Source/SendDataProcess.c **** 
+ 502              		.loc 1 106 5 view .LVU115
+ 503 0024 FFF7FEFF 		bl	memcpy
+ 504              	.LVL42:
+ 108:UserAPP/Source/SendDataProcess.c **** }
+ 505              		.loc 1 108 5 is_stmt 1 view .LVU116
+ 108:UserAPP/Source/SendDataProcess.c **** }
+ 506              		.loc 1 108 12 is_stmt 0 view .LVU117
+ 507 0028 0023     		movs	r3, #0
+ 508 002a 2246     		mov	r2, r4
+ 509 002c 01A9     		add	r1, sp, #4
+ 510 002e 2846     		mov	r0, r5
+ 511 0030 FFF7FEFF 		bl	xQueueGenericSend
+ 512              	.LVL43:
+ 513 0034 04E0     		b	.L37
+ 514              	.LVL44:
+ 515              	.L39:
+  97:UserAPP/Source/SendDataProcess.c ****     }
+ 516              		.loc 1 97 16 view .LVU118
+ 517 0036 0020     		movs	r0, #0
+ 518              	.LVL45:
+  97:UserAPP/Source/SendDataProcess.c ****     }
+ 519              		.loc 1 97 16 view .LVU119
+ 520 0038 02E0     		b	.L37
+ 521              	.LVL46:
+ 522              	.L40:
+  97:UserAPP/Source/SendDataProcess.c ****     }
+ 523              		.loc 1 97 16 view .LVU120
+ 524 003a 0020     		movs	r0, #0
+ 525              	.LVL47:
+  97:UserAPP/Source/SendDataProcess.c ****     }
+ 526              		.loc 1 97 16 view .LVU121
+ 527 003c 00E0     		b	.L37
+ 528              	.LVL48:
+ 529              	.L41:
+  97:UserAPP/Source/SendDataProcess.c ****     }
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc2eVAD3.s 			page 18
 
 
- 533              		.cfi_def_cfa_offset 12
- 534              		.cfi_offset 4, -12
- 535              		.cfi_offset 5, -8
- 536              		.cfi_offset 14, -4
- 537 0002 A3B0     		sub	sp, sp, #140
- 538              	.LCFI17:
- 539              		.cfi_def_cfa_offset 152
- 115:UserAPP/Source/SendDataProcess.c ****         return pdFAIL;
- 540              		.loc 1 115 5 is_stmt 1 view .LVU121
- 115:UserAPP/Source/SendDataProcess.c ****         return pdFAIL;
- 541              		.loc 1 115 24 is_stmt 0 view .LVU122
- 542 0004 0F4B     		ldr	r3, .L53
- 543 0006 1D68     		ldr	r5, [r3]
- 115:UserAPP/Source/SendDataProcess.c ****         return pdFAIL;
- 544              		.loc 1 115 8 view .LVU123
- 545 0008 ADB1     		cbz	r5, .L47
- 546 000a 1446     		mov	r4, r2
- 115:UserAPP/Source/SendDataProcess.c ****         return pdFAIL;
- 547              		.loc 1 115 32 discriminator 1 view .LVU124
- 548 000c A8B1     		cbz	r0, .L48
- 115:UserAPP/Source/SendDataProcess.c ****         return pdFAIL;
- 549              		.loc 1 115 48 discriminator 2 view .LVU125
- 550 000e B1B1     		cbz	r1, .L49
- 119:UserAPP/Source/SendDataProcess.c ****         return pdFAIL; // 数据过长，避免溢出
- 551              		.loc 1 119 5 is_stmt 1 view .LVU126
- 119:UserAPP/Source/SendDataProcess.c ****         return pdFAIL; // 数据过长，避免溢出
- 552              		.loc 1 119 8 is_stmt 0 view .LVU127
- 553 0010 8029     		cmp	r1, #128
- 554 0012 01D9     		bls	.L52
- 120:UserAPP/Source/SendDataProcess.c ****     }
- 555              		.loc 1 120 16 view .LVU128
- 556 0014 0020     		movs	r0, #0
- 557              	.LVL47:
- 120:UserAPP/Source/SendDataProcess.c ****     }
- 558              		.loc 1 120 16 view .LVU129
- 559 0016 13E0     		b	.L45
- 560              	.LVL48:
- 561              	.L52:
- 123:UserAPP/Source/SendDataProcess.c ****     item.len = len;
- 562              		.loc 1 123 5 is_stmt 1 view .LVU130
- 124:UserAPP/Source/SendDataProcess.c ****     memcpy(item.buf, data, len);
- 563              		.loc 1 124 5 view .LVU131
- 124:UserAPP/Source/SendDataProcess.c ****     memcpy(item.buf, data, len);
- 564              		.loc 1 124 14 is_stmt 0 view .LVU132
- 565 0018 ADF80410 		strh	r1, [sp, #4]	@ movhi
- 125:UserAPP/Source/SendDataProcess.c **** 
- 566              		.loc 1 125 5 is_stmt 1 view .LVU133
- 567 001c 0A46     		mov	r2, r1
- 568              	.LVL49:
- 125:UserAPP/Source/SendDataProcess.c **** 
- 569              		.loc 1 125 5 is_stmt 0 view .LVU134
- 570 001e 0146     		mov	r1, r0
- 571              	.LVL50:
- 125:UserAPP/Source/SendDataProcess.c **** 
- 572              		.loc 1 125 5 view .LVU135
- 573 0020 0DF10600 		add	r0, sp, #6
- 574              	.LVL51:
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cccDmnZi.s 			page 19
+ 530              		.loc 1 97 16 view .LVU122
+ 531 003e 0020     		movs	r0, #0
+ 532              	.LVL49:
+ 533              	.L37:
+ 109:UserAPP/Source/SendDataProcess.c **** 
+ 534              		.loc 1 109 1 view .LVU123
+ 535 0040 23B0     		add	sp, sp, #140
+ 536              	.LCFI16:
+ 537              		.cfi_def_cfa_offset 12
+ 538              		@ sp needed
+ 539 0042 30BD     		pop	{r4, r5, pc}
+ 540              	.L46:
+ 541              		.align	2
+ 542              	.L45:
+ 543 0044 00000000 		.word	xSendDataQueue
+ 544              		.cfi_endproc
+ 545              	.LFE83:
+ 547              		.section	.text.SendBinaryToHostFront,"ax",%progbits
+ 548              		.align	1
+ 549              		.global	SendBinaryToHostFront
+ 550              		.syntax unified
+ 551              		.thumb
+ 552              		.thumb_func
+ 554              	SendBinaryToHostFront:
+ 555              	.LVL50:
+ 556              	.LFB84:
+ 115:UserAPP/Source/SendDataProcess.c ****     if (xSendDataQueue == NULL || data == NULL || len == 0) {
+ 557              		.loc 1 115 1 is_stmt 1 view -0
+ 558              		.cfi_startproc
+ 559              		@ args = 0, pretend = 0, frame = 136
+ 560              		@ frame_needed = 0, uses_anonymous_args = 0
+ 115:UserAPP/Source/SendDataProcess.c ****     if (xSendDataQueue == NULL || data == NULL || len == 0) {
+ 561              		.loc 1 115 1 is_stmt 0 view .LVU125
+ 562 0000 30B5     		push	{r4, r5, lr}
+ 563              	.LCFI17:
+ 564              		.cfi_def_cfa_offset 12
+ 565              		.cfi_offset 4, -12
+ 566              		.cfi_offset 5, -8
+ 567              		.cfi_offset 14, -4
+ 568 0002 A3B0     		sub	sp, sp, #140
+ 569              	.LCFI18:
+ 570              		.cfi_def_cfa_offset 152
+ 116:UserAPP/Source/SendDataProcess.c ****         return pdFAIL;
+ 571              		.loc 1 116 5 is_stmt 1 view .LVU126
+ 116:UserAPP/Source/SendDataProcess.c ****         return pdFAIL;
+ 572              		.loc 1 116 24 is_stmt 0 view .LVU127
+ 573 0004 0F4B     		ldr	r3, .L55
+ 574 0006 1D68     		ldr	r5, [r3]
+ 116:UserAPP/Source/SendDataProcess.c ****         return pdFAIL;
+ 575              		.loc 1 116 8 view .LVU128
+ 576 0008 ADB1     		cbz	r5, .L49
+ 577 000a 1446     		mov	r4, r2
+ 116:UserAPP/Source/SendDataProcess.c ****         return pdFAIL;
+ 578              		.loc 1 116 32 discriminator 1 view .LVU129
+ 579 000c A8B1     		cbz	r0, .L50
+ 116:UserAPP/Source/SendDataProcess.c ****         return pdFAIL;
+ 580              		.loc 1 116 48 discriminator 2 view .LVU130
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc2eVAD3.s 			page 19
 
 
- 125:UserAPP/Source/SendDataProcess.c **** 
- 575              		.loc 1 125 5 view .LVU136
- 576 0024 FFF7FEFF 		bl	memcpy
- 577              	.LVL52:
- 127:UserAPP/Source/SendDataProcess.c **** }
- 578              		.loc 1 127 5 is_stmt 1 view .LVU137
- 127:UserAPP/Source/SendDataProcess.c **** }
- 579              		.loc 1 127 12 is_stmt 0 view .LVU138
- 580 0028 0023     		movs	r3, #0
- 581 002a 2246     		mov	r2, r4
- 582 002c 01A9     		add	r1, sp, #4
- 583 002e 2846     		mov	r0, r5
- 584 0030 FFF7FEFF 		bl	xQueueGenericSend
- 585              	.LVL53:
- 586 0034 04E0     		b	.L45
- 587              	.LVL54:
- 588              	.L47:
- 116:UserAPP/Source/SendDataProcess.c ****     }
- 589              		.loc 1 116 16 view .LVU139
- 590 0036 0020     		movs	r0, #0
- 591              	.LVL55:
- 116:UserAPP/Source/SendDataProcess.c ****     }
- 592              		.loc 1 116 16 view .LVU140
- 593 0038 02E0     		b	.L45
- 594              	.LVL56:
- 595              	.L48:
- 116:UserAPP/Source/SendDataProcess.c ****     }
- 596              		.loc 1 116 16 view .LVU141
- 597 003a 0020     		movs	r0, #0
- 598              	.LVL57:
- 116:UserAPP/Source/SendDataProcess.c ****     }
- 599              		.loc 1 116 16 view .LVU142
- 600 003c 00E0     		b	.L45
- 601              	.LVL58:
- 602              	.L49:
- 116:UserAPP/Source/SendDataProcess.c ****     }
- 603              		.loc 1 116 16 view .LVU143
- 604 003e 0020     		movs	r0, #0
- 605              	.LVL59:
- 606              	.L45:
- 128:UserAPP/Source/SendDataProcess.c **** 
- 607              		.loc 1 128 1 view .LVU144
- 608 0040 23B0     		add	sp, sp, #140
- 609              	.LCFI18:
- 610              		.cfi_def_cfa_offset 12
- 611              		@ sp needed
- 612 0042 30BD     		pop	{r4, r5, pc}
- 613              	.L54:
- 614              		.align	2
- 615              	.L53:
- 616 0044 00000000 		.word	xSendDataQueue
- 617              		.cfi_endproc
- 618              	.LFE83:
- 620              		.section	.text.BuildReplyPacket,"ax",%progbits
- 621              		.align	1
- 622              		.global	BuildReplyPacket
- 623              		.syntax unified
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cccDmnZi.s 			page 20
+ 581 000e B1B1     		cbz	r1, .L51
+ 120:UserAPP/Source/SendDataProcess.c ****         return pdFAIL; // 数据过长，避免溢出
+ 582              		.loc 1 120 5 is_stmt 1 view .LVU131
+ 120:UserAPP/Source/SendDataProcess.c ****         return pdFAIL; // 数据过长，避免溢出
+ 583              		.loc 1 120 8 is_stmt 0 view .LVU132
+ 584 0010 8029     		cmp	r1, #128
+ 585 0012 01D9     		bls	.L54
+ 121:UserAPP/Source/SendDataProcess.c ****     }
+ 586              		.loc 1 121 16 view .LVU133
+ 587 0014 0020     		movs	r0, #0
+ 588              	.LVL51:
+ 121:UserAPP/Source/SendDataProcess.c ****     }
+ 589              		.loc 1 121 16 view .LVU134
+ 590 0016 13E0     		b	.L47
+ 591              	.LVL52:
+ 592              	.L54:
+ 124:UserAPP/Source/SendDataProcess.c ****     item.len = len;
+ 593              		.loc 1 124 5 is_stmt 1 view .LVU135
+ 125:UserAPP/Source/SendDataProcess.c ****     memcpy(item.buf, data, len);
+ 594              		.loc 1 125 5 view .LVU136
+ 125:UserAPP/Source/SendDataProcess.c ****     memcpy(item.buf, data, len);
+ 595              		.loc 1 125 14 is_stmt 0 view .LVU137
+ 596 0018 ADF80410 		strh	r1, [sp, #4]	@ movhi
+ 126:UserAPP/Source/SendDataProcess.c **** 
+ 597              		.loc 1 126 5 is_stmt 1 view .LVU138
+ 598 001c 0A46     		mov	r2, r1
+ 599              	.LVL53:
+ 126:UserAPP/Source/SendDataProcess.c **** 
+ 600              		.loc 1 126 5 is_stmt 0 view .LVU139
+ 601 001e 0146     		mov	r1, r0
+ 602              	.LVL54:
+ 126:UserAPP/Source/SendDataProcess.c **** 
+ 603              		.loc 1 126 5 view .LVU140
+ 604 0020 0DF10600 		add	r0, sp, #6
+ 605              	.LVL55:
+ 126:UserAPP/Source/SendDataProcess.c **** 
+ 606              		.loc 1 126 5 view .LVU141
+ 607 0024 FFF7FEFF 		bl	memcpy
+ 608              	.LVL56:
+ 128:UserAPP/Source/SendDataProcess.c **** }
+ 609              		.loc 1 128 5 is_stmt 1 view .LVU142
+ 128:UserAPP/Source/SendDataProcess.c **** }
+ 610              		.loc 1 128 12 is_stmt 0 view .LVU143
+ 611 0028 0123     		movs	r3, #1
+ 612 002a 2246     		mov	r2, r4
+ 613 002c 01A9     		add	r1, sp, #4
+ 614 002e 2846     		mov	r0, r5
+ 615 0030 FFF7FEFF 		bl	xQueueGenericSend
+ 616              	.LVL57:
+ 617 0034 04E0     		b	.L47
+ 618              	.LVL58:
+ 619              	.L49:
+ 117:UserAPP/Source/SendDataProcess.c ****     }
+ 620              		.loc 1 117 16 view .LVU144
+ 621 0036 0020     		movs	r0, #0
+ 622              	.LVL59:
+ 117:UserAPP/Source/SendDataProcess.c ****     }
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc2eVAD3.s 			page 20
 
 
- 624              		.thumb
- 625              		.thumb_func
- 627              	BuildReplyPacket:
- 628              	.LVL60:
- 629              	.LFB85:
- 146:UserAPP/Source/SendDataProcess.c **** 
- 147:UserAPP/Source/SendDataProcess.c **** /* 构建应答/数据包 */
- 148:UserAPP/Source/SendDataProcess.c **** uint8_t BuildReplyPacket(uint8_t functionCode, uint16_t execIndex, const uint8_t *data, uint8_t dat
- 149:UserAPP/Source/SendDataProcess.c **** {
- 630              		.loc 1 149 1 is_stmt 1 view -0
- 631              		.cfi_startproc
- 632              		@ args = 8, pretend = 0, frame = 0
- 633              		@ frame_needed = 0, uses_anonymous_args = 0
- 634              		.loc 1 149 1 is_stmt 0 view .LVU146
- 635 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
- 636              	.LCFI19:
- 637              		.cfi_def_cfa_offset 24
- 638              		.cfi_offset 3, -24
- 639              		.cfi_offset 4, -20
- 640              		.cfi_offset 5, -16
- 641              		.cfi_offset 6, -12
- 642              		.cfi_offset 7, -8
- 643              		.cfi_offset 14, -4
- 644 0002 069F     		ldr	r7, [sp, #24]
- 645 0004 079D     		ldr	r5, [sp, #28]
- 150:UserAPP/Source/SendDataProcess.c ****     if (outBuf == NULL || outLen == NULL) {
- 646              		.loc 1 150 5 is_stmt 1 view .LVU147
- 647              		.loc 1 150 8 is_stmt 0 view .LVU148
- 648 0006 0FB3     		cbz	r7, .L59
- 649 0008 1646     		mov	r6, r2
- 650 000a 1C46     		mov	r4, r3
- 651              		.loc 1 150 24 discriminator 1 view .LVU149
- 652 000c 05B3     		cbz	r5, .L60
- 151:UserAPP/Source/SendDataProcess.c ****         return 1;
- 152:UserAPP/Source/SendDataProcess.c ****     }
- 153:UserAPP/Source/SendDataProcess.c ****     if (dataLen > PACKET_MAX_DATA_LEN) {
- 653              		.loc 1 153 5 is_stmt 1 view .LVU150
- 654              		.loc 1 153 8 is_stmt 0 view .LVU151
- 655 000e 3B2B     		cmp	r3, #59
- 656 0010 20D8     		bhi	.L61
- 154:UserAPP/Source/SendDataProcess.c ****         return 2;
- 155:UserAPP/Source/SendDataProcess.c ****     }
- 156:UserAPP/Source/SendDataProcess.c ****     if (dataLen > 0 && data == NULL) {
- 657              		.loc 1 156 5 is_stmt 1 view .LVU152
- 658              		.loc 1 156 8 is_stmt 0 view .LVU153
- 659 0012 1BB1     		cbz	r3, .L57
- 660              		.loc 1 156 21 discriminator 1 view .LVU154
- 661 0014 02B3     		cbz	r2, .L62
- 157:UserAPP/Source/SendDataProcess.c ****         return 3;
- 158:UserAPP/Source/SendDataProcess.c ****     }
- 159:UserAPP/Source/SendDataProcess.c **** 
- 160:UserAPP/Source/SendDataProcess.c ****     const uint16_t headerLen = 1; /* 0xAA */
- 662              		.loc 1 160 5 is_stmt 1 view .LVU155
- 663              	.LVL61:
- 161:UserAPP/Source/SendDataProcess.c ****     const uint16_t funcLen   = 1;
- 664              		.loc 1 161 5 view .LVU156
- 162:UserAPP/Source/SendDataProcess.c ****     const uint16_t indexLen  = 2;
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cccDmnZi.s 			page 21
+ 623              		.loc 1 117 16 view .LVU145
+ 624 0038 02E0     		b	.L47
+ 625              	.LVL60:
+ 626              	.L50:
+ 117:UserAPP/Source/SendDataProcess.c ****     }
+ 627              		.loc 1 117 16 view .LVU146
+ 628 003a 0020     		movs	r0, #0
+ 629              	.LVL61:
+ 117:UserAPP/Source/SendDataProcess.c ****     }
+ 630              		.loc 1 117 16 view .LVU147
+ 631 003c 00E0     		b	.L47
+ 632              	.LVL62:
+ 633              	.L51:
+ 117:UserAPP/Source/SendDataProcess.c ****     }
+ 634              		.loc 1 117 16 view .LVU148
+ 635 003e 0020     		movs	r0, #0
+ 636              	.LVL63:
+ 637              	.L47:
+ 129:UserAPP/Source/SendDataProcess.c **** 
+ 638              		.loc 1 129 1 view .LVU149
+ 639 0040 23B0     		add	sp, sp, #140
+ 640              	.LCFI19:
+ 641              		.cfi_def_cfa_offset 12
+ 642              		@ sp needed
+ 643 0042 30BD     		pop	{r4, r5, pc}
+ 644              	.L56:
+ 645              		.align	2
+ 646              	.L55:
+ 647 0044 00000000 		.word	xSendDataQueue
+ 648              		.cfi_endproc
+ 649              	.LFE84:
+ 651              		.section	.text.BuildReplyPacket,"ax",%progbits
+ 652              		.align	1
+ 653              		.global	BuildReplyPacket
+ 654              		.syntax unified
+ 655              		.thumb
+ 656              		.thumb_func
+ 658              	BuildReplyPacket:
+ 659              	.LVL64:
+ 660              	.LFB86:
+ 147:UserAPP/Source/SendDataProcess.c **** 
+ 148:UserAPP/Source/SendDataProcess.c **** /* 构建应答/数据包 */
+ 149:UserAPP/Source/SendDataProcess.c **** uint8_t BuildReplyPacket(uint8_t functionCode, uint16_t execIndex, const uint8_t *data, uint8_t dat
+ 150:UserAPP/Source/SendDataProcess.c **** {
+ 661              		.loc 1 150 1 is_stmt 1 view -0
+ 662              		.cfi_startproc
+ 663              		@ args = 8, pretend = 0, frame = 0
+ 664              		@ frame_needed = 0, uses_anonymous_args = 0
+ 665              		.loc 1 150 1 is_stmt 0 view .LVU151
+ 666 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+ 667              	.LCFI20:
+ 668              		.cfi_def_cfa_offset 24
+ 669              		.cfi_offset 3, -24
+ 670              		.cfi_offset 4, -20
+ 671              		.cfi_offset 5, -16
+ 672              		.cfi_offset 6, -12
+ 673              		.cfi_offset 7, -8
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc2eVAD3.s 			page 21
 
 
- 665              		.loc 1 162 5 view .LVU157
- 163:UserAPP/Source/SendDataProcess.c ****     const uint16_t crcLen    = 1;
- 666              		.loc 1 163 5 view .LVU158
- 164:UserAPP/Source/SendDataProcess.c ****     uint16_t totalLen = headerLen + funcLen + indexLen + dataLen + crcLen;
- 667              		.loc 1 164 5 view .LVU159
- 668              		.loc 1 164 14 is_stmt 0 view .LVU160
- 669 0016 0533     		adds	r3, r3, #5
- 670              	.LVL62:
- 165:UserAPP/Source/SendDataProcess.c **** 
- 166:UserAPP/Source/SendDataProcess.c ****     if (totalLen > PACKET_MAX_SIZE) {
- 671              		.loc 1 166 5 is_stmt 1 view .LVU161
- 672              		.loc 1 166 8 is_stmt 0 view .LVU162
- 673 0018 402B     		cmp	r3, #64
- 674 001a 1FD8     		bhi	.L63
- 675              	.LVL63:
- 676              	.L57:
- 167:UserAPP/Source/SendDataProcess.c ****         return 4;
- 168:UserAPP/Source/SendDataProcess.c ****     }
- 169:UserAPP/Source/SendDataProcess.c **** 
- 170:UserAPP/Source/SendDataProcess.c ****     uint16_t pos = 0;
- 677              		.loc 1 170 5 is_stmt 1 view .LVU163
- 171:UserAPP/Source/SendDataProcess.c ****     outBuf[pos++] = 0xAA;
- 678              		.loc 1 171 5 view .LVU164
- 679              		.loc 1 171 19 is_stmt 0 view .LVU165
- 680 001c AA23     		movs	r3, #170
- 681 001e 3B70     		strb	r3, [r7]
- 172:UserAPP/Source/SendDataProcess.c ****     outBuf[pos++] = functionCode;
- 682              		.loc 1 172 5 is_stmt 1 view .LVU166
- 683              	.LVL64:
- 684              		.loc 1 172 19 is_stmt 0 view .LVU167
- 685 0020 7870     		strb	r0, [r7, #1]
- 173:UserAPP/Source/SendDataProcess.c ****     outBuf[pos++] = (uint8_t)(execIndex >> 8);
- 686              		.loc 1 173 5 is_stmt 1 view .LVU168
- 687              	.LVL65:
- 688              		.loc 1 173 21 is_stmt 0 view .LVU169
- 689 0022 0B0A     		lsrs	r3, r1, #8
- 690              		.loc 1 173 19 view .LVU170
- 691 0024 BB70     		strb	r3, [r7, #2]
- 174:UserAPP/Source/SendDataProcess.c ****     outBuf[pos++] = (uint8_t)(execIndex & 0xFF);
- 692              		.loc 1 174 5 is_stmt 1 view .LVU171
- 693              	.LVL66:
- 694              		.loc 1 174 19 is_stmt 0 view .LVU172
- 695 0026 F970     		strb	r1, [r7, #3]
- 175:UserAPP/Source/SendDataProcess.c **** 
- 176:UserAPP/Source/SendDataProcess.c ****     if (dataLen > 0) {
- 696              		.loc 1 176 5 is_stmt 1 view .LVU173
- 697              		.loc 1 176 8 is_stmt 0 view .LVU174
- 698 0028 4CB9     		cbnz	r4, .L66
- 174:UserAPP/Source/SendDataProcess.c ****     outBuf[pos++] = (uint8_t)(execIndex & 0xFF);
- 699              		.loc 1 174 15 view .LVU175
- 700 002a 0424     		movs	r4, #4
- 701              	.LVL67:
- 702              	.L58:
- 177:UserAPP/Source/SendDataProcess.c ****         memcpy(&outBuf[pos], data, dataLen);
+ 674              		.cfi_offset 14, -4
+ 675 0002 069F     		ldr	r7, [sp, #24]
+ 676 0004 079D     		ldr	r5, [sp, #28]
+ 151:UserAPP/Source/SendDataProcess.c ****     if (outBuf == NULL || outLen == NULL) {
+ 677              		.loc 1 151 5 is_stmt 1 view .LVU152
+ 678              		.loc 1 151 8 is_stmt 0 view .LVU153
+ 679 0006 0FB3     		cbz	r7, .L61
+ 680 0008 1646     		mov	r6, r2
+ 681 000a 1C46     		mov	r4, r3
+ 682              		.loc 1 151 24 discriminator 1 view .LVU154
+ 683 000c 05B3     		cbz	r5, .L62
+ 152:UserAPP/Source/SendDataProcess.c ****         return 1;
+ 153:UserAPP/Source/SendDataProcess.c ****     }
+ 154:UserAPP/Source/SendDataProcess.c ****     if (dataLen > PACKET_MAX_DATA_LEN) {
+ 684              		.loc 1 154 5 is_stmt 1 view .LVU155
+ 685              		.loc 1 154 8 is_stmt 0 view .LVU156
+ 686 000e 3B2B     		cmp	r3, #59
+ 687 0010 20D8     		bhi	.L63
+ 155:UserAPP/Source/SendDataProcess.c ****         return 2;
+ 156:UserAPP/Source/SendDataProcess.c ****     }
+ 157:UserAPP/Source/SendDataProcess.c ****     if (dataLen > 0 && data == NULL) {
+ 688              		.loc 1 157 5 is_stmt 1 view .LVU157
+ 689              		.loc 1 157 8 is_stmt 0 view .LVU158
+ 690 0012 1BB1     		cbz	r3, .L59
+ 691              		.loc 1 157 21 discriminator 1 view .LVU159
+ 692 0014 02B3     		cbz	r2, .L64
+ 158:UserAPP/Source/SendDataProcess.c ****         return 3;
+ 159:UserAPP/Source/SendDataProcess.c ****     }
+ 160:UserAPP/Source/SendDataProcess.c **** 
+ 161:UserAPP/Source/SendDataProcess.c ****     const uint16_t headerLen = 1; /* 0xAA */
+ 693              		.loc 1 161 5 is_stmt 1 view .LVU160
+ 694              	.LVL65:
+ 162:UserAPP/Source/SendDataProcess.c ****     const uint16_t funcLen   = 1;
+ 695              		.loc 1 162 5 view .LVU161
+ 163:UserAPP/Source/SendDataProcess.c ****     const uint16_t indexLen  = 2;
+ 696              		.loc 1 163 5 view .LVU162
+ 164:UserAPP/Source/SendDataProcess.c ****     const uint16_t crcLen    = 1;
+ 697              		.loc 1 164 5 view .LVU163
+ 165:UserAPP/Source/SendDataProcess.c ****     uint16_t totalLen = headerLen + funcLen + indexLen + dataLen + crcLen;
+ 698              		.loc 1 165 5 view .LVU164
+ 699              		.loc 1 165 14 is_stmt 0 view .LVU165
+ 700 0016 0533     		adds	r3, r3, #5
+ 701              	.LVL66:
+ 166:UserAPP/Source/SendDataProcess.c **** 
+ 167:UserAPP/Source/SendDataProcess.c ****     if (totalLen > PACKET_MAX_SIZE) {
+ 702              		.loc 1 167 5 is_stmt 1 view .LVU166
+ 703              		.loc 1 167 8 is_stmt 0 view .LVU167
+ 704 0018 402B     		cmp	r3, #64
+ 705 001a 1FD8     		bhi	.L65
+ 706              	.LVL67:
+ 707              	.L59:
+ 168:UserAPP/Source/SendDataProcess.c ****         return 4;
+ 169:UserAPP/Source/SendDataProcess.c ****     }
+ 170:UserAPP/Source/SendDataProcess.c **** 
+ 171:UserAPP/Source/SendDataProcess.c ****     uint16_t pos = 0;
+ 708              		.loc 1 171 5 is_stmt 1 view .LVU168
+ 172:UserAPP/Source/SendDataProcess.c ****     outBuf[pos++] = 0xAA;
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc2eVAD3.s 			page 22
+
+
+ 709              		.loc 1 172 5 view .LVU169
+ 710              		.loc 1 172 19 is_stmt 0 view .LVU170
+ 711 001c AA23     		movs	r3, #170
+ 712 001e 3B70     		strb	r3, [r7]
+ 173:UserAPP/Source/SendDataProcess.c ****     outBuf[pos++] = functionCode;
+ 713              		.loc 1 173 5 is_stmt 1 view .LVU171
+ 714              	.LVL68:
+ 715              		.loc 1 173 19 is_stmt 0 view .LVU172
+ 716 0020 7870     		strb	r0, [r7, #1]
+ 174:UserAPP/Source/SendDataProcess.c ****     outBuf[pos++] = (uint8_t)(execIndex >> 8);
+ 717              		.loc 1 174 5 is_stmt 1 view .LVU173
+ 718              	.LVL69:
+ 719              		.loc 1 174 21 is_stmt 0 view .LVU174
+ 720 0022 0B0A     		lsrs	r3, r1, #8
+ 721              		.loc 1 174 19 view .LVU175
+ 722 0024 BB70     		strb	r3, [r7, #2]
+ 175:UserAPP/Source/SendDataProcess.c ****     outBuf[pos++] = (uint8_t)(execIndex & 0xFF);
+ 723              		.loc 1 175 5 is_stmt 1 view .LVU176
+ 724              	.LVL70:
+ 725              		.loc 1 175 19 is_stmt 0 view .LVU177
+ 726 0026 F970     		strb	r1, [r7, #3]
+ 176:UserAPP/Source/SendDataProcess.c **** 
+ 177:UserAPP/Source/SendDataProcess.c ****     if (dataLen > 0) {
+ 727              		.loc 1 177 5 is_stmt 1 view .LVU178
+ 728              		.loc 1 177 8 is_stmt 0 view .LVU179
+ 729 0028 4CB9     		cbnz	r4, .L68
+ 175:UserAPP/Source/SendDataProcess.c ****     outBuf[pos++] = (uint8_t)(execIndex & 0xFF);
+ 730              		.loc 1 175 15 view .LVU180
+ 731 002a 0424     		movs	r4, #4
+ 732              	.LVL71:
+ 733              	.L60:
+ 178:UserAPP/Source/SendDataProcess.c ****         memcpy(&outBuf[pos], data, dataLen);
+ 179:UserAPP/Source/SendDataProcess.c ****         pos += dataLen;
+ 180:UserAPP/Source/SendDataProcess.c ****     }
+ 181:UserAPP/Source/SendDataProcess.c **** 
+ 182:UserAPP/Source/SendDataProcess.c ****     uint8_t crc = Packet_CRC8(outBuf, pos);
+ 734              		.loc 1 182 5 is_stmt 1 view .LVU181
+ 735              		.loc 1 182 19 is_stmt 0 view .LVU182
+ 736 002c 2146     		mov	r1, r4
+ 737 002e 3846     		mov	r0, r7
+ 738 0030 FFF7FEFF 		bl	Packet_CRC8
+ 739              	.LVL72:
+ 183:UserAPP/Source/SendDataProcess.c ****     outBuf[pos++] = crc;
+ 740              		.loc 1 183 5 is_stmt 1 view .LVU183
+ 741              		.loc 1 183 15 is_stmt 0 view .LVU184
+ 742 0034 631C     		adds	r3, r4, #1
+ 743              	.LVL73:
+ 744              		.loc 1 183 19 view .LVU185
+ 745 0036 3855     		strb	r0, [r7, r4]
+ 184:UserAPP/Source/SendDataProcess.c **** 
+ 185:UserAPP/Source/SendDataProcess.c ****     *outLen = pos;
+ 746              		.loc 1 185 5 is_stmt 1 view .LVU186
+ 747              		.loc 1 185 13 is_stmt 0 view .LVU187
+ 748 0038 2B80     		strh	r3, [r5]	@ movhi
+ 186:UserAPP/Source/SendDataProcess.c ****     return 0;
+ 749              		.loc 1 186 5 is_stmt 1 view .LVU188
+ 750              		.loc 1 186 12 is_stmt 0 view .LVU189
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc2eVAD3.s 			page 23
+
+
+ 751 003a 0020     		movs	r0, #0
+ 752              	.LVL74:
+ 753              	.L58:
+ 187:UserAPP/Source/SendDataProcess.c **** }
+ 754              		.loc 1 187 1 view .LVU190
+ 755 003c F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 756              	.LVL75:
+ 757              	.L68:
  178:UserAPP/Source/SendDataProcess.c ****         pos += dataLen;
+ 758              		.loc 1 178 9 is_stmt 1 view .LVU191
+ 759 003e 2246     		mov	r2, r4
+ 760              	.LVL76:
+ 178:UserAPP/Source/SendDataProcess.c ****         pos += dataLen;
+ 761              		.loc 1 178 9 is_stmt 0 view .LVU192
+ 762 0040 3146     		mov	r1, r6
+ 763              	.LVL77:
+ 178:UserAPP/Source/SendDataProcess.c ****         pos += dataLen;
+ 764              		.loc 1 178 9 view .LVU193
+ 765 0042 381D     		adds	r0, r7, #4
+ 766              	.LVL78:
+ 178:UserAPP/Source/SendDataProcess.c ****         pos += dataLen;
+ 767              		.loc 1 178 9 view .LVU194
+ 768 0044 FFF7FEFF 		bl	memcpy
+ 769              	.LVL79:
  179:UserAPP/Source/SendDataProcess.c ****     }
- 180:UserAPP/Source/SendDataProcess.c **** 
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cccDmnZi.s 			page 22
+ 770              		.loc 1 179 9 is_stmt 1 view .LVU195
+ 179:UserAPP/Source/SendDataProcess.c ****     }
+ 771              		.loc 1 179 13 is_stmt 0 view .LVU196
+ 772 0048 0434     		adds	r4, r4, #4
+ 773              	.LVL80:
+ 179:UserAPP/Source/SendDataProcess.c ****     }
+ 774              		.loc 1 179 13 view .LVU197
+ 775 004a EFE7     		b	.L60
+ 776              	.LVL81:
+ 777              	.L61:
+ 152:UserAPP/Source/SendDataProcess.c ****     }
+ 778              		.loc 1 152 16 view .LVU198
+ 779 004c 0120     		movs	r0, #1
+ 780              	.LVL82:
+ 152:UserAPP/Source/SendDataProcess.c ****     }
+ 781              		.loc 1 152 16 view .LVU199
+ 782 004e F5E7     		b	.L58
+ 783              	.LVL83:
+ 784              	.L62:
+ 152:UserAPP/Source/SendDataProcess.c ****     }
+ 785              		.loc 1 152 16 view .LVU200
+ 786 0050 0120     		movs	r0, #1
+ 787              	.LVL84:
+ 152:UserAPP/Source/SendDataProcess.c ****     }
+ 788              		.loc 1 152 16 view .LVU201
+ 789 0052 F3E7     		b	.L58
+ 790              	.LVL85:
+ 791              	.L63:
+ 155:UserAPP/Source/SendDataProcess.c ****     }
+ 792              		.loc 1 155 16 view .LVU202
+ 793 0054 0220     		movs	r0, #2
+ 794              	.LVL86:
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc2eVAD3.s 			page 24
 
 
- 181:UserAPP/Source/SendDataProcess.c ****     uint8_t crc = Packet_CRC8(outBuf, pos);
- 703              		.loc 1 181 5 is_stmt 1 view .LVU176
- 704              		.loc 1 181 19 is_stmt 0 view .LVU177
- 705 002c 2146     		mov	r1, r4
- 706 002e 3846     		mov	r0, r7
- 707 0030 FFF7FEFF 		bl	Packet_CRC8
- 708              	.LVL68:
- 182:UserAPP/Source/SendDataProcess.c ****     outBuf[pos++] = crc;
- 709              		.loc 1 182 5 is_stmt 1 view .LVU178
- 710              		.loc 1 182 15 is_stmt 0 view .LVU179
- 711 0034 631C     		adds	r3, r4, #1
- 712              	.LVL69:
- 713              		.loc 1 182 19 view .LVU180
- 714 0036 3855     		strb	r0, [r7, r4]
- 183:UserAPP/Source/SendDataProcess.c **** 
- 184:UserAPP/Source/SendDataProcess.c ****     *outLen = pos;
- 715              		.loc 1 184 5 is_stmt 1 view .LVU181
- 716              		.loc 1 184 13 is_stmt 0 view .LVU182
- 717 0038 2B80     		strh	r3, [r5]	@ movhi
- 185:UserAPP/Source/SendDataProcess.c ****     return 0;
- 718              		.loc 1 185 5 is_stmt 1 view .LVU183
- 719              		.loc 1 185 12 is_stmt 0 view .LVU184
- 720 003a 0020     		movs	r0, #0
- 721              	.LVL70:
- 722              	.L56:
- 186:UserAPP/Source/SendDataProcess.c **** }
- 723              		.loc 1 186 1 view .LVU185
- 724 003c F8BD     		pop	{r3, r4, r5, r6, r7, pc}
- 725              	.LVL71:
- 726              	.L66:
- 177:UserAPP/Source/SendDataProcess.c ****         pos += dataLen;
- 727              		.loc 1 177 9 is_stmt 1 view .LVU186
- 728 003e 2246     		mov	r2, r4
- 729              	.LVL72:
- 177:UserAPP/Source/SendDataProcess.c ****         pos += dataLen;
- 730              		.loc 1 177 9 is_stmt 0 view .LVU187
- 731 0040 3146     		mov	r1, r6
- 732              	.LVL73:
- 177:UserAPP/Source/SendDataProcess.c ****         pos += dataLen;
- 733              		.loc 1 177 9 view .LVU188
- 734 0042 381D     		adds	r0, r7, #4
- 735              	.LVL74:
- 177:UserAPP/Source/SendDataProcess.c ****         pos += dataLen;
- 736              		.loc 1 177 9 view .LVU189
- 737 0044 FFF7FEFF 		bl	memcpy
- 738              	.LVL75:
- 178:UserAPP/Source/SendDataProcess.c ****     }
- 739              		.loc 1 178 9 is_stmt 1 view .LVU190
- 178:UserAPP/Source/SendDataProcess.c ****     }
- 740              		.loc 1 178 13 is_stmt 0 view .LVU191
- 741 0048 0434     		adds	r4, r4, #4
- 742              	.LVL76:
- 178:UserAPP/Source/SendDataProcess.c ****     }
- 743              		.loc 1 178 13 view .LVU192
- 744 004a EFE7     		b	.L58
- 745              	.LVL77:
- 746              	.L59:
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cccDmnZi.s 			page 23
+ 155:UserAPP/Source/SendDataProcess.c ****     }
+ 795              		.loc 1 155 16 view .LVU203
+ 796 0056 F1E7     		b	.L58
+ 797              	.LVL87:
+ 798              	.L64:
+ 158:UserAPP/Source/SendDataProcess.c ****     }
+ 799              		.loc 1 158 16 view .LVU204
+ 800 0058 0320     		movs	r0, #3
+ 801              	.LVL88:
+ 158:UserAPP/Source/SendDataProcess.c ****     }
+ 802              		.loc 1 158 16 view .LVU205
+ 803 005a EFE7     		b	.L58
+ 804              	.LVL89:
+ 805              	.L65:
+ 168:UserAPP/Source/SendDataProcess.c ****     }
+ 806              		.loc 1 168 16 view .LVU206
+ 807 005c 0420     		movs	r0, #4
+ 808              	.LVL90:
+ 168:UserAPP/Source/SendDataProcess.c ****     }
+ 809              		.loc 1 168 16 view .LVU207
+ 810 005e EDE7     		b	.L58
+ 811              		.cfi_endproc
+ 812              	.LFE86:
+ 814              		.section	.rodata.ReplyPacket.str1.4,"aMS",%progbits,1
+ 815              		.align	2
+ 816              	.LC1:
+ 817 0000 E69E84E5 		.ascii	"\346\236\204\345\273\272\345\272\224\347\255\224\345"
+ 817      BBBAE5BA 
+ 817      94E7AD94 
+ 817      E5
+ 818 000d 8C85E5A4 		.ascii	"\214\205\345\244\261\350\264\245\357\274\214\351\224"
+ 818      B1E8B4A5 
+ 818      EFBC8CE9 
+ 818      94
+ 819 001a 99E8AFAF 		.ascii	"\231\350\257\257\347\240\201=%u\015\012\000"
+ 819      E7A0813D 
+ 819      25750D0A 
+ 819      00
+ 820              		.section	.text.ReplyPacket,"ax",%progbits
+ 821              		.align	1
+ 822              		.global	ReplyPacket
+ 823              		.syntax unified
+ 824              		.thumb
+ 825              		.thumb_func
+ 827              	ReplyPacket:
+ 828              	.LVL91:
+ 829              	.LFB87:
+ 188:UserAPP/Source/SendDataProcess.c **** 
+ 189:UserAPP/Source/SendDataProcess.c **** /* 封装并入队应答包 */
+ 190:UserAPP/Source/SendDataProcess.c **** void ReplyPacket(uint8_t reply)
+ 191:UserAPP/Source/SendDataProcess.c **** {
+ 830              		.loc 1 191 1 is_stmt 1 view -0
+ 831              		.cfi_startproc
+ 832              		@ args = 0, pretend = 0, frame = 72
+ 833              		@ frame_needed = 0, uses_anonymous_args = 0
+ 834              		.loc 1 191 1 is_stmt 0 view .LVU209
+ 835 0000 00B5     		push	{lr}
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc2eVAD3.s 			page 25
 
 
- 151:UserAPP/Source/SendDataProcess.c ****     }
- 747              		.loc 1 151 16 view .LVU193
- 748 004c 0120     		movs	r0, #1
- 749              	.LVL78:
- 151:UserAPP/Source/SendDataProcess.c ****     }
- 750              		.loc 1 151 16 view .LVU194
- 751 004e F5E7     		b	.L56
- 752              	.LVL79:
- 753              	.L60:
- 151:UserAPP/Source/SendDataProcess.c ****     }
- 754              		.loc 1 151 16 view .LVU195
- 755 0050 0120     		movs	r0, #1
- 756              	.LVL80:
- 151:UserAPP/Source/SendDataProcess.c ****     }
- 757              		.loc 1 151 16 view .LVU196
- 758 0052 F3E7     		b	.L56
- 759              	.LVL81:
- 760              	.L61:
- 154:UserAPP/Source/SendDataProcess.c ****     }
- 761              		.loc 1 154 16 view .LVU197
- 762 0054 0220     		movs	r0, #2
- 763              	.LVL82:
- 154:UserAPP/Source/SendDataProcess.c ****     }
- 764              		.loc 1 154 16 view .LVU198
- 765 0056 F1E7     		b	.L56
- 766              	.LVL83:
- 767              	.L62:
- 157:UserAPP/Source/SendDataProcess.c ****     }
- 768              		.loc 1 157 16 view .LVU199
- 769 0058 0320     		movs	r0, #3
- 770              	.LVL84:
- 157:UserAPP/Source/SendDataProcess.c ****     }
- 771              		.loc 1 157 16 view .LVU200
- 772 005a EFE7     		b	.L56
- 773              	.LVL85:
- 774              	.L63:
- 167:UserAPP/Source/SendDataProcess.c ****     }
- 775              		.loc 1 167 16 view .LVU201
- 776 005c 0420     		movs	r0, #4
- 777              	.LVL86:
- 167:UserAPP/Source/SendDataProcess.c ****     }
- 778              		.loc 1 167 16 view .LVU202
- 779 005e EDE7     		b	.L56
- 780              		.cfi_endproc
- 781              	.LFE85:
- 783              		.section	.rodata.ReplyPacket.str1.4,"aMS",%progbits,1
- 784              		.align	2
- 785              	.LC1:
- 786 0000 E69E84E5 		.ascii	"\346\236\204\345\273\272\345\272\224\347\255\224\345"
- 786      BBBAE5BA 
- 786      94E7AD94 
- 786      E5
- 787 000d 8C85E5A4 		.ascii	"\214\205\345\244\261\350\264\245\357\274\214\351\224"
- 787      B1E8B4A5 
- 787      EFBC8CE9 
- 787      94
- 788 001a 99E8AFAF 		.ascii	"\231\350\257\257\347\240\201=%u\015\012\000"
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cccDmnZi.s 			page 24
+ 836              	.LCFI21:
+ 837              		.cfi_def_cfa_offset 4
+ 838              		.cfi_offset 14, -4
+ 839 0002 95B0     		sub	sp, sp, #84
+ 840              	.LCFI22:
+ 841              		.cfi_def_cfa_offset 88
+ 192:UserAPP/Source/SendDataProcess.c ****     (void)reply;
+ 842              		.loc 1 192 5 is_stmt 1 view .LVU210
+ 193:UserAPP/Source/SendDataProcess.c ****     uint8_t outBuf[PACKET_MAX_SIZE];
+ 843              		.loc 1 193 5 view .LVU211
+ 194:UserAPP/Source/SendDataProcess.c ****     uint16_t outLen = 0;
+ 844              		.loc 1 194 5 view .LVU212
+ 845              		.loc 1 194 14 is_stmt 0 view .LVU213
+ 846 0004 0021     		movs	r1, #0
+ 847 0006 ADF80E10 		strh	r1, [sp, #14]	@ movhi
+ 195:UserAPP/Source/SendDataProcess.c **** 
+ 196:UserAPP/Source/SendDataProcess.c ****     uint8_t buildRet = BuildReplyPacket((uint8_t)FUNCTION_CODE_Reply,
+ 848              		.loc 1 196 5 is_stmt 1 view .LVU214
+ 849              		.loc 1 196 24 is_stmt 0 view .LVU215
+ 850 000a 0DF10E03 		add	r3, sp, #14
+ 851 000e 0193     		str	r3, [sp, #4]
+ 852 0010 04AB     		add	r3, sp, #16
+ 853 0012 0093     		str	r3, [sp]
+ 854 0014 0B46     		mov	r3, r1
+ 855 0016 0A46     		mov	r2, r1
+ 856 0018 0120     		movs	r0, #1
+ 857              	.LVL92:
+ 858              		.loc 1 196 24 view .LVU216
+ 859 001a FFF7FEFF 		bl	BuildReplyPacket
+ 860              	.LVL93:
+ 197:UserAPP/Source/SendDataProcess.c ****                                         0x0000,
+ 198:UserAPP/Source/SendDataProcess.c ****                                         NULL,
+ 199:UserAPP/Source/SendDataProcess.c ****                                         0,
+ 200:UserAPP/Source/SendDataProcess.c ****                                         outBuf,
+ 201:UserAPP/Source/SendDataProcess.c ****                                         &outLen);
+ 202:UserAPP/Source/SendDataProcess.c ****     if (buildRet != 0) {
+ 861              		.loc 1 202 5 is_stmt 1 view .LVU217
+ 862              		.loc 1 202 8 is_stmt 0 view .LVU218
+ 863 001e 50B1     		cbz	r0, .L70
+ 864 0020 0346     		mov	r3, r0
+ 203:UserAPP/Source/SendDataProcess.c ****         if (xSendDataQueue != NULL) {
+ 865              		.loc 1 203 9 is_stmt 1 view .LVU219
+ 866              		.loc 1 203 28 is_stmt 0 view .LVU220
+ 867 0022 0C4A     		ldr	r2, .L75
+ 868 0024 1068     		ldr	r0, [r2]
+ 869              	.LVL94:
+ 870              		.loc 1 203 12 view .LVU221
+ 871 0026 18B1     		cbz	r0, .L69
+ 204:UserAPP/Source/SendDataProcess.c ****             QueueSendfmt(xSendDataQueue, 0, "构建应答包失败，错误码=%u\r\n", buildRet);
+ 872              		.loc 1 204 13 is_stmt 1 view .LVU222
+ 873 0028 0B4A     		ldr	r2, .L75+4
+ 874 002a 0021     		movs	r1, #0
+ 875 002c FFF7FEFF 		bl	QueueSendfmt
+ 876              	.LVL95:
+ 205:UserAPP/Source/SendDataProcess.c ****         }
+ 206:UserAPP/Source/SendDataProcess.c ****         return;
+ 877              		.loc 1 206 9 view .LVU223
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc2eVAD3.s 			page 26
 
 
- 788      E7A0813D 
- 788      25750D0A 
- 788      00
- 789 0027 00       		.align	2
- 790              	.LC2:
- 791 0028 25303258 		.ascii	"%02X \000"
- 791      2000
- 792 002e 0000     		.align	2
- 793              	.LC3:
- 794 0030 E69E84E5 		.ascii	"\346\236\204\345\273\272\345\256\214\346\210\220(%u"
- 794      BBBAE5AE 
- 794      8CE68890 
- 794      282575
- 795 003f 20E5AD97 		.ascii	" \345\255\227\350\212\202\357\274\211\357\274\232%s"
- 795      E88A82EF 
- 795      BC89EFBC 
- 795      9A2573
- 796 004e 0D0A00   		.ascii	"\015\012\000"
- 797 0051 000000   		.align	2
- 798              	.LC4:
- 799 0054 E5BA94E7 		.ascii	"\345\272\224\347\255\224\345\214\205\345\205\245\351"
- 799      AD94E58C 
- 799      85E585A5 
- 799      E9
- 800 0061 989FE5A4 		.ascii	"\230\237\345\244\261\350\264\245\357\274\214\351\225"
- 800      B1E8B4A5 
- 800      EFBC8CE9 
- 800      95
- 801 006e BFE5BAA6 		.ascii	"\277\345\272\246=%u\015\012\000"
- 801      3D25750D 
- 801      0A00
- 802              		.section	.text.ReplyPacket,"ax",%progbits
- 803              		.align	1
- 804              		.global	ReplyPacket
- 805              		.syntax unified
- 806              		.thumb
- 807              		.thumb_func
- 809              	ReplyPacket:
- 810              	.LVL87:
- 811              	.LFB86:
- 187:UserAPP/Source/SendDataProcess.c **** 
- 188:UserAPP/Source/SendDataProcess.c **** /* 封装并入队应答包 */
- 189:UserAPP/Source/SendDataProcess.c **** void ReplyPacket(uint8_t reply)
- 190:UserAPP/Source/SendDataProcess.c **** {
- 812              		.loc 1 190 1 is_stmt 1 view -0
- 813              		.cfi_startproc
- 814              		@ args = 0, pretend = 0, frame = 200
- 815              		@ frame_needed = 0, uses_anonymous_args = 0
- 816              		.loc 1 190 1 is_stmt 0 view .LVU204
- 817 0000 30B5     		push	{r4, r5, lr}
- 818              	.LCFI20:
- 819              		.cfi_def_cfa_offset 12
- 820              		.cfi_offset 4, -12
- 821              		.cfi_offset 5, -8
- 822              		.cfi_offset 14, -4
- 823 0002 B5B0     		sub	sp, sp, #212
- 824              	.LCFI21:
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cccDmnZi.s 			page 25
+ 878              	.L69:
+ 207:UserAPP/Source/SendDataProcess.c ****     }
+ 208:UserAPP/Source/SendDataProcess.c **** 
+ 209:UserAPP/Source/SendDataProcess.c ****     if (xSendDataQueue != NULL) {
+ 210:UserAPP/Source/SendDataProcess.c **** #if TEST_MODE
+ 211:UserAPP/Source/SendDataProcess.c ****         char hexbuf[128];
+ 212:UserAPP/Source/SendDataProcess.c ****         int pos = 0;
+ 213:UserAPP/Source/SendDataProcess.c ****         for (uint16_t i = 0; i < outLen && pos < (int)sizeof(hexbuf) - 4; ++i) {
+ 214:UserAPP/Source/SendDataProcess.c ****             pos += snprintf(&hexbuf[pos], sizeof(hexbuf) - pos, "%02X ", outBuf[i]);
+ 215:UserAPP/Source/SendDataProcess.c ****         }
+ 216:UserAPP/Source/SendDataProcess.c ****         hexbuf[pos] = '\0';
+ 217:UserAPP/Source/SendDataProcess.c ****         QueueSendfmt(xSendDataQueue, 0, "构建完成(%u 字节）：%s\r\n", outLen, hexbuf);
+ 218:UserAPP/Source/SendDataProcess.c **** #endif
+ 219:UserAPP/Source/SendDataProcess.c ****     }
+ 220:UserAPP/Source/SendDataProcess.c **** 
+ 221:UserAPP/Source/SendDataProcess.c ****     if (SendBinaryToHostFront(outBuf, outLen, pdMS_TO_TICKS(100)) != pdPASS)
+ 222:UserAPP/Source/SendDataProcess.c ****     {
+ 223:UserAPP/Source/SendDataProcess.c ****         /* 队列阻塞/满时，直接走UART兜底，确保上位机能及时收到应答 */
+ 224:UserAPP/Source/SendDataProcess.c ****         UART1_SendBlocking(outBuf, outLen);
+ 225:UserAPP/Source/SendDataProcess.c ****     }
+ 226:UserAPP/Source/SendDataProcess.c **** }
+ 879              		.loc 1 226 1 is_stmt 0 view .LVU224
+ 880 0030 15B0     		add	sp, sp, #84
+ 881              	.LCFI23:
+ 882              		.cfi_remember_state
+ 883              		.cfi_def_cfa_offset 4
+ 884              		@ sp needed
+ 885 0032 5DF804FB 		ldr	pc, [sp], #4
+ 886              	.LVL96:
+ 887              	.L70:
+ 888              	.LCFI24:
+ 889              		.cfi_restore_state
+ 209:UserAPP/Source/SendDataProcess.c **** #if TEST_MODE
+ 890              		.loc 1 209 5 is_stmt 1 view .LVU225
+ 219:UserAPP/Source/SendDataProcess.c **** 
+ 891              		.loc 1 219 5 view .LVU226
+ 221:UserAPP/Source/SendDataProcess.c ****     {
+ 892              		.loc 1 221 5 view .LVU227
+ 221:UserAPP/Source/SendDataProcess.c ****     {
+ 893              		.loc 1 221 9 is_stmt 0 view .LVU228
+ 894 0036 4FF47A72 		mov	r2, #1000
+ 895 003a BDF80E10 		ldrh	r1, [sp, #14]
+ 896 003e 04A8     		add	r0, sp, #16
+ 897              	.LVL97:
+ 221:UserAPP/Source/SendDataProcess.c ****     {
+ 898              		.loc 1 221 9 view .LVU229
+ 899 0040 FFF7FEFF 		bl	SendBinaryToHostFront
+ 900              	.LVL98:
+ 221:UserAPP/Source/SendDataProcess.c ****     {
+ 901              		.loc 1 221 8 discriminator 1 view .LVU230
+ 902 0044 0128     		cmp	r0, #1
+ 903 0046 F3D0     		beq	.L69
+ 224:UserAPP/Source/SendDataProcess.c ****     }
+ 904              		.loc 1 224 9 is_stmt 1 view .LVU231
+ 905 0048 BDF80E10 		ldrh	r1, [sp, #14]
+ 906 004c 04A8     		add	r0, sp, #16
+ 907 004e FFF7FEFF 		bl	UART1_SendBlocking
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc2eVAD3.s 			page 27
 
 
- 825              		.cfi_def_cfa_offset 224
- 826 0004 0146     		mov	r1, r0
- 191:UserAPP/Source/SendDataProcess.c ****     uint8_t outBuf[PACKET_MAX_SIZE];
- 827              		.loc 1 191 5 is_stmt 1 view .LVU205
- 192:UserAPP/Source/SendDataProcess.c ****     uint16_t outLen = 0;
- 828              		.loc 1 192 5 view .LVU206
- 829              		.loc 1 192 14 is_stmt 0 view .LVU207
- 830 0006 0022     		movs	r2, #0
- 831 0008 ADF88E20 		strh	r2, [sp, #142]	@ movhi
- 193:UserAPP/Source/SendDataProcess.c ****     uint16_t execIndex = (uint16_t)reply;
- 832              		.loc 1 193 5 is_stmt 1 view .LVU208
- 833              	.LVL88:
- 194:UserAPP/Source/SendDataProcess.c **** 
- 195:UserAPP/Source/SendDataProcess.c ****     uint8_t buildRet = BuildReplyPacket((uint8_t)FUNCTION_CODE_Reply, execIndex, NULL, 0, outBuf, &
- 834              		.loc 1 195 5 view .LVU209
- 835              		.loc 1 195 24 is_stmt 0 view .LVU210
- 836 000c 0DF18E03 		add	r3, sp, #142
- 837 0010 0193     		str	r3, [sp, #4]
- 838 0012 24AB     		add	r3, sp, #144
- 839 0014 0093     		str	r3, [sp]
- 840 0016 1346     		mov	r3, r2
- 841 0018 0120     		movs	r0, #1
- 842              	.LVL89:
- 843              		.loc 1 195 24 view .LVU211
- 844 001a FFF7FEFF 		bl	BuildReplyPacket
- 845              	.LVL90:
- 196:UserAPP/Source/SendDataProcess.c ****     if (buildRet != 0) {
- 846              		.loc 1 196 5 is_stmt 1 view .LVU212
- 847              		.loc 1 196 8 is_stmt 0 view .LVU213
- 848 001e 28B9     		cbnz	r0, .L78
- 197:UserAPP/Source/SendDataProcess.c ****         if (xSendDataQueue != NULL) {
- 198:UserAPP/Source/SendDataProcess.c ****             QueueSendfmt(xSendDataQueue, 0, "构建应答包失败，错误码=%u\r\n", buildRet);
- 199:UserAPP/Source/SendDataProcess.c ****         }
- 200:UserAPP/Source/SendDataProcess.c ****         return;
- 201:UserAPP/Source/SendDataProcess.c ****     }
- 202:UserAPP/Source/SendDataProcess.c **** 
- 203:UserAPP/Source/SendDataProcess.c ****     if (xSendDataQueue != NULL) {
- 849              		.loc 1 203 5 is_stmt 1 view .LVU214
- 850              		.loc 1 203 24 is_stmt 0 view .LVU215
- 851 0020 224B     		ldr	r3, .L79
- 852 0022 1B68     		ldr	r3, [r3]
- 853              		.loc 1 203 8 view .LVU216
- 854 0024 7BB3     		cbz	r3, .L72
- 855              	.LBB16:
- 856              	.LBB17:
- 204:UserAPP/Source/SendDataProcess.c ****         char hexbuf[128];
- 205:UserAPP/Source/SendDataProcess.c ****         int pos = 0;
- 206:UserAPP/Source/SendDataProcess.c ****         for (uint16_t i = 0; i < outLen && pos < (int)sizeof(hexbuf) - 4; ++i) {
- 857              		.loc 1 206 23 view .LVU217
- 858 0026 0024     		movs	r4, #0
- 859              	.LBE17:
- 205:UserAPP/Source/SendDataProcess.c ****         for (uint16_t i = 0; i < outLen && pos < (int)sizeof(hexbuf) - 4; ++i) {
- 860              		.loc 1 205 13 view .LVU218
- 861 0028 2546     		mov	r5, r4
- 862 002a 18E0     		b	.L71
- 863              	.L78:
- 864 002c 0346     		mov	r3, r0
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cccDmnZi.s 			page 26
-
-
- 865              	.LBE16:
- 197:UserAPP/Source/SendDataProcess.c ****         if (xSendDataQueue != NULL) {
- 866              		.loc 1 197 9 is_stmt 1 view .LVU219
- 197:UserAPP/Source/SendDataProcess.c ****         if (xSendDataQueue != NULL) {
- 867              		.loc 1 197 28 is_stmt 0 view .LVU220
- 868 002e 1F4A     		ldr	r2, .L79
- 869 0030 1068     		ldr	r0, [r2]
- 870              	.LVL91:
- 197:UserAPP/Source/SendDataProcess.c ****         if (xSendDataQueue != NULL) {
- 871              		.loc 1 197 12 view .LVU221
- 872 0032 0028     		cmp	r0, #0
- 873 0034 38D0     		beq	.L67
- 198:UserAPP/Source/SendDataProcess.c ****         }
- 874              		.loc 1 198 13 is_stmt 1 view .LVU222
- 875 0036 1E4A     		ldr	r2, .L79+4
- 876 0038 0021     		movs	r1, #0
- 877 003a FFF7FEFF 		bl	QueueSendfmt
- 878              	.LVL92:
- 200:UserAPP/Source/SendDataProcess.c ****     }
- 879              		.loc 1 200 9 view .LVU223
- 880 003e 33E0     		b	.L67
- 881              	.LVL93:
- 882              	.L74:
- 883              	.LBB19:
- 884              	.LBB18:
- 207:UserAPP/Source/SendDataProcess.c ****             pos += snprintf(&hexbuf[pos], sizeof(hexbuf) - pos, "%02X ", outBuf[i]);
- 885              		.loc 1 207 13 view .LVU224
- 886              		.loc 1 207 80 is_stmt 0 view .LVU225
- 887 0040 04F1D003 		add	r3, r4, #208
- 888 0044 6B44     		add	r3, sp, r3
- 889              		.loc 1 207 20 view .LVU226
- 890 0046 13F8403C 		ldrb	r3, [r3, #-64]	@ zero_extendqisi2
- 891 004a 1A4A     		ldr	r2, .L79+8
- 892 004c C5F18001 		rsb	r1, r5, #128
- 893 0050 03A8     		add	r0, sp, #12
- 894 0052 2844     		add	r0, r0, r5
- 895 0054 FFF7FEFF 		bl	snprintf
- 896              	.LVL94:
- 897              		.loc 1 207 17 discriminator 1 view .LVU227
- 898 0058 0544     		add	r5, r5, r0
- 899              	.LVL95:
- 206:UserAPP/Source/SendDataProcess.c ****             pos += snprintf(&hexbuf[pos], sizeof(hexbuf) - pos, "%02X ", outBuf[i]);
- 900              		.loc 1 206 75 is_stmt 1 discriminator 4 view .LVU228
- 901 005a 0134     		adds	r4, r4, #1
- 902              	.LVL96:
- 206:UserAPP/Source/SendDataProcess.c ****             pos += snprintf(&hexbuf[pos], sizeof(hexbuf) - pos, "%02X ", outBuf[i]);
- 903              		.loc 1 206 75 is_stmt 0 discriminator 4 view .LVU229
- 904 005c A4B2     		uxth	r4, r4
- 905              	.LVL97:
- 906              	.L71:
- 206:UserAPP/Source/SendDataProcess.c ****             pos += snprintf(&hexbuf[pos], sizeof(hexbuf) - pos, "%02X ", outBuf[i]);
- 907              		.loc 1 206 41 is_stmt 1 discriminator 1 view .LVU230
- 206:UserAPP/Source/SendDataProcess.c ****             pos += snprintf(&hexbuf[pos], sizeof(hexbuf) - pos, "%02X ", outBuf[i]);
- 908              		.loc 1 206 32 is_stmt 0 discriminator 1 view .LVU231
- 909 005e BDF88E30 		ldrh	r3, [sp, #142]
- 206:UserAPP/Source/SendDataProcess.c ****             pos += snprintf(&hexbuf[pos], sizeof(hexbuf) - pos, "%02X ", outBuf[i]);
- 910              		.loc 1 206 41 discriminator 1 view .LVU232
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cccDmnZi.s 			page 27
-
-
- 911 0062 A342     		cmp	r3, r4
- 912 0064 01D9     		bls	.L73
- 206:UserAPP/Source/SendDataProcess.c ****             pos += snprintf(&hexbuf[pos], sizeof(hexbuf) - pos, "%02X ", outBuf[i]);
- 913              		.loc 1 206 41 discriminator 3 view .LVU233
- 914 0066 7B2D     		cmp	r5, #123
- 915 0068 EADD     		ble	.L74
- 916              	.L73:
- 917              	.LBE18:
- 208:UserAPP/Source/SendDataProcess.c ****         }
- 209:UserAPP/Source/SendDataProcess.c ****         hexbuf[pos] = '\0';
- 918              		.loc 1 209 9 is_stmt 1 view .LVU234
- 919              		.loc 1 209 21 is_stmt 0 view .LVU235
- 920 006a 05F1D002 		add	r2, r5, #208
- 921 006e 0DEB0205 		add	r5, sp, r2
- 922              	.LVL98:
- 923              		.loc 1 209 21 view .LVU236
- 924 0072 0021     		movs	r1, #0
- 925 0074 05F8C41C 		strb	r1, [r5, #-196]
- 210:UserAPP/Source/SendDataProcess.c ****         QueueSendfmt(xSendDataQueue, 0, "构建完成(%u 字节）：%s\r\n", outLen, hexbuf);
- 926              		.loc 1 210 9 is_stmt 1 view .LVU237
- 927 0078 03AA     		add	r2, sp, #12
- 928              	.LVL99:
- 929              		.loc 1 210 9 is_stmt 0 view .LVU238
- 930 007a 0092     		str	r2, [sp]
- 931 007c 0E4A     		ldr	r2, .L79+12
- 932 007e 0B48     		ldr	r0, .L79
- 933 0080 0068     		ldr	r0, [r0]
- 934 0082 FFF7FEFF 		bl	QueueSendfmt
- 935              	.LVL100:
- 936              	.L72:
- 937              		.loc 1 210 9 view .LVU239
- 938              	.LBE19:
- 211:UserAPP/Source/SendDataProcess.c ****     }
- 212:UserAPP/Source/SendDataProcess.c **** 
- 213:UserAPP/Source/SendDataProcess.c ****     if (SendBinaryToHost(outBuf, outLen, pdMS_TO_TICKS(20)) != pdPASS)
- 939              		.loc 1 213 5 is_stmt 1 view .LVU240
- 940              		.loc 1 213 9 is_stmt 0 view .LVU241
- 941 0086 C822     		movs	r2, #200
- 942 0088 BDF88E10 		ldrh	r1, [sp, #142]
- 943 008c 24A8     		add	r0, sp, #144
- 944 008e FFF7FEFF 		bl	SendBinaryToHost
- 945              	.LVL101:
- 946              		.loc 1 213 8 discriminator 1 view .LVU242
- 947 0092 0128     		cmp	r0, #1
- 948 0094 08D0     		beq	.L67
- 214:UserAPP/Source/SendDataProcess.c ****     {
- 215:UserAPP/Source/SendDataProcess.c ****         if (xSendDataQueue != NULL) {
- 949              		.loc 1 215 9 is_stmt 1 view .LVU243
- 950              		.loc 1 215 28 is_stmt 0 view .LVU244
- 951 0096 054B     		ldr	r3, .L79
- 952 0098 1868     		ldr	r0, [r3]
- 953              		.loc 1 215 12 view .LVU245
- 954 009a 28B1     		cbz	r0, .L67
- 216:UserAPP/Source/SendDataProcess.c ****             QueueSendfmt(xSendDataQueue, 0, "应答包入队失败，长度=%u\r\n", outLen);
- 955              		.loc 1 216 13 is_stmt 1 view .LVU246
- 956 009c BDF88E30 		ldrh	r3, [sp, #142]
- 957 00a0 064A     		ldr	r2, .L79+16
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cccDmnZi.s 			page 28
-
-
- 958 00a2 0021     		movs	r1, #0
- 959 00a4 FFF7FEFF 		bl	QueueSendfmt
- 960              	.LVL102:
- 961              	.L67:
- 217:UserAPP/Source/SendDataProcess.c ****         }
- 218:UserAPP/Source/SendDataProcess.c ****     }
- 219:UserAPP/Source/SendDataProcess.c **** }
- 962              		.loc 1 219 1 is_stmt 0 view .LVU247
- 963 00a8 35B0     		add	sp, sp, #212
- 964              	.LCFI22:
- 965              		.cfi_def_cfa_offset 12
- 966              		@ sp needed
- 967 00aa 30BD     		pop	{r4, r5, pc}
- 968              	.L80:
- 969              		.align	2
- 970              	.L79:
- 971 00ac 00000000 		.word	xSendDataQueue
- 972 00b0 00000000 		.word	.LC1
- 973 00b4 28000000 		.word	.LC2
- 974 00b8 30000000 		.word	.LC3
- 975 00bc 54000000 		.word	.LC4
- 976              		.cfi_endproc
- 977              	.LFE86:
- 979              		.global	xSendDataQueue
- 980              		.section	.bss.xSendDataQueue,"aw",%nobits
- 981              		.align	2
- 984              	xSendDataQueue:
- 985 0000 00000000 		.space	4
- 986              		.global	xCreateSendDataTaskHandle
- 987              		.section	.bss.xCreateSendDataTaskHandle,"aw",%nobits
- 988              		.align	2
- 991              	xCreateSendDataTaskHandle:
- 992 0000 00000000 		.space	4
- 993              		.global	xCreateSendDataTaskReturned
- 994              		.section	.bss.xCreateSendDataTaskReturned,"aw",%nobits
- 995              		.align	2
- 998              	xCreateSendDataTaskReturned:
- 999 0000 00000000 		.space	4
- 1000              		.text
- 1001              	.Letext0:
- 1002              		.file 3 "D:/gcc-arm/14.3 rel1/arm-none-eabi/include/machine/_default_types.h"
- 1003              		.file 4 "D:/gcc-arm/14.3 rel1/arm-none-eabi/include/sys/_stdint.h"
- 1004              		.file 5 "D:/gcc-arm/14.3 rel1/lib/gcc/arm-none-eabi/14.3.1/include/stddef.h"
- 1005              		.file 6 "D:/gcc-arm/14.3 rel1/lib/gcc/arm-none-eabi/14.3.1/include/stdarg.h"
- 1006              		.file 7 "D:/gcc-arm/14.3 rel1/arm-none-eabi/include/stdio.h"
- 1007              		.file 8 "Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h"
- 1008              		.file 9 "Middlewares/Third_Party/FreeRTOS/Source/include/task.h"
- 1009              		.file 10 "Middlewares/Third_Party/FreeRTOS/Source/include/queue.h"
- 1010              		.file 11 "Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_def.h"
- 1011              		.file 12 "UserAPP/Include/Tasklist.h"
- 1012              		.file 13 "UserAPP/Include/SendDataProcess.h"
- 1013              		.file 14 "D:/gcc-arm/14.3 rel1/arm-none-eabi/include/string.h"
- 1014              		.file 15 "USB_DEVICE/App/usbd_cdc_if.h"
- 1015              		.file 16 "<built-in>"
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cccDmnZi.s 			page 29
+ 908              	.LVL99:
+ 909 0052 EDE7     		b	.L69
+ 910              	.L76:
+ 911              		.align	2
+ 912              	.L75:
+ 913 0054 00000000 		.word	xSendDataQueue
+ 914 0058 00000000 		.word	.LC1
+ 915              		.cfi_endproc
+ 916              	.LFE87:
+ 918              		.global	xSendDataQueue
+ 919              		.section	.bss.xSendDataQueue,"aw",%nobits
+ 920              		.align	2
+ 923              	xSendDataQueue:
+ 924 0000 00000000 		.space	4
+ 925              		.global	xCreateSendDataTaskHandle
+ 926              		.section	.bss.xCreateSendDataTaskHandle,"aw",%nobits
+ 927              		.align	2
+ 930              	xCreateSendDataTaskHandle:
+ 931 0000 00000000 		.space	4
+ 932              		.global	xCreateSendDataTaskReturned
+ 933              		.section	.bss.xCreateSendDataTaskReturned,"aw",%nobits
+ 934              		.align	2
+ 937              	xCreateSendDataTaskReturned:
+ 938 0000 00000000 		.space	4
+ 939              		.text
+ 940              	.Letext0:
+ 941              		.file 3 "D:/gcc-arm/14.3 rel1/arm-none-eabi/include/machine/_default_types.h"
+ 942              		.file 4 "D:/gcc-arm/14.3 rel1/arm-none-eabi/include/sys/_stdint.h"
+ 943              		.file 5 "D:/gcc-arm/14.3 rel1/lib/gcc/arm-none-eabi/14.3.1/include/stddef.h"
+ 944              		.file 6 "D:/gcc-arm/14.3 rel1/lib/gcc/arm-none-eabi/14.3.1/include/stdarg.h"
+ 945              		.file 7 "D:/gcc-arm/14.3 rel1/arm-none-eabi/include/stdio.h"
+ 946              		.file 8 "Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h"
+ 947              		.file 9 "Middlewares/Third_Party/FreeRTOS/Source/include/task.h"
+ 948              		.file 10 "Middlewares/Third_Party/FreeRTOS/Source/include/queue.h"
+ 949              		.file 11 "UserAPP/Include/SendDataProcess.h"
+ 950              		.file 12 "D:/gcc-arm/14.3 rel1/arm-none-eabi/include/string.h"
+ 951              		.file 13 "<built-in>"
+ 952              		.file 14 "UserAPP/Include/Tasklist.h"
+ 953              		.file 15 "UserDriver/Include/uart1.h"
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc2eVAD3.s 			page 28
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 SendDataProcess.c
-C:\Users\Administrator\AppData\Local\Temp\cccDmnZi.s:19     .text.Packet_CRC8:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\cccDmnZi.s:24     .text.Packet_CRC8:00000000 Packet_CRC8
-C:\Users\Administrator\AppData\Local\Temp\cccDmnZi.s:121    .text.vSendDataProcessTask:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\cccDmnZi.s:127    .text.vSendDataProcessTask:00000000 vSendDataProcessTask
-C:\Users\Administrator\AppData\Local\Temp\cccDmnZi.s:273    .text.vSendDataProcessTask:0000006c $d
-C:\Users\Administrator\AppData\Local\Temp\cccDmnZi.s:984    .bss.xSendDataQueue:00000000 xSendDataQueue
-C:\Users\Administrator\AppData\Local\Temp\cccDmnZi.s:279    .text.vCreateSendDataQueueTask:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\cccDmnZi.s:285    .text.vCreateSendDataQueueTask:00000000 vCreateSendDataQueueTask
-C:\Users\Administrator\AppData\Local\Temp\cccDmnZi.s:316    .text.vCreateSendDataQueueTask:00000014 $d
-C:\Users\Administrator\AppData\Local\Temp\cccDmnZi.s:321    .rodata.vCreateSendDataTask.str1.4:00000000 $d
-C:\Users\Administrator\AppData\Local\Temp\cccDmnZi.s:325    .text.vCreateSendDataTask:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\cccDmnZi.s:331    .text.vCreateSendDataTask:00000000 vCreateSendDataTask
-C:\Users\Administrator\AppData\Local\Temp\cccDmnZi.s:372    .text.vCreateSendDataTask:0000002c $d
-C:\Users\Administrator\AppData\Local\Temp\cccDmnZi.s:991    .bss.xCreateSendDataTaskHandle:00000000 xCreateSendDataTaskHandle
-C:\Users\Administrator\AppData\Local\Temp\cccDmnZi.s:998    .bss.xCreateSendDataTaskReturned:00000000 xCreateSendDataTaskReturned
-C:\Users\Administrator\AppData\Local\Temp\cccDmnZi.s:380    .text.QueueSendfmt:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\cccDmnZi.s:386    .text.QueueSendfmt:00000000 QueueSendfmt
-C:\Users\Administrator\AppData\Local\Temp\cccDmnZi.s:517    .text.SendBinaryToHost:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\cccDmnZi.s:523    .text.SendBinaryToHost:00000000 SendBinaryToHost
-C:\Users\Administrator\AppData\Local\Temp\cccDmnZi.s:616    .text.SendBinaryToHost:00000044 $d
-C:\Users\Administrator\AppData\Local\Temp\cccDmnZi.s:621    .text.BuildReplyPacket:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\cccDmnZi.s:627    .text.BuildReplyPacket:00000000 BuildReplyPacket
-C:\Users\Administrator\AppData\Local\Temp\cccDmnZi.s:784    .rodata.ReplyPacket.str1.4:00000000 $d
-C:\Users\Administrator\AppData\Local\Temp\cccDmnZi.s:803    .text.ReplyPacket:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\cccDmnZi.s:809    .text.ReplyPacket:00000000 ReplyPacket
-C:\Users\Administrator\AppData\Local\Temp\cccDmnZi.s:971    .text.ReplyPacket:000000ac $d
-C:\Users\Administrator\AppData\Local\Temp\cccDmnZi.s:981    .bss.xSendDataQueue:00000000 $d
-C:\Users\Administrator\AppData\Local\Temp\cccDmnZi.s:988    .bss.xCreateSendDataTaskHandle:00000000 $d
-C:\Users\Administrator\AppData\Local\Temp\cccDmnZi.s:995    .bss.xCreateSendDataTaskReturned:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\cc2eVAD3.s:19     .text.Packet_CRC8:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\cc2eVAD3.s:24     .text.Packet_CRC8:00000000 Packet_CRC8
+C:\Users\Administrator\AppData\Local\Temp\cc2eVAD3.s:121    .text.vSendDataProcessTask:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\cc2eVAD3.s:127    .text.vSendDataProcessTask:00000000 vSendDataProcessTask
+C:\Users\Administrator\AppData\Local\Temp\cc2eVAD3.s:201    .text.vSendDataProcessTask:00000040 $d
+C:\Users\Administrator\AppData\Local\Temp\cc2eVAD3.s:923    .bss.xSendDataQueue:00000000 xSendDataQueue
+C:\Users\Administrator\AppData\Local\Temp\cc2eVAD3.s:206    .text.vCreateSendDataQueueTask:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\cc2eVAD3.s:212    .text.vCreateSendDataQueueTask:00000000 vCreateSendDataQueueTask
+C:\Users\Administrator\AppData\Local\Temp\cc2eVAD3.s:243    .text.vCreateSendDataQueueTask:00000014 $d
+C:\Users\Administrator\AppData\Local\Temp\cc2eVAD3.s:248    .rodata.vCreateSendDataTask.str1.4:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\cc2eVAD3.s:252    .text.vCreateSendDataTask:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\cc2eVAD3.s:258    .text.vCreateSendDataTask:00000000 vCreateSendDataTask
+C:\Users\Administrator\AppData\Local\Temp\cc2eVAD3.s:299    .text.vCreateSendDataTask:0000002c $d
+C:\Users\Administrator\AppData\Local\Temp\cc2eVAD3.s:930    .bss.xCreateSendDataTaskHandle:00000000 xCreateSendDataTaskHandle
+C:\Users\Administrator\AppData\Local\Temp\cc2eVAD3.s:937    .bss.xCreateSendDataTaskReturned:00000000 xCreateSendDataTaskReturned
+C:\Users\Administrator\AppData\Local\Temp\cc2eVAD3.s:307    .text.QueueSendfmt:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\cc2eVAD3.s:313    .text.QueueSendfmt:00000000 QueueSendfmt
+C:\Users\Administrator\AppData\Local\Temp\cc2eVAD3.s:444    .text.SendBinaryToHost:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\cc2eVAD3.s:450    .text.SendBinaryToHost:00000000 SendBinaryToHost
+C:\Users\Administrator\AppData\Local\Temp\cc2eVAD3.s:543    .text.SendBinaryToHost:00000044 $d
+C:\Users\Administrator\AppData\Local\Temp\cc2eVAD3.s:548    .text.SendBinaryToHostFront:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\cc2eVAD3.s:554    .text.SendBinaryToHostFront:00000000 SendBinaryToHostFront
+C:\Users\Administrator\AppData\Local\Temp\cc2eVAD3.s:647    .text.SendBinaryToHostFront:00000044 $d
+C:\Users\Administrator\AppData\Local\Temp\cc2eVAD3.s:652    .text.BuildReplyPacket:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\cc2eVAD3.s:658    .text.BuildReplyPacket:00000000 BuildReplyPacket
+C:\Users\Administrator\AppData\Local\Temp\cc2eVAD3.s:815    .rodata.ReplyPacket.str1.4:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\cc2eVAD3.s:821    .text.ReplyPacket:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\cc2eVAD3.s:827    .text.ReplyPacket:00000000 ReplyPacket
+C:\Users\Administrator\AppData\Local\Temp\cc2eVAD3.s:913    .text.ReplyPacket:00000054 $d
+C:\Users\Administrator\AppData\Local\Temp\cc2eVAD3.s:920    .bss.xSendDataQueue:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\cc2eVAD3.s:927    .bss.xCreateSendDataTaskHandle:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\cc2eVAD3.s:934    .bss.xCreateSendDataTaskReturned:00000000 $d
 
 UNDEFINED SYMBOLS
-USBD_CDC_GetTxState
-CDC_Transmit_FS
-vTaskDelay
 xQueueReceive
+UART1_SendBlocking
 xQueueGenericCreate
 xTaskCreate
 memset
 vsnprintf
 xQueueGenericSend
 memcpy
-snprintf

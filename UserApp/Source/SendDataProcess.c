@@ -1,4 +1,6 @@
 #include "SendDataProcess.h" // 数据发送与封包模块
+#include "main.h"
+#include "uart1.h"
 
 
 // 全局变量定义
@@ -44,29 +46,8 @@ void vSendDataProcessTask(void *pvParameters)
         {
             if (xQueueReceive(xSendDataQueue, &item, portMAX_DELAY) == pdPASS)
             {
-                /* 等待 USB 空闲再发送，避免并发 BUSY */
-                for (int attempt = 0; attempt < 5; ++attempt)
-                {
-                    uint32_t waitLoops = 0;
-                    while (USBD_CDC_GetTxState() != 0 && waitLoops < 40)
-                    {
-                        vTaskDelay(pdMS_TO_TICKS(5));
-                        waitLoops++;
-                    }
-
-                    if (USBD_CDC_GetTxState() != 0)
-                    {
-                        continue; // 继续下一次尝试
-                    }
-
-                    uint8_t txRet = CDC_Transmit_FS(item.buf, item.len);
-                    if (txRet == USBD_OK)
-                    {
-                        break; // 发送成功
-                    }
-
-                    vTaskDelay(pdMS_TO_TICKS(5)); // 短暂等待再试
-                }
+                /* 发送至串口 USART1 */
+                UART1_SendBlocking(item.buf, item.len);
             }
         }
     }
@@ -125,6 +106,26 @@ BaseType_t SendBinaryToHost(const uint8_t *data, uint16_t len, TickType_t xTicks
     memcpy(item.buf, data, len);
 
     return xQueueSend(xSendDataQueue, &item, xTicksToWait);
+}
+
+/**
+ * @brief 将应答类二进制数据优先入发送队列（入队到队列头部）
+ */
+BaseType_t SendBinaryToHostFront(const uint8_t *data, uint16_t len, TickType_t xTicksToWait)
+{
+    if (xSendDataQueue == NULL || data == NULL || len == 0) {
+        return pdFAIL;
+    }
+
+    if (len > PRINT_QUEUE_ITEM_SIZE) {
+        return pdFAIL; // 数据过长，避免溢出
+    }
+
+    SendDataItem_t item;
+    item.len = len;
+    memcpy(item.buf, data, len);
+
+    return xQueueSendToFront(xSendDataQueue, &item, xTicksToWait);
 }
 
 /* @brief 计算数据包的 CRC8 校验 */
@@ -188,11 +189,16 @@ uint8_t BuildReplyPacket(uint8_t functionCode, uint16_t execIndex, const uint8_t
 /* 封装并入队应答包 */
 void ReplyPacket(uint8_t reply)
 {
+    (void)reply;
     uint8_t outBuf[PACKET_MAX_SIZE];
     uint16_t outLen = 0;
-    uint16_t execIndex = (uint16_t)reply;
 
-    uint8_t buildRet = BuildReplyPacket((uint8_t)FUNCTION_CODE_Reply, execIndex, NULL, 0, outBuf, &outLen);
+    uint8_t buildRet = BuildReplyPacket((uint8_t)FUNCTION_CODE_Reply,
+                                        0x0000,
+                                        NULL,
+                                        0,
+                                        outBuf,
+                                        &outLen);
     if (buildRet != 0) {
         if (xSendDataQueue != NULL) {
             QueueSendfmt(xSendDataQueue, 0, "构建应答包失败，错误码=%u\r\n", buildRet);
@@ -201,6 +207,7 @@ void ReplyPacket(uint8_t reply)
     }
 
     if (xSendDataQueue != NULL) {
+#if TEST_MODE
         char hexbuf[128];
         int pos = 0;
         for (uint16_t i = 0; i < outLen && pos < (int)sizeof(hexbuf) - 4; ++i) {
@@ -208,12 +215,12 @@ void ReplyPacket(uint8_t reply)
         }
         hexbuf[pos] = '\0';
         QueueSendfmt(xSendDataQueue, 0, "构建完成(%u 字节）：%s\r\n", outLen, hexbuf);
+#endif
     }
 
-    if (SendBinaryToHost(outBuf, outLen, pdMS_TO_TICKS(20)) != pdPASS)
+    if (SendBinaryToHostFront(outBuf, outLen, pdMS_TO_TICKS(100)) != pdPASS)
     {
-        if (xSendDataQueue != NULL) {
-            QueueSendfmt(xSendDataQueue, 0, "应答包入队失败，长度=%u\r\n", outLen);
-        }
+        /* 队列阻塞/满时，直接走UART兜底，确保上位机能及时收到应答 */
+        UART1_SendBlocking(outBuf, outLen);
     }
 }

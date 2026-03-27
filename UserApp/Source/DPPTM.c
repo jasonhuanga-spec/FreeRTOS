@@ -1,7 +1,7 @@
 ﻿#include "DPPTM.h"
 
 /* 目标VDD电压全局变量，由HWCI任务设置，PID任务读取 */
-float TargetVDDVoltage = -1.0f;
+float TargetVDDVoltage = 3.3f;
 
 /*=================== 实测校准查表（0.0V~3.3V，0.1V步进） ===================*/
 /* 索引 = 目标电压 / 0.1，范围 0~33 对应 0.0V~3.3V
@@ -41,7 +41,7 @@ static uint8_t voltage_to_code(float targetV)
 /*===================== PID 微调状态（模块内部） ====================*/
 static float   pid_integral   = 0.0f;                                          // 积分项累积
 static float   pid_lastError  = 0.0f;                                          // 上次误差
-static uint8_t pid_dpptm      = 0x40;                                          // 当前DPPTM码值（默认约1.65V）
+static uint8_t pid_dpptm      = 0x7F;                                          // 当前DPPTM码值（默认约3.3V）
 static uint8_t pid_baseCode   = 0x40;                                          // 查表基准码值（目标切换时更新）
 static float   pid_lastTarget = -1.0f;                                         // 上次目标值
 static uint8_t pid_locked     = 0;                                             // 锁定标志
@@ -186,4 +186,20 @@ void SetESLVDDVoltage(void)
 
     pid_dpptm = (uint8_t)newCode;
     ControlDPPTM(pid_dpptm);                                                   // 写入微调码值
+}
+
+/**
+ * @brief 获取当前VDD电压值
+ * @return float 返回当前VDD电压值（单位V），如果数据无效返回-1.0f
+ */
+float get_current_vdd_voltage(void) // 获取当前VDD电压
+{
+    // 检查DMA传输是否完成
+    if (adc_dma_complete == 0) // 如果DMA未完成
+    {
+        return -1.0f; // 返回错误值
+    }
+    
+    // 返回voltage_array[0]（VDD电压）
+    return calibrated_voltage_array[0]; // 返回VDD通道的电压值
 }

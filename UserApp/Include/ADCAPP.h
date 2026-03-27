@@ -8,7 +8,9 @@
 #include "dma.h"
 #include "SendDataProcess.h" // 包含日志发送模块
 #include "TaskList.h" // 包含功能码定义（FUNCTION_CODE_DataPacket等）
-#include "usbd_cdc_if.h" // 包含USB CDC发送函数
+#include "uart1.h"
+#include <string.h> // 用于 memcpy 将浮点数组转为字节流
+#include "ESL.h" // 包含 ESL 模块，用于检查 ESL_RESET_Flag 以决定是否发送电压数据包
 
 // STM32F103 ADC 相关参数定义
 #define ADC_RESOLUTION  4095    // 12位ADC的最大值 (2^12 - 1)
@@ -17,11 +19,6 @@
 #define VOLTAGE_DIV_RATIO 0.164f
 // R39/R40均为1kΩ，分压系数1/2
 #define LEVEL_SHIFT_RATIO 2.0f
-// 定义校准偏移量，基于实测数据：
-// 实测 0V -> -0.60V
-// 实测 3.5V -> 2.92V
-// 误差约 -0.6V，故增加 +0.60V 补偿
-#define ADC_VOLTAGE_OFFSET 0.60f
 
 //ADC分压采集网络的上分压电阻
 #define RH 1000000.0f   // 1M
@@ -29,13 +26,19 @@
 #define RL 196000.0f    // 196k
 
 
+extern float calibrated_voltage_array[11]; // 全局电压数组，存储转换后的实际电压值（单位V）
+extern uint8_t adc_dma_complete; // ADC DMA转换完成标志
+
+
+
 uint8_t vADC_StartConversion(void);
 float adc_to_voltage(uint16_t adc_value);
-float get_current_vdd_voltage(void); /* 获取当前VDD电压的函数声明 */ // 每行注释
-void send_voltage_packet(void); /* 发送电压数据包的函数声明 */ // 每行注释
-void send_current_packet(void); /* 发送电流数据包的函数声明 */ // 每行注释
-void vCreateADCTask(void); /* 创建 ADC 处理任务的函数声明 */ // 每行注释
-void vADCProcessTask(void *pvParameters); /* ADC 处理任务的主函数声明 */ // 每行注释
-float adc_voltage_to_current(float adc_voltage); /* 将ADC电压值转换为电流值的函数声明 */ // 每行注释
+void send_voltage_packet(void); /* 发送电压数据包的函数声明 */ 
+void send_current_packet(void); /* 发送电流数据包的函数声明 */ 
+void vCreateADCTask(void); /* 创建 ADC 处理任务的函数声明 */ 
+void vADCProcessTask(void *pvParameters); /* ADC 处理任务的主函数声明 */ 
+float adc_voltage_to_current(float adc_voltage); /* 将ADC电压值转换为电流值的函数声明 */ 
+void calibrate_channel_voltage(void); /* 所有通道电压校准函数声明 */ 
+void calibrate_channel_current(void); /* 所有通道电流校准函数声明 */ 
 
 #endif // ADCAPP_H

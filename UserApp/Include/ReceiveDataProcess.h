@@ -5,8 +5,6 @@
 #include "cmsis_os.h"
 #include <queue.h>
 #include <string.h>  
-#include "usbd_def.h"
-#include "usbd_cdc.h"
 #include "SendDataProcess.h"
 #include "TaskList.h"
 
@@ -45,7 +43,7 @@ void vCreateReceiveDataTask(void);
 void vReceiveDataProcessTask( void * pvParameters );
 void vCreateReceiveDataQueueTask( void *pvParameters );
 uint8_t vReceiveDataQueueSendISRTask(uint8_t* Buf, uint32_t *Len);
-void vParseReceivedDataPacket(void);
+void vParseReceivedDataPacket(const ReceiveDataPacket_t *packet);
 
 
 #endif // RECEIVEDATAPROCESS_H

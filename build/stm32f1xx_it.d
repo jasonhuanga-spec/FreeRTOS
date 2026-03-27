@@ -27,7 +27,27 @@ build/stm32f1xx_it.o: Core/Src/stm32f1xx_it.c Core/Inc/main.h \
  Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_pcd.h \
  Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_ll_usb.h \
  Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_pcd_ex.h \
- Core/Inc/stm32f1xx_it.h
+ Core/Inc/stm32f1xx_it.h UserAPP/Include/ReceiveDataProcess.h \
+ Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h \
+ Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h \
+ Core/Inc/FreeRTOSConfig.h \
+ Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h \
+ Middlewares/Third_Party/FreeRTOS/Source/include/portable.h \
+ Middlewares/Third_Party/FreeRTOS/Source/include/deprecated_definitions.h \
+ Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h \
+ Middlewares/Third_Party/FreeRTOS/Source/include/mpu_wrappers.h \
+ Middlewares/Third_Party/FreeRTOS/Source/include/task.h \
+ Middlewares/Third_Party/FreeRTOS/Source/include/list.h \
+ Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h \
+ Middlewares/Third_Party/FreeRTOS/Source/include/queue.h \
+ Middlewares/Third_Party/FreeRTOS/Source/include/task.h \
+ UserAPP/Include/SendDataProcess.h UserAPP/Include/DPPTM.h \
+ UserDriver/Include/DPPTMIIC.h UserAPP/Include/Tasklist.h \
+ UserAPP/Include/ReceiveDataProcess.h UserDriver/Include/HWCIDri.h \
+ Core/Inc/gpio.h Core/Inc/main.h UserAPP/Include/ESL.h \
+ UserDriver/Include/ESLComDri.h UserDriver/Include/ESL4SPI.h \
+ UserAPP/Include/TaskList.h UserAPP/Include/ADCAPP.h Core/Inc/adc.h \
+ Core/Inc/dma.h UserDriver/Include/uart1.h
 Core/Inc/main.h:
 Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h:
 Core/Inc/stm32f1xx_hal_conf.h:
@@ -60,3 +80,33 @@ Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_pcd.h:
 Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_ll_usb.h:
 Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_pcd_ex.h:
 Core/Inc/stm32f1xx_it.h:
+UserAPP/Include/ReceiveDataProcess.h:
+Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h:
+Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h:
+Core/Inc/FreeRTOSConfig.h:
+Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h:
+Middlewares/Third_Party/FreeRTOS/Source/include/portable.h:
+Middlewares/Third_Party/FreeRTOS/Source/include/deprecated_definitions.h:
+Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h:
+Middlewares/Third_Party/FreeRTOS/Source/include/mpu_wrappers.h:
+Middlewares/Third_Party/FreeRTOS/Source/include/task.h:
+Middlewares/Third_Party/FreeRTOS/Source/include/list.h:
+Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h:
+Middlewares/Third_Party/FreeRTOS/Source/include/queue.h:
+Middlewares/Third_Party/FreeRTOS/Source/include/task.h:
+UserAPP/Include/SendDataProcess.h:
+UserAPP/Include/DPPTM.h:
+UserDriver/Include/DPPTMIIC.h:
+UserAPP/Include/Tasklist.h:
+UserAPP/Include/ReceiveDataProcess.h:
+UserDriver/Include/HWCIDri.h:
+Core/Inc/gpio.h:
+Core/Inc/main.h:
+UserAPP/Include/ESL.h:
+UserDriver/Include/ESLComDri.h:
+UserDriver/Include/ESL4SPI.h:
+UserAPP/Include/TaskList.h:
+UserAPP/Include/ADCAPP.h:
+Core/Inc/adc.h:
+Core/Inc/dma.h:
+UserDriver/Include/uart1.h:

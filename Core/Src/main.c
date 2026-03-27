@@ -21,7 +21,6 @@
 #include "cmsis_os.h"
 #include "adc.h"
 #include "dma.h"
-#include "usb_device.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -30,6 +29,9 @@
 #include "SendDataProcess.h"
 #include "ADCAPP.h"
 #include "TaskList.h"
+#include "uart1.h"
+#include "HWCIDri.h"
+#include "DPPTM.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -96,7 +98,7 @@ int main(void)
   MX_GPIO_Init();
   MX_DMA_Init();
   MX_ADC1_Init();
-  MX_USB_DEVICE_Init();
+  UART1_Init();
   /* USER CODE BEGIN 2 */
 
   vCreateReceiveDataTask();

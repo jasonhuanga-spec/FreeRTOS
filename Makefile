@@ -40,14 +40,7 @@ Core/Src/main.c \
 Core/Src/gpio.c \
 Core/Src/stm32f1xx_it.c \
 Core/Src/stm32f1xx_hal_msp.c \
-USB_DEVICE/App/usb_device.c \
-USB_DEVICE/App/usbd_desc.c \
-USB_DEVICE/App/usbd_cdc_if.c \
-USB_DEVICE/Target/usbd_conf.c \
 Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_gpio_ex.c \
-Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_pcd.c \
-Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_pcd_ex.c \
-Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_ll_usb.c \
 Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal.c \
 Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc.c \
 Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc_ex.c \
@@ -59,10 +52,6 @@ Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_flash.c \
 Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_flash_ex.c \
 Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_exti.c \
 Core/Src/system_stm32f1xx.c \
-Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.c \
-Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.c \
-Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.c \
-Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.c \
 Core/Src/sysmem.c \
 Core/Src/syscalls.c \
 UserAPP/Source/ReceiveDataProcess.c \
@@ -85,6 +74,7 @@ Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.c \
 Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang/heap_4.c \
 Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c\
 UserAPP/Source/SendDataProcess.c \
+UserDriver/Source/uart1.c \
 UserDriver/Source/HWCIDri.c	\
 UserAPP/Source/ADCAPP.c	\
 UserAPP/Source/TaskList.c \
@@ -158,12 +148,8 @@ AS_INCLUDES =
 # C includes
 C_INCLUDES =  \
 -ICore/Inc \
--IUSB_DEVICE/App \
--IUSB_DEVICE/Target \
 -IDrivers/STM32F1xx_HAL_Driver/Inc \
 -IDrivers/STM32F1xx_HAL_Driver/Inc/Legacy \
--IMiddlewares/ST/STM32_USB_Device_Library/Core/Inc \
--IMiddlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc \
 -IDrivers/CMSIS/Device/ST/STM32F1xx/Include \
 -IDrivers/CMSIS/Include	 \
 -IUserAPP/Include  \

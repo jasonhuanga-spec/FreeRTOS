@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccoaaTba.s 			page 1
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccSXJVur.s 			page 1
 
 
    1              		.cpu cortex-m3
@@ -58,7 +58,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccoaaTba.s 			page 1
   30:Core/Src/gpio.c **** /*----------------------------------------------------------------------------*/
   31:Core/Src/gpio.c **** /* USER CODE BEGIN 1 */
   32:Core/Src/gpio.c **** 
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccoaaTba.s 			page 2
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccSXJVur.s 			page 2
 
 
   33:Core/Src/gpio.c **** /* USER CODE END 1 */
@@ -118,7 +118,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccoaaTba.s 			page 1
   65 0022 0092     		str	r2, [sp]
   66              		.loc 1 48 3 view .LVU7
   67 0024 009A     		ldr	r2, [sp]
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccoaaTba.s 			page 3
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccSXJVur.s 			page 3
 
 
   68              	.LBE2:
@@ -178,7 +178,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccoaaTba.s 			page 1
  116 005c DFF83081 		ldr	r8, .L3+4
  117 0060 0122     		movs	r2, #1
  118 0062 43F68C71 		movw	r1, #16268
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccoaaTba.s 			page 4
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccSXJVur.s 			page 4
 
 
  119 0066 4046     		mov	r0, r8
@@ -197,11 +197,11 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccoaaTba.s 			page 1
  127              	.LVL1:
   60:Core/Src/gpio.c **** 
   61:Core/Src/gpio.c ****   /*Configure GPIO pin Output Level */
-  62:Core/Src/gpio.c ****   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0|GPIO_PIN_13|GPIO_PIN_14|GPIO_PIN_15, GPIO_PIN_RESET);
+  62:Core/Src/gpio.c ****   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_13|GPIO_PIN_14|GPIO_PIN_15, GPIO_PIN_RESET);
  128              		.loc 1 62 3 view .LVU29
  129 0076 DFF81CB1 		ldr	fp, .L3+8
  130 007a 3246     		mov	r2, r6
- 131 007c 4EF20101 		movw	r1, #57345
+ 131 007c 4FF46041 		mov	r1, #57344
  132 0080 5846     		mov	r0, fp
  133 0082 FFF7FEFF 		bl	HAL_GPIO_WritePin
  134              	.LVL2:
@@ -219,10 +219,10 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccoaaTba.s 			page 1
   67:Core/Src/gpio.c ****                           |GPIO_PIN_7|GPIO_PIN_8|GPIO_PIN_9, GPIO_PIN_RESET);
   68:Core/Src/gpio.c **** 
   69:Core/Src/gpio.c ****   /*Configure GPIO pin Output Level */
-  70:Core/Src/gpio.c ****   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);
+  70:Core/Src/gpio.c ****   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8|GPIO_PIN_0, GPIO_PIN_SET);
  142              		.loc 1 70 3 view .LVU31
  143 0096 0122     		movs	r2, #1
- 144 0098 4FF48071 		mov	r1, #256
+ 144 0098 40F20111 		movw	r1, #257
  145 009c 5846     		mov	r0, fp
  146 009e FFF7FEFF 		bl	HAL_GPIO_WritePin
  147              	.LVL4:
@@ -238,7 +238,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccoaaTba.s 			page 1
   74:Core/Src/gpio.c **** 
   75:Core/Src/gpio.c ****   /*Configure GPIO pin Output Level */
   76:Core/Src/gpio.c ****   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_3, GPIO_PIN_SET);
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccoaaTba.s 			page 5
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccSXJVur.s 			page 5
 
 
  154              		.loc 1 76 3 view .LVU33
@@ -298,7 +298,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccoaaTba.s 			page 1
  193 00dc 0797     		str	r7, [sp, #28]
   92:Core/Src/gpio.c ****   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
  194              		.loc 1 92 3 is_stmt 1 view .LVU51
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccoaaTba.s 			page 6
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccSXJVur.s 			page 6
 
 
  195 00de 2146     		mov	r1, r4
@@ -358,7 +358,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccoaaTba.s 			page 1
  235              	.LVL10:
  107:Core/Src/gpio.c **** 
  108:Core/Src/gpio.c ****   /*Configure GPIO pins : PB10 PB11 PB12 PB13
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccoaaTba.s 			page 7
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccSXJVur.s 			page 7
 
 
  109:Core/Src/gpio.c ****                            PB14 PB15 PB5 PB6
@@ -418,7 +418,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccoaaTba.s 			page 1
  127:Core/Src/gpio.c ****   GPIO_InitStruct.Pin = GPIO_PIN_10;
  272              		.loc 1 127 3 view .LVU88
  273              		.loc 1 127 23 is_stmt 0 view .LVU89
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccoaaTba.s 			page 8
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccSXJVur.s 			page 8
 
 
  274 013a 4FF48063 		mov	r3, #1024
@@ -478,7 +478,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccoaaTba.s 			page 1
  313              		.loc 1 142 24 is_stmt 0 view .LVU109
  314 0166 0595     		str	r5, [sp, #20]
  143:Core/Src/gpio.c ****   GPIO_InitStruct.Pull = GPIO_PULLUP;
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccoaaTba.s 			page 9
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccSXJVur.s 			page 9
 
 
  315              		.loc 1 143 3 is_stmt 1 view .LVU110
@@ -538,18 +538,18 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccoaaTba.s 			page 1
  360              		.file 2 "D:/gcc-arm/14.3 rel1/arm-none-eabi/include/machine/_default_types.h"
  361              		.file 3 "D:/gcc-arm/14.3 rel1/arm-none-eabi/include/sys/_stdint.h"
  362              		.file 4 "Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f103xg.h"
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccoaaTba.s 			page 10
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccSXJVur.s 			page 10
 
 
  363              		.file 5 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_gpio.h"
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccoaaTba.s 			page 11
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccSXJVur.s 			page 11
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 gpio.c
-C:\Users\Administrator\AppData\Local\Temp\ccoaaTba.s:19     .text.MX_GPIO_Init:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\ccoaaTba.s:25     .text.MX_GPIO_Init:00000000 MX_GPIO_Init
-C:\Users\Administrator\AppData\Local\Temp\ccoaaTba.s:350    .text.MX_GPIO_Init:0000018c $d
+C:\Users\Administrator\AppData\Local\Temp\ccSXJVur.s:19     .text.MX_GPIO_Init:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\ccSXJVur.s:25     .text.MX_GPIO_Init:00000000 MX_GPIO_Init
+C:\Users\Administrator\AppData\Local\Temp\ccSXJVur.s:350    .text.MX_GPIO_Init:0000018c $d
 
 UNDEFINED SYMBOLS
 HAL_GPIO_WritePin

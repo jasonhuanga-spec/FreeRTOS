@@ -42,20 +42,12 @@ build/ESL.o: UserAPP/Source/ESL.c UserAPP/Include/ESL.h Core/Inc/main.h \
  Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h \
  Middlewares/Third_Party/FreeRTOS/Source/include/queue.h \
  Middlewares/Third_Party/FreeRTOS/Source/include/task.h \
- USB_DEVICE/App/usbd_cdc_if.h \
- Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc/usbd_cdc.h \
- Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h \
- Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_def.h \
- USB_DEVICE/Target/usbd_conf.h \
- Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_core.h \
- Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h \
- Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ctlreq.h \
  UserAPP/Include/DPPTM.h UserDriver/Include/DPPTMIIC.h \
  UserAPP/Include/Tasklist.h UserAPP/Include/ReceiveDataProcess.h \
- Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_def.h \
  UserAPP/Include/TaskList.h UserDriver/Include/HWCIDri.h \
  UserAPP/Include/ESL.h UserAPP/Include/ADCAPP.h Core/Inc/adc.h \
- Core/Inc/dma.h UserAPP/Include/SendDataProcess.h
+ Core/Inc/dma.h UserDriver/Include/uart1.h \
+ UserAPP/Include/SendDataProcess.h
 UserAPP/Include/ESL.h:
 Core/Inc/main.h:
 Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h:
@@ -106,23 +98,15 @@ Middlewares/Third_Party/FreeRTOS/Source/include/list.h:
 Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h:
 Middlewares/Third_Party/FreeRTOS/Source/include/queue.h:
 Middlewares/Third_Party/FreeRTOS/Source/include/task.h:
-USB_DEVICE/App/usbd_cdc_if.h:
-Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc/usbd_cdc.h:
-Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h:
-Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_def.h:
-USB_DEVICE/Target/usbd_conf.h:
-Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_core.h:
-Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h:
-Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ctlreq.h:
 UserAPP/Include/DPPTM.h:
 UserDriver/Include/DPPTMIIC.h:
 UserAPP/Include/Tasklist.h:
 UserAPP/Include/ReceiveDataProcess.h:
-Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_def.h:
 UserAPP/Include/TaskList.h:
 UserDriver/Include/HWCIDri.h:
 UserAPP/Include/ESL.h:
 UserAPP/Include/ADCAPP.h:
 Core/Inc/adc.h:
 Core/Inc/dma.h:
+UserDriver/Include/uart1.h:
 UserAPP/Include/SendDataProcess.h:

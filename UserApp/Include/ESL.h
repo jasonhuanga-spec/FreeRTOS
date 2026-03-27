@@ -9,6 +9,8 @@
 #include "TaskList.h" // 包含功能码定义（FUNCTION_CODE_ESLCommands等）
 
 
+extern uint8_t ESL_RESET_Flag; /* ESL复位标志，外部声明供其他模块引用 */
+
 
 void ESLtest(void);
 void E52bitRead(uint8_t Address, uint8_t Number);

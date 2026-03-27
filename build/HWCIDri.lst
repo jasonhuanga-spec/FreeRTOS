@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccSwfoZa.s 			page 1
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtrKuR.s 			page 1
 
 
    1              		.cpu cortex-m3
@@ -58,7 +58,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccSwfoZa.s 			page 1
   40              		.loc 1 16 8 is_stmt 0 view .LVU3
   41 0004 0128     		cmp	r0, #1
   42 0006 01D0     		beq	.L5
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccSwfoZa.s 			page 2
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtrKuR.s 			page 2
 
 
   43              	.LVL1:
@@ -118,7 +118,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccSwfoZa.s 			page 1
   25:UserDriver/Source/HWCIDri.c **** void LVSwitch(uint8_t LVSwitch)
   26:UserDriver/Source/HWCIDri.c **** {
   88              		.loc 1 26 1 is_stmt 1 view -0
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccSwfoZa.s 			page 3
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtrKuR.s 			page 3
 
 
   89              		.cfi_startproc
@@ -178,7 +178,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccSwfoZa.s 			page 1
  135              		.cfi_endproc
  136              	.LFE76:
  138              		.section	.text.SelectInductor,"ax",%progbits
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccSwfoZa.s 			page 4
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtrKuR.s 			page 4
 
 
  139              		.align	1
@@ -238,7 +238,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccSwfoZa.s 			page 1
   41:UserDriver/Source/HWCIDri.c ****         HAL_GPIO_WritePin(SelectInductorIN2GPIOX, SelectInductorIN2PINX, GPIO_PIN_SET);
  176              		.loc 1 41 9 is_stmt 1 view .LVU29
  177 000c 0B4D     		ldr	r5, .L23
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccSwfoZa.s 			page 5
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtrKuR.s 			page 5
 
 
  178 000e 0022     		movs	r2, #0
@@ -298,7 +298,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccSwfoZa.s 			page 1
   52:UserDriver/Source/HWCIDri.c ****  * @函数名称       选择电阻
   53:UserDriver/Source/HWCIDri.c ****  * @说明           ResistanceParameter:电阻参数
   54:UserDriver/Source/HWCIDri.c ****  */
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccSwfoZa.s 			page 6
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtrKuR.s 			page 6
 
 
   55:UserDriver/Source/HWCIDri.c **** void SelectResistance(uint8_t ResistanceParameter)
@@ -358,7 +358,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccSwfoZa.s 			page 1
  262 0012 0122     		movs	r2, #1
  263 0014 4FF40071 		mov	r1, #512
  264 0018 2846     		mov	r0, r5
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccSwfoZa.s 			page 7
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtrKuR.s 			page 7
 
 
  265              	.LVL26:
@@ -418,7 +418,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccSwfoZa.s 			page 1
  312 0064 000C0140 		.word	1073810432
  313              		.cfi_endproc
  314              	.LFE78:
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccSwfoZa.s 			page 8
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtrKuR.s 			page 8
 
 
  316              		.section	.text.SelectESLSPI,"ax",%progbits
@@ -478,7 +478,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccSwfoZa.s 			page 1
  352 000c 0022     		movs	r2, #0
  353 000e 4021     		movs	r1, #64
  354 0010 0A48     		ldr	r0, .L41
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccSwfoZa.s 			page 9
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtrKuR.s 			page 9
 
 
  355              	.LVL37:
@@ -538,7 +538,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccSwfoZa.s 			page 1
  400              		.cfi_startproc
  401              		@ args = 0, pretend = 0, frame = 0
  402              		@ frame_needed = 0, uses_anonymous_args = 0
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccSwfoZa.s 			page 10
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtrKuR.s 			page 10
 
 
  403              		.loc 1 97 1 is_stmt 0 view .LVU68
@@ -598,7 +598,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccSwfoZa.s 			page 1
  443              	.L48:
  105:UserDriver/Source/HWCIDri.c ****         HAL_GPIO_WritePin(VDDOrAAVSPL2IN2GPIOX, VDDOrAAVSPL2IN2PINX, GPIO_PIN_RESET);
  444              		.loc 1 105 9 view .LVU77
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccSwfoZa.s 			page 11
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtrKuR.s 			page 11
 
 
  445 0028 04F18044 		add	r4, r4, #1073741824
@@ -658,7 +658,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccSwfoZa.s 			page 1
  490              		.cfi_offset 4, -12
  491              		.cfi_offset 5, -8
  492              		.cfi_offset 14, -4
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccSwfoZa.s 			page 12
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtrKuR.s 			page 12
 
 
  493 0002 0446     		mov	r4, r0
@@ -718,7 +718,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccSwfoZa.s 			page 1
  531 002c 4FF48061 		mov	r1, #1024
  532 0030 2046     		mov	r0, r4
  533 0032 FFF7FEFF 		bl	HAL_GPIO_WritePin
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccSwfoZa.s 			page 13
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtrKuR.s 			page 13
 
 
  534              	.LVL61:
@@ -778,7 +778,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccSwfoZa.s 			page 1
  138:UserDriver/Source/HWCIDri.c ****         HAL_GPIO_WritePin(TSCLOrVSPL2IN2GPIOX, TSCLOrVSPL2IN2PINX, GPIO_PIN_SET);
  139:UserDriver/Source/HWCIDri.c ****     }   
  140:UserDriver/Source/HWCIDri.c ****     if (SelectU3HW == TSCL)
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccSwfoZa.s 			page 14
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtrKuR.s 			page 14
 
 
  579              		.loc 1 140 5 is_stmt 1 view .LVU100
@@ -838,7 +838,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccSwfoZa.s 			page 1
  618 003a 0022     		movs	r2, #0
  619 003c 4FF48041 		mov	r1, #16384
  620 0040 2846     		mov	r0, r5
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccSwfoZa.s 			page 15
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtrKuR.s 			page 15
 
 
  621 0042 FFF7FEFF 		bl	HAL_GPIO_WritePin
@@ -898,7 +898,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccSwfoZa.s 			page 1
  667              		.cfi_offset 3, -16
  668              		.cfi_offset 4, -12
  669              		.cfi_offset 5, -8
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccSwfoZa.s 			page 16
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtrKuR.s 			page 16
 
 
  670              		.cfi_offset 14, -4
@@ -958,7 +958,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccSwfoZa.s 			page 1
  708 002a 0122     		movs	r2, #1
  709 002c 4FF40051 		mov	r1, #8192
  710 0030 2046     		mov	r0, r4
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccSwfoZa.s 			page 17
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtrKuR.s 			page 17
 
 
  711 0032 FFF7FEFF 		bl	HAL_GPIO_WritePin
@@ -1018,7 +1018,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccSwfoZa.s 			page 1
  181:UserDriver/Source/HWCIDri.c ****         VDDOrAAVSPL2(VDD);
  182:UserDriver/Source/HWCIDri.c ****         VSNL2rVMTP(VMTP);
  183:UserDriver/Source/HWCIDri.c ****     }   
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccSwfoZa.s 			page 18
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtrKuR.s 			page 18
 
 
  184:UserDriver/Source/HWCIDri.c ****     if (ICType == E53bitAA)
@@ -1078,7 +1078,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccSwfoZa.s 			page 1
  788              	.LVL92:
  187:UserDriver/Source/HWCIDri.c ****         VDDOrAAVSPL2(AAVSPL2);
  789              		.loc 1 187 9 view .LVU142
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccSwfoZa.s 			page 19
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtrKuR.s 			page 19
 
 
  790 002e 0220     		movs	r0, #2
@@ -1126,40 +1126,40 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccSwfoZa.s 			page 1
  827              		.file 3 "D:/gcc-arm/14.3 rel1/arm-none-eabi/include/sys/_stdint.h"
  828              		.file 4 "Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f103xg.h"
  829              		.file 5 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_gpio.h"
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccSwfoZa.s 			page 20
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccwtrKuR.s 			page 20
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 HWCIDri.c
-C:\Users\Administrator\AppData\Local\Temp\ccSwfoZa.s:19     .text.VDDSwitch:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\ccSwfoZa.s:25     .text.VDDSwitch:00000000 VDDSwitch
-C:\Users\Administrator\AppData\Local\Temp\ccSwfoZa.s:74     .text.VDDSwitch:00000024 $d
-C:\Users\Administrator\AppData\Local\Temp\ccSwfoZa.s:79     .text.LVSwitch:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\ccSwfoZa.s:85     .text.LVSwitch:00000000 LVSwitch
-C:\Users\Administrator\AppData\Local\Temp\ccSwfoZa.s:134    .text.LVSwitch:00000028 $d
-C:\Users\Administrator\AppData\Local\Temp\ccSwfoZa.s:139    .text.SelectInductor:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\ccSwfoZa.s:145    .text.SelectInductor:00000000 SelectInductor
-C:\Users\Administrator\AppData\Local\Temp\ccSwfoZa.s:213    .text.SelectInductor:0000003c $d
-C:\Users\Administrator\AppData\Local\Temp\ccSwfoZa.s:218    .text.SelectResistance:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\ccSwfoZa.s:224    .text.SelectResistance:00000000 SelectResistance
-C:\Users\Administrator\AppData\Local\Temp\ccSwfoZa.s:312    .text.SelectResistance:00000064 $d
-C:\Users\Administrator\AppData\Local\Temp\ccSwfoZa.s:317    .text.SelectESLSPI:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\ccSwfoZa.s:323    .text.SelectESLSPI:00000000 SelectESLSPI
-C:\Users\Administrator\AppData\Local\Temp\ccSwfoZa.s:384    .text.SelectESLSPI:0000003c $d
-C:\Users\Administrator\AppData\Local\Temp\ccSwfoZa.s:390    .text.VDDOrAAVSPL2:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\ccSwfoZa.s:396    .text.VDDOrAAVSPL2:00000000 VDDOrAAVSPL2
-C:\Users\Administrator\AppData\Local\Temp\ccSwfoZa.s:467    .text.VDDOrAAVSPL2:0000004c $d
-C:\Users\Administrator\AppData\Local\Temp\ccSwfoZa.s:472    .text.VDDLOrHiz:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\ccSwfoZa.s:478    .text.VDDLOrHiz:00000000 VDDLOrHiz
-C:\Users\Administrator\AppData\Local\Temp\ccSwfoZa.s:546    .text.VDDLOrHiz:00000044 $d
-C:\Users\Administrator\AppData\Local\Temp\ccSwfoZa.s:551    .text.TSCLOrVSPL2OrHiz:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\ccSwfoZa.s:557    .text.TSCLOrVSPL2OrHiz:00000000 TSCLOrVSPL2OrHiz
-C:\Users\Administrator\AppData\Local\Temp\ccSwfoZa.s:645    .text.TSCLOrVSPL2OrHiz:00000064 $d
-C:\Users\Administrator\AppData\Local\Temp\ccSwfoZa.s:650    .text.VSNL2rVMTP:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\ccSwfoZa.s:656    .text.VSNL2rVMTP:00000000 VSNL2rVMTP
-C:\Users\Administrator\AppData\Local\Temp\ccSwfoZa.s:724    .text.VSNL2rVMTP:00000044 $d
-C:\Users\Administrator\AppData\Local\Temp\ccSwfoZa.s:729    .text.ICTypeSelect:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\ccSwfoZa.s:735    .text.ICTypeSelect:00000000 ICTypeSelect
+C:\Users\Administrator\AppData\Local\Temp\ccwtrKuR.s:19     .text.VDDSwitch:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\ccwtrKuR.s:25     .text.VDDSwitch:00000000 VDDSwitch
+C:\Users\Administrator\AppData\Local\Temp\ccwtrKuR.s:74     .text.VDDSwitch:00000024 $d
+C:\Users\Administrator\AppData\Local\Temp\ccwtrKuR.s:79     .text.LVSwitch:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\ccwtrKuR.s:85     .text.LVSwitch:00000000 LVSwitch
+C:\Users\Administrator\AppData\Local\Temp\ccwtrKuR.s:134    .text.LVSwitch:00000028 $d
+C:\Users\Administrator\AppData\Local\Temp\ccwtrKuR.s:139    .text.SelectInductor:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\ccwtrKuR.s:145    .text.SelectInductor:00000000 SelectInductor
+C:\Users\Administrator\AppData\Local\Temp\ccwtrKuR.s:213    .text.SelectInductor:0000003c $d
+C:\Users\Administrator\AppData\Local\Temp\ccwtrKuR.s:218    .text.SelectResistance:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\ccwtrKuR.s:224    .text.SelectResistance:00000000 SelectResistance
+C:\Users\Administrator\AppData\Local\Temp\ccwtrKuR.s:312    .text.SelectResistance:00000064 $d
+C:\Users\Administrator\AppData\Local\Temp\ccwtrKuR.s:317    .text.SelectESLSPI:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\ccwtrKuR.s:323    .text.SelectESLSPI:00000000 SelectESLSPI
+C:\Users\Administrator\AppData\Local\Temp\ccwtrKuR.s:384    .text.SelectESLSPI:0000003c $d
+C:\Users\Administrator\AppData\Local\Temp\ccwtrKuR.s:390    .text.VDDOrAAVSPL2:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\ccwtrKuR.s:396    .text.VDDOrAAVSPL2:00000000 VDDOrAAVSPL2
+C:\Users\Administrator\AppData\Local\Temp\ccwtrKuR.s:467    .text.VDDOrAAVSPL2:0000004c $d
+C:\Users\Administrator\AppData\Local\Temp\ccwtrKuR.s:472    .text.VDDLOrHiz:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\ccwtrKuR.s:478    .text.VDDLOrHiz:00000000 VDDLOrHiz
+C:\Users\Administrator\AppData\Local\Temp\ccwtrKuR.s:546    .text.VDDLOrHiz:00000044 $d
+C:\Users\Administrator\AppData\Local\Temp\ccwtrKuR.s:551    .text.TSCLOrVSPL2OrHiz:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\ccwtrKuR.s:557    .text.TSCLOrVSPL2OrHiz:00000000 TSCLOrVSPL2OrHiz
+C:\Users\Administrator\AppData\Local\Temp\ccwtrKuR.s:645    .text.TSCLOrVSPL2OrHiz:00000064 $d
+C:\Users\Administrator\AppData\Local\Temp\ccwtrKuR.s:650    .text.VSNL2rVMTP:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\ccwtrKuR.s:656    .text.VSNL2rVMTP:00000000 VSNL2rVMTP
+C:\Users\Administrator\AppData\Local\Temp\ccwtrKuR.s:724    .text.VSNL2rVMTP:00000044 $d
+C:\Users\Administrator\AppData\Local\Temp\ccwtrKuR.s:729    .text.ICTypeSelect:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\ccwtrKuR.s:735    .text.ICTypeSelect:00000000 ICTypeSelect
 
 UNDEFINED SYMBOLS
 HAL_GPIO_WritePin

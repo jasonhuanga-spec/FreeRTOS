@@ -304,7 +304,7 @@ void calibrate_channel_current(void)
         osDelay(500);
 
         for (uint8_t i = 0; i < ADC_CHANNEL_COUNT; i++)
-        {
+       {
             current_offset_sum[i] = 0.0f;
         }
 

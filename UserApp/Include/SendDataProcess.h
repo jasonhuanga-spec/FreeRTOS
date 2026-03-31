@@ -28,7 +28,7 @@ BaseType_t QueueSendfmt(QueueHandle_t xQueue, TickType_t xTicksToWait, const cha
 BaseType_t SendBinaryToHost(const uint8_t *data, uint16_t len, TickType_t xTicksToWait);
 BaseType_t SendBinaryToHostFront(const uint8_t *data, uint16_t len, TickType_t xTicksToWait);
 uint8_t BuildReplyPacket(uint8_t functionCode, uint16_t execIndex, const uint8_t *data, uint8_t dataLen, uint8_t *outBuf, uint16_t *outLen);
-void ReplyPacket(uint8_t reply); /* 执行成功应答固定为 FunctionCode=0x01, ExecIndex=0x0000 */
+void ReplyPacket(uint16_t execIndex, uint8_t replyCode); /* ACK: FC=0x01, ExecIndex=请求索引, Data[0]=状态码 */
 
 
 #endif // SendLog_H

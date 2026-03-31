@@ -337,6 +337,12 @@ void vParseReceivedDataPacket(const ReceiveDataPacket_t *packet)
 
     parsedDataPacket.CRC8 = receivedCRC;                             /* 填充 CRC8 字段 */ // 每行注释
 
+    /* ACK帧不进入业务执行队列，避免应答触发应答循环 */
+    if (parsedDataPacket.FunctionCode == FUNCTION_CODE_Reply)
+    {
+        return;
+    }
+
     /* 将解析后的数据包发送到 xParsedDataQueue，以供 HWCI 任务处理 */ // 每行注释
     if (xParsedDataQueue != NULL)                                     /* 检查解析队列是否已创建 */ // 每行注释
     {

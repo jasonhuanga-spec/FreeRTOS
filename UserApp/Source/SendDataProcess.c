@@ -186,17 +186,17 @@ uint8_t BuildReplyPacket(uint8_t functionCode, uint16_t execIndex, const uint8_t
     return 0;
 }
 
-/* 封装并入队应答包 */
-void ReplyPacket(uint8_t reply)
+/* 封装并入队应答包：ACK 帧携带原请求 ExecIndex 与状态码 */
+void ReplyPacket(uint16_t execIndex, uint8_t replyCode)
 {
-    (void)reply;
     uint8_t outBuf[PACKET_MAX_SIZE];
     uint16_t outLen = 0;
+    uint8_t ackPayload[1] = { replyCode };
 
     uint8_t buildRet = BuildReplyPacket((uint8_t)FUNCTION_CODE_Reply,
-                                        0x0000,
-                                        NULL,
-                                        0,
+                                        execIndex,
+                                        ackPayload,
+                                        (uint8_t)sizeof(ackPayload),
                                         outBuf,
                                         &outLen);
     if (buildRet != 0) {

@@ -3,7 +3,7 @@
 
 #define ADC_CHANNEL_COUNT 11U // ADC通道数量
 #define CURRENT_AVG_WINDOW 64U // 电流滑动平均窗口长度
-#define OFFSET_SAMPLE_COUNT 30U // 校准采样次数
+#define OFFSET_SAMPLE_COUNT 10U // 校准采样次数
 
 // 1. 改为全局变量（避免局部变量随机值）+ 类型匹配DMA的uint32_t
 uint32_t adcbuf[11] = {0}; 
@@ -152,12 +152,13 @@ float adc_to_voltage(uint16_t adc_value) // 转换函数实现
  */
 static float channel_voltage_to_current_diff(float channel_voltage)
 {
-    // 当前口径不使用固定静态偏移，直接使用通道电压差分。
-    // float voltage_diff = channel_voltage;
-
-    // // 与原链路等价：I = (Vch - OFFSET) * DIV_RATIO / (RL/(RH+RL))
-    // static const float current_gain = (VOLTAGE_DIV_RATIO * (RH + RL) / RL);
-    return (channel_voltage / RL) * 1000.0f; // 保留正负电流，单位mA
+    float current_value = (channel_voltage / RL) * 1000.0f; // 电流值，单位mA
+    if (current_value < 0)
+    {
+        return 0;
+    }
+    
+    return current_value; // 保留正负电流，单位mA
 }
 
 
@@ -301,58 +302,30 @@ void calibrate_channel_current(void)
         (voltage_offset_ready == 1) &&
         (current_offset_ready == 0))
     {
-        osDelay(500);
+        osDelay(500); // 等待VDD稳定，确保采样数据可靠
 
-        for (uint8_t i = 0; i < ADC_CHANNEL_COUNT; i++)
-       {
-            current_offset_sum[i] = 0.0f;
-        }
-
-        float current_min[ADC_CHANNEL_COUNT];
-        float current_max[ADC_CHANNEL_COUNT];
         for (uint8_t i = 0; i < ADC_CHANNEL_COUNT; i++)
         {
-            current_min[i] = 1e9f;
-            current_max[i] = -1e9f;
+            current_offset_sum[i] = 0.0f;
         }
 
         for (uint8_t k = 0; k < OFFSET_SAMPLE_COUNT; k++)
         {
-            if (vADC_StartConversion() != 0U)
-            {
-                return;
-            }
-
             for (uint8_t i = 0; i < ADC_CHANNEL_COUNT; i++)
             {
                 float raw_voltage = adc_to_voltage((uint16_t)adcbuf[i]);
                 float channel_voltage = raw_voltage - channel_voltage_offset[i];
                 float raw_current = channel_voltage_to_current_diff(channel_voltage);
-
-                current_offset_sum[i] += raw_current;
-                if (raw_current < current_min[i]) current_min[i] = raw_current;
-                if (raw_current > current_max[i]) current_max[i] = raw_current;
+                current_offset_sum[i] = raw_current + current_offset_sum[i];
             }
-
-            osDelay(5);
         }
 
         for (uint8_t j = 0; j < ADC_CHANNEL_COUNT; j++)
         {
-            if (OFFSET_SAMPLE_COUNT > 2U)
-            {
-                channel_current_offset[j] =
-                    (current_offset_sum[j] - current_min[j] - current_max[j]) /
-                    (float)(OFFSET_SAMPLE_COUNT - 2U);
-            }
-            else
-            {
-                channel_current_offset[j] =
-                    current_offset_sum[j] / (float)OFFSET_SAMPLE_COUNT;
-            }
+            channel_current_offset[j] = current_offset_sum[j] / (float)OFFSET_SAMPLE_COUNT;
         }
 
-        current_offset_ready = 1;
+        current_offset_ready = 1; // 电流偏置准备就绪
     }
 }
 

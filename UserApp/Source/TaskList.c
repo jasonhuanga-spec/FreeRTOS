@@ -71,7 +71,7 @@ void vHWCIProcessTask(void *pvParameters) // HWCI 任务入口函数
                             TargetVDDVoltage = 2.3f + 0.1f * localPacket.Data[0]; // 设置目标电压（全局变量，PID会自动跃进）
                         }
 
-                        ReplyPacket(REPLY_OK); // 发送应答包（固定执行成功头）
+                        ReplyPacket(localPacket.ExecIndex, REPLY_OK); // 按请求索引返回ACK
 #if TEST_MODE
                         QueueSendfmt(xSendDataQueue, 0, "硬件配置成功, ExecIndex=%u, DataLen=%u\r\n", localPacket.ExecIndex, localPacket.DataLen); // 发送日志
 #endif
@@ -83,7 +83,7 @@ void vHWCIProcessTask(void *pvParameters) // HWCI 任务入口函数
                             ESLCommands(localPacket.Data[0], localPacket.Data[1], localPacket.Data[2]); // 调用 ESLCommands 函数，传入数据和长度
                         }
                         
-                        ReplyPacket(REPLY_OK); // 发送应答包（固定执行成功头）
+                        ReplyPacket(localPacket.ExecIndex, REPLY_OK); // 按请求索引返回ACK
                         break; // 退出该 case
 
                     default: // 未知功能码分支处理

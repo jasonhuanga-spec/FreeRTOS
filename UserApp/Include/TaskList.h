@@ -35,7 +35,11 @@ typedef enum {
 /* 应答码枚举：用于上位机和下位机之间的应答表示 */ // 每行注释
 typedef enum {
     REPLY_OK = 0, /* 操作成功应答 */ // 每行注释
-    REPLY_PROTOCOL_ERROR = 1 /* 协议流程或参数错误 */ // 每行注释
+    REPLY_PROTOCOL_ERROR = 1, /* 协议流程或参数错误 */ // 每行注释
+    REPLY_BUSY = 2, /* 设备忙或事务占用 */ // 每行注释
+    REPLY_LENGTH_MISMATCH = 3, /* 数据长度与命令不匹配 */ // 每行注释
+    REPLY_CONTEXT_TIMEOUT = 4, /* 事务等待数据超时 */ // 每行注释
+    REPLY_CONTEXT_MISMATCH = 5 /* 事务上下文不匹配 */ // 每行注释
 } ReplyCode_t; /* 应答码枚举类型定义 */ // 每行注释
 
 /* 解析后数据包的队列句柄，供 HWCI 任务从中接收解析后的数据包 */ // 每行注释

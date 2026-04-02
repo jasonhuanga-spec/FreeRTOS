@@ -1,5 +1,7 @@
 #include "TaskList.h" // 包含解析和队列的声明
 
+#define REGISTER_WRITE_TRANSACTION_TIMEOUT_MS 3000U
+
 /* HWCI 任务句柄定义 */ // 每行注释
 TaskHandle_t xHWCIProcessTaskHandle = NULL; // 定义 HWCI 任务句柄
 
@@ -49,6 +51,48 @@ void vHWCIProcessTask(void *pvParameters) // HWCI 任务入口函数
                 switch (localPacket.FunctionCode) // 根据功能码选择处理分支
                 {
                     case FUNCTION_CODE_DataPacket: // 功能码示例：0x02
+                        if (gPendingRegisterContext.active &&
+                            gPendingRegisterContext.rw == 1 &&
+                            localPacket.ExecIndex != gPendingRegisterContext.execIndex)
+                        {
+                            ReplyPacket(localPacket.ExecIndex, REPLY_BUSY);
+                            break;
+                        }
+
+                        if (localPacket.ExecIndex == TASK_ID_ESLCommands)
+                        {
+                            if (!(gPendingRegisterContext.active &&
+                                  gPendingRegisterContext.execIndex == localPacket.ExecIndex &&
+                                  gPendingRegisterContext.rw == 1 &&
+                                  gPendingRegisterContext.number > 0))
+                            {
+                                ReplyPacket(localPacket.ExecIndex, REPLY_CONTEXT_MISMATCH);
+                                break;
+                            }
+
+                            if (xTaskGetTickCount() > gPendingRegisterContext.deadlineTick)
+                            {
+                                ReplyPacket(localPacket.ExecIndex, REPLY_CONTEXT_TIMEOUT);
+                                gPendingRegisterContext.active = 0;
+                                break;
+                            }
+
+                            if (localPacket.DataLen != gPendingRegisterContext.number)
+                            {
+                                ReplyPacket(localPacket.ExecIndex, REPLY_LENGTH_MISMATCH);
+                                gPendingRegisterContext.active = 0;
+                                break;
+                            }
+
+                            E52bitWrite(gPendingRegisterContext.address,
+                                        gPendingRegisterContext.number,
+                                        localPacket.Data,
+                                        localPacket.DataLen);
+                            ReplyPacket(localPacket.ExecIndex, REPLY_OK);
+                            gPendingRegisterContext.active = 0;
+                            break;
+                        }
+
                         if (localPacket.ExecIndex == TASK_ID_ESLReset)
                         {
                             SoftwareReset();
@@ -69,29 +113,7 @@ void vHWCIProcessTask(void *pvParameters) // HWCI 任务入口函数
                             }
 
                             uint8_t ok = ESLCheckBusy(timeoutMs);
-                            ReplyPacket(localPacket.ExecIndex, ok ? REPLY_OK : REPLY_PROTOCOL_ERROR);
-                            break;
-                        }
-
-                        if (localPacket.ExecIndex == TASK_ID_ESLCommands)
-                        {
-                            if (gPendingRevContext.active &&
-                                gPendingRevContext.execIndex == localPacket.ExecIndex &&
-                                gPendingRevContext.rw == 1 &&
-                                gPendingRevContext.number > 0 &&
-                                localPacket.DataLen == gPendingRevContext.number)
-                            {
-                                E52bitWrite(gPendingRevContext.address,
-                                            gPendingRevContext.number,
-                                            localPacket.Data,
-                                            localPacket.DataLen);
-                                ReplyPacket(localPacket.ExecIndex, REPLY_OK);
-                            }
-                            else
-                            {
-                                ReplyPacket(localPacket.ExecIndex, REPLY_PROTOCOL_ERROR);
-                            }
-                            gPendingRevContext.active = 0;
+                            ReplyPacket(localPacket.ExecIndex, ok ? REPLY_OK : REPLY_BUSY);
                             break;
                         }
 
@@ -123,12 +145,20 @@ void vHWCIProcessTask(void *pvParameters) // HWCI 任务入口函数
                         break; // 退出该 case
 
                     case FUNCTION_CODE_CommandPacket: // 功能码示例：0x03
+                        if (gPendingRegisterContext.active &&
+                            gPendingRegisterContext.rw == 1 &&
+                            localPacket.ExecIndex != gPendingRegisterContext.execIndex)
+                        {
+                            ReplyPacket(localPacket.ExecIndex, REPLY_BUSY);
+                            break;
+                        }
+
                         if (localPacket.ExecIndex == TASK_ID_ESLCommands) // 如果执行索引为ESLCommands
                         {
                             if (localPacket.DataLen < 3)
                             {
                                 ReplyPacket(localPacket.ExecIndex, REPLY_PROTOCOL_ERROR);
-                                gPendingRevContext.active = 0;
+                                gPendingRegisterContext.active = 0;
                                 break;
                             }
 
@@ -139,32 +169,50 @@ void vHWCIProcessTask(void *pvParameters) // HWCI 任务入口函数
                             if (rw > 1)
                             {
                                 ReplyPacket(localPacket.ExecIndex, REPLY_PROTOCOL_ERROR);
-                                gPendingRevContext.active = 0;
+                                gPendingRegisterContext.active = 0;
                                 break;
                             }
 
-                            if (rw == 1 && number == 0)
+                            if (rw == 1 && number > 0)
                             {
-                                ESLCommands(localPacket.ExecIndex, address, rw, number);
-                                gPendingRevContext.active = 0;
+                                if (gPendingRegisterContext.active && gPendingRegisterContext.rw == 1)
+                                {
+                                    if (gPendingRegisterContext.execIndex == localPacket.ExecIndex &&
+                                        gPendingRegisterContext.address == address &&
+                                        gPendingRegisterContext.number == number)
+                                    {
+                                        gPendingRegisterContext.deadlineTick = xTaskGetTickCount() + pdMS_TO_TICKS(REGISTER_WRITE_TRANSACTION_TIMEOUT_MS);
+                                        ReplyPacket(localPacket.ExecIndex, REPLY_OK);
+                                    }
+                                    else
+                                    {
+                                        ReplyPacket(localPacket.ExecIndex, REPLY_BUSY);
+                                    }
+                                    break;
+                                }
+
+                                gPendingRegisterContext.active = 1;
+                                gPendingRegisterContext.execIndex = localPacket.ExecIndex;
+                                gPendingRegisterContext.address = address;
+                                gPendingRegisterContext.rw = rw;
+                                gPendingRegisterContext.number = number;
+                                gPendingRegisterContext.deadlineTick = xTaskGetTickCount() + pdMS_TO_TICKS(REGISTER_WRITE_TRANSACTION_TIMEOUT_MS);
+
+                                ESLCommands(localPacket.ExecIndex, address, rw, number); // 调用 ESLCommands 函数，传入数据和长度
                                 ReplyPacket(localPacket.ExecIndex, REPLY_OK);
                                 break;
                             }
 
-                            gPendingRevContext.active = 1;
-                            gPendingRevContext.execIndex = localPacket.ExecIndex;
-                            gPendingRevContext.address = address;
-                            gPendingRevContext.rw = rw;
-                            gPendingRevContext.number = number;
-
                             ESLCommands(localPacket.ExecIndex, address, rw, number); // 调用 ESLCommands 函数，传入数据和长度
-
-                            if (rw == 0)
+                            gPendingRegisterContext.active = 0;
+                            if (rw == 1)
                             {
-                                gPendingRevContext.active = 0;
+                                ReplyPacket(localPacket.ExecIndex, REPLY_OK);
                             }
+                            /* rw==0 的读取路径由 E52bitRead 直接回 DataPacket，不再补 ACK */
+                            break;
                         }
-                         
+
                         ReplyPacket(localPacket.ExecIndex, REPLY_OK); // 按请求索引返回ACK
                         break; // 退出该 case
 

@@ -70,8 +70,11 @@ void vADCProcessTask(void *pvParameters) // ADC 任务实现
     {
         vADC_StartConversion();    // 启动ADC DMA采样并等待完成
         SetESLVDDVoltage();        // PID单步调节VDD电压（利用刚采样的数据）
-        send_voltage_packet();     // 将电压数据打包发送给上位机
-        send_current_packet();     // 将电流数据打包发送给上位机
+        if (!(gPendingRegisterContext.active && gPendingRegisterContext.rw == 1))
+        {
+            send_voltage_packet(); // 将电压数据打包发送给上位机
+            send_current_packet(); // 将电流数据打包发送给上位机
+        }
 
         vTaskDelay(pdMS_TO_TICKS(10)); // 延迟10ms等待电压稳定（PID控制周期）
     }

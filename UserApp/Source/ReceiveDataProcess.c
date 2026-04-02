@@ -11,7 +11,7 @@ QueueHandle_t xReceiveDataQueue = NULL;
 BaseType_t xHigherPriorityTaskWoken = pdFALSE;
 // 拆开接收到的数据包
 ParsedDataPacket_t parsedDataPacket;
-PendingRevContext_t gPendingRevContext = {0};
+PendingRegisterContext_t gPendingRegisterContext = {0};
 
 static uint8_t rxStreamBuf[MAX_RECEIVE_DATA_SIZE * 4];
 static uint16_t rxStreamLen = 0;
@@ -64,7 +64,7 @@ void vReceiveDataProcessTask( void * pvParameters )
         if( xReceiveDataQueue != NULL )
         {
             /* 从已创建的队列接收一条消息 */
-            if( xQueueReceive( xReceiveDataQueue, &(taskDataPacket),(TickType_t) 0 ) == pdPASS )
+            if( xQueueReceive( xReceiveDataQueue, &(taskDataPacket), portMAX_DELAY ) == pdPASS )
             {
                 /* xReceiveDataQueueRx now contains a copy of xMessage. */
                 
@@ -142,7 +142,7 @@ uint8_t vReceiveDataQueueSendISRTask(uint8_t* Buf, uint32_t *Len)
         memcpy(isrPacket.data, &Buf[offset], chunkLen);
         isrPacket.length = (uint16_t)chunkLen;
 
-        if (xQueueSendFromISR(xReceiveDataQueue, &isrPacket, &localTaskWoken) == errQUEUE_FULL)
+        if (xQueueSendFromISR(xReceiveDataQueue, &isrPacket, &localTaskWoken) != pdPASS)
         {
             return 1;
         }
@@ -170,6 +170,8 @@ static uint8_t IsHostRequestFunctionCode(uint8_t functionCode)
 
 static uint16_t FindValidFrameLength(const uint8_t *buf, uint16_t available)
 {
+    uint16_t maxTry;
+
     if (buf == NULL || available < 5)
     {
         return 0;
@@ -185,7 +187,24 @@ static uint16_t FindValidFrameLength(const uint8_t *buf, uint16_t available)
         return 0;
     }
 
-    uint16_t maxTry = (available < MAX_RECEIVE_DATA_SIZE) ? available : MAX_RECEIVE_DATA_SIZE;
+    maxTry = (available < MAX_RECEIVE_DATA_SIZE) ? available : MAX_RECEIVE_DATA_SIZE;
+
+    if (buf[1] == FUNCTION_CODE_CommandPacket)
+    {
+        /* CommandPacket 固定包含 3 字节参数：Address/Wr/Number。 */
+        if (maxTry < 8)
+        {
+            return 0;
+        }
+
+        if (CalculateCRC8(buf, 7) == buf[7])
+        {
+            return 8;
+        }
+
+        return 0;
+    }
+
     for (uint16_t frameLen = 5; frameLen <= maxTry; frameLen++)
     {
         uint8_t crc = CalculateCRC8(buf, (uint16_t)(frameLen - 1));

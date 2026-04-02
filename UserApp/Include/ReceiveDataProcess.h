@@ -34,13 +34,14 @@ typedef struct {
     uint8_t address;
     uint8_t rw;
     uint8_t number;
-} PendingRevContext_t;
+    uint32_t deadlineTick;
+} PendingRegisterContext_t;
 
 /* 队列句柄，用于接收数据的存储和传递。 */
 extern QueueHandle_t xReceiveDataQueue;
 // 拆开接收到的数据包
 extern ParsedDataPacket_t parsedDataPacket;
-extern PendingRevContext_t gPendingRevContext;
+extern PendingRegisterContext_t gPendingRegisterContext;
 
 /* 解析后数据包的队列句柄，供 HWCI 任务从中接收解析后的数据包 */ // 每行注释
 extern QueueHandle_t xParsedDataQueue; /* extern 声明：解析后数据队列 */ // 每行注释

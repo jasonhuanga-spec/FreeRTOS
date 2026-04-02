@@ -49,7 +49,28 @@ void vHWCIProcessTask(void *pvParameters) // HWCI 任务入口函数
                 switch (localPacket.FunctionCode) // 根据功能码选择处理分支
                 {
                     case FUNCTION_CODE_DataPacket: // 功能码示例：0x02
-                        // TODO: 在此处添加对应的处理逻辑
+                        if (localPacket.ExecIndex == TASK_ID_ESLCommands)
+                        {
+                            if (gPendingRevContext.active &&
+                                gPendingRevContext.execIndex == localPacket.ExecIndex &&
+                                gPendingRevContext.rw == 1 &&
+                                gPendingRevContext.number > 0 &&
+                                localPacket.DataLen == gPendingRevContext.number)
+                            {
+                                E52bitWrite(gPendingRevContext.address,
+                                            gPendingRevContext.number,
+                                            localPacket.Data,
+                                            localPacket.DataLen);
+                                ReplyPacket(localPacket.ExecIndex, REPLY_OK);
+                            }
+                            else
+                            {
+                                ReplyPacket(localPacket.ExecIndex, REPLY_PROTOCOL_ERROR);
+                            }
+                            gPendingRevContext.active = 0;
+                            break;
+                        }
+
                         if (localPacket.ExecIndex == TASK_ID_SelectESLSPI)// 如果执行索引为SelectESLSPI
                         {
                             SelectESLSPI(localPacket.Data[0]); // 调用 SelectESLSPI 函数，传入SPIXLine 参数
@@ -80,9 +101,46 @@ void vHWCIProcessTask(void *pvParameters) // HWCI 任务入口函数
                     case FUNCTION_CODE_CommandPacket: // 功能码示例：0x03
                         if (localPacket.ExecIndex == TASK_ID_ESLCommands) // 如果执行索引为ESLCommands
                         {
-                            ESLCommands(localPacket.Data[0], localPacket.Data[1], localPacket.Data[2]); // 调用 ESLCommands 函数，传入数据和长度
+                            if (localPacket.DataLen < 3)
+                            {
+                                ReplyPacket(localPacket.ExecIndex, REPLY_PROTOCOL_ERROR);
+                                gPendingRevContext.active = 0;
+                                break;
+                            }
+
+                            uint8_t address = localPacket.Data[0];
+                            uint8_t rw = localPacket.Data[1];
+                            uint8_t number = localPacket.Data[2];
+
+                            if (rw > 1)
+                            {
+                                ReplyPacket(localPacket.ExecIndex, REPLY_PROTOCOL_ERROR);
+                                gPendingRevContext.active = 0;
+                                break;
+                            }
+
+                            if (rw == 1 && number == 0)
+                            {
+                                ESLCommands(localPacket.ExecIndex, address, rw, number);
+                                gPendingRevContext.active = 0;
+                                ReplyPacket(localPacket.ExecIndex, REPLY_OK);
+                                break;
+                            }
+
+                            gPendingRevContext.active = 1;
+                            gPendingRevContext.execIndex = localPacket.ExecIndex;
+                            gPendingRevContext.address = address;
+                            gPendingRevContext.rw = rw;
+                            gPendingRevContext.number = number;
+
+                            ESLCommands(localPacket.ExecIndex, address, rw, number); // 调用 ESLCommands 函数，传入数据和长度
+
+                            if (rw == 0)
+                            {
+                                gPendingRevContext.active = 0;
+                            }
                         }
-                        
+                         
                         ReplyPacket(localPacket.ExecIndex, REPLY_OK); // 按请求索引返回ACK
                         break; // 退出该 case
 

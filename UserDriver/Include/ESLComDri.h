@@ -4,6 +4,7 @@
 
 #include "main.h"
 #include "gpio.h"
+#include "cmsis_os.h"
 
 
 //ESL IC用到的reset和busy信号，进行配置GPIO
@@ -17,5 +18,6 @@
 
 void ESL_RESET(void);
 void Check_Busy(void);
+uint8_t Check_BusyTimeout(uint32_t timeoutMs);
 
 #endif          

@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc4SDGAI.s 			page 1
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccVlat78.s 			page 1
 
 
    1              		.cpu cortex-m3
@@ -21,21 +21,33 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc4SDGAI.s 			page 1
   18              		.section	.rodata.vHWCIProcessTask.str1.4,"aMS",%progbits,1
   19              		.align	2
   20              	.LC0:
-  21 0000 E69CAAE7 		.ascii	"\346\234\252\347\237\245\345\212\237\350\203\275\347"
-  21      9FA5E58A 
-  21      9FE883BD 
-  21      E7
-  22 000d A0812030 		.ascii	"\240\201 0x%02X\015\012\000"
-  22      78253032 
-  22      580D0A00 
-  23              		.section	.text.vHWCIProcessTask,"ax",%progbits
-  24              		.align	1
-  25              		.global	vHWCIProcessTask
-  26              		.syntax unified
-  27              		.thumb
-  28              		.thumb_func
-  30              	vHWCIProcessTask:
-  31              	.LFB80:
+  21 0000 E7A1ACE4 		.ascii	"\347\241\254\344\273\266\351\205\215\347\275\256\346"
+  21      BBB6E985 
+  21      8DE7BDAE 
+  21      E6
+  22 000d 8890E58A 		.ascii	"\210\220\345\212\237, ExecIndex=%u, DataLen=%u\015\012"
+  22      9F2C2045 
+  22      78656349 
+  22      6E646578 
+  22      3D25752C 
+  23 002e 00       		.ascii	"\000"
+  24 002f 00       		.align	2
+  25              	.LC1:
+  26 0030 E69CAAE7 		.ascii	"\346\234\252\347\237\245\345\212\237\350\203\275\347"
+  26      9FA5E58A 
+  26      9FE883BD 
+  26      E7
+  27 003d A0812030 		.ascii	"\240\201 0x%02X\015\012\000"
+  27      78253032 
+  27      580D0A00 
+  28              		.section	.text.vHWCIProcessTask,"ax",%progbits
+  29              		.align	1
+  30              		.global	vHWCIProcessTask
+  31              		.syntax unified
+  32              		.thumb
+  33              		.thumb_func
+  35              	vHWCIProcessTask:
+  36              	.LFB80:
    1:UserAPP/Source/TaskList.c **** #include "TaskList.h" // 包含解析和队列的声明
    2:UserAPP/Source/TaskList.c **** 
    3:UserAPP/Source/TaskList.c **** /* HWCI 任务句柄定义 */ // 每行注释
@@ -46,6 +58,9 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc4SDGAI.s 			page 1
    8:UserAPP/Source/TaskList.c **** 
    9:UserAPP/Source/TaskList.c **** 
   10:UserAPP/Source/TaskList.c **** /**
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccVlat78.s 			page 2
+
+
   11:UserAPP/Source/TaskList.c ****  * @brief 创建并启动HWCI 处理任务和解析结果队列
   12:UserAPP/Source/TaskList.c ****  *
   13:UserAPP/Source/TaskList.c ****  */
@@ -58,9 +73,6 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc4SDGAI.s 			page 1
   20:UserAPP/Source/TaskList.c ****     {
   21:UserAPP/Source/TaskList.c ****         QueueSendfmt(xSendDataQueue, 0, "创建 xParsedDataQueue 失败\r\n"); // 记录队列创�
   22:UserAPP/Source/TaskList.c ****         return; // 返回，不创建任务
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc4SDGAI.s 			page 2
-
-
   23:UserAPP/Source/TaskList.c ****     }
   24:UserAPP/Source/TaskList.c **** 
   25:UserAPP/Source/TaskList.c ****     /* 创建 HWCI 处理任务并保存句柄 */ // 每行注释
@@ -78,23 +90,23 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc4SDGAI.s 			page 1
   37:UserAPP/Source/TaskList.c ****  */
   38:UserAPP/Source/TaskList.c **** void vHWCIProcessTask(void *pvParameters) // HWCI 任务入口函数
   39:UserAPP/Source/TaskList.c **** {
-  32              		.loc 1 39 1 view -0
-  33              		.cfi_startproc
-  34              		@ Volatile: function does not return.
-  35              		@ args = 0, pretend = 0, frame = 72
-  36              		@ frame_needed = 0, uses_anonymous_args = 0
-  37              	.LVL0:
-  38              		.loc 1 39 1 is_stmt 0 view .LVU1
-  39 0000 00B5     		push	{lr}
-  40              	.LCFI0:
-  41              		.cfi_def_cfa_offset 4
-  42              		.cfi_offset 14, -4
-  43 0002 93B0     		sub	sp, sp, #76
-  44              	.LCFI1:
-  45              		.cfi_def_cfa_offset 80
-  46 0004 17E0     		b	.L3
-  47              	.LVL1:
-  48              	.L5:
+  37              		.loc 1 39 1 view -0
+  38              		.cfi_startproc
+  39              		@ args = 0, pretend = 0, frame = 72
+  40              		@ frame_needed = 0, uses_anonymous_args = 0
+  41              	.LVL0:
+  42              		.loc 1 39 1 is_stmt 0 view .LVU1
+  43 0000 10B5     		push	{r4, lr}
+  44              	.LCFI0:
+  45              		.cfi_def_cfa_offset 8
+  46              		.cfi_offset 4, -8
+  47              		.cfi_offset 14, -4
+  48 0002 94B0     		sub	sp, sp, #80
+  49              	.LCFI1:
+  50              		.cfi_def_cfa_offset 88
+  51 0004 24E0     		b	.L3
+  52              	.LVL1:
+  53              	.L5:
   40:UserAPP/Source/TaskList.c ****     ParsedDataPacket_t localPacket; // 本地变量：存放从队列接收的解析后数据包
   41:UserAPP/Source/TaskList.c **** 
   42:UserAPP/Source/TaskList.c ****     for(;;) // 永久循环，任务主循环
@@ -106,388 +118,699 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc4SDGAI.s 			page 1
   48:UserAPP/Source/TaskList.c ****                 /* 根据 FunctionCode 分发处理逻辑 */ // 每行注释
   49:UserAPP/Source/TaskList.c ****                 switch (localPacket.FunctionCode) // 根据功能码选择处理分支
   50:UserAPP/Source/TaskList.c ****                 {
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccVlat78.s 			page 3
+
+
   51:UserAPP/Source/TaskList.c ****                     case FUNCTION_CODE_DataPacket: // 功能码示例：0x02
-  52:UserAPP/Source/TaskList.c ****                         // TODO: 在此处添加对应的处理逻辑
-  53:UserAPP/Source/TaskList.c ****                         if (localPacket.ExecIndex == TASK_ID_SelectESLSPI)// 如果执行索引为S
-  49              		.loc 1 53 25 is_stmt 1 view .LVU2
-  50              		.loc 1 53 40 is_stmt 0 view .LVU3
-  51 0006 BDF80630 		ldrh	r3, [sp, #6]
-  52              		.loc 1 53 28 view .LVU4
-  53 000a 012B     		cmp	r3, #1
-  54 000c 2BD0     		beq	.L17
-  55              	.L8:
-  54:UserAPP/Source/TaskList.c ****                         {
-  55:UserAPP/Source/TaskList.c ****                             SelectESLSPI(localPacket.Data[0]); // 调用 SelectESLSPI 函数，传�
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc4SDGAI.s 			page 3
-
-
-  56:UserAPP/Source/TaskList.c ****                         }
-  57:UserAPP/Source/TaskList.c ****                         if (localPacket.ExecIndex == TASK_ID_ICTypeSelect)// 如果执行索引为I
-  56              		.loc 1 57 25 is_stmt 1 view .LVU5
-  57              		.loc 1 57 40 is_stmt 0 view .LVU6
-  58 000e BDF80630 		ldrh	r3, [sp, #6]
-  59              		.loc 1 57 28 view .LVU7
-  60 0012 022B     		cmp	r3, #2
-  61 0014 2CD0     		beq	.L18
-  62              	.L9:
-  58:UserAPP/Source/TaskList.c ****                         {
-  59:UserAPP/Source/TaskList.c ****                             ICTypeSelect(localPacket.Data[0]); // 调用 ICTypeSelect 函数，传�
-  60:UserAPP/Source/TaskList.c ****                         }
-  61:UserAPP/Source/TaskList.c ****                         if (localPacket.ExecIndex == TASK_ID_SelectInductor)// 如果执行索引�
-  63              		.loc 1 61 25 is_stmt 1 view .LVU8
-  64              		.loc 1 61 40 is_stmt 0 view .LVU9
-  65 0016 BDF80630 		ldrh	r3, [sp, #6]
-  66              		.loc 1 61 28 view .LVU10
-  67 001a 032B     		cmp	r3, #3
-  68 001c 2DD0     		beq	.L19
-  69              	.L10:
-  62:UserAPP/Source/TaskList.c ****                         {
-  63:UserAPP/Source/TaskList.c ****                             SelectInductor(localPacket.Data[0]); // 调用 SelectInductor 函数，
-  64:UserAPP/Source/TaskList.c ****                         }
-  65:UserAPP/Source/TaskList.c ****                         if (localPacket.ExecIndex == TASK_ID_SelectResistance)// 如果执行索引
-  70              		.loc 1 65 25 is_stmt 1 view .LVU11
-  71              		.loc 1 65 40 is_stmt 0 view .LVU12
-  72 001e BDF80630 		ldrh	r3, [sp, #6]
-  73              		.loc 1 65 28 view .LVU13
-  74 0022 042B     		cmp	r3, #4
-  75 0024 2ED0     		beq	.L20
-  76              	.L11:
-  66:UserAPP/Source/TaskList.c ****                         {
-  67:UserAPP/Source/TaskList.c ****                             SelectResistance(localPacket.Data[0]); // 调用 SelectResistance 函�
-  68:UserAPP/Source/TaskList.c ****                         }
-  69:UserAPP/Source/TaskList.c ****                         if (localPacket.ExecIndex == TASK_ID_SetESLVDDVoltage)// 如果执行索引
-  77              		.loc 1 69 25 is_stmt 1 view .LVU14
-  78              		.loc 1 69 40 is_stmt 0 view .LVU15
-  79 0026 BDF80640 		ldrh	r4, [sp, #6]
-  80              		.loc 1 69 28 view .LVU16
-  81 002a 052C     		cmp	r4, #5
-  82 002c 2FD0     		beq	.L21
-  83              	.L12:
-  70:UserAPP/Source/TaskList.c ****                         {
-  71:UserAPP/Source/TaskList.c ****                             TargetVDDVoltage = 2.3f + 0.1f * localPacket.Data[0]; // 设置目标�
+  52:UserAPP/Source/TaskList.c ****                         if (localPacket.ExecIndex == TASK_ID_ESLCommands)
+  54              		.loc 1 52 25 is_stmt 1 view .LVU2
+  55              		.loc 1 52 40 is_stmt 0 view .LVU3
+  56 0006 BDF80E00 		ldrh	r0, [sp, #14]
+  57              		.loc 1 52 28 view .LVU4
+  58 000a 0728     		cmp	r0, #7
+  59 000c 38D0     		beq	.L23
+  53:UserAPP/Source/TaskList.c ****                         {
+  54:UserAPP/Source/TaskList.c ****                             if (gPendingRevContext.active &&
+  55:UserAPP/Source/TaskList.c ****                                 gPendingRevContext.execIndex == localPacket.ExecIndex &&
+  56:UserAPP/Source/TaskList.c ****                                 gPendingRevContext.rw == 1 &&
+  57:UserAPP/Source/TaskList.c ****                                 gPendingRevContext.number > 0 &&
+  58:UserAPP/Source/TaskList.c ****                                 localPacket.DataLen == gPendingRevContext.number)
+  59:UserAPP/Source/TaskList.c ****                             {
+  60:UserAPP/Source/TaskList.c ****                                 E52bitWrite(gPendingRevContext.address,
+  61:UserAPP/Source/TaskList.c ****                                             gPendingRevContext.number,
+  62:UserAPP/Source/TaskList.c ****                                             localPacket.Data,
+  63:UserAPP/Source/TaskList.c ****                                             localPacket.DataLen);
+  64:UserAPP/Source/TaskList.c ****                                 ReplyPacket(localPacket.ExecIndex, REPLY_OK);
+  65:UserAPP/Source/TaskList.c ****                             }
+  66:UserAPP/Source/TaskList.c ****                             else
+  67:UserAPP/Source/TaskList.c ****                             {
+  68:UserAPP/Source/TaskList.c ****                                 ReplyPacket(localPacket.ExecIndex, REPLY_PROTOCOL_ERROR);
+  69:UserAPP/Source/TaskList.c ****                             }
+  70:UserAPP/Source/TaskList.c ****                             gPendingRevContext.active = 0;
+  71:UserAPP/Source/TaskList.c ****                             break;
   72:UserAPP/Source/TaskList.c ****                         }
   73:UserAPP/Source/TaskList.c **** 
-  74:UserAPP/Source/TaskList.c ****                         ReplyPacket(localPacket.ExecIndex, REPLY_OK); // 按请求索引返回ACK
-  84              		.loc 1 74 25 is_stmt 1 view .LVU17
-  85 002e 0021     		movs	r1, #0
-  86 0030 2046     		mov	r0, r4
-  87 0032 FFF7FEFF 		bl	ReplyPacket
-  88              	.LVL2:
-  75:UserAPP/Source/TaskList.c **** #if TEST_MODE
-  76:UserAPP/Source/TaskList.c ****                         QueueSendfmt(xSendDataQueue, 0, "硬件配置成功, ExecIndex=%u, DataLen=
-  77:UserAPP/Source/TaskList.c **** #endif
-  78:UserAPP/Source/TaskList.c ****                         break; // 退出该 case
-  89              		.loc 1 78 25 view .LVU18
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc4SDGAI.s 			page 4
+  74:UserAPP/Source/TaskList.c ****                         if (localPacket.ExecIndex == TASK_ID_SelectESLSPI)// 如果执行索引为S
+  60              		.loc 1 74 25 is_stmt 1 view .LVU5
+  61              		.loc 1 74 28 is_stmt 0 view .LVU6
+  62 000e 0128     		cmp	r0, #1
+  63 0010 5CD0     		beq	.L24
+  64              	.L12:
+  75:UserAPP/Source/TaskList.c ****                         {
+  76:UserAPP/Source/TaskList.c ****                             SelectESLSPI(localPacket.Data[0]); // 调用 SelectESLSPI 函数，传�
+  77:UserAPP/Source/TaskList.c ****                         }
+  78:UserAPP/Source/TaskList.c ****                         if (localPacket.ExecIndex == TASK_ID_ICTypeSelect)// 如果执行索引为I
+  65              		.loc 1 78 25 is_stmt 1 view .LVU7
+  66              		.loc 1 78 40 is_stmt 0 view .LVU8
+  67 0012 BDF80E30 		ldrh	r3, [sp, #14]
+  68              		.loc 1 78 28 view .LVU9
+  69 0016 022B     		cmp	r3, #2
+  70 0018 5DD0     		beq	.L25
+  71              	.L13:
+  79:UserAPP/Source/TaskList.c ****                         {
+  80:UserAPP/Source/TaskList.c ****                             ICTypeSelect(localPacket.Data[0]); // 调用 ICTypeSelect 函数，传�
+  81:UserAPP/Source/TaskList.c ****                         }
+  82:UserAPP/Source/TaskList.c ****                         if (localPacket.ExecIndex == TASK_ID_SelectInductor)// 如果执行索引�
+  72              		.loc 1 82 25 is_stmt 1 view .LVU10
+  73              		.loc 1 82 40 is_stmt 0 view .LVU11
+  74 001a BDF80E30 		ldrh	r3, [sp, #14]
+  75              		.loc 1 82 28 view .LVU12
+  76 001e 032B     		cmp	r3, #3
+  77 0020 5ED0     		beq	.L26
+  78              	.L14:
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccVlat78.s 			page 4
 
 
-  90              	.L3:
+  83:UserAPP/Source/TaskList.c ****                         {
+  84:UserAPP/Source/TaskList.c ****                             SelectInductor(localPacket.Data[0]); // 调用 SelectInductor 函数，
+  85:UserAPP/Source/TaskList.c ****                         }
+  86:UserAPP/Source/TaskList.c ****                         if (localPacket.ExecIndex == TASK_ID_SelectResistance)// 如果执行索引
+  79              		.loc 1 86 25 is_stmt 1 view .LVU13
+  80              		.loc 1 86 40 is_stmt 0 view .LVU14
+  81 0022 BDF80E30 		ldrh	r3, [sp, #14]
+  82              		.loc 1 86 28 view .LVU15
+  83 0026 042B     		cmp	r3, #4
+  84 0028 5FD0     		beq	.L27
+  85              	.L15:
+  87:UserAPP/Source/TaskList.c ****                         {
+  88:UserAPP/Source/TaskList.c ****                             SelectResistance(localPacket.Data[0]); // 调用 SelectResistance 函�
+  89:UserAPP/Source/TaskList.c ****                         }
+  90:UserAPP/Source/TaskList.c ****                         if (localPacket.ExecIndex == TASK_ID_SetESLVDDVoltage)// 如果执行索引
+  86              		.loc 1 90 25 is_stmt 1 view .LVU16
+  87              		.loc 1 90 40 is_stmt 0 view .LVU17
+  88 002a BDF80E40 		ldrh	r4, [sp, #14]
+  89              		.loc 1 90 28 view .LVU18
+  90 002e 052C     		cmp	r4, #5
+  91 0030 60D0     		beq	.L28
+  92              	.L16:
+  91:UserAPP/Source/TaskList.c ****                         {
+  92:UserAPP/Source/TaskList.c ****                             TargetVDDVoltage = 2.3f + 0.1f * localPacket.Data[0]; // 设置目标�
+  93:UserAPP/Source/TaskList.c ****                         }
+  94:UserAPP/Source/TaskList.c **** 
+  95:UserAPP/Source/TaskList.c ****                         ReplyPacket(localPacket.ExecIndex, REPLY_OK); // 按请求索引返回ACK
+  93              		.loc 1 95 25 is_stmt 1 view .LVU19
+  94 0032 0021     		movs	r1, #0
+  95 0034 2046     		mov	r0, r4
+  96 0036 FFF7FEFF 		bl	ReplyPacket
+  97              	.LVL2:
+  96:UserAPP/Source/TaskList.c **** #if TEST_MODE
+  97:UserAPP/Source/TaskList.c ****                         QueueSendfmt(xSendDataQueue, 0, "硬件配置成功, ExecIndex=%u, DataLen=
+  98              		.loc 1 97 25 view .LVU20
+  99              		.loc 1 97 143 is_stmt 0 view .LVU21
+ 100 003a 9DF81030 		ldrb	r3, [sp, #16]	@ zero_extendqisi2
+ 101              		.loc 1 97 25 view .LVU22
+ 102 003e 0093     		str	r3, [sp]
+ 103 0040 BDF80E30 		ldrh	r3, [sp, #14]
+ 104 0044 534A     		ldr	r2, .L33
+ 105 0046 0021     		movs	r1, #0
+ 106 0048 5348     		ldr	r0, .L33+4
+ 107 004a 0068     		ldr	r0, [r0]
+ 108 004c FFF7FEFF 		bl	QueueSendfmt
+ 109              	.LVL3:
+  98:UserAPP/Source/TaskList.c **** #endif
+  99:UserAPP/Source/TaskList.c ****                         break; // 退出该 case
+ 110              		.loc 1 99 25 is_stmt 1 view .LVU23
+ 111              	.L3:
   40:UserAPP/Source/TaskList.c **** 
-  91              		.loc 1 40 5 view .LVU19
+ 112              		.loc 1 40 5 view .LVU24
   42:UserAPP/Source/TaskList.c ****     {
-  92              		.loc 1 42 5 view .LVU20
+ 113              		.loc 1 42 5 view .LVU25
   44:UserAPP/Source/TaskList.c ****         {
-  93              		.loc 1 44 9 view .LVU21
+ 114              		.loc 1 44 9 view .LVU26
   44:UserAPP/Source/TaskList.c ****         {
-  94              		.loc 1 44 30 is_stmt 0 view .LVU22
-  95 0036 264B     		ldr	r3, .L23
-  96 0038 1868     		ldr	r0, [r3]
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccVlat78.s 			page 5
+
+
+ 115              		.loc 1 44 30 is_stmt 0 view .LVU27
+ 116 0050 524B     		ldr	r3, .L33+8
+ 117 0052 1868     		ldr	r0, [r3]
   44:UserAPP/Source/TaskList.c ****         {
-  97              		.loc 1 44 12 view .LVU23
-  98 003a 0028     		cmp	r0, #0
-  99 003c FBD0     		beq	.L3
+ 118              		.loc 1 44 12 view .LVU28
+ 119 0054 0028     		cmp	r0, #0
+ 120 0056 FBD0     		beq	.L3
   46:UserAPP/Source/TaskList.c ****             {
- 100              		.loc 1 46 13 is_stmt 1 view .LVU24
+ 121              		.loc 1 46 13 is_stmt 1 view .LVU29
   46:UserAPP/Source/TaskList.c ****             {
- 101              		.loc 1 46 17 is_stmt 0 view .LVU25
- 102 003e 4FF0FF32 		mov	r2, #-1
- 103 0042 01A9     		add	r1, sp, #4
- 104 0044 FFF7FEFF 		bl	xQueueReceive
- 105              	.LVL3:
+ 122              		.loc 1 46 17 is_stmt 0 view .LVU30
+ 123 0058 4FF0FF32 		mov	r2, #-1
+ 124 005c 03A9     		add	r1, sp, #12
+ 125 005e FFF7FEFF 		bl	xQueueReceive
+ 126              	.LVL4:
   46:UserAPP/Source/TaskList.c ****             {
- 106              		.loc 1 46 16 discriminator 1 view .LVU26
- 107 0048 0128     		cmp	r0, #1
- 108 004a F4D1     		bne	.L3
+ 127              		.loc 1 46 16 discriminator 1 view .LVU31
+ 128 0062 0128     		cmp	r0, #1
+ 129 0064 F4D1     		bne	.L3
   49:UserAPP/Source/TaskList.c ****                 {
- 109              		.loc 1 49 17 is_stmt 1 view .LVU27
+ 130              		.loc 1 49 17 is_stmt 1 view .LVU32
   49:UserAPP/Source/TaskList.c ****                 {
- 110              		.loc 1 49 36 is_stmt 0 view .LVU28
- 111 004c 9DF80530 		ldrb	r3, [sp, #5]	@ zero_extendqisi2
+ 131              		.loc 1 49 36 is_stmt 0 view .LVU33
+ 132 0066 9DF80D30 		ldrb	r3, [sp, #13]	@ zero_extendqisi2
   49:UserAPP/Source/TaskList.c ****                 {
- 112              		.loc 1 49 17 view .LVU29
- 113 0050 022B     		cmp	r3, #2
- 114 0052 D8D0     		beq	.L5
- 115 0054 032B     		cmp	r3, #3
- 116 0056 27D0     		beq	.L6
-  79:UserAPP/Source/TaskList.c **** 
-  80:UserAPP/Source/TaskList.c ****                     case FUNCTION_CODE_CommandPacket: // 功能码示例：0x03
-  81:UserAPP/Source/TaskList.c ****                         if (localPacket.ExecIndex == TASK_ID_ESLCommands) // 如果执行索引为E
-  82:UserAPP/Source/TaskList.c ****                         {
-  83:UserAPP/Source/TaskList.c ****                             ESLCommands(localPacket.Data[0], localPacket.Data[1], localPacket.Data[
+ 133              		.loc 1 49 17 view .LVU34
+ 134 006a 022B     		cmp	r3, #2
+ 135 006c CBD0     		beq	.L5
+ 136 006e 032B     		cmp	r3, #3
+ 137 0070 4DD0     		beq	.L6
+ 100:UserAPP/Source/TaskList.c **** 
+ 101:UserAPP/Source/TaskList.c ****                     case FUNCTION_CODE_CommandPacket: // 功能码示例：0x03
+ 102:UserAPP/Source/TaskList.c ****                         if (localPacket.ExecIndex == TASK_ID_ESLCommands) // 如果执行索引为E
+ 103:UserAPP/Source/TaskList.c ****                         {
+ 104:UserAPP/Source/TaskList.c ****                             if (localPacket.DataLen < 3)
+ 105:UserAPP/Source/TaskList.c ****                             {
+ 106:UserAPP/Source/TaskList.c ****                                 ReplyPacket(localPacket.ExecIndex, REPLY_PROTOCOL_ERROR);
+ 107:UserAPP/Source/TaskList.c ****                                 gPendingRevContext.active = 0;
+ 108:UserAPP/Source/TaskList.c ****                                 break;
+ 109:UserAPP/Source/TaskList.c ****                             }
+ 110:UserAPP/Source/TaskList.c **** 
+ 111:UserAPP/Source/TaskList.c ****                             uint8_t address = localPacket.Data[0];
+ 112:UserAPP/Source/TaskList.c ****                             uint8_t rw = localPacket.Data[1];
+ 113:UserAPP/Source/TaskList.c ****                             uint8_t number = localPacket.Data[2];
+ 114:UserAPP/Source/TaskList.c **** 
+ 115:UserAPP/Source/TaskList.c ****                             if (rw > 1)
+ 116:UserAPP/Source/TaskList.c ****                             {
+ 117:UserAPP/Source/TaskList.c ****                                 ReplyPacket(localPacket.ExecIndex, REPLY_PROTOCOL_ERROR);
+ 118:UserAPP/Source/TaskList.c ****                                 gPendingRevContext.active = 0;
+ 119:UserAPP/Source/TaskList.c ****                                 break;
+ 120:UserAPP/Source/TaskList.c ****                             }
+ 121:UserAPP/Source/TaskList.c **** 
+ 122:UserAPP/Source/TaskList.c ****                             if (rw == 1 && number == 0)
+ 123:UserAPP/Source/TaskList.c ****                             {
+ 124:UserAPP/Source/TaskList.c ****                                 ESLCommands(localPacket.ExecIndex, address, rw, number);
+ 125:UserAPP/Source/TaskList.c ****                                 gPendingRevContext.active = 0;
+ 126:UserAPP/Source/TaskList.c ****                                 ReplyPacket(localPacket.ExecIndex, REPLY_OK);
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccVlat78.s 			page 6
+
+
+ 127:UserAPP/Source/TaskList.c ****                                 break;
+ 128:UserAPP/Source/TaskList.c ****                             }
+ 129:UserAPP/Source/TaskList.c **** 
+ 130:UserAPP/Source/TaskList.c ****                             gPendingRevContext.active = 1;
+ 131:UserAPP/Source/TaskList.c ****                             gPendingRevContext.execIndex = localPacket.ExecIndex;
+ 132:UserAPP/Source/TaskList.c ****                             gPendingRevContext.address = address;
+ 133:UserAPP/Source/TaskList.c ****                             gPendingRevContext.rw = rw;
+ 134:UserAPP/Source/TaskList.c ****                             gPendingRevContext.number = number;
+ 135:UserAPP/Source/TaskList.c **** 
+ 136:UserAPP/Source/TaskList.c ****                             ESLCommands(localPacket.ExecIndex, address, rw, number); // 调用 ESLC
+ 137:UserAPP/Source/TaskList.c **** 
+ 138:UserAPP/Source/TaskList.c ****                             if (rw == 0)
+ 139:UserAPP/Source/TaskList.c ****                             {
+ 140:UserAPP/Source/TaskList.c ****                                 gPendingRevContext.active = 0;
+ 141:UserAPP/Source/TaskList.c ****                             }
+ 142:UserAPP/Source/TaskList.c ****                         }
+ 143:UserAPP/Source/TaskList.c ****                          
+ 144:UserAPP/Source/TaskList.c ****                         ReplyPacket(localPacket.ExecIndex, REPLY_OK); // 按请求索引返回ACK
+ 145:UserAPP/Source/TaskList.c ****                         break; // 退出该 case
+ 146:UserAPP/Source/TaskList.c **** 
+ 147:UserAPP/Source/TaskList.c ****                     default: // 未知功能码分支处理
+ 148:UserAPP/Source/TaskList.c ****                         QueueSendfmt(xSendDataQueue, 0, "未知功能码 0x%02X\r\n", localPacket.F
+ 138              		.loc 1 148 25 is_stmt 1 view .LVU35
+ 139 0072 4B4A     		ldr	r2, .L33+12
+ 140 0074 0021     		movs	r1, #0
+ 141 0076 4848     		ldr	r0, .L33+4
+ 142 0078 0068     		ldr	r0, [r0]
+ 143 007a FFF7FEFF 		bl	QueueSendfmt
+ 144              	.LVL5:
+ 149:UserAPP/Source/TaskList.c ****                         break; // 退出默认分支
+ 145              		.loc 1 149 25 view .LVU36
+ 146 007e E7E7     		b	.L3
+ 147              	.L23:
+  54:UserAPP/Source/TaskList.c ****                                 gPendingRevContext.execIndex == localPacket.ExecIndex &&
+ 148              		.loc 1 54 29 view .LVU37
+  54:UserAPP/Source/TaskList.c ****                                 gPendingRevContext.execIndex == localPacket.ExecIndex &&
+ 149              		.loc 1 54 51 is_stmt 0 view .LVU38
+ 150 0080 484B     		ldr	r3, .L33+16
+ 151 0082 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+  54:UserAPP/Source/TaskList.c ****                                 gPendingRevContext.execIndex == localPacket.ExecIndex &&
+ 152              		.loc 1 54 32 view .LVU39
+ 153 0084 1BB1     		cbz	r3, .L9
+  55:UserAPP/Source/TaskList.c ****                                 gPendingRevContext.rw == 1 &&
+ 154              		.loc 1 55 51 view .LVU40
+ 155 0086 474B     		ldr	r3, .L33+16
+ 156 0088 5B88     		ldrh	r3, [r3, #2]
+  54:UserAPP/Source/TaskList.c ****                                 gPendingRevContext.execIndex == localPacket.ExecIndex &&
+ 157              		.loc 1 54 59 discriminator 1 view .LVU41
+ 158 008a 9842     		cmp	r0, r3
+ 159 008c 06D0     		beq	.L29
+ 160              	.L9:
+  68:UserAPP/Source/TaskList.c ****                             }
+ 161              		.loc 1 68 33 is_stmt 1 view .LVU42
+ 162 008e 0121     		movs	r1, #1
+ 163 0090 FFF7FEFF 		bl	ReplyPacket
+ 164              	.LVL6:
+ 165              	.L10:
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccVlat78.s 			page 7
+
+
+  70:UserAPP/Source/TaskList.c ****                             break;
+ 166              		.loc 1 70 29 view .LVU43
+  70:UserAPP/Source/TaskList.c ****                             break;
+ 167              		.loc 1 70 55 is_stmt 0 view .LVU44
+ 168 0094 434B     		ldr	r3, .L33+16
+ 169 0096 0022     		movs	r2, #0
+ 170 0098 1A70     		strb	r2, [r3]
+  71:UserAPP/Source/TaskList.c ****                         }
+ 171              		.loc 1 71 29 is_stmt 1 view .LVU45
+ 172 009a D9E7     		b	.L3
+ 173              	.L29:
+  56:UserAPP/Source/TaskList.c ****                                 gPendingRevContext.number > 0 &&
+ 174              		.loc 1 56 51 is_stmt 0 view .LVU46
+ 175 009c 414B     		ldr	r3, .L33+16
+ 176 009e 5B79     		ldrb	r3, [r3, #5]	@ zero_extendqisi2
+  55:UserAPP/Source/TaskList.c ****                                 gPendingRevContext.rw == 1 &&
+ 177              		.loc 1 55 87 view .LVU47
+ 178 00a0 012B     		cmp	r3, #1
+ 179 00a2 F4D1     		bne	.L9
+  57:UserAPP/Source/TaskList.c ****                                 localPacket.DataLen == gPendingRevContext.number)
+ 180              		.loc 1 57 51 view .LVU48
+ 181 00a4 3F4B     		ldr	r3, .L33+16
+ 182 00a6 9979     		ldrb	r1, [r3, #6]	@ zero_extendqisi2
+  56:UserAPP/Source/TaskList.c ****                                 gPendingRevContext.number > 0 &&
+ 183              		.loc 1 56 60 view .LVU49
+ 184 00a8 0029     		cmp	r1, #0
+ 185 00aa F0D0     		beq	.L9
+  58:UserAPP/Source/TaskList.c ****                             {
+ 186              		.loc 1 58 44 view .LVU50
+ 187 00ac 9DF81030 		ldrb	r3, [sp, #16]	@ zero_extendqisi2
+  57:UserAPP/Source/TaskList.c ****                                 localPacket.DataLen == gPendingRevContext.number)
+ 188              		.loc 1 57 63 view .LVU51
+ 189 00b0 9942     		cmp	r1, r3
+ 190 00b2 ECD1     		bne	.L9
+  60:UserAPP/Source/TaskList.c ****                                             gPendingRevContext.number,
+ 191              		.loc 1 60 33 is_stmt 1 view .LVU52
+ 192 00b4 0DF11102 		add	r2, sp, #17
+ 193 00b8 3A48     		ldr	r0, .L33+16
+ 194 00ba 0079     		ldrb	r0, [r0, #4]	@ zero_extendqisi2
+ 195 00bc FFF7FEFF 		bl	E52bitWrite
+ 196              	.LVL7:
+  64:UserAPP/Source/TaskList.c ****                             }
+ 197              		.loc 1 64 33 view .LVU53
+ 198 00c0 0021     		movs	r1, #0
+ 199 00c2 BDF80E00 		ldrh	r0, [sp, #14]
+ 200 00c6 FFF7FEFF 		bl	ReplyPacket
+ 201              	.LVL8:
+ 202 00ca E3E7     		b	.L10
+ 203              	.L24:
+  76:UserAPP/Source/TaskList.c ****                         }
+ 204              		.loc 1 76 29 view .LVU54
+ 205 00cc 9DF81100 		ldrb	r0, [sp, #17]	@ zero_extendqisi2
+ 206 00d0 FFF7FEFF 		bl	SelectESLSPI
+ 207              	.LVL9:
+ 208 00d4 9DE7     		b	.L12
+ 209              	.L25:
+  80:UserAPP/Source/TaskList.c ****                         }
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccVlat78.s 			page 8
+
+
+ 210              		.loc 1 80 29 view .LVU55
+ 211 00d6 9DF81100 		ldrb	r0, [sp, #17]	@ zero_extendqisi2
+ 212 00da FFF7FEFF 		bl	ICTypeSelect
+ 213              	.LVL10:
+ 214 00de 9CE7     		b	.L13
+ 215              	.L26:
   84:UserAPP/Source/TaskList.c ****                         }
-  85:UserAPP/Source/TaskList.c ****                         
-  86:UserAPP/Source/TaskList.c ****                         ReplyPacket(localPacket.ExecIndex, REPLY_OK); // 按请求索引返回ACK
-  87:UserAPP/Source/TaskList.c ****                         break; // 退出该 case
-  88:UserAPP/Source/TaskList.c **** 
-  89:UserAPP/Source/TaskList.c ****                     default: // 未知功能码分支处理
-  90:UserAPP/Source/TaskList.c ****                         QueueSendfmt(xSendDataQueue, 0, "未知功能码 0x%02X\r\n", localPacket.F
- 117              		.loc 1 90 25 is_stmt 1 view .LVU30
- 118 0058 1E4A     		ldr	r2, .L23+4
- 119 005a 0021     		movs	r1, #0
- 120 005c 1E48     		ldr	r0, .L23+8
- 121 005e 0068     		ldr	r0, [r0]
- 122 0060 FFF7FEFF 		bl	QueueSendfmt
- 123              	.LVL4:
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc4SDGAI.s 			page 5
+ 216              		.loc 1 84 29 view .LVU56
+ 217 00e0 9DF81100 		ldrb	r0, [sp, #17]	@ zero_extendqisi2
+ 218 00e4 FFF7FEFF 		bl	SelectInductor
+ 219              	.LVL11:
+ 220 00e8 9BE7     		b	.L14
+ 221              	.L27:
+  88:UserAPP/Source/TaskList.c ****                         }
+ 222              		.loc 1 88 29 view .LVU57
+ 223 00ea 9DF81100 		ldrb	r0, [sp, #17]	@ zero_extendqisi2
+ 224 00ee FFF7FEFF 		bl	SelectResistance
+ 225              	.LVL12:
+ 226 00f2 9AE7     		b	.L15
+ 227              	.L28:
+  92:UserAPP/Source/TaskList.c ****                         }
+ 228              		.loc 1 92 29 view .LVU58
+  92:UserAPP/Source/TaskList.c ****                         }
+ 229              		.loc 1 92 60 is_stmt 0 view .LVU59
+ 230 00f4 9DF81100 		ldrb	r0, [sp, #17]	@ zero_extendqisi2
+ 231 00f8 FFF7FEFF 		bl	__aeabi_i2f
+ 232              	.LVL13:
+ 233 00fc 2A49     		ldr	r1, .L33+20
+ 234 00fe FFF7FEFF 		bl	__aeabi_fmul
+ 235              	.LVL14:
+  92:UserAPP/Source/TaskList.c ****                         }
+ 236              		.loc 1 92 53 view .LVU60
+ 237 0102 2A49     		ldr	r1, .L33+24
+ 238 0104 FFF7FEFF 		bl	__aeabi_fadd
+ 239              	.LVL15:
+  92:UserAPP/Source/TaskList.c ****                         }
+ 240              		.loc 1 92 46 view .LVU61
+ 241 0108 294B     		ldr	r3, .L33+28
+ 242 010a 1860     		str	r0, [r3]	@ float
+ 243 010c 91E7     		b	.L16
+ 244              	.L6:
+ 102:UserAPP/Source/TaskList.c ****                         {
+ 245              		.loc 1 102 25 is_stmt 1 view .LVU62
+ 102:UserAPP/Source/TaskList.c ****                         {
+ 246              		.loc 1 102 40 is_stmt 0 view .LVU63
+ 247 010e BDF80E00 		ldrh	r0, [sp, #14]
+ 102:UserAPP/Source/TaskList.c ****                         {
+ 248              		.loc 1 102 28 view .LVU64
+ 249 0112 0728     		cmp	r0, #7
+ 250 0114 1ED1     		bne	.L17
+ 251              	.LBB2:
+ 104:UserAPP/Source/TaskList.c ****                             {
+ 252              		.loc 1 104 29 is_stmt 1 view .LVU65
+ 104:UserAPP/Source/TaskList.c ****                             {
+ 253              		.loc 1 104 44 is_stmt 0 view .LVU66
+ 254 0116 9DF81030 		ldrb	r3, [sp, #16]	@ zero_extendqisi2
+ 104:UserAPP/Source/TaskList.c ****                             {
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccVlat78.s 			page 9
 
 
-  91:UserAPP/Source/TaskList.c ****                         break; // 退出默认分支
- 124              		.loc 1 91 25 view .LVU31
- 125 0064 E7E7     		b	.L3
- 126              	.L17:
-  55:UserAPP/Source/TaskList.c ****                         }
- 127              		.loc 1 55 29 view .LVU32
- 128 0066 9DF80900 		ldrb	r0, [sp, #9]	@ zero_extendqisi2
- 129 006a FFF7FEFF 		bl	SelectESLSPI
- 130              	.LVL5:
- 131 006e CEE7     		b	.L8
- 132              	.L18:
-  59:UserAPP/Source/TaskList.c ****                         }
- 133              		.loc 1 59 29 view .LVU33
- 134 0070 9DF80900 		ldrb	r0, [sp, #9]	@ zero_extendqisi2
- 135 0074 FFF7FEFF 		bl	ICTypeSelect
- 136              	.LVL6:
- 137 0078 CDE7     		b	.L9
- 138              	.L19:
-  63:UserAPP/Source/TaskList.c ****                         }
- 139              		.loc 1 63 29 view .LVU34
- 140 007a 9DF80900 		ldrb	r0, [sp, #9]	@ zero_extendqisi2
- 141 007e FFF7FEFF 		bl	SelectInductor
- 142              	.LVL7:
- 143 0082 CCE7     		b	.L10
- 144              	.L20:
-  67:UserAPP/Source/TaskList.c ****                         }
- 145              		.loc 1 67 29 view .LVU35
- 146 0084 9DF80900 		ldrb	r0, [sp, #9]	@ zero_extendqisi2
- 147 0088 FFF7FEFF 		bl	SelectResistance
- 148              	.LVL8:
- 149 008c CBE7     		b	.L11
- 150              	.L21:
-  71:UserAPP/Source/TaskList.c ****                         }
- 151              		.loc 1 71 29 view .LVU36
-  71:UserAPP/Source/TaskList.c ****                         }
- 152              		.loc 1 71 60 is_stmt 0 view .LVU37
- 153 008e 9DF80900 		ldrb	r0, [sp, #9]	@ zero_extendqisi2
- 154 0092 FFF7FEFF 		bl	__aeabi_i2f
- 155              	.LVL9:
- 156 0096 1149     		ldr	r1, .L23+12
- 157 0098 FFF7FEFF 		bl	__aeabi_fmul
- 158              	.LVL10:
-  71:UserAPP/Source/TaskList.c ****                         }
- 159              		.loc 1 71 53 view .LVU38
- 160 009c 1049     		ldr	r1, .L23+16
- 161 009e FFF7FEFF 		bl	__aeabi_fadd
- 162              	.LVL11:
-  71:UserAPP/Source/TaskList.c ****                         }
- 163              		.loc 1 71 46 view .LVU39
- 164 00a2 104B     		ldr	r3, .L23+20
- 165 00a4 1860     		str	r0, [r3]	@ float
- 166 00a6 C2E7     		b	.L12
- 167              	.L6:
-  81:UserAPP/Source/TaskList.c ****                         {
- 168              		.loc 1 81 25 is_stmt 1 view .LVU40
-  81:UserAPP/Source/TaskList.c ****                         {
- 169              		.loc 1 81 40 is_stmt 0 view .LVU41
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc4SDGAI.s 			page 6
+ 255              		.loc 1 104 32 view .LVU67
+ 256 011a 022B     		cmp	r3, #2
+ 257 011c 20D9     		bls	.L30
+ 111:UserAPP/Source/TaskList.c ****                             uint8_t rw = localPacket.Data[1];
+ 258              		.loc 1 111 29 is_stmt 1 view .LVU68
+ 111:UserAPP/Source/TaskList.c ****                             uint8_t rw = localPacket.Data[1];
+ 259              		.loc 1 111 37 is_stmt 0 view .LVU69
+ 260 011e 9DF81110 		ldrb	r1, [sp, #17]	@ zero_extendqisi2
+ 261              	.LVL16:
+ 112:UserAPP/Source/TaskList.c ****                             uint8_t number = localPacket.Data[2];
+ 262              		.loc 1 112 29 is_stmt 1 view .LVU70
+ 112:UserAPP/Source/TaskList.c ****                             uint8_t number = localPacket.Data[2];
+ 263              		.loc 1 112 37 is_stmt 0 view .LVU71
+ 264 0122 9DF81240 		ldrb	r4, [sp, #18]	@ zero_extendqisi2
+ 265              	.LVL17:
+ 113:UserAPP/Source/TaskList.c **** 
+ 266              		.loc 1 113 29 is_stmt 1 view .LVU72
+ 113:UserAPP/Source/TaskList.c **** 
+ 267              		.loc 1 113 37 is_stmt 0 view .LVU73
+ 268 0126 9DF81330 		ldrb	r3, [sp, #19]	@ zero_extendqisi2
+ 269              	.LVL18:
+ 115:UserAPP/Source/TaskList.c ****                             {
+ 270              		.loc 1 115 29 is_stmt 1 view .LVU74
+ 115:UserAPP/Source/TaskList.c ****                             {
+ 271              		.loc 1 115 32 is_stmt 0 view .LVU75
+ 272 012a 012C     		cmp	r4, #1
+ 273 012c 1FD8     		bhi	.L31
+ 122:UserAPP/Source/TaskList.c ****                             {
+ 274              		.loc 1 122 29 is_stmt 1 view .LVU76
+ 122:UserAPP/Source/TaskList.c ****                             {
+ 275              		.loc 1 122 32 is_stmt 0 view .LVU77
+ 276 012e 012C     		cmp	r4, #1
+ 277 0130 00D1     		bne	.L20
+ 122:UserAPP/Source/TaskList.c ****                             {
+ 278              		.loc 1 122 41 discriminator 1 view .LVU78
+ 279 0132 1BB3     		cbz	r3, .L32
+ 280              	.L20:
+ 130:UserAPP/Source/TaskList.c ****                             gPendingRevContext.execIndex = localPacket.ExecIndex;
+ 281              		.loc 1 130 29 is_stmt 1 view .LVU79
+ 130:UserAPP/Source/TaskList.c ****                             gPendingRevContext.execIndex = localPacket.ExecIndex;
+ 282              		.loc 1 130 55 is_stmt 0 view .LVU80
+ 283 0134 1B4A     		ldr	r2, .L33+16
+ 284 0136 4FF0010C 		mov	ip, #1
+ 285 013a 82F800C0 		strb	ip, [r2]
+ 131:UserAPP/Source/TaskList.c ****                             gPendingRevContext.address = address;
+ 286              		.loc 1 131 29 is_stmt 1 view .LVU81
+ 131:UserAPP/Source/TaskList.c ****                             gPendingRevContext.address = address;
+ 287              		.loc 1 131 58 is_stmt 0 view .LVU82
+ 288 013e 5080     		strh	r0, [r2, #2]	@ movhi
+ 132:UserAPP/Source/TaskList.c ****                             gPendingRevContext.rw = rw;
+ 289              		.loc 1 132 29 is_stmt 1 view .LVU83
+ 132:UserAPP/Source/TaskList.c ****                             gPendingRevContext.rw = rw;
+ 290              		.loc 1 132 56 is_stmt 0 view .LVU84
+ 291 0140 1171     		strb	r1, [r2, #4]
+ 133:UserAPP/Source/TaskList.c ****                             gPendingRevContext.number = number;
+ 292              		.loc 1 133 29 is_stmt 1 view .LVU85
+ 133:UserAPP/Source/TaskList.c ****                             gPendingRevContext.number = number;
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccVlat78.s 			page 10
 
 
- 170 00a8 BDF80630 		ldrh	r3, [sp, #6]
-  81:UserAPP/Source/TaskList.c ****                         {
- 171              		.loc 1 81 28 view .LVU42
- 172 00ac 072B     		cmp	r3, #7
- 173 00ae 05D0     		beq	.L22
- 174              	.L14:
-  86:UserAPP/Source/TaskList.c ****                         break; // 退出该 case
- 175              		.loc 1 86 25 is_stmt 1 view .LVU43
- 176 00b0 0021     		movs	r1, #0
- 177 00b2 BDF80600 		ldrh	r0, [sp, #6]
- 178 00b6 FFF7FEFF 		bl	ReplyPacket
- 179              	.LVL12:
-  87:UserAPP/Source/TaskList.c **** 
- 180              		.loc 1 87 25 view .LVU44
- 181 00ba BCE7     		b	.L3
- 182              	.L22:
-  83:UserAPP/Source/TaskList.c ****                         }
- 183              		.loc 1 83 29 view .LVU45
- 184 00bc 9DF80B20 		ldrb	r2, [sp, #11]	@ zero_extendqisi2
- 185 00c0 9DF80A10 		ldrb	r1, [sp, #10]	@ zero_extendqisi2
- 186 00c4 9DF80900 		ldrb	r0, [sp, #9]	@ zero_extendqisi2
- 187 00c8 FFF7FEFF 		bl	ESLCommands
- 188              	.LVL13:
- 189 00cc F0E7     		b	.L14
- 190              	.L24:
- 191 00ce 00BF     		.align	2
- 192              	.L23:
- 193 00d0 00000000 		.word	xParsedDataQueue
- 194 00d4 00000000 		.word	.LC0
- 195 00d8 00000000 		.word	xSendDataQueue
- 196 00dc CDCCCC3D 		.word	1036831949
- 197 00e0 33331340 		.word	1075000115
- 198 00e4 00000000 		.word	TargetVDDVoltage
- 199              		.cfi_endproc
- 200              	.LFE80:
- 202              		.section	.rodata.vCreateHWCIProcessTask.str1.4,"aMS",%progbits,1
- 203              		.align	2
- 204              	.LC1:
- 205 0000 E5889BE5 		.ascii	"\345\210\233\345\273\272 xParsedDataQueue \345\244\261"
- 205      BBBA2078 
- 205      50617273 
- 205      65644461 
- 205      74615175 
- 206 001b E8B4A50D 		.ascii	"\350\264\245\015\012\000"
- 206      0A00
- 207 0021 000000   		.align	2
- 208              	.LC2:
- 209 0024 76485743 		.ascii	"vHWCIProcessTask\000"
- 209      4950726F 
- 209      63657373 
- 209      5461736B 
- 209      00
- 210              		.section	.text.vCreateHWCIProcessTask,"ax",%progbits
- 211              		.align	1
- 212              		.global	vCreateHWCIProcessTask
- 213              		.syntax unified
- 214              		.thumb
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc4SDGAI.s 			page 7
+ 293              		.loc 1 133 51 is_stmt 0 view .LVU86
+ 294 0142 5471     		strb	r4, [r2, #5]
+ 134:UserAPP/Source/TaskList.c **** 
+ 295              		.loc 1 134 29 is_stmt 1 view .LVU87
+ 134:UserAPP/Source/TaskList.c **** 
+ 296              		.loc 1 134 55 is_stmt 0 view .LVU88
+ 297 0144 9371     		strb	r3, [r2, #6]
+ 136:UserAPP/Source/TaskList.c **** 
+ 298              		.loc 1 136 29 is_stmt 1 view .LVU89
+ 299 0146 2246     		mov	r2, r4
+ 300 0148 FFF7FEFF 		bl	ESLCommands
+ 301              	.LVL19:
+ 138:UserAPP/Source/TaskList.c ****                             {
+ 302              		.loc 1 138 29 view .LVU90
+ 138:UserAPP/Source/TaskList.c ****                             {
+ 303              		.loc 1 138 32 is_stmt 0 view .LVU91
+ 304 014c 14B9     		cbnz	r4, .L17
+ 140:UserAPP/Source/TaskList.c ****                             }
+ 305              		.loc 1 140 33 is_stmt 1 view .LVU92
+ 140:UserAPP/Source/TaskList.c ****                             }
+ 306              		.loc 1 140 59 is_stmt 0 view .LVU93
+ 307 014e 154B     		ldr	r3, .L33+16
+ 308 0150 0022     		movs	r2, #0
+ 309 0152 1A70     		strb	r2, [r3]
+ 310              	.LVL20:
+ 311              	.L17:
+ 140:UserAPP/Source/TaskList.c ****                             }
+ 312              		.loc 1 140 59 view .LVU94
+ 313              	.LBE2:
+ 144:UserAPP/Source/TaskList.c ****                         break; // 退出该 case
+ 314              		.loc 1 144 25 is_stmt 1 view .LVU95
+ 315 0154 0021     		movs	r1, #0
+ 316 0156 BDF80E00 		ldrh	r0, [sp, #14]
+ 317 015a FFF7FEFF 		bl	ReplyPacket
+ 318              	.LVL21:
+ 145:UserAPP/Source/TaskList.c **** 
+ 319              		.loc 1 145 25 view .LVU96
+ 320 015e 77E7     		b	.L3
+ 321              	.L30:
+ 322              	.LBB3:
+ 106:UserAPP/Source/TaskList.c ****                                 gPendingRevContext.active = 0;
+ 323              		.loc 1 106 33 view .LVU97
+ 324 0160 0121     		movs	r1, #1
+ 325 0162 FFF7FEFF 		bl	ReplyPacket
+ 326              	.LVL22:
+ 107:UserAPP/Source/TaskList.c ****                                 break;
+ 327              		.loc 1 107 33 view .LVU98
+ 107:UserAPP/Source/TaskList.c ****                                 break;
+ 328              		.loc 1 107 59 is_stmt 0 view .LVU99
+ 329 0166 0F4B     		ldr	r3, .L33+16
+ 330 0168 0022     		movs	r2, #0
+ 331 016a 1A70     		strb	r2, [r3]
+ 108:UserAPP/Source/TaskList.c ****                             }
+ 332              		.loc 1 108 33 is_stmt 1 view .LVU100
+ 333 016c 70E7     		b	.L3
+ 334              	.LVL23:
+ 335              	.L31:
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccVlat78.s 			page 11
 
 
- 215              		.thumb_func
- 217              	vCreateHWCIProcessTask:
- 218              	.LFB79:
+ 117:UserAPP/Source/TaskList.c ****                                 gPendingRevContext.active = 0;
+ 336              		.loc 1 117 33 view .LVU101
+ 337 016e 0121     		movs	r1, #1
+ 338              	.LVL24:
+ 117:UserAPP/Source/TaskList.c ****                                 gPendingRevContext.active = 0;
+ 339              		.loc 1 117 33 is_stmt 0 view .LVU102
+ 340 0170 FFF7FEFF 		bl	ReplyPacket
+ 341              	.LVL25:
+ 118:UserAPP/Source/TaskList.c ****                                 break;
+ 342              		.loc 1 118 33 is_stmt 1 view .LVU103
+ 118:UserAPP/Source/TaskList.c ****                                 break;
+ 343              		.loc 1 118 59 is_stmt 0 view .LVU104
+ 344 0174 0B4B     		ldr	r3, .L33+16
+ 345 0176 0022     		movs	r2, #0
+ 346 0178 1A70     		strb	r2, [r3]
+ 119:UserAPP/Source/TaskList.c ****                             }
+ 347              		.loc 1 119 33 is_stmt 1 view .LVU105
+ 348 017a 69E7     		b	.L3
+ 349              	.LVL26:
+ 350              	.L32:
+ 124:UserAPP/Source/TaskList.c ****                                 gPendingRevContext.active = 0;
+ 351              		.loc 1 124 33 view .LVU106
+ 352 017c 2246     		mov	r2, r4
+ 353 017e FFF7FEFF 		bl	ESLCommands
+ 354              	.LVL27:
+ 125:UserAPP/Source/TaskList.c ****                                 ReplyPacket(localPacket.ExecIndex, REPLY_OK);
+ 355              		.loc 1 125 33 view .LVU107
+ 125:UserAPP/Source/TaskList.c ****                                 ReplyPacket(localPacket.ExecIndex, REPLY_OK);
+ 356              		.loc 1 125 59 is_stmt 0 view .LVU108
+ 357 0182 0021     		movs	r1, #0
+ 358 0184 074B     		ldr	r3, .L33+16
+ 359 0186 1970     		strb	r1, [r3]
+ 126:UserAPP/Source/TaskList.c ****                                 break;
+ 360              		.loc 1 126 33 is_stmt 1 view .LVU109
+ 361 0188 BDF80E00 		ldrh	r0, [sp, #14]
+ 362 018c FFF7FEFF 		bl	ReplyPacket
+ 363              	.LVL28:
+ 127:UserAPP/Source/TaskList.c ****                             }
+ 364              		.loc 1 127 33 view .LVU110
+ 365 0190 5EE7     		b	.L3
+ 366              	.L34:
+ 367 0192 00BF     		.align	2
+ 368              	.L33:
+ 369 0194 00000000 		.word	.LC0
+ 370 0198 00000000 		.word	xSendDataQueue
+ 371 019c 00000000 		.word	xParsedDataQueue
+ 372 01a0 30000000 		.word	.LC1
+ 373 01a4 00000000 		.word	gPendingRevContext
+ 374 01a8 CDCCCC3D 		.word	1036831949
+ 375 01ac 33331340 		.word	1075000115
+ 376 01b0 00000000 		.word	TargetVDDVoltage
+ 377              	.LBE3:
+ 378              		.cfi_endproc
+ 379              	.LFE80:
+ 381              		.section	.rodata.vCreateHWCIProcessTask.str1.4,"aMS",%progbits,1
+ 382              		.align	2
+ 383              	.LC2:
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccVlat78.s 			page 12
+
+
+ 384 0000 E5889BE5 		.ascii	"\345\210\233\345\273\272 xParsedDataQueue \345\244\261"
+ 384      BBBA2078 
+ 384      50617273 
+ 384      65644461 
+ 384      74615175 
+ 385 001b E8B4A50D 		.ascii	"\350\264\245\015\012\000"
+ 385      0A00
+ 386 0021 000000   		.align	2
+ 387              	.LC3:
+ 388 0024 76485743 		.ascii	"vHWCIProcessTask\000"
+ 388      4950726F 
+ 388      63657373 
+ 388      5461736B 
+ 388      00
+ 389              		.section	.text.vCreateHWCIProcessTask,"ax",%progbits
+ 390              		.align	1
+ 391              		.global	vCreateHWCIProcessTask
+ 392              		.syntax unified
+ 393              		.thumb
+ 394              		.thumb_func
+ 396              	vCreateHWCIProcessTask:
+ 397              	.LFB79:
   15:UserAPP/Source/TaskList.c ****     /* 创建解析后数据队列，容量为10 个ParsedDataPacket_t */ // 每行注释
- 219              		.loc 1 15 1 view -0
- 220              		.cfi_startproc
- 221              		@ args = 0, pretend = 0, frame = 0
- 222              		@ frame_needed = 0, uses_anonymous_args = 0
- 223 0000 00B5     		push	{lr}
- 224              	.LCFI2:
- 225              		.cfi_def_cfa_offset 4
- 226              		.cfi_offset 14, -4
- 227 0002 83B0     		sub	sp, sp, #12
- 228              	.LCFI3:
- 229              		.cfi_def_cfa_offset 16
+ 398              		.loc 1 15 1 view -0
+ 399              		.cfi_startproc
+ 400              		@ args = 0, pretend = 0, frame = 0
+ 401              		@ frame_needed = 0, uses_anonymous_args = 0
+ 402 0000 00B5     		push	{lr}
+ 403              	.LCFI2:
+ 404              		.cfi_def_cfa_offset 4
+ 405              		.cfi_offset 14, -4
+ 406 0002 83B0     		sub	sp, sp, #12
+ 407              	.LCFI3:
+ 408              		.cfi_def_cfa_offset 16
   17:UserAPP/Source/TaskList.c **** 
- 230              		.loc 1 17 5 view .LVU47
+ 409              		.loc 1 17 5 view .LVU112
   17:UserAPP/Source/TaskList.c **** 
- 231              		.loc 1 17 24 is_stmt 0 view .LVU48
- 232 0004 0022     		movs	r2, #0
- 233 0006 4221     		movs	r1, #66
- 234 0008 0A20     		movs	r0, #10
- 235 000a FFF7FEFF 		bl	xQueueGenericCreate
- 236              	.LVL14:
+ 410              		.loc 1 17 24 is_stmt 0 view .LVU113
+ 411 0004 0022     		movs	r2, #0
+ 412 0006 4221     		movs	r1, #66
+ 413 0008 0A20     		movs	r0, #10
+ 414 000a FFF7FEFF 		bl	xQueueGenericCreate
+ 415              	.LVL29:
   17:UserAPP/Source/TaskList.c **** 
- 237              		.loc 1 17 22 discriminator 1 view .LVU49
- 238 000e 0B4B     		ldr	r3, .L30
- 239 0010 1860     		str	r0, [r3]
+ 416              		.loc 1 17 22 discriminator 1 view .LVU114
+ 417 000e 0B4B     		ldr	r3, .L40
+ 418 0010 1860     		str	r0, [r3]
   19:UserAPP/Source/TaskList.c ****     {
- 240              		.loc 1 19 5 is_stmt 1 view .LVU50
+ 419              		.loc 1 19 5 is_stmt 1 view .LVU115
   19:UserAPP/Source/TaskList.c ****     {
- 241              		.loc 1 19 8 is_stmt 0 view .LVU51
- 242 0012 60B1     		cbz	r0, .L29
+ 420              		.loc 1 19 8 is_stmt 0 view .LVU116
+ 421 0012 60B1     		cbz	r0, .L39
   26:UserAPP/Source/TaskList.c ****                 "vHWCIProcessTask", 
- 243              		.loc 1 26 5 is_stmt 1 view .LVU52
- 244 0014 0A4B     		ldr	r3, .L30+4
- 245 0016 0193     		str	r3, [sp, #4]
- 246 0018 0023     		movs	r3, #0
- 247 001a 0093     		str	r3, [sp]
- 248 001c 4FF48072 		mov	r2, #256
- 249 0020 0849     		ldr	r1, .L30+8
- 250 0022 0948     		ldr	r0, .L30+12
- 251 0024 FFF7FEFF 		bl	xTaskCreate
- 252              	.LVL15:
- 253              	.L25:
+ 422              		.loc 1 26 5 is_stmt 1 view .LVU117
+ 423 0014 0A4B     		ldr	r3, .L40+4
+ 424 0016 0193     		str	r3, [sp, #4]
+ 425 0018 0023     		movs	r3, #0
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccVlat78.s 			page 13
+
+
+ 426 001a 0093     		str	r3, [sp]
+ 427 001c 4FF48072 		mov	r2, #256
+ 428 0020 0849     		ldr	r1, .L40+8
+ 429 0022 0948     		ldr	r0, .L40+12
+ 430 0024 FFF7FEFF 		bl	xTaskCreate
+ 431              	.LVL30:
+ 432              	.L35:
   32:UserAPP/Source/TaskList.c **** 
- 254              		.loc 1 32 1 is_stmt 0 view .LVU53
- 255 0028 03B0     		add	sp, sp, #12
- 256              	.LCFI4:
- 257              		.cfi_remember_state
- 258              		.cfi_def_cfa_offset 4
- 259              		@ sp needed
- 260 002a 5DF804FB 		ldr	pc, [sp], #4
- 261              	.L29:
- 262              	.LCFI5:
- 263              		.cfi_restore_state
+ 433              		.loc 1 32 1 is_stmt 0 view .LVU118
+ 434 0028 03B0     		add	sp, sp, #12
+ 435              	.LCFI4:
+ 436              		.cfi_remember_state
+ 437              		.cfi_def_cfa_offset 4
+ 438              		@ sp needed
+ 439 002a 5DF804FB 		ldr	pc, [sp], #4
+ 440              	.L39:
+ 441              	.LCFI5:
+ 442              		.cfi_restore_state
   21:UserAPP/Source/TaskList.c ****         return; // 返回，不创建任务
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc4SDGAI.s 			page 8
-
-
- 264              		.loc 1 21 9 is_stmt 1 view .LVU54
- 265 002e 074A     		ldr	r2, .L30+16
- 266 0030 0021     		movs	r1, #0
- 267 0032 074B     		ldr	r3, .L30+20
- 268 0034 1868     		ldr	r0, [r3]
- 269 0036 FFF7FEFF 		bl	QueueSendfmt
- 270              	.LVL16:
+ 443              		.loc 1 21 9 is_stmt 1 view .LVU119
+ 444 002e 074A     		ldr	r2, .L40+16
+ 445 0030 0021     		movs	r1, #0
+ 446 0032 074B     		ldr	r3, .L40+20
+ 447 0034 1868     		ldr	r0, [r3]
+ 448 0036 FFF7FEFF 		bl	QueueSendfmt
+ 449              	.LVL31:
   22:UserAPP/Source/TaskList.c ****     }
- 271              		.loc 1 22 9 view .LVU55
- 272 003a F5E7     		b	.L25
- 273              	.L31:
- 274              		.align	2
- 275              	.L30:
- 276 003c 00000000 		.word	xParsedDataQueue
- 277 0040 00000000 		.word	xHWCIProcessTaskHandle
- 278 0044 24000000 		.word	.LC2
- 279 0048 00000000 		.word	vHWCIProcessTask
- 280 004c 00000000 		.word	.LC1
- 281 0050 00000000 		.word	xSendDataQueue
- 282              		.cfi_endproc
- 283              	.LFE79:
- 285              		.global	xParsedDataQueue
- 286              		.section	.bss.xParsedDataQueue,"aw",%nobits
- 287              		.align	2
- 290              	xParsedDataQueue:
- 291 0000 00000000 		.space	4
- 292              		.global	xHWCIProcessTaskHandle
- 293              		.section	.bss.xHWCIProcessTaskHandle,"aw",%nobits
- 294              		.align	2
- 297              	xHWCIProcessTaskHandle:
- 298 0000 00000000 		.space	4
- 299              		.text
- 300              	.Letext0:
- 301              		.file 2 "D:/gcc-arm/14.3 rel1/arm-none-eabi/include/machine/_default_types.h"
- 302              		.file 3 "D:/gcc-arm/14.3 rel1/arm-none-eabi/include/sys/_stdint.h"
- 303              		.file 4 "Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h"
- 304              		.file 5 "Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h"
- 305              		.file 6 "Middlewares/Third_Party/FreeRTOS/Source/include/task.h"
- 306              		.file 7 "Middlewares/Third_Party/FreeRTOS/Source/include/queue.h"
- 307              		.file 8 "UserAPP/Include/DPPTM.h"
- 308              		.file 9 "UserAPP/Include/SendDataProcess.h"
- 309              		.file 10 "UserAPP/Include/ReceiveDataProcess.h"
- 310              		.file 11 "UserAPP/Include/TaskList.h"
- 311              		.file 12 "UserAPP/Include/ESL.h"
- 312              		.file 13 "UserDriver/Include/HWCIDri.h"
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc4SDGAI.s 			page 9
+ 450              		.loc 1 22 9 view .LVU120
+ 451 003a F5E7     		b	.L35
+ 452              	.L41:
+ 453              		.align	2
+ 454              	.L40:
+ 455 003c 00000000 		.word	xParsedDataQueue
+ 456 0040 00000000 		.word	xHWCIProcessTaskHandle
+ 457 0044 24000000 		.word	.LC3
+ 458 0048 00000000 		.word	vHWCIProcessTask
+ 459 004c 00000000 		.word	.LC2
+ 460 0050 00000000 		.word	xSendDataQueue
+ 461              		.cfi_endproc
+ 462              	.LFE79:
+ 464              		.global	xParsedDataQueue
+ 465              		.section	.bss.xParsedDataQueue,"aw",%nobits
+ 466              		.align	2
+ 469              	xParsedDataQueue:
+ 470 0000 00000000 		.space	4
+ 471              		.global	xHWCIProcessTaskHandle
+ 472              		.section	.bss.xHWCIProcessTaskHandle,"aw",%nobits
+ 473              		.align	2
+ 476              	xHWCIProcessTaskHandle:
+ 477 0000 00000000 		.space	4
+ 478              		.text
+ 479              	.Letext0:
+ 480              		.file 2 "D:/gcc-arm/14.3 rel1/arm-none-eabi/include/machine/_default_types.h"
+ 481              		.file 3 "D:/gcc-arm/14.3 rel1/arm-none-eabi/include/sys/_stdint.h"
+ 482              		.file 4 "Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h"
+ 483              		.file 5 "Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h"
+ 484              		.file 6 "Middlewares/Third_Party/FreeRTOS/Source/include/task.h"
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccVlat78.s 			page 14
+
+
+ 485              		.file 7 "Middlewares/Third_Party/FreeRTOS/Source/include/queue.h"
+ 486              		.file 8 "UserAPP/Include/DPPTM.h"
+ 487              		.file 9 "UserAPP/Include/SendDataProcess.h"
+ 488              		.file 10 "UserAPP/Include/ReceiveDataProcess.h"
+ 489              		.file 11 "UserAPP/Include/TaskList.h"
+ 490              		.file 12 "UserAPP/Include/ESL.h"
+ 491              		.file 13 "UserDriver/Include/HWCIDri.h"
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccVlat78.s 			page 15
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 TaskList.c
-C:\Users\Administrator\AppData\Local\Temp\cc4SDGAI.s:19     .rodata.vHWCIProcessTask.str1.4:00000000 $d
-C:\Users\Administrator\AppData\Local\Temp\cc4SDGAI.s:24     .text.vHWCIProcessTask:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\cc4SDGAI.s:30     .text.vHWCIProcessTask:00000000 vHWCIProcessTask
-C:\Users\Administrator\AppData\Local\Temp\cc4SDGAI.s:193    .text.vHWCIProcessTask:000000d0 $d
-C:\Users\Administrator\AppData\Local\Temp\cc4SDGAI.s:290    .bss.xParsedDataQueue:00000000 xParsedDataQueue
-C:\Users\Administrator\AppData\Local\Temp\cc4SDGAI.s:203    .rodata.vCreateHWCIProcessTask.str1.4:00000000 $d
-C:\Users\Administrator\AppData\Local\Temp\cc4SDGAI.s:211    .text.vCreateHWCIProcessTask:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\cc4SDGAI.s:217    .text.vCreateHWCIProcessTask:00000000 vCreateHWCIProcessTask
-C:\Users\Administrator\AppData\Local\Temp\cc4SDGAI.s:276    .text.vCreateHWCIProcessTask:0000003c $d
-C:\Users\Administrator\AppData\Local\Temp\cc4SDGAI.s:297    .bss.xHWCIProcessTaskHandle:00000000 xHWCIProcessTaskHandle
-C:\Users\Administrator\AppData\Local\Temp\cc4SDGAI.s:287    .bss.xParsedDataQueue:00000000 $d
-C:\Users\Administrator\AppData\Local\Temp\cc4SDGAI.s:294    .bss.xHWCIProcessTaskHandle:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\ccVlat78.s:19     .rodata.vHWCIProcessTask.str1.4:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\ccVlat78.s:29     .text.vHWCIProcessTask:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\ccVlat78.s:35     .text.vHWCIProcessTask:00000000 vHWCIProcessTask
+C:\Users\Administrator\AppData\Local\Temp\ccVlat78.s:369    .text.vHWCIProcessTask:00000194 $d
+C:\Users\Administrator\AppData\Local\Temp\ccVlat78.s:469    .bss.xParsedDataQueue:00000000 xParsedDataQueue
+C:\Users\Administrator\AppData\Local\Temp\ccVlat78.s:382    .rodata.vCreateHWCIProcessTask.str1.4:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\ccVlat78.s:390    .text.vCreateHWCIProcessTask:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\ccVlat78.s:396    .text.vCreateHWCIProcessTask:00000000 vCreateHWCIProcessTask
+C:\Users\Administrator\AppData\Local\Temp\ccVlat78.s:455    .text.vCreateHWCIProcessTask:0000003c $d
+C:\Users\Administrator\AppData\Local\Temp\ccVlat78.s:476    .bss.xHWCIProcessTaskHandle:00000000 xHWCIProcessTaskHandle
+C:\Users\Administrator\AppData\Local\Temp\ccVlat78.s:466    .bss.xParsedDataQueue:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\ccVlat78.s:473    .bss.xHWCIProcessTaskHandle:00000000 $d
 
 UNDEFINED SYMBOLS
 ReplyPacket
-xQueueReceive
 QueueSendfmt
+xQueueReceive
+E52bitWrite
 SelectESLSPI
 ICTypeSelect
 SelectInductor
@@ -497,6 +820,7 @@ __aeabi_fmul
 __aeabi_fadd
 ESLCommands
 xSendDataQueue
+gPendingRevContext
 TargetVDDVoltage
 xQueueGenericCreate
 xTaskCreate

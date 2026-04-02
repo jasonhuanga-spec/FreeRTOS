@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s 			page 1
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s 			page 1
 
 
    1              		.cpu cortex-m3
@@ -58,7 +58,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s 			page 1
   30:UserAPP/Source/ADCAPP.c **** float current_offset_sum[ADC_CHANNEL_COUNT] = {0.0f};
   31:UserAPP/Source/ADCAPP.c **** // 用于记录采样次数
   32:UserAPP/Source/ADCAPP.c **** uint8_t current_offset_count = 0;
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s 			page 2
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s 			page 2
 
 
   33:UserAPP/Source/ADCAPP.c **** // 标记电流偏置是否已准备就绪
@@ -118,7 +118,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s 			page 1
   87:UserAPP/Source/ADCAPP.c ****   }
   88:UserAPP/Source/ADCAPP.c **** }
   89:UserAPP/Source/ADCAPP.c **** 
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s 			page 3
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s 			page 3
 
 
   90:UserAPP/Source/ADCAPP.c **** 
@@ -178,7 +178,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s 			page 1
  144:UserAPP/Source/ADCAPP.c ****     // 不使用固定静态偏移，直接返回物理换算值。
  145:UserAPP/Source/ADCAPP.c ****     return raw_voltage;
  146:UserAPP/Source/ADCAPP.c **** }
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s 			page 4
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s 			page 4
 
 
  147:UserAPP/Source/ADCAPP.c **** 
@@ -238,7 +238,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s 			page 1
   64              	.LVL7:
  158:UserAPP/Source/ADCAPP.c ****     }
   65              		.loc 1 158 16 view .LVU10
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s 			page 5
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s 			page 5
 
 
   66 001e FBE7     		b	.L1
@@ -298,7 +298,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s 			page 1
  116 001e 00BF     		.align	2
  117              	.L10:
  118 0020 00000000 		.word	xADCProcessTaskHandle
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s 			page 6
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s 			page 6
 
 
  119 0024 00000000 		.word	.LC0
@@ -358,7 +358,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s 			page 1
  168 0000 41444320 		.ascii	"ADC Start DMA Error\015\012\000"
  168      53746172 
  168      7420444D 
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s 			page 7
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s 			page 7
 
 
  168      41204572 
@@ -418,7 +418,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s 			page 1
  103:UserAPP/Source/ADCAPP.c ****             QueueSendfmt(xSendDataQueue, 0, "ADC Start DMA Error\r\n"); // 发送错误信息
  211              		.loc 1 103 9 is_stmt 1 view .LVU29
  103:UserAPP/Source/ADCAPP.c ****             QueueSendfmt(xSendDataQueue, 0, "ADC Start DMA Error\r\n"); // 发送错误信息
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s 			page 8
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s 			page 8
 
 
  212              		.loc 1 103 28 is_stmt 0 view .LVU30
@@ -478,7 +478,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s 			page 1
  119:UserAPP/Source/ADCAPP.c ****     {
  253              		.loc 1 119 8 is_stmt 0 view .LVU44
  254 0044 0CB1     		cbz	r4, .L27
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s 			page 9
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s 			page 9
 
 
  255              	.LVL16:
@@ -538,7 +538,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s 			page 1
  303              		@ frame_needed = 0, uses_anonymous_args = 0
  138:UserAPP/Source/ADCAPP.c ****     float adc_voltage = (float)adc_value * ADC_REF_VOLTAGE / ADC_RESOLUTION; // 计算引脚电压
  304              		.loc 1 138 1 is_stmt 0 view .LVU53
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s 			page 10
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s 			page 10
 
 
  305 0000 08B5     		push	{r3, lr}
@@ -598,7 +598,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s 			page 1
  350              		.global	adc_voltage_to_current
  351              		.syntax unified
  352              		.thumb
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s 			page 11
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s 			page 11
 
 
  353              		.thumb_func
@@ -658,7 +658,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s 			page 1
  213:UserAPP/Source/ADCAPP.c ****         // 队列满/阻塞时直接串口兜底发送，保证上位机可收到电压包。
  214:UserAPP/Source/ADCAPP.c ****         UART1_SendBlocking(outBuf, outLen);
  215:UserAPP/Source/ADCAPP.c ****     }
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s 			page 12
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s 			page 12
 
 
  216:UserAPP/Source/ADCAPP.c **** }
@@ -718,7 +718,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s 			page 1
  270:UserAPP/Source/ADCAPP.c ****         }
  271:UserAPP/Source/ADCAPP.c ****         #endif
  272:UserAPP/Source/ADCAPP.c ****     }
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s 			page 13
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s 			page 13
 
 
  273:UserAPP/Source/ADCAPP.c ****     else
@@ -778,7 +778,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s 			page 1
  393              		.section	.text.calibrate_channel_current,"ax",%progbits
  394              		.align	1
  395              		.global	calibrate_channel_current
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s 			page 14
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s 			page 14
 
 
  396              		.syntax unified
@@ -838,7 +838,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s 			page 1
  313:UserAPP/Source/ADCAPP.c ****         {
  314:UserAPP/Source/ADCAPP.c ****             for (uint8_t i = 0; i < ADC_CHANNEL_COUNT; i++)
  315:UserAPP/Source/ADCAPP.c ****             {
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s 			page 15
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s 			page 15
 
 
  316:UserAPP/Source/ADCAPP.c ****                 float raw_voltage = adc_to_voltage((uint16_t)adcbuf[i]);
@@ -898,7 +898,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s 			page 1
  459 0034 0133     		adds	r3, r3, #1
  460              	.LVL35:
  307:UserAPP/Source/ADCAPP.c ****         {
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s 			page 16
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s 			page 16
 
 
  461              		.loc 1 307 53 is_stmt 0 discriminator 3 view .LVU89
@@ -958,7 +958,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s 			page 1
  502              	.LVL43:
  319:UserAPP/Source/ADCAPP.c ****             }
  503              		.loc 1 319 53 view .LVU103
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s 			page 17
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s 			page 17
 
 
  504 005e FFF7FEFF 		bl	__aeabi_fadd
@@ -1018,7 +1018,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s 			page 1
  546 0080 0A4B     		ldr	r3, .L52+12
  547 0082 53F82600 		ldr	r0, [r3, r6, lsl #2]	@ float
  548 0086 FFF7FEFF 		bl	__aeabi_fdiv
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s 			page 18
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s 			page 18
 
 
  549              	.LVL50:
@@ -1078,249 +1078,284 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s 			page 1
  591 001a A5EFBC8C 		.ascii	"\245\357\274\214\351\224\231\350\257\257\347\240\201"
  591      E99499E8 
  591      AFAFE7A0 
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s 			page 19
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s 			page 19
 
 
  591      81
  592 0027 3D25750D 		.ascii	"=%u\015\012\000"
  592      0A00
- 593              		.section	.text.send_current_packet,"ax",%progbits
- 594              		.align	1
- 595              		.global	send_current_packet
- 596              		.syntax unified
- 597              		.thumb
- 598              		.thumb_func
- 600              	send_current_packet:
- 601              	.LFB86:
+ 593 002d 000000   		.align	2
+ 594              	.LC4:
+ 595 0030 E794B5E6 		.ascii	"\347\224\265\346\265\201\346\225\260\346\215\256\345"
+ 595      B581E695 
+ 595      B0E68DAE 
+ 595      E5
+ 596 003d 8C85E585 		.ascii	"\214\205\345\205\245\351\230\237\346\210\220\345\212"
+ 596      A5E9989F 
+ 596      E68890E5 
+ 596      8A
+ 597 004a 9FEFBC8C 		.ascii	"\237\357\274\214\351\225\277\345\272\246=%u\015\012"
+ 597      E995BFE5 
+ 597      BAA63D25 
+ 597      750D0A
+ 598 0059 00       		.ascii	"\000"
+ 599              		.section	.text.send_current_packet,"ax",%progbits
+ 600              		.align	1
+ 601              		.global	send_current_packet
+ 602              		.syntax unified
+ 603              		.thumb
+ 604              		.thumb_func
+ 606              	send_current_packet:
+ 607              	.LFB86:
  224:UserAPP/Source/ADCAPP.c ****     // 校准每个通道的电流（更新全局校准数组）
- 602              		.loc 1 224 1 is_stmt 1 view -0
- 603              		.cfi_startproc
- 604              		@ args = 0, pretend = 0, frame = 112
- 605              		@ frame_needed = 0, uses_anonymous_args = 0
- 606 0000 30B5     		push	{r4, r5, lr}
- 607              	.LCFI8:
- 608              		.cfi_def_cfa_offset 12
- 609              		.cfi_offset 4, -12
- 610              		.cfi_offset 5, -8
- 611              		.cfi_offset 14, -4
- 612 0002 9FB0     		sub	sp, sp, #124
- 613              	.LCFI9:
- 614              		.cfi_def_cfa_offset 136
+ 608              		.loc 1 224 1 is_stmt 1 view -0
+ 609              		.cfi_startproc
+ 610              		@ args = 0, pretend = 0, frame = 112
+ 611              		@ frame_needed = 0, uses_anonymous_args = 0
+ 612 0000 30B5     		push	{r4, r5, lr}
+ 613              	.LCFI8:
+ 614              		.cfi_def_cfa_offset 12
+ 615              		.cfi_offset 4, -12
+ 616              		.cfi_offset 5, -8
+ 617              		.cfi_offset 14, -4
+ 618 0002 9FB0     		sub	sp, sp, #124
+ 619              	.LCFI9:
+ 620              		.cfi_def_cfa_offset 136
  226:UserAPP/Source/ADCAPP.c ****     // 每轮都基于最新ADC值更新“原始/校准后”电流，避免发送陈旧校准数�
- 615              		.loc 1 226 5 view .LVU125
- 616 0004 FFF7FEFF 		bl	calibrate_channel_current
- 617              	.LVL54:
+ 621              		.loc 1 226 5 view .LVU125
+ 622 0004 FFF7FEFF 		bl	calibrate_channel_current
+ 623              	.LVL54:
  228:UserAPP/Source/ADCAPP.c ****     {
- 618              		.loc 1 228 5 view .LVU126
- 619              	.LBB8:
+ 624              		.loc 1 228 5 view .LVU126
+ 625              	.LBB8:
  228:UserAPP/Source/ADCAPP.c ****     {
- 620              		.loc 1 228 10 view .LVU127
+ 626              		.loc 1 228 10 view .LVU127
  228:UserAPP/Source/ADCAPP.c ****     {
- 621              		.loc 1 228 18 is_stmt 0 view .LVU128
- 622 0008 0024     		movs	r4, #0
+ 627              		.loc 1 228 18 is_stmt 0 view .LVU128
+ 628 0008 0024     		movs	r4, #0
  228:UserAPP/Source/ADCAPP.c ****     {
- 623              		.loc 1 228 5 view .LVU129
- 624 000a 04E0     		b	.L55
- 625              	.LVL55:
- 626              	.L56:
- 627              	.LBB9:
- 236:UserAPP/Source/ADCAPP.c ****         }
- 628              		.loc 1 236 13 is_stmt 1 view .LVU130
- 236:UserAPP/Source/ADCAPP.c ****         }
- 629              		.loc 1 236 41 is_stmt 0 view .LVU131
- 630 000c 264B     		ldr	r3, .L65
- 631 000e 43F82400 		str	r0, [r3, r4, lsl #2]	@ float
- 632              	.LVL56:
- 633              	.L57:
- 236:UserAPP/Source/ADCAPP.c ****         }
- 634              		.loc 1 236 41 view .LVU132
- 635              	.LBE9:
- 228:UserAPP/Source/ADCAPP.c ****     {
- 636              		.loc 1 228 49 is_stmt 1 discriminator 2 view .LVU133
- 637 0012 0134     		adds	r4, r4, #1
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s 			page 20
+ 629              		.loc 1 228 5 view .LVU129
+ 630 000a 04E0     		b	.L55
+ 631              	.LVL55:
+ 632              	.L56:
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s 			page 20
 
 
- 638              	.LVL57:
+ 633              	.LBB9:
+ 236:UserAPP/Source/ADCAPP.c ****         }
+ 634              		.loc 1 236 13 is_stmt 1 view .LVU130
+ 236:UserAPP/Source/ADCAPP.c ****         }
+ 635              		.loc 1 236 41 is_stmt 0 view .LVU131
+ 636 000c 2B4B     		ldr	r3, .L66
+ 637 000e 43F82400 		str	r0, [r3, r4, lsl #2]	@ float
+ 638              	.LVL56:
+ 639              	.L57:
+ 236:UserAPP/Source/ADCAPP.c ****         }
+ 640              		.loc 1 236 41 view .LVU132
+ 641              	.LBE9:
  228:UserAPP/Source/ADCAPP.c ****     {
- 639              		.loc 1 228 49 is_stmt 0 discriminator 2 view .LVU134
- 640 0014 E4B2     		uxtb	r4, r4
- 641              	.LVL58:
- 642              	.L55:
+ 642              		.loc 1 228 49 is_stmt 1 discriminator 2 view .LVU133
+ 643 0012 0134     		adds	r4, r4, #1
+ 644              	.LVL57:
  228:UserAPP/Source/ADCAPP.c ****     {
- 643              		.loc 1 228 27 is_stmt 1 discriminator 1 view .LVU135
- 644 0016 0A2C     		cmp	r4, #10
- 645 0018 14D8     		bhi	.L64
- 646              	.LBB10:
+ 645              		.loc 1 228 49 is_stmt 0 discriminator 2 view .LVU134
+ 646 0014 E4B2     		uxtb	r4, r4
+ 647              	.LVL58:
+ 648              	.L55:
+ 228:UserAPP/Source/ADCAPP.c ****     {
+ 649              		.loc 1 228 27 is_stmt 1 discriminator 1 view .LVU135
+ 650 0016 0A2C     		cmp	r4, #10
+ 651 0018 14D8     		bhi	.L65
+ 652              	.LBB10:
  231:UserAPP/Source/ADCAPP.c ****         current_array[i] = raw_current;
- 647              		.loc 1 231 9 view .LVU136
+ 653              		.loc 1 231 9 view .LVU136
  231:UserAPP/Source/ADCAPP.c ****         current_array[i] = raw_current;
- 648              		.loc 1 231 29 is_stmt 0 view .LVU137
- 649 001a 244B     		ldr	r3, .L65+4
- 650 001c 53F82400 		ldr	r0, [r3, r4, lsl #2]	@ float
- 651 0020 FFF7FEFF 		bl	channel_voltage_to_current_diff
- 652              	.LVL59:
+ 654              		.loc 1 231 29 is_stmt 0 view .LVU137
+ 655 001a 294B     		ldr	r3, .L66+4
+ 656 001c 53F82400 		ldr	r0, [r3, r4, lsl #2]	@ float
+ 657 0020 FFF7FEFF 		bl	channel_voltage_to_current_diff
+ 658              	.LVL59:
  232:UserAPP/Source/ADCAPP.c ****         if (current_offset_ready) {
- 653              		.loc 1 232 9 is_stmt 1 view .LVU138
+ 659              		.loc 1 232 9 is_stmt 1 view .LVU138
  232:UserAPP/Source/ADCAPP.c ****         if (current_offset_ready) {
- 654              		.loc 1 232 26 is_stmt 0 view .LVU139
- 655 0024 224B     		ldr	r3, .L65+8
- 656 0026 43F82400 		str	r0, [r3, r4, lsl #2]	@ float
+ 660              		.loc 1 232 26 is_stmt 0 view .LVU139
+ 661 0024 274B     		ldr	r3, .L66+8
+ 662 0026 43F82400 		str	r0, [r3, r4, lsl #2]	@ float
  233:UserAPP/Source/ADCAPP.c ****             calibrated_current_array[i] = current_array[i] - channel_current_offset[i];
- 657              		.loc 1 233 9 is_stmt 1 view .LVU140
+ 663              		.loc 1 233 9 is_stmt 1 view .LVU140
  233:UserAPP/Source/ADCAPP.c ****             calibrated_current_array[i] = current_array[i] - channel_current_offset[i];
- 658              		.loc 1 233 13 is_stmt 0 view .LVU141
- 659 002a 224B     		ldr	r3, .L65+12
- 660 002c 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 664              		.loc 1 233 13 is_stmt 0 view .LVU141
+ 665 002a 274B     		ldr	r3, .L66+12
+ 666 002c 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
  233:UserAPP/Source/ADCAPP.c ****             calibrated_current_array[i] = current_array[i] - channel_current_offset[i];
- 661              		.loc 1 233 12 view .LVU142
- 662 002e 002B     		cmp	r3, #0
- 663 0030 ECD0     		beq	.L56
+ 667              		.loc 1 233 12 view .LVU142
+ 668 002e 002B     		cmp	r3, #0
+ 669 0030 ECD0     		beq	.L56
  234:UserAPP/Source/ADCAPP.c ****         } else {
- 664              		.loc 1 234 13 is_stmt 1 view .LVU143
+ 670              		.loc 1 234 13 is_stmt 1 view .LVU143
  234:UserAPP/Source/ADCAPP.c ****         } else {
- 665              		.loc 1 234 60 is_stmt 0 view .LVU144
- 666 0032 214B     		ldr	r3, .L65+16
- 667 0034 53F82410 		ldr	r1, [r3, r4, lsl #2]	@ float
- 668 0038 FFF7FEFF 		bl	__aeabi_fsub
- 669              	.LVL60:
+ 671              		.loc 1 234 60 is_stmt 0 view .LVU144
+ 672 0032 264B     		ldr	r3, .L66+16
+ 673 0034 53F82410 		ldr	r1, [r3, r4, lsl #2]	@ float
+ 674 0038 FFF7FEFF 		bl	__aeabi_fsub
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s 			page 21
+
+
+ 675              	.LVL60:
  234:UserAPP/Source/ADCAPP.c ****         } else {
- 670              		.loc 1 234 41 view .LVU145
- 671 003c 1A4B     		ldr	r3, .L65
- 672 003e 43F82400 		str	r0, [r3, r4, lsl #2]	@ float
- 673 0042 E6E7     		b	.L57
- 674              	.LVL61:
- 675              	.L64:
+ 676              		.loc 1 234 41 view .LVU145
+ 677 003c 1F4B     		ldr	r3, .L66
+ 678 003e 43F82400 		str	r0, [r3, r4, lsl #2]	@ float
+ 679 0042 E6E7     		b	.L57
+ 680              	.LVL61:
+ 681              	.L65:
  234:UserAPP/Source/ADCAPP.c ****         } else {
- 676              		.loc 1 234 41 view .LVU146
- 677              	.LBE10:
- 678              	.LBE8:
+ 682              		.loc 1 234 41 view .LVU146
+ 683              	.LBE10:
+ 684              	.LBE8:
  242:UserAPP/Source/ADCAPP.c ****     memcpy(current_data, calibrated_current_array, sizeof(calibrated_current_array));
- 679              		.loc 1 242 5 is_stmt 1 view .LVU147
+ 685              		.loc 1 242 5 is_stmt 1 view .LVU147
  243:UserAPP/Source/ADCAPP.c **** 
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s 			page 21
-
-
- 680              		.loc 1 243 5 view .LVU148
- 681 0044 13AC     		add	r4, sp, #76
- 682              	.LVL62:
+ 686              		.loc 1 243 5 view .LVU148
+ 687 0044 13AC     		add	r4, sp, #76
+ 688              	.LVL62:
  243:UserAPP/Source/ADCAPP.c **** 
- 683              		.loc 1 243 5 is_stmt 0 view .LVU149
- 684 0046 184D     		ldr	r5, .L65
- 685 0048 0FCD     		ldmia	r5!, {r0, r1, r2, r3}
- 686 004a 0FC4     		stmia	r4!, {r0, r1, r2, r3}
- 687 004c 0FCD     		ldmia	r5!, {r0, r1, r2, r3}
- 688 004e 0FC4     		stmia	r4!, {r0, r1, r2, r3}
- 689 0050 95E80700 		ldm	r5, {r0, r1, r2}
- 690 0054 84E80700 		stm	r4, {r0, r1, r2}
+ 689              		.loc 1 243 5 is_stmt 0 view .LVU149
+ 690 0046 1D4D     		ldr	r5, .L66
+ 691 0048 0FCD     		ldmia	r5!, {r0, r1, r2, r3}
+ 692 004a 0FC4     		stmia	r4!, {r0, r1, r2, r3}
+ 693 004c 0FCD     		ldmia	r5!, {r0, r1, r2, r3}
+ 694 004e 0FC4     		stmia	r4!, {r0, r1, r2, r3}
+ 695 0050 95E80700 		ldm	r5, {r0, r1, r2}
+ 696 0054 84E80700 		stm	r4, {r0, r1, r2}
  246:UserAPP/Source/ADCAPP.c ****     uint16_t outLen = 0; // 输出长度
- 691              		.loc 1 246 5 is_stmt 1 view .LVU150
+ 697              		.loc 1 246 5 is_stmt 1 view .LVU150
  247:UserAPP/Source/ADCAPP.c **** 
- 692              		.loc 1 247 5 view .LVU151
+ 698              		.loc 1 247 5 view .LVU151
  247:UserAPP/Source/ADCAPP.c **** 
- 693              		.loc 1 247 14 is_stmt 0 view .LVU152
- 694 0058 0023     		movs	r3, #0
- 695 005a ADF80A30 		strh	r3, [sp, #10]	@ movhi
+ 699              		.loc 1 247 14 is_stmt 0 view .LVU152
+ 700 0058 0023     		movs	r3, #0
+ 701 005a ADF80A30 		strh	r3, [sp, #10]	@ movhi
  249:UserAPP/Source/ADCAPP.c ****                                         TASK_ID_SendCurrentPacket,
- 696              		.loc 1 249 5 is_stmt 1 view .LVU153
+ 702              		.loc 1 249 5 is_stmt 1 view .LVU153
  249:UserAPP/Source/ADCAPP.c ****                                         TASK_ID_SendCurrentPacket,
- 697              		.loc 1 249 24 is_stmt 0 view .LVU154
- 698 005e 0DF10A03 		add	r3, sp, #10
- 699 0062 0193     		str	r3, [sp, #4]
- 700 0064 03AB     		add	r3, sp, #12
- 701 0066 0093     		str	r3, [sp]
- 702 0068 2C23     		movs	r3, #44
- 703 006a 13AA     		add	r2, sp, #76
- 704 006c 0821     		movs	r1, #8
- 705 006e 0220     		movs	r0, #2
- 706 0070 FFF7FEFF 		bl	BuildReplyPacket
- 707              	.LVL63:
+ 703              		.loc 1 249 24 is_stmt 0 view .LVU154
+ 704 005e 0DF10A03 		add	r3, sp, #10
+ 705 0062 0193     		str	r3, [sp, #4]
+ 706 0064 03AB     		add	r3, sp, #12
+ 707 0066 0093     		str	r3, [sp]
+ 708 0068 2C23     		movs	r3, #44
+ 709 006a 13AA     		add	r2, sp, #76
+ 710 006c 0821     		movs	r1, #8
+ 711 006e 0220     		movs	r0, #2
+ 712 0070 FFF7FEFF 		bl	BuildReplyPacket
+ 713              	.LVL63:
  256:UserAPP/Source/ADCAPP.c ****     {
- 708              		.loc 1 256 5 is_stmt 1 view .LVU155
+ 714              		.loc 1 256 5 is_stmt 1 view .LVU155
  256:UserAPP/Source/ADCAPP.c ****     {
- 709              		.loc 1 256 8 is_stmt 0 view .LVU156
- 710 0074 0346     		mov	r3, r0
- 711 0076 40B1     		cbz	r0, .L59
+ 715              		.loc 1 256 8 is_stmt 0 view .LVU156
+ 716 0074 0346     		mov	r3, r0
+ 717 0076 40B1     		cbz	r0, .L59
  258:UserAPP/Source/ADCAPP.c ****             QueueSendfmt(xSendDataQueue, 0, "构建电流数据包失败，错误码=%u\r\n", build
- 712              		.loc 1 258 9 is_stmt 1 view .LVU157
+ 718              		.loc 1 258 9 is_stmt 1 view .LVU157
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s 			page 22
+
+
  258:UserAPP/Source/ADCAPP.c ****             QueueSendfmt(xSendDataQueue, 0, "构建电流数据包失败，错误码=%u\r\n", build
- 713              		.loc 1 258 28 is_stmt 0 view .LVU158
- 714 0078 104A     		ldr	r2, .L65+20
- 715 007a 1068     		ldr	r0, [r2]
- 716              	.LVL64:
+ 719              		.loc 1 258 28 is_stmt 0 view .LVU158
+ 720 0078 154A     		ldr	r2, .L66+20
+ 721 007a 1068     		ldr	r0, [r2]
+ 722              	.LVL64:
  258:UserAPP/Source/ADCAPP.c ****             QueueSendfmt(xSendDataQueue, 0, "构建电流数据包失败，错误码=%u\r\n", build
- 717              		.loc 1 258 12 view .LVU159
- 718 007c 18B1     		cbz	r0, .L54
+ 723              		.loc 1 258 12 view .LVU159
+ 724 007c 18B1     		cbz	r0, .L54
  259:UserAPP/Source/ADCAPP.c ****         }
- 719              		.loc 1 259 13 is_stmt 1 view .LVU160
- 720 007e 104A     		ldr	r2, .L65+24
- 721 0080 0021     		movs	r1, #0
- 722 0082 FFF7FEFF 		bl	QueueSendfmt
- 723              	.LVL65:
+ 725              		.loc 1 259 13 is_stmt 1 view .LVU160
+ 726 007e 154A     		ldr	r2, .L66+24
+ 727 0080 0021     		movs	r1, #0
+ 728 0082 FFF7FEFF 		bl	QueueSendfmt
+ 729              	.LVL65:
  261:UserAPP/Source/ADCAPP.c ****     }
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s 			page 22
-
-
- 724              		.loc 1 261 9 view .LVU161
- 725              	.L54:
+ 730              		.loc 1 261 9 view .LVU161
+ 731              	.L54:
  277:UserAPP/Source/ADCAPP.c **** 
- 726              		.loc 1 277 1 is_stmt 0 view .LVU162
- 727 0086 1FB0     		add	sp, sp, #124
- 728              	.LCFI10:
- 729              		.cfi_remember_state
- 730              		.cfi_def_cfa_offset 12
- 731              		@ sp needed
- 732 0088 30BD     		pop	{r4, r5, pc}
- 733              	.LVL66:
- 734              	.L59:
- 735              	.LCFI11:
- 736              		.cfi_restore_state
+ 732              		.loc 1 277 1 is_stmt 0 view .LVU162
+ 733 0086 1FB0     		add	sp, sp, #124
+ 734              	.LCFI10:
+ 735              		.cfi_remember_state
+ 736              		.cfi_def_cfa_offset 12
+ 737              		@ sp needed
+ 738 0088 30BD     		pop	{r4, r5, pc}
+ 739              	.LVL66:
+ 740              	.L59:
+ 741              	.LCFI11:
+ 742              		.cfi_restore_state
  265:UserAPP/Source/ADCAPP.c ****     {
- 737              		.loc 1 265 5 is_stmt 1 view .LVU163
+ 743              		.loc 1 265 5 is_stmt 1 view .LVU163
  265:UserAPP/Source/ADCAPP.c ****     {
- 738              		.loc 1 265 9 is_stmt 0 view .LVU164
- 739 008a C822     		movs	r2, #200
- 740 008c BDF80A10 		ldrh	r1, [sp, #10]
- 741 0090 03A8     		add	r0, sp, #12
- 742              	.LVL67:
+ 744              		.loc 1 265 9 is_stmt 0 view .LVU164
+ 745 008a C822     		movs	r2, #200
+ 746 008c BDF80A10 		ldrh	r1, [sp, #10]
+ 747 0090 03A8     		add	r0, sp, #12
+ 748              	.LVL67:
  265:UserAPP/Source/ADCAPP.c ****     {
- 743              		.loc 1 265 9 view .LVU165
- 744 0092 FFF7FEFF 		bl	SendBinaryToHost
- 745              	.LVL68:
+ 749              		.loc 1 265 9 view .LVU165
+ 750 0092 FFF7FEFF 		bl	SendBinaryToHost
+ 751              	.LVL68:
  265:UserAPP/Source/ADCAPP.c ****     {
- 746              		.loc 1 265 8 discriminator 1 view .LVU166
- 747 0096 0128     		cmp	r0, #1
- 748 0098 F5D0     		beq	.L54
+ 752              		.loc 1 265 8 discriminator 1 view .LVU166
+ 753 0096 0128     		cmp	r0, #1
+ 754 0098 0AD1     		bne	.L62
+ 268:UserAPP/Source/ADCAPP.c ****             QueueSendfmt(xSendDataQueue, 0, "电流数据包入队成功，长度=%u\r\n", outLen);
+ 755              		.loc 1 268 9 is_stmt 1 view .LVU167
+ 268:UserAPP/Source/ADCAPP.c ****             QueueSendfmt(xSendDataQueue, 0, "电流数据包入队成功，长度=%u\r\n", outLen);
+ 756              		.loc 1 268 28 is_stmt 0 view .LVU168
+ 757 009a 0D4B     		ldr	r3, .L66+20
+ 758 009c 1868     		ldr	r0, [r3]
+ 268:UserAPP/Source/ADCAPP.c ****             QueueSendfmt(xSendDataQueue, 0, "电流数据包入队成功，长度=%u\r\n", outLen);
+ 759              		.loc 1 268 12 view .LVU169
+ 760 009e 0028     		cmp	r0, #0
+ 761 00a0 F1D0     		beq	.L54
+ 269:UserAPP/Source/ADCAPP.c ****         }
+ 762              		.loc 1 269 13 is_stmt 1 view .LVU170
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s 			page 23
+
+
+ 763 00a2 BDF80A30 		ldrh	r3, [sp, #10]
+ 764 00a6 0C4A     		ldr	r2, .L66+28
+ 765 00a8 0021     		movs	r1, #0
+ 766 00aa FFF7FEFF 		bl	QueueSendfmt
+ 767              	.LVL69:
+ 768 00ae EAE7     		b	.L54
+ 769              	.L62:
  275:UserAPP/Source/ADCAPP.c ****     }
- 749              		.loc 1 275 9 is_stmt 1 view .LVU167
- 750 009a BDF80A10 		ldrh	r1, [sp, #10]
- 751 009e 03A8     		add	r0, sp, #12
- 752 00a0 FFF7FEFF 		bl	UART1_SendBlocking
- 753              	.LVL69:
- 754 00a4 EFE7     		b	.L54
- 755              	.L66:
- 756 00a6 00BF     		.align	2
- 757              	.L65:
- 758 00a8 00000000 		.word	calibrated_current_array
- 759 00ac 00000000 		.word	calibrated_voltage_array
- 760 00b0 00000000 		.word	current_array
- 761 00b4 00000000 		.word	current_offset_ready
- 762 00b8 00000000 		.word	channel_current_offset
- 763 00bc 00000000 		.word	xSendDataQueue
- 764 00c0 00000000 		.word	.LC3
- 765              		.cfi_endproc
- 766              	.LFE86:
- 768              		.section	.text.calibrate_channel_voltage,"ax",%progbits
- 769              		.align	1
- 770              		.global	calibrate_channel_voltage
- 771              		.syntax unified
- 772              		.thumb
- 773              		.thumb_func
- 775              	calibrate_channel_voltage:
- 776              	.LFB89:
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s 			page 23
-
-
+ 770              		.loc 1 275 9 view .LVU171
+ 771 00b0 BDF80A10 		ldrh	r1, [sp, #10]
+ 772 00b4 03A8     		add	r0, sp, #12
+ 773 00b6 FFF7FEFF 		bl	UART1_SendBlocking
+ 774              	.LVL70:
+ 775 00ba E4E7     		b	.L54
+ 776              	.L67:
+ 777              		.align	2
+ 778              	.L66:
+ 779 00bc 00000000 		.word	calibrated_current_array
+ 780 00c0 00000000 		.word	calibrated_voltage_array
+ 781 00c4 00000000 		.word	current_array
+ 782 00c8 00000000 		.word	current_offset_ready
+ 783 00cc 00000000 		.word	channel_current_offset
+ 784 00d0 00000000 		.word	xSendDataQueue
+ 785 00d4 00000000 		.word	.LC3
+ 786 00d8 30000000 		.word	.LC4
+ 787              		.cfi_endproc
+ 788              	.LFE86:
+ 790              		.section	.text.calibrate_channel_voltage,"ax",%progbits
+ 791              		.align	1
+ 792              		.global	calibrate_channel_voltage
+ 793              		.syntax unified
+ 794              		.thumb
+ 795              		.thumb_func
+ 797              	calibrate_channel_voltage:
+ 798              	.LFB89:
  331:UserAPP/Source/ADCAPP.c **** 
  332:UserAPP/Source/ADCAPP.c **** 
  333:UserAPP/Source/ADCAPP.c **** /**
@@ -1328,28 +1363,31 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s 			page 1
  335:UserAPP/Source/ADCAPP.c ****  */
  336:UserAPP/Source/ADCAPP.c **** void calibrate_channel_voltage(void)
  337:UserAPP/Source/ADCAPP.c **** {
- 777              		.loc 1 337 1 view -0
- 778              		.cfi_startproc
- 779              		@ args = 0, pretend = 0, frame = 0
- 780              		@ frame_needed = 0, uses_anonymous_args = 0
- 781 0000 70B5     		push	{r4, r5, r6, lr}
- 782              	.LCFI12:
- 783              		.cfi_def_cfa_offset 16
- 784              		.cfi_offset 4, -16
- 785              		.cfi_offset 5, -12
- 786              		.cfi_offset 6, -8
- 787              		.cfi_offset 14, -4
+ 799              		.loc 1 337 1 view -0
+ 800              		.cfi_startproc
+ 801              		@ args = 0, pretend = 0, frame = 0
+ 802              		@ frame_needed = 0, uses_anonymous_args = 0
+ 803 0000 70B5     		push	{r4, r5, r6, lr}
+ 804              	.LCFI12:
+ 805              		.cfi_def_cfa_offset 16
+ 806              		.cfi_offset 4, -16
+ 807              		.cfi_offset 5, -12
+ 808              		.cfi_offset 6, -8
+ 809              		.cfi_offset 14, -4
  338:UserAPP/Source/ADCAPP.c ****     if (HAL_GPIO_ReadPin(VDDSwitchGPIOX, VDDSwitchPINX) == GPIO_PIN_SET)
- 788              		.loc 1 338 5 view .LVU169
- 789              		.loc 1 338 9 is_stmt 0 view .LVU170
- 790 0002 0121     		movs	r1, #1
- 791 0004 1B48     		ldr	r0, .L79
- 792 0006 FFF7FEFF 		bl	HAL_GPIO_ReadPin
- 793              	.LVL70:
- 794              		.loc 1 338 8 discriminator 1 view .LVU171
- 795 000a 0128     		cmp	r0, #1
- 796 000c 00D0     		beq	.L76
- 797              	.L67:
+ 810              		.loc 1 338 5 view .LVU173
+ 811              		.loc 1 338 9 is_stmt 0 view .LVU174
+ 812 0002 0121     		movs	r1, #1
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s 			page 24
+
+
+ 813 0004 1B48     		ldr	r0, .L80
+ 814 0006 FFF7FEFF 		bl	HAL_GPIO_ReadPin
+ 815              	.LVL71:
+ 816              		.loc 1 338 8 discriminator 1 view .LVU175
+ 817 000a 0128     		cmp	r0, #1
+ 818 000c 00D0     		beq	.L77
+ 819              	.L68:
  339:UserAPP/Source/ADCAPP.c ****     {
  340:UserAPP/Source/ADCAPP.c ****         osDelay(500); // 等待VDD稳定，确保采样数据可靠
  341:UserAPP/Source/ADCAPP.c ****         for (uint8_t k = 0; k < OFFSET_SAMPLE_COUNT; k++)
@@ -1370,644 +1408,679 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s 			page 1
  356:UserAPP/Source/ADCAPP.c ****         VDDSwitch(VDDON); // 校准完成后打开VDD，准备校准电流偏置
  357:UserAPP/Source/ADCAPP.c ****     }    
  358:UserAPP/Source/ADCAPP.c **** }
- 798              		.loc 1 358 1 view .LVU172
- 799 000e 70BD     		pop	{r4, r5, r6, pc}
- 800              	.L76:
+ 820              		.loc 1 358 1 view .LVU176
+ 821 000e 70BD     		pop	{r4, r5, r6, pc}
+ 822              	.L77:
  340:UserAPP/Source/ADCAPP.c ****         for (uint8_t k = 0; k < OFFSET_SAMPLE_COUNT; k++)
- 801              		.loc 1 340 9 is_stmt 1 view .LVU173
- 802 0010 4FF4FA70 		mov	r0, #500
- 803 0014 FFF7FEFF 		bl	osDelay
- 804              	.LVL71:
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s 			page 24
-
-
+ 823              		.loc 1 340 9 is_stmt 1 view .LVU177
+ 824 0010 4FF4FA70 		mov	r0, #500
+ 825 0014 FFF7FEFF 		bl	osDelay
+ 826              	.LVL72:
  341:UserAPP/Source/ADCAPP.c ****         {
- 805              		.loc 1 341 9 view .LVU174
- 806              	.LBB11:
+ 827              		.loc 1 341 9 view .LVU178
+ 828              	.LBB11:
  341:UserAPP/Source/ADCAPP.c ****         {
- 807              		.loc 1 341 14 view .LVU175
+ 829              		.loc 1 341 14 view .LVU179
  341:UserAPP/Source/ADCAPP.c ****         {
- 808              		.loc 1 341 22 is_stmt 0 view .LVU176
- 809 0018 0026     		movs	r6, #0
+ 830              		.loc 1 341 22 is_stmt 0 view .LVU180
+ 831 0018 0026     		movs	r6, #0
  341:UserAPP/Source/ADCAPP.c ****         {
- 810              		.loc 1 341 9 view .LVU177
- 811 001a 12E0     		b	.L69
- 812              	.LVL72:
- 813              	.L70:
- 814              	.LBB12:
- 815              	.LBB13:
+ 832              		.loc 1 341 9 view .LVU181
+ 833 001a 12E0     		b	.L70
+ 834              	.LVL73:
+ 835              	.L71:
+ 836              	.LBB12:
+ 837              	.LBB13:
  345:UserAPP/Source/ADCAPP.c ****                 channel_voltage_offset[i] = raw_voltage + channel_voltage_offset[i];
- 816              		.loc 1 345 17 is_stmt 1 view .LVU178
+ 838              		.loc 1 345 17 is_stmt 1 view .LVU182
  345:UserAPP/Source/ADCAPP.c ****                 channel_voltage_offset[i] = raw_voltage + channel_voltage_offset[i];
- 817              		.loc 1 345 37 is_stmt 0 view .LVU179
- 818 001c 164B     		ldr	r3, .L79+4
- 819 001e 33F82400 		ldrh	r0, [r3, r4, lsl #2]
- 820 0022 FFF7FEFF 		bl	adc_to_voltage
- 821              	.LVL73:
- 822 0026 0146     		mov	r1, r0
- 823              	.LVL74:
+ 839              		.loc 1 345 37 is_stmt 0 view .LVU183
+ 840 001c 164B     		ldr	r3, .L80+4
+ 841 001e 33F82400 		ldrh	r0, [r3, r4, lsl #2]
+ 842 0022 FFF7FEFF 		bl	adc_to_voltage
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s 			page 25
+
+
+ 843              	.LVL74:
+ 844 0026 0146     		mov	r1, r0
+ 845              	.LVL75:
  346:UserAPP/Source/ADCAPP.c ****             }
- 824              		.loc 1 346 17 is_stmt 1 view .LVU180
+ 846              		.loc 1 346 17 is_stmt 1 view .LVU184
  346:UserAPP/Source/ADCAPP.c ****             }
- 825              		.loc 1 346 81 is_stmt 0 view .LVU181
- 826 0028 144D     		ldr	r5, .L79+8
+ 847              		.loc 1 346 81 is_stmt 0 view .LVU185
+ 848 0028 144D     		ldr	r5, .L80+8
  346:UserAPP/Source/ADCAPP.c ****             }
- 827              		.loc 1 346 57 view .LVU182
- 828 002a 55F82400 		ldr	r0, [r5, r4, lsl #2]	@ float
- 829              	.LVL75:
+ 849              		.loc 1 346 57 view .LVU186
+ 850 002a 55F82400 		ldr	r0, [r5, r4, lsl #2]	@ float
+ 851              	.LVL76:
  346:UserAPP/Source/ADCAPP.c ****             }
- 830              		.loc 1 346 57 view .LVU183
- 831 002e FFF7FEFF 		bl	__aeabi_fadd
- 832              	.LVL76:
+ 852              		.loc 1 346 57 view .LVU187
+ 853 002e FFF7FEFF 		bl	__aeabi_fadd
+ 854              	.LVL77:
  346:UserAPP/Source/ADCAPP.c ****             }
- 833              		.loc 1 346 43 view .LVU184
- 834 0032 45F82400 		str	r0, [r5, r4, lsl #2]	@ float
- 835              	.LBE13:
+ 855              		.loc 1 346 43 view .LVU188
+ 856 0032 45F82400 		str	r0, [r5, r4, lsl #2]	@ float
+ 857              	.LBE13:
  343:UserAPP/Source/ADCAPP.c ****             {
- 836              		.loc 1 343 57 is_stmt 1 discriminator 3 view .LVU185
- 837 0036 0134     		adds	r4, r4, #1
- 838              	.LVL77:
+ 858              		.loc 1 343 57 is_stmt 1 discriminator 3 view .LVU189
+ 859 0036 0134     		adds	r4, r4, #1
+ 860              	.LVL78:
  343:UserAPP/Source/ADCAPP.c ****             {
- 839              		.loc 1 343 57 is_stmt 0 discriminator 3 view .LVU186
- 840 0038 E4B2     		uxtb	r4, r4
- 841              	.LVL78:
- 842              	.L71:
+ 861              		.loc 1 343 57 is_stmt 0 discriminator 3 view .LVU190
+ 862 0038 E4B2     		uxtb	r4, r4
+ 863              	.LVL79:
+ 864              	.L72:
  343:UserAPP/Source/ADCAPP.c ****             {
- 843              		.loc 1 343 35 is_stmt 1 discriminator 1 view .LVU187
- 844 003a 0A2C     		cmp	r4, #10
- 845 003c EED9     		bls	.L70
- 846              	.LBE12:
+ 865              		.loc 1 343 35 is_stmt 1 discriminator 1 view .LVU191
+ 866 003a 0A2C     		cmp	r4, #10
+ 867 003c EED9     		bls	.L71
+ 868              	.LBE12:
  341:UserAPP/Source/ADCAPP.c ****         {
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s 			page 25
-
-
- 847              		.loc 1 341 55 discriminator 2 view .LVU188
- 848 003e 0136     		adds	r6, r6, #1
- 849              	.LVL79:
+ 869              		.loc 1 341 55 discriminator 2 view .LVU192
+ 870 003e 0136     		adds	r6, r6, #1
+ 871              	.LVL80:
  341:UserAPP/Source/ADCAPP.c ****         {
- 850              		.loc 1 341 55 is_stmt 0 discriminator 2 view .LVU189
- 851 0040 F6B2     		uxtb	r6, r6
- 852              	.LVL80:
- 853              	.L69:
+ 872              		.loc 1 341 55 is_stmt 0 discriminator 2 view .LVU193
+ 873 0040 F6B2     		uxtb	r6, r6
+ 874              	.LVL81:
+ 875              	.L70:
  341:UserAPP/Source/ADCAPP.c ****         {
- 854              		.loc 1 341 31 is_stmt 1 discriminator 1 view .LVU190
- 855 0042 092E     		cmp	r6, #9
- 856 0044 01D8     		bhi	.L77
- 857              	.LBB14:
+ 876              		.loc 1 341 31 is_stmt 1 discriminator 1 view .LVU194
+ 877 0042 092E     		cmp	r6, #9
+ 878 0044 01D8     		bhi	.L78
+ 879              	.LBB14:
  343:UserAPP/Source/ADCAPP.c ****             {
- 858              		.loc 1 343 26 is_stmt 0 view .LVU191
- 859 0046 0024     		movs	r4, #0
- 860 0048 F7E7     		b	.L71
- 861              	.L77:
- 862              	.LBE14:
- 863              	.LBE11:
- 864              	.LBB15:
+ 880              		.loc 1 343 26 is_stmt 0 view .LVU195
+ 881 0046 0024     		movs	r4, #0
+ 882 0048 F7E7     		b	.L72
+ 883              	.L78:
+ 884              	.LBE14:
+ 885              	.LBE11:
+ 886              	.LBB15:
  350:UserAPP/Source/ADCAPP.c ****         {
- 865              		.loc 1 350 22 view .LVU192
- 866 004a 0024     		movs	r4, #0
- 867              	.L72:
- 868              	.LVL81:
- 350:UserAPP/Source/ADCAPP.c ****         {
- 869              		.loc 1 350 31 is_stmt 1 discriminator 1 view .LVU193
- 870 004c 0A2C     		cmp	r4, #10
- 871 004e 0AD8     		bhi	.L78
- 352:UserAPP/Source/ADCAPP.c ****         }
- 872              		.loc 1 352 13 view .LVU194
- 352:UserAPP/Source/ADCAPP.c ****         }
- 873              		.loc 1 352 63 is_stmt 0 view .LVU195
- 874 0050 0A4D     		ldr	r5, .L79+8
- 352:UserAPP/Source/ADCAPP.c ****         }
- 875              		.loc 1 352 67 view .LVU196
- 876 0052 0B49     		ldr	r1, .L79+12
- 877 0054 55F82400 		ldr	r0, [r5, r4, lsl #2]	@ float
- 878 0058 FFF7FEFF 		bl	__aeabi_fdiv
- 879              	.LVL82:
- 352:UserAPP/Source/ADCAPP.c ****         }
- 880              		.loc 1 352 39 view .LVU197
- 881 005c 45F82400 		str	r0, [r5, r4, lsl #2]	@ float
- 350:UserAPP/Source/ADCAPP.c ****         {
- 882              		.loc 1 350 53 is_stmt 1 discriminator 3 view .LVU198
- 883 0060 0134     		adds	r4, r4, #1
- 884              	.LVL83:
- 350:UserAPP/Source/ADCAPP.c ****         {
- 885              		.loc 1 350 53 is_stmt 0 discriminator 3 view .LVU199
- 886 0062 E4B2     		uxtb	r4, r4
- 887              	.LVL84:
- 350:UserAPP/Source/ADCAPP.c ****         {
- 888              		.loc 1 350 53 discriminator 3 view .LVU200
- 889 0064 F2E7     		b	.L72
- 890              	.LVL85:
- 891              	.L78:
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s 			page 26
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s 			page 26
 
 
+ 887              		.loc 1 350 22 view .LVU196
+ 888 004a 0024     		movs	r4, #0
+ 889              	.L73:
+ 890              	.LVL82:
  350:UserAPP/Source/ADCAPP.c ****         {
- 892              		.loc 1 350 53 discriminator 3 view .LVU201
- 893              	.LBE15:
+ 891              		.loc 1 350 31 is_stmt 1 discriminator 1 view .LVU197
+ 892 004c 0A2C     		cmp	r4, #10
+ 893 004e 0AD8     		bhi	.L79
+ 352:UserAPP/Source/ADCAPP.c ****         }
+ 894              		.loc 1 352 13 view .LVU198
+ 352:UserAPP/Source/ADCAPP.c ****         }
+ 895              		.loc 1 352 63 is_stmt 0 view .LVU199
+ 896 0050 0A4D     		ldr	r5, .L80+8
+ 352:UserAPP/Source/ADCAPP.c ****         }
+ 897              		.loc 1 352 67 view .LVU200
+ 898 0052 0B49     		ldr	r1, .L80+12
+ 899 0054 55F82400 		ldr	r0, [r5, r4, lsl #2]	@ float
+ 900 0058 FFF7FEFF 		bl	__aeabi_fdiv
+ 901              	.LVL83:
+ 352:UserAPP/Source/ADCAPP.c ****         }
+ 902              		.loc 1 352 39 view .LVU201
+ 903 005c 45F82400 		str	r0, [r5, r4, lsl #2]	@ float
+ 350:UserAPP/Source/ADCAPP.c ****         {
+ 904              		.loc 1 350 53 is_stmt 1 discriminator 3 view .LVU202
+ 905 0060 0134     		adds	r4, r4, #1
+ 906              	.LVL84:
+ 350:UserAPP/Source/ADCAPP.c ****         {
+ 907              		.loc 1 350 53 is_stmt 0 discriminator 3 view .LVU203
+ 908 0062 E4B2     		uxtb	r4, r4
+ 909              	.LVL85:
+ 350:UserAPP/Source/ADCAPP.c ****         {
+ 910              		.loc 1 350 53 discriminator 3 view .LVU204
+ 911 0064 F2E7     		b	.L73
+ 912              	.LVL86:
+ 913              	.L79:
+ 350:UserAPP/Source/ADCAPP.c ****         {
+ 914              		.loc 1 350 53 discriminator 3 view .LVU205
+ 915              	.LBE15:
  355:UserAPP/Source/ADCAPP.c ****         VDDSwitch(VDDON); // 校准完成后打开VDD，准备校准电流偏置
- 894              		.loc 1 355 9 is_stmt 1 view .LVU202
+ 916              		.loc 1 355 9 is_stmt 1 view .LVU206
  355:UserAPP/Source/ADCAPP.c ****         VDDSwitch(VDDON); // 校准完成后打开VDD，准备校准电流偏置
- 895              		.loc 1 355 30 is_stmt 0 view .LVU203
- 896 0066 0120     		movs	r0, #1
- 897 0068 064B     		ldr	r3, .L79+16
- 898 006a 1870     		strb	r0, [r3]
+ 917              		.loc 1 355 30 is_stmt 0 view .LVU207
+ 918 0066 0120     		movs	r0, #1
+ 919 0068 064B     		ldr	r3, .L80+16
+ 920 006a 1870     		strb	r0, [r3]
  356:UserAPP/Source/ADCAPP.c ****     }    
- 899              		.loc 1 356 9 is_stmt 1 view .LVU204
- 900 006c FFF7FEFF 		bl	VDDSwitch
- 901              	.LVL86:
- 902              		.loc 1 358 1 is_stmt 0 view .LVU205
- 903 0070 CDE7     		b	.L67
- 904              	.L80:
- 905 0072 00BF     		.align	2
- 906              	.L79:
- 907 0074 00080140 		.word	1073809408
- 908 0078 00000000 		.word	adcbuf
- 909 007c 00000000 		.word	channel_voltage_offset
- 910 0080 00002041 		.word	1092616192
- 911 0084 00000000 		.word	voltage_offset_ready
- 912              		.cfi_endproc
- 913              	.LFE89:
- 915              		.section	.rodata.send_voltage_packet.str1.4,"aMS",%progbits,1
- 916              		.align	2
- 917              	.LC4:
- 918 0000 E69E84E5 		.ascii	"\346\236\204\345\273\272\347\224\265\345\216\213\346"
- 918      BBBAE794 
- 918      B5E58E8B 
- 918      E6
- 919 000d 95B0E68D 		.ascii	"\225\260\346\215\256\345\214\205\345\244\261\350\264"
- 919      AEE58C85 
- 919      E5A4B1E8 
- 919      B4
- 920 001a A5EFBC8C 		.ascii	"\245\357\274\214\351\224\231\350\257\257\347\240\201"
- 920      E99499E8 
- 920      AFAFE7A0 
- 920      81
- 921 0027 3D25750D 		.ascii	"=%u\015\012\000"
- 921      0A00
- 922              		.section	.text.send_voltage_packet,"ax",%progbits
- 923              		.align	1
- 924              		.global	send_voltage_packet
- 925              		.syntax unified
- 926              		.thumb
- 927              		.thumb_func
- 929              	send_voltage_packet:
- 930              	.LFB85:
+ 921              		.loc 1 356 9 is_stmt 1 view .LVU208
+ 922 006c FFF7FEFF 		bl	VDDSwitch
+ 923              	.LVL87:
+ 924              		.loc 1 358 1 is_stmt 0 view .LVU209
+ 925 0070 CDE7     		b	.L68
+ 926              	.L81:
+ 927 0072 00BF     		.align	2
+ 928              	.L80:
+ 929 0074 00080140 		.word	1073809408
+ 930 0078 00000000 		.word	adcbuf
+ 931 007c 00000000 		.word	channel_voltage_offset
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s 			page 27
+
+
+ 932 0080 00002041 		.word	1092616192
+ 933 0084 00000000 		.word	voltage_offset_ready
+ 934              		.cfi_endproc
+ 935              	.LFE89:
+ 937              		.section	.rodata.send_voltage_packet.str1.4,"aMS",%progbits,1
+ 938              		.align	2
+ 939              	.LC5:
+ 940 0000 E69E84E5 		.ascii	"\346\236\204\345\273\272\347\224\265\345\216\213\346"
+ 940      BBBAE794 
+ 940      B5E58E8B 
+ 940      E6
+ 941 000d 95B0E68D 		.ascii	"\225\260\346\215\256\345\214\205\345\244\261\350\264"
+ 941      AEE58C85 
+ 941      E5A4B1E8 
+ 941      B4
+ 942 001a A5EFBC8C 		.ascii	"\245\357\274\214\351\224\231\350\257\257\347\240\201"
+ 942      E99499E8 
+ 942      AFAFE7A0 
+ 942      81
+ 943 0027 3D25750D 		.ascii	"=%u\015\012\000"
+ 943      0A00
+ 944 002d 000000   		.align	2
+ 945              	.LC6:
+ 946 0030 E794B5E5 		.ascii	"\347\224\265\345\216\213\346\225\260\346\215\256\345"
+ 946      8E8BE695 
+ 946      B0E68DAE 
+ 946      E5
+ 947 003d 8C85E585 		.ascii	"\214\205\345\205\245\351\230\237\346\210\220\345\212"
+ 947      A5E9989F 
+ 947      E68890E5 
+ 947      8A
+ 948 004a 9FEFBC8C 		.ascii	"\237\357\274\214\351\225\277\345\272\246=%u\015\012"
+ 948      E995BFE5 
+ 948      BAA63D25 
+ 948      750D0A
+ 949 0059 00       		.ascii	"\000"
+ 950              		.section	.text.send_voltage_packet,"ax",%progbits
+ 951              		.align	1
+ 952              		.global	send_voltage_packet
+ 953              		.syntax unified
+ 954              		.thumb
+ 955              		.thumb_func
+ 957              	send_voltage_packet:
+ 958              	.LFB85:
  171:UserAPP/Source/ADCAPP.c ****     // 校准每个通道的电压（更新全局校准数组
- 931              		.loc 1 171 1 is_stmt 1 view -0
- 932              		.cfi_startproc
- 933              		@ args = 0, pretend = 0, frame = 112
- 934              		@ frame_needed = 0, uses_anonymous_args = 0
- 935 0000 30B5     		push	{r4, r5, lr}
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s 			page 27
+ 959              		.loc 1 171 1 is_stmt 1 view -0
+ 960              		.cfi_startproc
+ 961              		@ args = 0, pretend = 0, frame = 112
+ 962              		@ frame_needed = 0, uses_anonymous_args = 0
+ 963 0000 30B5     		push	{r4, r5, lr}
+ 964              	.LCFI13:
+ 965              		.cfi_def_cfa_offset 12
+ 966              		.cfi_offset 4, -12
+ 967              		.cfi_offset 5, -8
+ 968              		.cfi_offset 14, -4
+ 969 0002 9FB0     		sub	sp, sp, #124
+ 970              	.LCFI14:
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s 			page 28
 
 
- 936              	.LCFI13:
- 937              		.cfi_def_cfa_offset 12
- 938              		.cfi_offset 4, -12
- 939              		.cfi_offset 5, -8
- 940              		.cfi_offset 14, -4
- 941 0002 9FB0     		sub	sp, sp, #124
- 942              	.LCFI14:
- 943              		.cfi_def_cfa_offset 136
+ 971              		.cfi_def_cfa_offset 136
  173:UserAPP/Source/ADCAPP.c **** 
- 944              		.loc 1 173 5 view .LVU207
- 945 0004 FFF7FEFF 		bl	calibrate_channel_voltage
- 946              	.LVL87:
+ 972              		.loc 1 173 5 view .LVU211
+ 973 0004 FFF7FEFF 		bl	calibrate_channel_voltage
+ 974              	.LVL88:
  176:UserAPP/Source/ADCAPP.c ****     {
- 947              		.loc 1 176 5 view .LVU208
- 948              	.LBB16:
+ 975              		.loc 1 176 5 view .LVU212
+ 976              	.LBB16:
  176:UserAPP/Source/ADCAPP.c ****     {
- 949              		.loc 1 176 10 view .LVU209
+ 977              		.loc 1 176 10 view .LVU213
  176:UserAPP/Source/ADCAPP.c ****     {
- 950              		.loc 1 176 18 is_stmt 0 view .LVU210
- 951 0008 0024     		movs	r4, #0
+ 978              		.loc 1 176 18 is_stmt 0 view .LVU214
+ 979 0008 0024     		movs	r4, #0
  176:UserAPP/Source/ADCAPP.c ****     {
- 952              		.loc 1 176 5 view .LVU211
- 953 000a 11E0     		b	.L82
- 954              	.LVL88:
- 955              	.L83:
- 956              	.LBB17:
+ 980              		.loc 1 176 5 view .LVU215
+ 981 000a 11E0     		b	.L83
+ 982              	.LVL89:
+ 983              	.L84:
+ 984              	.LBB17:
  178:UserAPP/Source/ADCAPP.c ****         voltage_array[i] = raw_voltage;
- 957              		.loc 1 178 9 is_stmt 1 view .LVU212
+ 985              		.loc 1 178 9 is_stmt 1 view .LVU216
  178:UserAPP/Source/ADCAPP.c ****         voltage_array[i] = raw_voltage;
- 958              		.loc 1 178 29 is_stmt 0 view .LVU213
- 959 000c 224B     		ldr	r3, .L89
- 960 000e 33F82400 		ldrh	r0, [r3, r4, lsl #2]
- 961 0012 FFF7FEFF 		bl	adc_to_voltage
- 962              	.LVL89:
+ 986              		.loc 1 178 29 is_stmt 0 view .LVU217
+ 987 000c 274B     		ldr	r3, .L91
+ 988 000e 33F82400 		ldrh	r0, [r3, r4, lsl #2]
+ 989 0012 FFF7FEFF 		bl	adc_to_voltage
+ 990              	.LVL90:
  179:UserAPP/Source/ADCAPP.c ****         calibrated_voltage_array[i] = raw_voltage - channel_voltage_offset[i];
- 963              		.loc 1 179 9 is_stmt 1 view .LVU214
+ 991              		.loc 1 179 9 is_stmt 1 view .LVU218
  179:UserAPP/Source/ADCAPP.c ****         calibrated_voltage_array[i] = raw_voltage - channel_voltage_offset[i];
- 964              		.loc 1 179 26 is_stmt 0 view .LVU215
- 965 0016 214B     		ldr	r3, .L89+4
- 966 0018 43F82400 		str	r0, [r3, r4, lsl #2]	@ float
+ 992              		.loc 1 179 26 is_stmt 0 view .LVU219
+ 993 0016 264B     		ldr	r3, .L91+4
+ 994 0018 43F82400 		str	r0, [r3, r4, lsl #2]	@ float
  180:UserAPP/Source/ADCAPP.c ****     }
- 967              		.loc 1 180 9 is_stmt 1 view .LVU216
+ 995              		.loc 1 180 9 is_stmt 1 view .LVU220
  180:UserAPP/Source/ADCAPP.c ****     }
- 968              		.loc 1 180 51 is_stmt 0 view .LVU217
- 969 001c 204B     		ldr	r3, .L89+8
- 970 001e 53F82410 		ldr	r1, [r3, r4, lsl #2]	@ float
- 971 0022 FFF7FEFF 		bl	__aeabi_fsub
- 972              	.LVL90:
+ 996              		.loc 1 180 51 is_stmt 0 view .LVU221
+ 997 001c 254B     		ldr	r3, .L91+8
+ 998 001e 53F82410 		ldr	r1, [r3, r4, lsl #2]	@ float
+ 999 0022 FFF7FEFF 		bl	__aeabi_fsub
+ 1000              	.LVL91:
  180:UserAPP/Source/ADCAPP.c ****     }
- 973              		.loc 1 180 37 view .LVU218
- 974 0026 1F4B     		ldr	r3, .L89+12
- 975 0028 43F82400 		str	r0, [r3, r4, lsl #2]	@ float
- 976              	.LBE17:
+ 1001              		.loc 1 180 37 view .LVU222
+ 1002 0026 244B     		ldr	r3, .L91+12
+ 1003 0028 43F82400 		str	r0, [r3, r4, lsl #2]	@ float
+ 1004              	.LBE17:
  176:UserAPP/Source/ADCAPP.c ****     {
- 977              		.loc 1 176 49 is_stmt 1 discriminator 3 view .LVU219
- 978 002c 0134     		adds	r4, r4, #1
- 979              	.LVL91:
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s 			page 28
+ 1005              		.loc 1 176 49 is_stmt 1 discriminator 3 view .LVU223
+ 1006 002c 0134     		adds	r4, r4, #1
+ 1007              	.LVL92:
+ 176:UserAPP/Source/ADCAPP.c ****     {
+ 1008              		.loc 1 176 49 is_stmt 0 discriminator 3 view .LVU224
+ 1009 002e E4B2     		uxtb	r4, r4
+ 1010              	.LVL93:
+ 1011              	.L83:
+ 176:UserAPP/Source/ADCAPP.c ****     {
+ 1012              		.loc 1 176 27 is_stmt 1 discriminator 1 view .LVU225
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s 			page 29
 
 
- 176:UserAPP/Source/ADCAPP.c ****     {
- 980              		.loc 1 176 49 is_stmt 0 discriminator 3 view .LVU220
- 981 002e E4B2     		uxtb	r4, r4
- 982              	.LVL92:
- 983              	.L82:
- 176:UserAPP/Source/ADCAPP.c ****     {
- 984              		.loc 1 176 27 is_stmt 1 discriminator 1 view .LVU221
- 985 0030 0A2C     		cmp	r4, #10
- 986 0032 EBD9     		bls	.L83
- 987              	.LBE16:
+ 1013 0030 0A2C     		cmp	r4, #10
+ 1014 0032 EBD9     		bls	.L84
+ 1015              	.LBE16:
  184:UserAPP/Source/ADCAPP.c ****     memcpy(voltage_data, calibrated_voltage_array, sizeof(calibrated_voltage_array));
- 988              		.loc 1 184 5 view .LVU222
+ 1016              		.loc 1 184 5 view .LVU226
  185:UserAPP/Source/ADCAPP.c **** 
- 989              		.loc 1 185 5 view .LVU223
- 990 0034 13AC     		add	r4, sp, #76
- 991              	.LVL93:
+ 1017              		.loc 1 185 5 view .LVU227
+ 1018 0034 13AC     		add	r4, sp, #76
+ 1019              	.LVL94:
  185:UserAPP/Source/ADCAPP.c **** 
- 992              		.loc 1 185 5 is_stmt 0 view .LVU224
- 993 0036 1B4D     		ldr	r5, .L89+12
- 994 0038 0FCD     		ldmia	r5!, {r0, r1, r2, r3}
- 995 003a 0FC4     		stmia	r4!, {r0, r1, r2, r3}
- 996 003c 0FCD     		ldmia	r5!, {r0, r1, r2, r3}
- 997 003e 0FC4     		stmia	r4!, {r0, r1, r2, r3}
- 998 0040 95E80700 		ldm	r5, {r0, r1, r2}
- 999 0044 84E80700 		stm	r4, {r0, r1, r2}
+ 1020              		.loc 1 185 5 is_stmt 0 view .LVU228
+ 1021 0036 204D     		ldr	r5, .L91+12
+ 1022 0038 0FCD     		ldmia	r5!, {r0, r1, r2, r3}
+ 1023 003a 0FC4     		stmia	r4!, {r0, r1, r2, r3}
+ 1024 003c 0FCD     		ldmia	r5!, {r0, r1, r2, r3}
+ 1025 003e 0FC4     		stmia	r4!, {r0, r1, r2, r3}
+ 1026 0040 95E80700 		ldm	r5, {r0, r1, r2}
+ 1027 0044 84E80700 		stm	r4, {r0, r1, r2}
  188:UserAPP/Source/ADCAPP.c ****     uint16_t outLen = 0; // 输出长度
- 1000              		.loc 1 188 5 is_stmt 1 view .LVU225
+ 1028              		.loc 1 188 5 is_stmt 1 view .LVU229
  189:UserAPP/Source/ADCAPP.c ****     
- 1001              		.loc 1 189 5 view .LVU226
+ 1029              		.loc 1 189 5 view .LVU230
  189:UserAPP/Source/ADCAPP.c ****     
- 1002              		.loc 1 189 14 is_stmt 0 view .LVU227
- 1003 0048 0023     		movs	r3, #0
- 1004 004a ADF80A30 		strh	r3, [sp, #10]	@ movhi
+ 1030              		.loc 1 189 14 is_stmt 0 view .LVU231
+ 1031 0048 0023     		movs	r3, #0
+ 1032 004a ADF80A30 		strh	r3, [sp, #10]	@ movhi
  192:UserAPP/Source/ADCAPP.c ****     
- 1005              		.loc 1 192 5 is_stmt 1 view .LVU228
+ 1033              		.loc 1 192 5 is_stmt 1 view .LVU232
  192:UserAPP/Source/ADCAPP.c ****     
- 1006              		.loc 1 192 24 is_stmt 0 view .LVU229
- 1007 004e 0DF10A03 		add	r3, sp, #10
- 1008 0052 0193     		str	r3, [sp, #4]
- 1009 0054 03AB     		add	r3, sp, #12
- 1010 0056 0093     		str	r3, [sp]
- 1011 0058 2C23     		movs	r3, #44
- 1012 005a 13AA     		add	r2, sp, #76
- 1013 005c 0621     		movs	r1, #6
- 1014 005e 0220     		movs	r0, #2
- 1015 0060 FFF7FEFF 		bl	BuildReplyPacket
- 1016              	.LVL94:
+ 1034              		.loc 1 192 24 is_stmt 0 view .LVU233
+ 1035 004e 0DF10A03 		add	r3, sp, #10
+ 1036 0052 0193     		str	r3, [sp, #4]
+ 1037 0054 03AB     		add	r3, sp, #12
+ 1038 0056 0093     		str	r3, [sp]
+ 1039 0058 2C23     		movs	r3, #44
+ 1040 005a 13AA     		add	r2, sp, #76
+ 1041 005c 0621     		movs	r1, #6
+ 1042 005e 0220     		movs	r0, #2
+ 1043 0060 FFF7FEFF 		bl	BuildReplyPacket
+ 1044              	.LVL95:
  194:UserAPP/Source/ADCAPP.c ****     {
- 1017              		.loc 1 194 5 is_stmt 1 view .LVU230
+ 1045              		.loc 1 194 5 is_stmt 1 view .LVU234
  194:UserAPP/Source/ADCAPP.c ****     {
- 1018              		.loc 1 194 8 is_stmt 0 view .LVU231
- 1019 0064 0346     		mov	r3, r0
- 1020 0066 40B1     		cbz	r0, .L84
+ 1046              		.loc 1 194 8 is_stmt 0 view .LVU235
+ 1047 0064 0346     		mov	r3, r0
+ 1048 0066 40B1     		cbz	r0, .L85
  196:UserAPP/Source/ADCAPP.c ****             QueueSendfmt(xSendDataQueue, 0, "构建电压数据包失败，错误码=%u\r\n", build
- 1021              		.loc 1 196 9 is_stmt 1 view .LVU232
+ 1049              		.loc 1 196 9 is_stmt 1 view .LVU236
  196:UserAPP/Source/ADCAPP.c ****             QueueSendfmt(xSendDataQueue, 0, "构建电压数据包失败，错误码=%u\r\n", build
- 1022              		.loc 1 196 28 is_stmt 0 view .LVU233
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s 			page 29
-
-
- 1023 0068 0F4A     		ldr	r2, .L89+16
- 1024 006a 1068     		ldr	r0, [r2]
- 1025              	.LVL95:
+ 1050              		.loc 1 196 28 is_stmt 0 view .LVU237
+ 1051 0068 144A     		ldr	r2, .L91+16
+ 1052 006a 1068     		ldr	r0, [r2]
+ 1053              	.LVL96:
  196:UserAPP/Source/ADCAPP.c ****             QueueSendfmt(xSendDataQueue, 0, "构建电压数据包失败，错误码=%u\r\n", build
- 1026              		.loc 1 196 12 view .LVU234
- 1027 006c 18B1     		cbz	r0, .L81
+ 1054              		.loc 1 196 12 view .LVU238
+ 1055 006c 18B1     		cbz	r0, .L82
  197:UserAPP/Source/ADCAPP.c ****         }
- 1028              		.loc 1 197 13 is_stmt 1 view .LVU235
- 1029 006e 0F4A     		ldr	r2, .L89+20
- 1030 0070 0021     		movs	r1, #0
- 1031 0072 FFF7FEFF 		bl	QueueSendfmt
- 1032              	.LVL96:
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s 			page 30
+
+
+ 1056              		.loc 1 197 13 is_stmt 1 view .LVU239
+ 1057 006e 144A     		ldr	r2, .L91+20
+ 1058 0070 0021     		movs	r1, #0
+ 1059 0072 FFF7FEFF 		bl	QueueSendfmt
+ 1060              	.LVL97:
  199:UserAPP/Source/ADCAPP.c ****     }
- 1033              		.loc 1 199 9 view .LVU236
- 1034              	.L81:
+ 1061              		.loc 1 199 9 view .LVU240
+ 1062              	.L82:
  216:UserAPP/Source/ADCAPP.c **** 
- 1035              		.loc 1 216 1 is_stmt 0 view .LVU237
- 1036 0076 1FB0     		add	sp, sp, #124
- 1037              	.LCFI15:
- 1038              		.cfi_remember_state
- 1039              		.cfi_def_cfa_offset 12
- 1040              		@ sp needed
- 1041 0078 30BD     		pop	{r4, r5, pc}
- 1042              	.LVL97:
- 1043              	.L84:
- 1044              	.LCFI16:
- 1045              		.cfi_restore_state
+ 1063              		.loc 1 216 1 is_stmt 0 view .LVU241
+ 1064 0076 1FB0     		add	sp, sp, #124
+ 1065              	.LCFI15:
+ 1066              		.cfi_remember_state
+ 1067              		.cfi_def_cfa_offset 12
+ 1068              		@ sp needed
+ 1069 0078 30BD     		pop	{r4, r5, pc}
+ 1070              	.LVL98:
+ 1071              	.L85:
+ 1072              	.LCFI16:
+ 1073              		.cfi_restore_state
  203:UserAPP/Source/ADCAPP.c ****     {
- 1046              		.loc 1 203 5 is_stmt 1 view .LVU238
+ 1074              		.loc 1 203 5 is_stmt 1 view .LVU242
  203:UserAPP/Source/ADCAPP.c ****     {
- 1047              		.loc 1 203 9 is_stmt 0 view .LVU239
- 1048 007a C822     		movs	r2, #200
- 1049 007c BDF80A10 		ldrh	r1, [sp, #10]
- 1050 0080 03A8     		add	r0, sp, #12
- 1051              	.LVL98:
+ 1075              		.loc 1 203 9 is_stmt 0 view .LVU243
+ 1076 007a C822     		movs	r2, #200
+ 1077 007c BDF80A10 		ldrh	r1, [sp, #10]
+ 1078 0080 03A8     		add	r0, sp, #12
+ 1079              	.LVL99:
  203:UserAPP/Source/ADCAPP.c ****     {
- 1052              		.loc 1 203 9 view .LVU240
- 1053 0082 FFF7FEFF 		bl	SendBinaryToHost
- 1054              	.LVL99:
+ 1080              		.loc 1 203 9 view .LVU244
+ 1081 0082 FFF7FEFF 		bl	SendBinaryToHost
+ 1082              	.LVL100:
  203:UserAPP/Source/ADCAPP.c ****     {
- 1055              		.loc 1 203 8 discriminator 1 view .LVU241
- 1056 0086 0128     		cmp	r0, #1
- 1057 0088 F5D0     		beq	.L81
+ 1083              		.loc 1 203 8 discriminator 1 view .LVU245
+ 1084 0086 0128     		cmp	r0, #1
+ 1085 0088 0AD1     		bne	.L88
+ 206:UserAPP/Source/ADCAPP.c ****             QueueSendfmt(xSendDataQueue, 0, "电压数据包入队成功，长度=%u\r\n", outLen);
+ 1086              		.loc 1 206 9 is_stmt 1 view .LVU246
+ 206:UserAPP/Source/ADCAPP.c ****             QueueSendfmt(xSendDataQueue, 0, "电压数据包入队成功，长度=%u\r\n", outLen);
+ 1087              		.loc 1 206 28 is_stmt 0 view .LVU247
+ 1088 008a 0C4B     		ldr	r3, .L91+16
+ 1089 008c 1868     		ldr	r0, [r3]
+ 206:UserAPP/Source/ADCAPP.c ****             QueueSendfmt(xSendDataQueue, 0, "电压数据包入队成功，长度=%u\r\n", outLen);
+ 1090              		.loc 1 206 12 view .LVU248
+ 1091 008e 0028     		cmp	r0, #0
+ 1092 0090 F1D0     		beq	.L82
+ 207:UserAPP/Source/ADCAPP.c ****         }
+ 1093              		.loc 1 207 13 is_stmt 1 view .LVU249
+ 1094 0092 BDF80A30 		ldrh	r3, [sp, #10]
+ 1095 0096 0B4A     		ldr	r2, .L91+24
+ 1096 0098 0021     		movs	r1, #0
+ 1097 009a FFF7FEFF 		bl	QueueSendfmt
+ 1098              	.LVL101:
+ 1099 009e EAE7     		b	.L82
+ 1100              	.L88:
  214:UserAPP/Source/ADCAPP.c ****     }
- 1058              		.loc 1 214 9 is_stmt 1 view .LVU242
- 1059 008a BDF80A10 		ldrh	r1, [sp, #10]
- 1060 008e 03A8     		add	r0, sp, #12
- 1061 0090 FFF7FEFF 		bl	UART1_SendBlocking
- 1062              	.LVL100:
- 1063 0094 EFE7     		b	.L81
- 1064              	.L90:
- 1065 0096 00BF     		.align	2
- 1066              	.L89:
- 1067 0098 00000000 		.word	adcbuf
- 1068 009c 00000000 		.word	voltage_array
- 1069 00a0 00000000 		.word	channel_voltage_offset
- 1070 00a4 00000000 		.word	calibrated_voltage_array
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s 			page 30
+ 1101              		.loc 1 214 9 view .LVU250
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s 			page 31
 
 
- 1071 00a8 00000000 		.word	xSendDataQueue
- 1072 00ac 00000000 		.word	.LC4
- 1073              		.cfi_endproc
- 1074              	.LFE85:
- 1076              		.section	.text.vADCProcessTask,"ax",%progbits
- 1077              		.align	1
- 1078              		.global	vADCProcessTask
- 1079              		.syntax unified
- 1080              		.thumb
- 1081              		.thumb_func
- 1083              	vADCProcessTask:
- 1084              	.LFB80:
+ 1102 00a0 BDF80A10 		ldrh	r1, [sp, #10]
+ 1103 00a4 03A8     		add	r0, sp, #12
+ 1104 00a6 FFF7FEFF 		bl	UART1_SendBlocking
+ 1105              	.LVL102:
+ 1106 00aa E4E7     		b	.L82
+ 1107              	.L92:
+ 1108              		.align	2
+ 1109              	.L91:
+ 1110 00ac 00000000 		.word	adcbuf
+ 1111 00b0 00000000 		.word	voltage_array
+ 1112 00b4 00000000 		.word	channel_voltage_offset
+ 1113 00b8 00000000 		.word	calibrated_voltage_array
+ 1114 00bc 00000000 		.word	xSendDataQueue
+ 1115 00c0 00000000 		.word	.LC5
+ 1116 00c4 30000000 		.word	.LC6
+ 1117              		.cfi_endproc
+ 1118              	.LFE85:
+ 1120              		.section	.text.vADCProcessTask,"ax",%progbits
+ 1121              		.align	1
+ 1122              		.global	vADCProcessTask
+ 1123              		.syntax unified
+ 1124              		.thumb
+ 1125              		.thumb_func
+ 1127              	vADCProcessTask:
+ 1128              	.LFB80:
   65:UserAPP/Source/ADCAPP.c ****     /* 避免编译器警告未使用参数 */ // 每行注释
- 1085              		.loc 1 65 1 view -0
- 1086              		.cfi_startproc
- 1087              		@ Volatile: function does not return.
- 1088              		@ args = 0, pretend = 0, frame = 0
- 1089              		@ frame_needed = 0, uses_anonymous_args = 0
- 1090              	.LVL101:
+ 1129              		.loc 1 65 1 view -0
+ 1130              		.cfi_startproc
+ 1131              		@ Volatile: function does not return.
+ 1132              		@ args = 0, pretend = 0, frame = 0
+ 1133              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1134              	.LVL103:
   65:UserAPP/Source/ADCAPP.c ****     /* 避免编译器警告未使用参数 */ // 每行注释
- 1091              		.loc 1 65 1 is_stmt 0 view .LVU244
- 1092 0000 08B5     		push	{r3, lr}
- 1093              	.LCFI17:
- 1094              		.cfi_def_cfa_offset 8
- 1095              		.cfi_offset 3, -8
- 1096              		.cfi_offset 14, -4
- 1097              	.LVL102:
- 1098              	.L92:
+ 1135              		.loc 1 65 1 is_stmt 0 view .LVU252
+ 1136 0000 08B5     		push	{r3, lr}
+ 1137              	.LCFI17:
+ 1138              		.cfi_def_cfa_offset 8
+ 1139              		.cfi_offset 3, -8
+ 1140              		.cfi_offset 14, -4
+ 1141              	.LVL104:
+ 1142              	.L94:
   67:UserAPP/Source/ADCAPP.c **** 
- 1099              		.loc 1 67 5 is_stmt 1 view .LVU245
+ 1143              		.loc 1 67 5 is_stmt 1 view .LVU253
   69:UserAPP/Source/ADCAPP.c ****     {
- 1100              		.loc 1 69 5 view .LVU246
+ 1144              		.loc 1 69 5 view .LVU254
   71:UserAPP/Source/ADCAPP.c ****         SetESLVDDVoltage();        // PID单步调节VDD电压（利用刚采样的数据）
- 1101              		.loc 1 71 9 view .LVU247
- 1102 0002 FFF7FEFF 		bl	vADC_StartConversion
- 1103              	.LVL103:
+ 1145              		.loc 1 71 9 view .LVU255
+ 1146 0002 FFF7FEFF 		bl	vADC_StartConversion
+ 1147              	.LVL105:
   72:UserAPP/Source/ADCAPP.c ****         send_voltage_packet();     // 将电压数据打包发送给上位机
- 1104              		.loc 1 72 9 view .LVU248
- 1105 0006 FFF7FEFF 		bl	SetESLVDDVoltage
- 1106              	.LVL104:
+ 1148              		.loc 1 72 9 view .LVU256
+ 1149 0006 FFF7FEFF 		bl	SetESLVDDVoltage
+ 1150              	.LVL106:
   73:UserAPP/Source/ADCAPP.c ****         send_current_packet();     // 将电流数据打包发送给上位机
- 1107              		.loc 1 73 9 view .LVU249
- 1108 000a FFF7FEFF 		bl	send_voltage_packet
- 1109              	.LVL105:
+ 1151              		.loc 1 73 9 view .LVU257
+ 1152 000a FFF7FEFF 		bl	send_voltage_packet
+ 1153              	.LVL107:
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s 			page 32
+
+
   74:UserAPP/Source/ADCAPP.c **** 
- 1110              		.loc 1 74 9 view .LVU250
- 1111 000e FFF7FEFF 		bl	send_current_packet
- 1112              	.LVL106:
+ 1154              		.loc 1 74 9 view .LVU258
+ 1155 000e FFF7FEFF 		bl	send_current_packet
+ 1156              	.LVL108:
   76:UserAPP/Source/ADCAPP.c ****     }
- 1113              		.loc 1 76 9 discriminator 1 view .LVU251
- 1114 0012 6420     		movs	r0, #100
- 1115 0014 FFF7FEFF 		bl	vTaskDelay
- 1116              	.LVL107:
+ 1157              		.loc 1 76 9 discriminator 1 view .LVU259
+ 1158 0012 6420     		movs	r0, #100
+ 1159 0014 FFF7FEFF 		bl	vTaskDelay
+ 1160              	.LVL109:
   69:UserAPP/Source/ADCAPP.c ****     {
- 1117              		.loc 1 69 5 view .LVU252
- 1118 0018 F3E7     		b	.L92
- 1119              		.cfi_endproc
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s 			page 31
-
-
- 1120              	.LFE80:
- 1122              		.global	xADCProcessTaskHandle
- 1123              		.section	.bss.xADCProcessTaskHandle,"aw",%nobits
- 1124              		.align	2
- 1127              	xADCProcessTaskHandle:
- 1128 0000 00000000 		.space	4
- 1129              		.global	voltage_offset_ready
- 1130              		.section	.bss.voltage_offset_ready,"aw",%nobits
- 1133              	voltage_offset_ready:
- 1134 0000 00       		.space	1
- 1135              		.global	voltage_offset_count
- 1136              		.section	.bss.voltage_offset_count,"aw",%nobits
- 1139              	voltage_offset_count:
- 1140 0000 00       		.space	1
- 1141              		.global	voltage_offset_sum
- 1142              		.section	.bss.voltage_offset_sum,"aw",%nobits
- 1143              		.align	2
- 1146              	voltage_offset_sum:
- 1147 0000 00000000 		.space	44
- 1147      00000000 
- 1147      00000000 
- 1147      00000000 
- 1147      00000000 
- 1148              		.global	current_offset_ready
- 1149              		.section	.bss.current_offset_ready,"aw",%nobits
- 1152              	current_offset_ready:
- 1153 0000 00       		.space	1
- 1154              		.global	current_offset_count
- 1155              		.section	.bss.current_offset_count,"aw",%nobits
- 1158              	current_offset_count:
- 1159 0000 00       		.space	1
- 1160              		.global	current_offset_sum
- 1161              		.section	.bss.current_offset_sum,"aw",%nobits
- 1162              		.align	2
- 1165              	current_offset_sum:
- 1166 0000 00000000 		.space	44
- 1166      00000000 
- 1166      00000000 
- 1166      00000000 
- 1166      00000000 
- 1167              		.section	.bss.channel_current_offset,"aw",%nobits
+ 1161              		.loc 1 69 5 view .LVU260
+ 1162 0018 F3E7     		b	.L94
+ 1163              		.cfi_endproc
+ 1164              	.LFE80:
+ 1166              		.global	xADCProcessTaskHandle
+ 1167              		.section	.bss.xADCProcessTaskHandle,"aw",%nobits
  1168              		.align	2
- 1171              	channel_current_offset:
- 1172 0000 00000000 		.space	44
- 1172      00000000 
- 1172      00000000 
- 1172      00000000 
- 1172      00000000 
- 1173              		.global	calibrated_current_array
- 1174              		.section	.bss.calibrated_current_array,"aw",%nobits
- 1175              		.align	2
- 1178              	calibrated_current_array:
- 1179 0000 00000000 		.space	44
- 1179      00000000 
- 1179      00000000 
- 1179      00000000 
- 1179      00000000 
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s 			page 32
+ 1171              	xADCProcessTaskHandle:
+ 1172 0000 00000000 		.space	4
+ 1173              		.global	voltage_offset_ready
+ 1174              		.section	.bss.voltage_offset_ready,"aw",%nobits
+ 1177              	voltage_offset_ready:
+ 1178 0000 00       		.space	1
+ 1179              		.global	voltage_offset_count
+ 1180              		.section	.bss.voltage_offset_count,"aw",%nobits
+ 1183              	voltage_offset_count:
+ 1184 0000 00       		.space	1
+ 1185              		.global	voltage_offset_sum
+ 1186              		.section	.bss.voltage_offset_sum,"aw",%nobits
+ 1187              		.align	2
+ 1190              	voltage_offset_sum:
+ 1191 0000 00000000 		.space	44
+ 1191      00000000 
+ 1191      00000000 
+ 1191      00000000 
+ 1191      00000000 
+ 1192              		.global	current_offset_ready
+ 1193              		.section	.bss.current_offset_ready,"aw",%nobits
+ 1196              	current_offset_ready:
+ 1197 0000 00       		.space	1
+ 1198              		.global	current_offset_count
+ 1199              		.section	.bss.current_offset_count,"aw",%nobits
+ 1202              	current_offset_count:
+ 1203 0000 00       		.space	1
+ 1204              		.global	current_offset_sum
+ 1205              		.section	.bss.current_offset_sum,"aw",%nobits
+ 1206              		.align	2
+ 1209              	current_offset_sum:
+ 1210 0000 00000000 		.space	44
+ 1210      00000000 
+ 1210      00000000 
+ 1210      00000000 
+ 1210      00000000 
+ 1211              		.section	.bss.channel_current_offset,"aw",%nobits
+ 1212              		.align	2
+ 1215              	channel_current_offset:
+ 1216 0000 00000000 		.space	44
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s 			page 33
 
 
- 1180              		.section	.bss.channel_voltage_offset,"aw",%nobits
- 1181              		.align	2
- 1184              	channel_voltage_offset:
- 1185 0000 00000000 		.space	44
- 1185      00000000 
- 1185      00000000 
- 1185      00000000 
- 1185      00000000 
- 1186              		.global	calibrated_voltage_array
- 1187              		.section	.bss.calibrated_voltage_array,"aw",%nobits
- 1188              		.align	2
- 1191              	calibrated_voltage_array:
- 1192 0000 00000000 		.space	44
- 1192      00000000 
- 1192      00000000 
- 1192      00000000 
- 1192      00000000 
- 1193              		.global	current_array
- 1194              		.section	.bss.current_array,"aw",%nobits
- 1195              		.align	2
- 1198              	current_array:
- 1199 0000 00000000 		.space	44
- 1199      00000000 
- 1199      00000000 
- 1199      00000000 
- 1199      00000000 
- 1200              		.global	voltage_array
- 1201              		.section	.bss.voltage_array,"aw",%nobits
- 1202              		.align	2
- 1205              	voltage_array:
- 1206 0000 00000000 		.space	44
- 1206      00000000 
- 1206      00000000 
- 1206      00000000 
- 1206      00000000 
- 1207              		.global	adc_dma_complete
- 1208              		.section	.bss.adc_dma_complete,"aw",%nobits
- 1211              	adc_dma_complete:
- 1212 0000 00       		.space	1
- 1213              		.global	adcbuf
- 1214              		.section	.bss.adcbuf,"aw",%nobits
- 1215              		.align	2
- 1218              	adcbuf:
- 1219 0000 00000000 		.space	44
- 1219      00000000 
- 1219      00000000 
- 1219      00000000 
- 1219      00000000 
- 1220              		.text
- 1221              	.Letext0:
- 1222              		.file 2 "D:/gcc-arm/14.3 rel1/arm-none-eabi/include/machine/_default_types.h"
- 1223              		.file 3 "D:/gcc-arm/14.3 rel1/arm-none-eabi/include/sys/_stdint.h"
- 1224              		.file 4 "Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f103xg.h"
- 1225              		.file 5 "Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f1xx.h"
- 1226              		.file 6 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_def.h"
- 1227              		.file 7 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_gpio.h"
- 1228              		.file 8 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_dma.h"
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s 			page 33
+ 1216      00000000 
+ 1216      00000000 
+ 1216      00000000 
+ 1216      00000000 
+ 1217              		.global	calibrated_current_array
+ 1218              		.section	.bss.calibrated_current_array,"aw",%nobits
+ 1219              		.align	2
+ 1222              	calibrated_current_array:
+ 1223 0000 00000000 		.space	44
+ 1223      00000000 
+ 1223      00000000 
+ 1223      00000000 
+ 1223      00000000 
+ 1224              		.section	.bss.channel_voltage_offset,"aw",%nobits
+ 1225              		.align	2
+ 1228              	channel_voltage_offset:
+ 1229 0000 00000000 		.space	44
+ 1229      00000000 
+ 1229      00000000 
+ 1229      00000000 
+ 1229      00000000 
+ 1230              		.global	calibrated_voltage_array
+ 1231              		.section	.bss.calibrated_voltage_array,"aw",%nobits
+ 1232              		.align	2
+ 1235              	calibrated_voltage_array:
+ 1236 0000 00000000 		.space	44
+ 1236      00000000 
+ 1236      00000000 
+ 1236      00000000 
+ 1236      00000000 
+ 1237              		.global	current_array
+ 1238              		.section	.bss.current_array,"aw",%nobits
+ 1239              		.align	2
+ 1242              	current_array:
+ 1243 0000 00000000 		.space	44
+ 1243      00000000 
+ 1243      00000000 
+ 1243      00000000 
+ 1243      00000000 
+ 1244              		.global	voltage_array
+ 1245              		.section	.bss.voltage_array,"aw",%nobits
+ 1246              		.align	2
+ 1249              	voltage_array:
+ 1250 0000 00000000 		.space	44
+ 1250      00000000 
+ 1250      00000000 
+ 1250      00000000 
+ 1250      00000000 
+ 1251              		.global	adc_dma_complete
+ 1252              		.section	.bss.adc_dma_complete,"aw",%nobits
+ 1255              	adc_dma_complete:
+ 1256 0000 00       		.space	1
+ 1257              		.global	adcbuf
+ 1258              		.section	.bss.adcbuf,"aw",%nobits
+ 1259              		.align	2
+ 1262              	adcbuf:
+ 1263 0000 00000000 		.space	44
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s 			page 34
 
 
- 1229              		.file 9 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_adc.h"
- 1230              		.file 10 "Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h"
- 1231              		.file 11 "Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h"
- 1232              		.file 12 "Middlewares/Third_Party/FreeRTOS/Source/include/task.h"
- 1233              		.file 13 "Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h"
- 1234              		.file 14 "Middlewares/Third_Party/FreeRTOS/Source/include/queue.h"
- 1235              		.file 15 "UserAPP/Include/Tasklist.h"
- 1236              		.file 16 "Core/Inc/adc.h"
- 1237              		.file 17 "UserAPP/Include/SendDataProcess.h"
- 1238              		.file 18 "UserAPP/Include/ADCAPP.h"
- 1239              		.file 19 "UserDriver/Include/HWCIDri.h"
- 1240              		.file 20 "UserDriver/Include/uart1.h"
- 1241              		.file 21 "UserAPP/Include/DPPTM.h"
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s 			page 34
+ 1263      00000000 
+ 1263      00000000 
+ 1263      00000000 
+ 1263      00000000 
+ 1264              		.text
+ 1265              	.Letext0:
+ 1266              		.file 2 "D:/gcc-arm/14.3 rel1/arm-none-eabi/include/machine/_default_types.h"
+ 1267              		.file 3 "D:/gcc-arm/14.3 rel1/arm-none-eabi/include/sys/_stdint.h"
+ 1268              		.file 4 "Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f103xg.h"
+ 1269              		.file 5 "Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f1xx.h"
+ 1270              		.file 6 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_def.h"
+ 1271              		.file 7 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_gpio.h"
+ 1272              		.file 8 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_dma.h"
+ 1273              		.file 9 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_adc.h"
+ 1274              		.file 10 "Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h"
+ 1275              		.file 11 "Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h"
+ 1276              		.file 12 "Middlewares/Third_Party/FreeRTOS/Source/include/task.h"
+ 1277              		.file 13 "Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h"
+ 1278              		.file 14 "Middlewares/Third_Party/FreeRTOS/Source/include/queue.h"
+ 1279              		.file 15 "UserAPP/Include/Tasklist.h"
+ 1280              		.file 16 "Core/Inc/adc.h"
+ 1281              		.file 17 "UserAPP/Include/SendDataProcess.h"
+ 1282              		.file 18 "UserAPP/Include/ADCAPP.h"
+ 1283              		.file 19 "UserDriver/Include/HWCIDri.h"
+ 1284              		.file 20 "UserDriver/Include/uart1.h"
+ 1285              		.file 21 "UserAPP/Include/DPPTM.h"
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s 			page 35
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 ADCAPP.c
-C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s:19     .text.channel_voltage_to_current_diff:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s:24     .text.channel_voltage_to_current_diff:00000000 channel_voltage_to_current_diff
-C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s:70     .text.channel_voltage_to_current_diff:00000020 $d
-C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s:76     .rodata.vCreateADCTask.str1.4:00000000 $d
-C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s:80     .text.vCreateADCTask:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s:86     .text.vCreateADCTask:00000000 vCreateADCTask
-C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s:118    .text.vCreateADCTask:00000020 $d
-C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s:1127   .bss.xADCProcessTaskHandle:00000000 xADCProcessTaskHandle
-C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s:1083   .text.vADCProcessTask:00000000 vADCProcessTask
-C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s:125    .text.HAL_ADC_ConvCpltCallback:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s:131    .text.HAL_ADC_ConvCpltCallback:00000000 HAL_ADC_ConvCpltCallback
-C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s:160    .text.HAL_ADC_ConvCpltCallback:00000014 $d
-C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s:1211   .bss.adc_dma_complete:00000000 adc_dma_complete
-C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s:166    .rodata.vADC_StartConversion.str1.4:00000000 $d
-C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s:173    .text.vADC_StartConversion:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s:179    .text.vADC_StartConversion:00000000 vADC_StartConversion
-C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s:281    .text.vADC_StartConversion:0000005c $d
-C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s:1218   .bss.adcbuf:00000000 adcbuf
-C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s:291    .text.adc_to_voltage:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s:297    .text.adc_to_voltage:00000000 adc_to_voltage
-C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s:342    .text.adc_to_voltage:00000028 $d
-C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s:349    .text.adc_voltage_to_current:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s:355    .text.adc_voltage_to_current:00000000 adc_voltage_to_current
-C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s:388    .text.adc_voltage_to_current:00000018 $d
-C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s:394    .text.calibrate_channel_current:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s:400    .text.calibrate_channel_current:00000000 calibrate_channel_current
-C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s:575    .text.calibrate_channel_current:000000a0 $d
-C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s:1133   .bss.voltage_offset_ready:00000000 voltage_offset_ready
-C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s:1152   .bss.current_offset_ready:00000000 current_offset_ready
-C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s:1165   .bss.current_offset_sum:00000000 current_offset_sum
-C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s:1184   .bss.channel_voltage_offset:00000000 channel_voltage_offset
-C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s:1171   .bss.channel_current_offset:00000000 channel_current_offset
-C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s:587    .rodata.send_current_packet.str1.4:00000000 $d
-C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s:594    .text.send_current_packet:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s:600    .text.send_current_packet:00000000 send_current_packet
-C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s:758    .text.send_current_packet:000000a8 $d
-C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s:1178   .bss.calibrated_current_array:00000000 calibrated_current_array
-C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s:1191   .bss.calibrated_voltage_array:00000000 calibrated_voltage_array
-C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s:1198   .bss.current_array:00000000 current_array
-C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s:769    .text.calibrate_channel_voltage:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s:775    .text.calibrate_channel_voltage:00000000 calibrate_channel_voltage
-C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s:907    .text.calibrate_channel_voltage:00000074 $d
-C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s:916    .rodata.send_voltage_packet.str1.4:00000000 $d
-C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s:923    .text.send_voltage_packet:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s:929    .text.send_voltage_packet:00000000 send_voltage_packet
-C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s:1067   .text.send_voltage_packet:00000098 $d
-C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s:1205   .bss.voltage_array:00000000 voltage_array
-C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s:1077   .text.vADCProcessTask:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s:1124   .bss.xADCProcessTaskHandle:00000000 $d
-C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s:1134   .bss.voltage_offset_ready:00000000 $d
-C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s:1139   .bss.voltage_offset_count:00000000 voltage_offset_count
-C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s:1140   .bss.voltage_offset_count:00000000 $d
-C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s:1146   .bss.voltage_offset_sum:00000000 voltage_offset_sum
-C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s:1143   .bss.voltage_offset_sum:00000000 $d
-C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s:1153   .bss.current_offset_ready:00000000 $d
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s 			page 35
+C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s:19     .text.channel_voltage_to_current_diff:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s:24     .text.channel_voltage_to_current_diff:00000000 channel_voltage_to_current_diff
+C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s:70     .text.channel_voltage_to_current_diff:00000020 $d
+C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s:76     .rodata.vCreateADCTask.str1.4:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s:80     .text.vCreateADCTask:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s:86     .text.vCreateADCTask:00000000 vCreateADCTask
+C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s:118    .text.vCreateADCTask:00000020 $d
+C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s:1171   .bss.xADCProcessTaskHandle:00000000 xADCProcessTaskHandle
+C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s:1127   .text.vADCProcessTask:00000000 vADCProcessTask
+C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s:125    .text.HAL_ADC_ConvCpltCallback:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s:131    .text.HAL_ADC_ConvCpltCallback:00000000 HAL_ADC_ConvCpltCallback
+C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s:160    .text.HAL_ADC_ConvCpltCallback:00000014 $d
+C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s:1255   .bss.adc_dma_complete:00000000 adc_dma_complete
+C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s:166    .rodata.vADC_StartConversion.str1.4:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s:173    .text.vADC_StartConversion:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s:179    .text.vADC_StartConversion:00000000 vADC_StartConversion
+C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s:281    .text.vADC_StartConversion:0000005c $d
+C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s:1262   .bss.adcbuf:00000000 adcbuf
+C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s:291    .text.adc_to_voltage:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s:297    .text.adc_to_voltage:00000000 adc_to_voltage
+C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s:342    .text.adc_to_voltage:00000028 $d
+C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s:349    .text.adc_voltage_to_current:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s:355    .text.adc_voltage_to_current:00000000 adc_voltage_to_current
+C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s:388    .text.adc_voltage_to_current:00000018 $d
+C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s:394    .text.calibrate_channel_current:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s:400    .text.calibrate_channel_current:00000000 calibrate_channel_current
+C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s:575    .text.calibrate_channel_current:000000a0 $d
+C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s:1177   .bss.voltage_offset_ready:00000000 voltage_offset_ready
+C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s:1196   .bss.current_offset_ready:00000000 current_offset_ready
+C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s:1209   .bss.current_offset_sum:00000000 current_offset_sum
+C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s:1228   .bss.channel_voltage_offset:00000000 channel_voltage_offset
+C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s:1215   .bss.channel_current_offset:00000000 channel_current_offset
+C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s:587    .rodata.send_current_packet.str1.4:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s:600    .text.send_current_packet:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s:606    .text.send_current_packet:00000000 send_current_packet
+C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s:779    .text.send_current_packet:000000bc $d
+C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s:1222   .bss.calibrated_current_array:00000000 calibrated_current_array
+C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s:1235   .bss.calibrated_voltage_array:00000000 calibrated_voltage_array
+C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s:1242   .bss.current_array:00000000 current_array
+C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s:791    .text.calibrate_channel_voltage:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s:797    .text.calibrate_channel_voltage:00000000 calibrate_channel_voltage
+C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s:929    .text.calibrate_channel_voltage:00000074 $d
+C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s:938    .rodata.send_voltage_packet.str1.4:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s:951    .text.send_voltage_packet:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s:957    .text.send_voltage_packet:00000000 send_voltage_packet
+C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s:1110   .text.send_voltage_packet:000000ac $d
+C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s:1249   .bss.voltage_array:00000000 voltage_array
+C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s:1121   .text.vADCProcessTask:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s:1168   .bss.xADCProcessTaskHandle:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s:1178   .bss.voltage_offset_ready:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s:1183   .bss.voltage_offset_count:00000000 voltage_offset_count
+C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s:1184   .bss.voltage_offset_count:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s:1190   .bss.voltage_offset_sum:00000000 voltage_offset_sum
+C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s:1187   .bss.voltage_offset_sum:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s:1197   .bss.current_offset_ready:00000000 $d
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s 			page 36
 
 
-C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s:1158   .bss.current_offset_count:00000000 current_offset_count
-C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s:1159   .bss.current_offset_count:00000000 $d
-C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s:1162   .bss.current_offset_sum:00000000 $d
-C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s:1168   .bss.channel_current_offset:00000000 $d
-C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s:1175   .bss.calibrated_current_array:00000000 $d
-C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s:1181   .bss.channel_voltage_offset:00000000 $d
-C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s:1188   .bss.calibrated_voltage_array:00000000 $d
-C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s:1195   .bss.current_array:00000000 $d
-C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s:1202   .bss.voltage_array:00000000 $d
-C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s:1212   .bss.adc_dma_complete:00000000 $d
-C:\Users\Administrator\AppData\Local\Temp\cckLWe5I.s:1215   .bss.adcbuf:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s:1202   .bss.current_offset_count:00000000 current_offset_count
+C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s:1203   .bss.current_offset_count:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s:1206   .bss.current_offset_sum:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s:1212   .bss.channel_current_offset:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s:1219   .bss.calibrated_current_array:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s:1225   .bss.channel_voltage_offset:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s:1232   .bss.calibrated_voltage_array:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s:1239   .bss.current_array:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s:1246   .bss.voltage_array:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s:1256   .bss.adc_dma_complete:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\cc7zmRna.s:1259   .bss.adcbuf:00000000 $d
 
 UNDEFINED SYMBOLS
 __aeabi_fdiv

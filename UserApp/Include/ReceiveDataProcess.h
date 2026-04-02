@@ -28,10 +28,19 @@ typedef struct { // 解析后的数据包结构体定义，包含协议字段
     uint8_t CRC8;          /* 校验码CRC8，位于数据包最后一位 */ // 每行添加注释
 } ParsedDataPacket_t; // 解析后的数据包类型定义
 
+typedef struct {
+    uint8_t active;
+    uint16_t execIndex;
+    uint8_t address;
+    uint8_t rw;
+    uint8_t number;
+} PendingRevContext_t;
+
 /* 队列句柄，用于接收数据的存储和传递。 */
 extern QueueHandle_t xReceiveDataQueue;
 // 拆开接收到的数据包
 extern ParsedDataPacket_t parsedDataPacket;
+extern PendingRevContext_t gPendingRevContext;
 
 /* 解析后数据包的队列句柄，供 HWCI 任务从中接收解析后的数据包 */ // 每行注释
 extern QueueHandle_t xParsedDataQueue; /* extern 声明：解析后数据队列 */ // 每行注释

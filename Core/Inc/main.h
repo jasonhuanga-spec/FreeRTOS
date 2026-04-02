@@ -61,7 +61,7 @@ void Error_Handler(void);
 /* USER CODE BEGIN Private defines */
 
 // 定义宏：1=启用调试，0=关闭调试
-#define TEST_MODE 0
+#define TEST_MODE 1
 
 /* USER CODE END Private defines */
 

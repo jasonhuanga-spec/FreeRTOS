@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc9wC9Tm.s 			page 1
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccxwYquP.s 			page 1
 
 
    1              		.cpu cortex-m3
@@ -18,148 +18,330 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc9wC9Tm.s 			page 1
   15              	.Ltext0:
   16              		.cfi_sections	.debug_frame
   17              		.file 1 "UserDriver/Source/ESLComDri.c"
-  18              		.section	.text.ESL_RESET,"ax",%progbits
+  18              		.section	.text.ESL_DelayMs,"ax",%progbits
   19              		.align	1
-  20              		.global	ESL_RESET
-  21              		.syntax unified
-  22              		.thumb
-  23              		.thumb_func
-  25              	ESL_RESET:
-  26              	.LFB75:
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  24              	ESL_DelayMs:
+  25              	.LVL0:
+  26              	.LFB79:
    1:UserDriver/Source/ESLComDri.c **** #include "ESLComDri.h"
    2:UserDriver/Source/ESLComDri.c **** 
-   3:UserDriver/Source/ESLComDri.c **** /**
-   4:UserDriver/Source/ESLComDri.c ****  * @函数名称       复位
-   5:UserDriver/Source/ESLComDri.c ****  * @说明           全局复位引脚。低电平复位。（正常情况下拉高）
-   6:UserDriver/Source/ESLComDri.c ****  */
-   7:UserDriver/Source/ESLComDri.c **** void ESL_RESET(void)
-   8:UserDriver/Source/ESLComDri.c **** {
-  27              		.loc 1 8 1 view -0
+   3:UserDriver/Source/ESLComDri.c **** static void ESL_DelayMs(uint32_t ms)
+   4:UserDriver/Source/ESLComDri.c **** {
+  27              		.loc 1 4 1 view -0
   28              		.cfi_startproc
   29              		@ args = 0, pretend = 0, frame = 0
   30              		@ frame_needed = 0, uses_anonymous_args = 0
-  31 0000 10B5     		push	{r4, lr}
-  32              	.LCFI0:
-  33              		.cfi_def_cfa_offset 8
-  34              		.cfi_offset 4, -8
-  35              		.cfi_offset 14, -4
-   9:UserDriver/Source/ESLComDri.c ****     HAL_GPIO_WritePin(RESET_GPIOX, RESET_GPIO_Pin_X, GPIO_PIN_SET);			
-  36              		.loc 1 9 5 view .LVU1
-  37 0002 0D4C     		ldr	r4, .L3
-  38 0004 0122     		movs	r2, #1
-  39 0006 0821     		movs	r1, #8
-  40 0008 2046     		mov	r0, r4
-  41 000a FFF7FEFF 		bl	HAL_GPIO_WritePin
-  42              	.LVL0:
-  10:UserDriver/Source/ESLComDri.c **** 	HAL_Delay(100);//100mss
-  43              		.loc 1 10 2 view .LVU2
-  44 000e 6420     		movs	r0, #100
-  45 0010 FFF7FEFF 		bl	HAL_Delay
-  46              	.LVL1:
-  11:UserDriver/Source/ESLComDri.c ****     HAL_GPIO_WritePin(RESET_GPIOX, RESET_GPIO_Pin_X, GPIO_PIN_RESET);   	
-  47              		.loc 1 11 5 view .LVU3
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc9wC9Tm.s 			page 2
+  31              		.loc 1 4 1 is_stmt 0 view .LVU1
+  32 0000 10B5     		push	{r4, lr}
+  33              	.LCFI0:
+  34              		.cfi_def_cfa_offset 8
+  35              		.cfi_offset 4, -8
+  36              		.cfi_offset 14, -4
+  37 0002 0446     		mov	r4, r0
+   5:UserDriver/Source/ESLComDri.c ****     if (xTaskGetSchedulerState() == taskSCHEDULER_RUNNING)
+  38              		.loc 1 5 5 is_stmt 1 view .LVU2
+  39              		.loc 1 5 9 is_stmt 0 view .LVU3
+  40 0004 FFF7FEFF 		bl	xTaskGetSchedulerState
+  41              	.LVL1:
+  42              		.loc 1 5 8 discriminator 1 view .LVU4
+  43 0008 0228     		cmp	r0, #2
+  44 000a 03D0     		beq	.L5
+   6:UserDriver/Source/ESLComDri.c ****     {
+   7:UserDriver/Source/ESLComDri.c ****         vTaskDelay(pdMS_TO_TICKS(ms));
+   8:UserDriver/Source/ESLComDri.c ****     }
+   9:UserDriver/Source/ESLComDri.c ****     else
+  10:UserDriver/Source/ESLComDri.c ****     {
+  11:UserDriver/Source/ESLComDri.c ****         HAL_Delay(ms);
+  45              		.loc 1 11 9 is_stmt 1 view .LVU5
+  46 000c 2046     		mov	r0, r4
+  47 000e FFF7FEFF 		bl	HAL_Delay
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccxwYquP.s 			page 2
 
 
-  48 0014 0022     		movs	r2, #0
-  49 0016 0821     		movs	r1, #8
-  50 0018 2046     		mov	r0, r4
-  51 001a FFF7FEFF 		bl	HAL_GPIO_WritePin
-  52              	.LVL2:
-  12:UserDriver/Source/ESLComDri.c **** 	HAL_Delay(100);								
-  53              		.loc 1 12 2 view .LVU4
-  54 001e 6420     		movs	r0, #100
-  55 0020 FFF7FEFF 		bl	HAL_Delay
-  56              	.LVL3:
-  13:UserDriver/Source/ESLComDri.c ****     HAL_GPIO_WritePin(RESET_GPIOX, RESET_GPIO_Pin_X, GPIO_PIN_SET);			
-  57              		.loc 1 13 5 view .LVU5
-  58 0024 0122     		movs	r2, #1
-  59 0026 0821     		movs	r1, #8
-  60 0028 2046     		mov	r0, r4
-  61 002a FFF7FEFF 		bl	HAL_GPIO_WritePin
-  62              	.LVL4:
-  14:UserDriver/Source/ESLComDri.c ****     HAL_Delay(100);
-  63              		.loc 1 14 5 view .LVU6
-  64 002e 6420     		movs	r0, #100
-  65 0030 FFF7FEFF 		bl	HAL_Delay
-  66              	.LVL5:
-  15:UserDriver/Source/ESLComDri.c **** }
-  67              		.loc 1 15 1 is_stmt 0 view .LVU7
-  68 0034 10BD     		pop	{r4, pc}
-  69              	.L4:
-  70 0036 00BF     		.align	2
-  71              	.L3:
-  72 0038 000C0140 		.word	1073810432
-  73              		.cfi_endproc
-  74              	.LFE75:
-  76              		.section	.text.Check_Busy,"ax",%progbits
-  77              		.align	1
-  78              		.global	Check_Busy
-  79              		.syntax unified
-  80              		.thumb
-  81              		.thumb_func
-  83              	Check_Busy:
-  84              	.LFB76:
-  16:UserDriver/Source/ESLComDri.c **** 
-  17:UserDriver/Source/ESLComDri.c **** 
-  18:UserDriver/Source/ESLComDri.c **** /**
-  19:UserDriver/Source/ESLComDri.c ****  * @函数名称       检查BUSY引脚
-  20:UserDriver/Source/ESLComDri.c ****  * @说明           0忙，数据/命令正在转换；1：不忙，主机可以发送命令/数�
-  21:UserDriver/Source/ESLComDri.c ****  */
-  22:UserDriver/Source/ESLComDri.c **** void Check_Busy(void)
-  23:UserDriver/Source/ESLComDri.c **** { 
-  85              		.loc 1 23 1 is_stmt 1 view -0
-  86              		.cfi_startproc
-  87              		@ args = 0, pretend = 0, frame = 0
-  88              		@ frame_needed = 0, uses_anonymous_args = 0
-  89 0000 08B5     		push	{r3, lr}
-  90              	.LCFI1:
-  91              		.cfi_def_cfa_offset 8
-  92              		.cfi_offset 3, -8
-  93              		.cfi_offset 14, -4
-  94              	.L6:
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc9wC9Tm.s 			page 3
+  48              	.LVL2:
+  49              	.L1:
+  12:UserDriver/Source/ESLComDri.c ****     }
+  13:UserDriver/Source/ESLComDri.c **** }
+  50              		.loc 1 13 1 is_stmt 0 view .LVU6
+  51 0012 10BD     		pop	{r4, pc}
+  52              	.LVL3:
+  53              	.L5:
+   7:UserDriver/Source/ESLComDri.c ****     }
+  54              		.loc 1 7 9 is_stmt 1 view .LVU7
+   7:UserDriver/Source/ESLComDri.c ****     }
+  55              		.loc 1 7 20 is_stmt 0 view .LVU8
+  56 0014 42F21073 		movw	r3, #10000
+  57 0018 03FB04F0 		mul	r0, r3, r4
+   7:UserDriver/Source/ESLComDri.c ****     }
+  58              		.loc 1 7 9 view .LVU9
+  59 001c 034B     		ldr	r3, .L6
+  60 001e A3FB0030 		umull	r3, r0, r3, r0
+  61 0022 8009     		lsrs	r0, r0, #6
+  62 0024 FFF7FEFF 		bl	vTaskDelay
+  63              	.LVL4:
+  64 0028 F3E7     		b	.L1
+  65              	.L7:
+  66 002a 00BF     		.align	2
+  67              	.L6:
+  68 002c D34D6210 		.word	274877907
+  69              		.cfi_endproc
+  70              	.LFE79:
+  72              		.section	.text.ESL_RESET,"ax",%progbits
+  73              		.align	1
+  74              		.global	ESL_RESET
+  75              		.syntax unified
+  76              		.thumb
+  77              		.thumb_func
+  79              	ESL_RESET:
+  80              	.LFB80:
+  14:UserDriver/Source/ESLComDri.c **** 
+  15:UserDriver/Source/ESLComDri.c **** /**
+  16:UserDriver/Source/ESLComDri.c ****  * @函数名称       复位
+  17:UserDriver/Source/ESLComDri.c ****  * @说明           全局复位引脚。低电平复位。（正常情况下拉高）
+  18:UserDriver/Source/ESLComDri.c ****  */
+  19:UserDriver/Source/ESLComDri.c **** void ESL_RESET(void)
+  20:UserDriver/Source/ESLComDri.c **** {
+  81              		.loc 1 20 1 is_stmt 1 view -0
+  82              		.cfi_startproc
+  83              		@ args = 0, pretend = 0, frame = 0
+  84              		@ frame_needed = 0, uses_anonymous_args = 0
+  85 0000 10B5     		push	{r4, lr}
+  86              	.LCFI1:
+  87              		.cfi_def_cfa_offset 8
+  88              		.cfi_offset 4, -8
+  89              		.cfi_offset 14, -4
+  21:UserDriver/Source/ESLComDri.c ****     HAL_GPIO_WritePin(RESET_GPIOX, RESET_GPIO_Pin_X, GPIO_PIN_SET);			
+  90              		.loc 1 21 5 view .LVU11
+  91 0002 0D4C     		ldr	r4, .L10
+  92 0004 0122     		movs	r2, #1
+  93 0006 0821     		movs	r1, #8
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccxwYquP.s 			page 3
 
 
-  24:UserDriver/Source/ESLComDri.c ****     while((HAL_GPIO_ReadPin(BUSY_GPIOX, BUSY_GPIO_Pin_X)) == 0);                   
-  95              		.loc 1 24 59 discriminator 1 view .LVU9
-  96              		.loc 1 24 12 is_stmt 0 discriminator 1 view .LVU10
-  97 0002 1021     		movs	r1, #16
-  98 0004 0248     		ldr	r0, .L8
-  99 0006 FFF7FEFF 		bl	HAL_GPIO_ReadPin
+  94 0008 2046     		mov	r0, r4
+  95 000a FFF7FEFF 		bl	HAL_GPIO_WritePin
+  96              	.LVL5:
+  22:UserDriver/Source/ESLComDri.c **** 	ESL_DelayMs(100);//100mss
+  97              		.loc 1 22 2 view .LVU12
+  98 000e 6420     		movs	r0, #100
+  99 0010 FFF7FEFF 		bl	ESL_DelayMs
  100              	.LVL6:
- 101              		.loc 1 24 59 discriminator 1 view .LVU11
- 102 000a 0028     		cmp	r0, #0
- 103 000c F9D0     		beq	.L6
-  25:UserDriver/Source/ESLComDri.c **** }...
- 104              		.loc 1 25 1 view .LVU12
- 105 000e 08BD     		pop	{r3, pc}
- 106              	.L9:
- 107              		.align	2
- 108              	.L8:
- 109 0010 000C0140 		.word	1073810432
- 110              		.cfi_endproc
- 111              	.LFE76:
- 113              		.text
- 114              	.Letext0:
- 115              		.file 2 "D:/gcc-arm/14.3 rel1/arm-none-eabi/include/machine/_default_types.h"
- 116              		.file 3 "D:/gcc-arm/14.3 rel1/arm-none-eabi/include/sys/_stdint.h"
- 117              		.file 4 "Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f103xg.h"
- 118              		.file 5 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_gpio.h"
- 119              		.file 6 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h"
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc9wC9Tm.s 			page 4
+  23:UserDriver/Source/ESLComDri.c ****     HAL_GPIO_WritePin(RESET_GPIOX, RESET_GPIO_Pin_X, GPIO_PIN_RESET);   	
+ 101              		.loc 1 23 5 view .LVU13
+ 102 0014 0022     		movs	r2, #0
+ 103 0016 0821     		movs	r1, #8
+ 104 0018 2046     		mov	r0, r4
+ 105 001a FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 106              	.LVL7:
+  24:UserDriver/Source/ESLComDri.c **** 	ESL_DelayMs(100);								
+ 107              		.loc 1 24 2 view .LVU14
+ 108 001e 6420     		movs	r0, #100
+ 109 0020 FFF7FEFF 		bl	ESL_DelayMs
+ 110              	.LVL8:
+  25:UserDriver/Source/ESLComDri.c ****     HAL_GPIO_WritePin(RESET_GPIOX, RESET_GPIO_Pin_X, GPIO_PIN_SET);			
+ 111              		.loc 1 25 5 view .LVU15
+ 112 0024 0122     		movs	r2, #1
+ 113 0026 0821     		movs	r1, #8
+ 114 0028 2046     		mov	r0, r4
+ 115 002a FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 116              	.LVL9:
+  26:UserDriver/Source/ESLComDri.c ****     ESL_DelayMs(100);
+ 117              		.loc 1 26 5 view .LVU16
+ 118 002e 6420     		movs	r0, #100
+ 119 0030 FFF7FEFF 		bl	ESL_DelayMs
+ 120              	.LVL10:
+  27:UserDriver/Source/ESLComDri.c **** }
+ 121              		.loc 1 27 1 is_stmt 0 view .LVU17
+ 122 0034 10BD     		pop	{r4, pc}
+ 123              	.L11:
+ 124 0036 00BF     		.align	2
+ 125              	.L10:
+ 126 0038 000C0140 		.word	1073810432
+ 127              		.cfi_endproc
+ 128              	.LFE80:
+ 130              		.section	.text.Check_Busy,"ax",%progbits
+ 131              		.align	1
+ 132              		.global	Check_Busy
+ 133              		.syntax unified
+ 134              		.thumb
+ 135              		.thumb_func
+ 137              	Check_Busy:
+ 138              	.LFB81:
+  28:UserDriver/Source/ESLComDri.c **** 
+  29:UserDriver/Source/ESLComDri.c **** 
+  30:UserDriver/Source/ESLComDri.c **** /**
+  31:UserDriver/Source/ESLComDri.c ****  * @函数名称       检查BUSY引脚
+  32:UserDriver/Source/ESLComDri.c ****  * @说明           0忙，数据/命令正在转换；1：不忙，主机可以发送命令/数�
+  33:UserDriver/Source/ESLComDri.c ****  */
+  34:UserDriver/Source/ESLComDri.c **** void Check_Busy(void)
+  35:UserDriver/Source/ESLComDri.c **** { 
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccxwYquP.s 			page 4
+
+
+ 139              		.loc 1 35 1 is_stmt 1 view -0
+ 140              		.cfi_startproc
+ 141              		@ args = 0, pretend = 0, frame = 0
+ 142              		@ frame_needed = 0, uses_anonymous_args = 0
+ 143 0000 08B5     		push	{r3, lr}
+ 144              	.LCFI2:
+ 145              		.cfi_def_cfa_offset 8
+ 146              		.cfi_offset 3, -8
+ 147              		.cfi_offset 14, -4
+ 148              	.L13:
+  36:UserDriver/Source/ESLComDri.c ****     while((HAL_GPIO_ReadPin(BUSY_GPIOX, BUSY_GPIO_Pin_X)) == 0);                   
+ 149              		.loc 1 36 59 discriminator 1 view .LVU19
+ 150              		.loc 1 36 12 is_stmt 0 discriminator 1 view .LVU20
+ 151 0002 1021     		movs	r1, #16
+ 152 0004 0248     		ldr	r0, .L15
+ 153 0006 FFF7FEFF 		bl	HAL_GPIO_ReadPin
+ 154              	.LVL11:
+ 155              		.loc 1 36 59 discriminator 1 view .LVU21
+ 156 000a 0028     		cmp	r0, #0
+ 157 000c F9D0     		beq	.L13
+  37:UserDriver/Source/ESLComDri.c **** }
+ 158              		.loc 1 37 1 view .LVU22
+ 159 000e 08BD     		pop	{r3, pc}
+ 160              	.L16:
+ 161              		.align	2
+ 162              	.L15:
+ 163 0010 000C0140 		.word	1073810432
+ 164              		.cfi_endproc
+ 165              	.LFE81:
+ 167              		.section	.text.Check_BusyTimeout,"ax",%progbits
+ 168              		.align	1
+ 169              		.global	Check_BusyTimeout
+ 170              		.syntax unified
+ 171              		.thumb
+ 172              		.thumb_func
+ 174              	Check_BusyTimeout:
+ 175              	.LVL12:
+ 176              	.LFB82:
+  38:UserDriver/Source/ESLComDri.c **** 
+  39:UserDriver/Source/ESLComDri.c **** uint8_t Check_BusyTimeout(uint32_t timeoutMs)
+  40:UserDriver/Source/ESLComDri.c **** {
+ 177              		.loc 1 40 1 is_stmt 1 view -0
+ 178              		.cfi_startproc
+ 179              		@ args = 0, pretend = 0, frame = 0
+ 180              		@ frame_needed = 0, uses_anonymous_args = 0
+ 181              		.loc 1 40 1 is_stmt 0 view .LVU24
+ 182 0000 70B5     		push	{r4, r5, r6, lr}
+ 183              	.LCFI3:
+ 184              		.cfi_def_cfa_offset 16
+ 185              		.cfi_offset 4, -16
+ 186              		.cfi_offset 5, -12
+ 187              		.cfi_offset 6, -8
+ 188              		.cfi_offset 14, -4
+ 189 0002 0546     		mov	r5, r0
+  41:UserDriver/Source/ESLComDri.c ****     uint32_t start = HAL_GetTick();
+ 190              		.loc 1 41 5 is_stmt 1 view .LVU25
+ 191              		.loc 1 41 22 is_stmt 0 view .LVU26
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccxwYquP.s 			page 5
+
+
+ 192 0004 FFF7FEFF 		bl	HAL_GetTick
+ 193              	.LVL13:
+ 194              		.loc 1 41 22 view .LVU27
+ 195 0008 0446     		mov	r4, r0
+ 196              	.LVL14:
+  42:UserDriver/Source/ESLComDri.c ****     while (HAL_GPIO_ReadPin(BUSY_GPIOX, BUSY_GPIO_Pin_X) == GPIO_PIN_RESET)
+ 197              		.loc 1 42 5 is_stmt 1 view .LVU28
+ 198              	.L20:
+ 199              		.loc 1 42 58 view .LVU29
+ 200              		.loc 1 42 12 is_stmt 0 view .LVU30
+ 201 000a 1021     		movs	r1, #16
+ 202 000c 0A48     		ldr	r0, .L24
+ 203 000e FFF7FEFF 		bl	HAL_GPIO_ReadPin
+ 204              	.LVL15:
+ 205              		.loc 1 42 58 discriminator 1 view .LVU31
+ 206 0012 0646     		mov	r6, r0
+ 207 0014 60B9     		cbnz	r0, .L23
+  43:UserDriver/Source/ESLComDri.c ****     {
+  44:UserDriver/Source/ESLComDri.c ****         if ((HAL_GetTick() - start) >= timeoutMs)
+ 208              		.loc 1 44 9 is_stmt 1 view .LVU32
+ 209              		.loc 1 44 14 is_stmt 0 view .LVU33
+ 210 0016 FFF7FEFF 		bl	HAL_GetTick
+ 211              	.LVL16:
+ 212              		.loc 1 44 28 discriminator 1 view .LVU34
+ 213 001a 001B     		subs	r0, r0, r4
+ 214              		.loc 1 44 12 discriminator 1 view .LVU35
+ 215 001c A842     		cmp	r0, r5
+ 216 001e 08D2     		bcs	.L19
+  45:UserDriver/Source/ESLComDri.c ****         {
+  46:UserDriver/Source/ESLComDri.c ****             return 0;
+  47:UserDriver/Source/ESLComDri.c ****         }
+  48:UserDriver/Source/ESLComDri.c **** 
+  49:UserDriver/Source/ESLComDri.c ****         if (xTaskGetSchedulerState() == taskSCHEDULER_RUNNING)
+ 217              		.loc 1 49 9 is_stmt 1 view .LVU36
+ 218              		.loc 1 49 13 is_stmt 0 view .LVU37
+ 219 0020 FFF7FEFF 		bl	xTaskGetSchedulerState
+ 220              	.LVL17:
+ 221              		.loc 1 49 12 discriminator 1 view .LVU38
+ 222 0024 0228     		cmp	r0, #2
+ 223 0026 F0D1     		bne	.L20
+  50:UserDriver/Source/ESLComDri.c ****         {
+  51:UserDriver/Source/ESLComDri.c ****             vTaskDelay(pdMS_TO_TICKS(1));
+ 224              		.loc 1 51 13 is_stmt 1 view .LVU39
+ 225 0028 0A20     		movs	r0, #10
+ 226 002a FFF7FEFF 		bl	vTaskDelay
+ 227              	.LVL18:
+ 228 002e ECE7     		b	.L20
+ 229              	.L23:
+  52:UserDriver/Source/ESLComDri.c ****         }
+  53:UserDriver/Source/ESLComDri.c ****     }
+  54:UserDriver/Source/ESLComDri.c **** 
+  55:UserDriver/Source/ESLComDri.c ****     return 1;
+ 230              		.loc 1 55 12 is_stmt 0 view .LVU40
+ 231 0030 0126     		movs	r6, #1
+ 232              	.L19:
+  56:UserDriver/Source/ESLComDri.c **** }
+ 233              		.loc 1 56 1 view .LVU41
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccxwYquP.s 			page 6
+
+
+ 234 0032 3046     		mov	r0, r6
+ 235 0034 70BD     		pop	{r4, r5, r6, pc}
+ 236              	.LVL19:
+ 237              	.L25:
+ 238              		.loc 1 56 1 view .LVU42
+ 239 0036 00BF     		.align	2
+ 240              	.L24:
+ 241 0038 000C0140 		.word	1073810432
+ 242              		.cfi_endproc
+ 243              	.LFE82:
+ 245              		.text
+ 246              	.Letext0:
+ 247              		.file 2 "D:/gcc-arm/14.3 rel1/arm-none-eabi/include/machine/_default_types.h"
+ 248              		.file 3 "D:/gcc-arm/14.3 rel1/arm-none-eabi/include/sys/_stdint.h"
+ 249              		.file 4 "Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f103xg.h"
+ 250              		.file 5 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_gpio.h"
+ 251              		.file 6 "Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h"
+ 252              		.file 7 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h"
+ 253              		.file 8 "Middlewares/Third_Party/FreeRTOS/Source/include/task.h"
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccxwYquP.s 			page 7
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 ESLComDri.c
-C:\Users\Administrator\AppData\Local\Temp\cc9wC9Tm.s:19     .text.ESL_RESET:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\cc9wC9Tm.s:25     .text.ESL_RESET:00000000 ESL_RESET
-C:\Users\Administrator\AppData\Local\Temp\cc9wC9Tm.s:72     .text.ESL_RESET:00000038 $d
-C:\Users\Administrator\AppData\Local\Temp\cc9wC9Tm.s:77     .text.Check_Busy:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\cc9wC9Tm.s:83     .text.Check_Busy:00000000 Check_Busy
-C:\Users\Administrator\AppData\Local\Temp\cc9wC9Tm.s:109    .text.Check_Busy:00000010 $d
+C:\Users\Administrator\AppData\Local\Temp\ccxwYquP.s:19     .text.ESL_DelayMs:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\ccxwYquP.s:24     .text.ESL_DelayMs:00000000 ESL_DelayMs
+C:\Users\Administrator\AppData\Local\Temp\ccxwYquP.s:68     .text.ESL_DelayMs:0000002c $d
+C:\Users\Administrator\AppData\Local\Temp\ccxwYquP.s:73     .text.ESL_RESET:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\ccxwYquP.s:79     .text.ESL_RESET:00000000 ESL_RESET
+C:\Users\Administrator\AppData\Local\Temp\ccxwYquP.s:126    .text.ESL_RESET:00000038 $d
+C:\Users\Administrator\AppData\Local\Temp\ccxwYquP.s:131    .text.Check_Busy:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\ccxwYquP.s:137    .text.Check_Busy:00000000 Check_Busy
+C:\Users\Administrator\AppData\Local\Temp\ccxwYquP.s:163    .text.Check_Busy:00000010 $d
+C:\Users\Administrator\AppData\Local\Temp\ccxwYquP.s:168    .text.Check_BusyTimeout:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\ccxwYquP.s:174    .text.Check_BusyTimeout:00000000 Check_BusyTimeout
+C:\Users\Administrator\AppData\Local\Temp\ccxwYquP.s:241    .text.Check_BusyTimeout:00000038 $d
 
 UNDEFINED SYMBOLS
-HAL_GPIO_WritePin
+xTaskGetSchedulerState
 HAL_Delay
+vTaskDelay
+HAL_GPIO_WritePin
 HAL_GPIO_ReadPin
+HAL_GetTick

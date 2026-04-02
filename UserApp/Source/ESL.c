@@ -10,6 +10,8 @@ uint8_t ESL_RESET_Flag = 1; // 设置复位标志，供其他模块检查
  */
 void ESLtest(void)
 {
+	ESL_RESET(); // 复位ESL模块
+
     ESL4SPI_WriteCMD(0x4D);
     ESL4SPI_WriteDATA(0x78);
 
@@ -79,11 +81,11 @@ void ESLtest(void)
 	// ESL4SPI_WriteDATA(0xA5);
 
 	ESL4SPI_WriteCMD(0x04); 
-	Check_Busy();
+	(void)Check_BusyTimeout(500);
 
 	ESL4SPI_WriteCMD(0x12); 
 	ESL4SPI_WriteDATA(0x00);
-	Check_Busy();
+	(void)Check_BusyTimeout(500);
 
     HAL_Delay(100);
 }
@@ -124,13 +126,14 @@ void E52bitRead(uint8_t Address, uint8_t Number)
  * @返回值         无
  * @备注           这里示例写入索引值，实际应用中应替换为需要写入的数据
  */
-void E52bitWrite(uint8_t Address, uint8_t Number)
+void E52bitWrite(uint8_t Address, uint8_t Number, const uint8_t *writeData, uint8_t writeLen)
 {
 	ESL4SPI_WriteCMD(Address);  // 发送写入命令地址
 
 	for (uint8_t i = 0; i < Number; i++)
 	{
-		ESL4SPI_WriteDATA(i);  // 示例写入数据（这里写入索引值，实际应用中应替换为需要写入的数据）
+		uint8_t value = (i < writeLen && writeData != NULL) ? writeData[i] : 0x00;
+		ESL4SPI_WriteDATA(value);
 	}
 }
 
@@ -144,8 +147,10 @@ void E52bitWrite(uint8_t Address, uint8_t Number)
  * @返回值         无
  * @备注           根据RW参数调用E52bitRead或E52bitWrite函数执行具体的读写操作
  */
-void ESLCommands(uint8_t Address, uint8_t RW, uint8_t Number)
+void ESLCommands(uint16_t execIndex, uint8_t Address, uint8_t RW, uint8_t Number)
 {
+    (void)execIndex;
+
 	switch(RW)
 	{
 		case 0:			//读
@@ -153,7 +158,7 @@ void ESLCommands(uint8_t Address, uint8_t RW, uint8_t Number)
 			break;
 		
 		case 1:			//写	
-			E52bitWrite(Address, Number);
+			/* 写入阶段由 DataPacket 触发，命令阶段只登记上下文并立即ACK */
 			break;
 	
 		default:

@@ -11,6 +11,7 @@ QueueHandle_t xReceiveDataQueue = NULL;
 BaseType_t xHigherPriorityTaskWoken = pdFALSE;
 // 拆开接收到的数据包
 ParsedDataPacket_t parsedDataPacket;
+PendingRevContext_t gPendingRevContext = {0};
 
 static uint8_t rxStreamBuf[MAX_RECEIVE_DATA_SIZE * 4];
 static uint16_t rxStreamLen = 0;
@@ -163,7 +164,8 @@ uint8_t vReceiveDataQueueSendISRTask(uint8_t* Buf, uint32_t *Len)
 
 static uint8_t IsHostRequestFunctionCode(uint8_t functionCode)
 {
-    return (functionCode == FUNCTION_CODE_DataPacket) || (functionCode == FUNCTION_CODE_CommandPacket);
+    return (functionCode == FUNCTION_CODE_DataPacket) ||
+           (functionCode == FUNCTION_CODE_CommandPacket);
 }
 
 static uint16_t FindValidFrameLength(const uint8_t *buf, uint16_t available)

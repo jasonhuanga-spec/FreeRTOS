@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s 			page 1
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccDKPpJJ.s 			page 1
 
 
    1              		.cpu cortex-m3
@@ -58,7 +58,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s 			page 1
   30:UserAPP/Source/DPPTM.c ****  */
   31:UserAPP/Source/DPPTM.c **** static uint8_t voltage_to_code(float targetV)
   32:UserAPP/Source/DPPTM.c **** {
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s 			page 2
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccDKPpJJ.s 			page 2
 
 
   27              		.loc 1 32 1 view -0
@@ -118,7 +118,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s 			page 1
   76              		.loc 1 36 5 is_stmt 1 view .LVU14
   77              		.loc 1 36 8 is_stmt 0 view .LVU15
   78 0030 0028     		cmp	r0, #0
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s 			page 3
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccDKPpJJ.s 			page 3
 
 
   79              		.loc 1 36 8 view .LVU16
@@ -178,7 +178,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s 			page 1
  122 0024 E58F91E9 		.ascii	"\345\217\221\351\200\201\346\225\260\345\255\227\347"
  122      8081E695 
  122      B0E5AD97 
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s 			page 4
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccDKPpJJ.s 			page 4
 
 
  122      E7
@@ -238,7 +238,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s 			page 1
   44:UserAPP/Source/DPPTM.c **** static uint8_t pid_dpptm      = 0x7F;                                          // 当前DPPTM码值
   45:UserAPP/Source/DPPTM.c **** static uint8_t pid_baseCode   = 0x40;                                          // 查表基准码�
   46:UserAPP/Source/DPPTM.c **** static float   pid_lastTarget = -1.0f;                                         // 上次目标值
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s 			page 5
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccDKPpJJ.s 			page 5
 
 
   47:UserAPP/Source/DPPTM.c **** static uint8_t pid_locked     = 0;                                             // 锁定标志
@@ -298,7 +298,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s 			page 1
   79:UserAPP/Source/DPPTM.c ****                 QueueSendfmt(xSendDataQueue, 0, "向数字电位器写入数据成功,数据 = 0x%0
   80:UserAPP/Source/DPPTM.c ****                 #endif
   81:UserAPP/Source/DPPTM.c ****             }
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s 			page 6
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccDKPpJJ.s 			page 6
 
 
   82:UserAPP/Source/DPPTM.c ****             else
@@ -358,7 +358,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s 			page 1
  204              		.loc 1 79 17 is_stmt 1 view .LVU42
  205 0040 2346     		mov	r3, r4
  206 0042 0A4A     		ldr	r2, .L16+12
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s 			page 7
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccDKPpJJ.s 			page 7
 
 
  207 0044 0021     		movs	r1, #0
@@ -418,7 +418,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s 			page 1
  111:UserAPP/Source/DPPTM.c ****     {
  112:UserAPP/Source/DPPTM.c ****         pid_integral  = 0.0f;                                                  // 重置积分
  113:UserAPP/Source/DPPTM.c ****         pid_lastError = 0.0f;                                                  // 重置微分
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s 			page 8
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccDKPpJJ.s 			page 8
 
 
  114:UserAPP/Source/DPPTM.c ****         pid_lastTarget = TargetVDDVoltage;                                     // 记录新目标
@@ -478,7 +478,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s 			page 1
  168:UserAPP/Source/DPPTM.c **** 
  169:UserAPP/Source/DPPTM.c ****     // 转为整数步进（PID输出不足半步时不调整，避免抖动）
  170:UserAPP/Source/DPPTM.c ****     int16_t step = 0;
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s 			page 9
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccDKPpJJ.s 			page 9
 
 
  171:UserAPP/Source/DPPTM.c ****     if (output > 0.5f)       step = (int16_t)(output + 0.5f);                   // 正方向超半�
@@ -538,7 +538,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s 			page 1
  205:UserAPP/Source/DPPTM.c **** }
  261              		.loc 1 205 1 view .LVU51
  262 000e 7047     		bx	lr
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s 			page 10
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccDKPpJJ.s 			page 10
 
 
  263              	.L22:
@@ -598,7 +598,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s 			page 1
  305              		.loc 1 102 26 is_stmt 0 view .LVU54
  306 0004 704B     		ldr	r3, .L59
  307 0006 1C68     		ldr	r4, [r3]	@ float
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s 			page 11
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccDKPpJJ.s 			page 11
 
 
  102:UserAPP/Source/DPPTM.c ****         return;
@@ -658,7 +658,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s 			page 1
  349 0040 FFF7FEFF 		bl	__aeabi_fsub
  350              	.LVL30:
  351 0044 0646     		mov	r6, r0
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s 			page 12
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccDKPpJJ.s 			page 12
 
 
  352              	.LVL31:
@@ -718,7 +718,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s 			page 1
  393              	.LVL37:
  145:UserAPP/Source/DPPTM.c ****     {
  394              		.loc 1 145 8 view .LVU81
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s 			page 13
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccDKPpJJ.s 			page 13
 
 
  395 0076 28B1     		cbz	r0, .L30
@@ -778,7 +778,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s 			page 1
  437 00ac 1A60     		str	r2, [r3]	@ float
  438              	.L35:
  163:UserAPP/Source/DPPTM.c ****     pid_lastError = error;
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s 			page 14
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccDKPpJJ.s 			page 14
 
 
  439              		.loc 1 163 5 is_stmt 1 view .LVU94
@@ -838,7 +838,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s 			page 1
  171:UserAPP/Source/DPPTM.c ****     else if (output < -0.5f) step = (int16_t)(output - 0.5f);                   // 负方向超半�
  481              		.loc 1 171 8 is_stmt 0 view .LVU107
  482 00e0 4FF07C51 		mov	r1, #1056964608
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s 			page 15
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccDKPpJJ.s 			page 15
 
 
  483 00e4 FFF7FEFF 		bl	__aeabi_fcmpgt
@@ -898,7 +898,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s 			page 1
  523              	.LVL59:
  182:UserAPP/Source/DPPTM.c ****     if (newCode > hi) newCode = hi;
  524              		.loc 1 182 5 is_stmt 1 view .LVU122
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s 			page 16
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccDKPpJJ.s 			page 16
 
 
  182:UserAPP/Source/DPPTM.c ****     if (newCode > hi) newCode = hi;
@@ -958,7 +958,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s 			page 1
  114:UserAPP/Source/DPPTM.c ****         pid_locked = 0;                                                        // 解锁
  564              		.loc 1 114 24 is_stmt 0 view .LVU138
  565 0132 264B     		ldr	r3, .L59+4
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s 			page 17
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccDKPpJJ.s 			page 17
 
 
  566 0134 1C60     		str	r4, [r3]	@ float
@@ -1018,7 +1018,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s 			page 1
  147:UserAPP/Source/DPPTM.c **** 
  609              		.loc 1 147 9 view .LVU150
  147:UserAPP/Source/DPPTM.c **** 
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s 			page 18
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccDKPpJJ.s 			page 18
 
 
  610              		.loc 1 147 20 is_stmt 0 view .LVU151
@@ -1078,7 +1078,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s 			page 1
  184:UserAPP/Source/DPPTM.c ****     if (newCode > DPPTM_CODE_MAX) newCode = DPPTM_CODE_MAX;                     // 绝对上限（0
  656              		.loc 1 184 43 discriminator 1 view .LVU160
  657 01b6 0020     		movs	r0, #0
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s 			page 19
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccDKPpJJ.s 			page 19
 
 
  658              	.LVL78:
@@ -1138,7 +1138,7 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s 			page 1
  714              		.section	.data.pid_dpptm,"aw"
  717              	pid_dpptm:
  718 0000 7F       		.byte	127
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s 			page 20
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccDKPpJJ.s 			page 20
 
 
  719              		.section	.bss.pid_lastError,"aw",%nobits
@@ -1175,39 +1175,39 @@ ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s 			page 1
  752              		.file 7 "UserAPP/Include/Tasklist.h"
  753              		.file 8 "UserAPP/Include/ADCAPP.h"
  754              		.file 9 "UserDriver/Include/DPPTMIIC.h"
-ARM GAS  C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s 			page 21
+ARM GAS  C:\Users\Administrator\AppData\Local\Temp\ccDKPpJJ.s 			page 21
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 DPPTM.c
-C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s:19     .text.voltage_to_code:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s:24     .text.voltage_to_code:00000000 voltage_to_code
-C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s:108    .text.voltage_to_code:00000044 $d
-C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s:735    .rodata.voltage_code_table:00000000 voltage_code_table
-C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s:115    .rodata.ControlDPPTM.str1.4:00000000 $d
-C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s:137    .text.ControlDPPTM:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s:143    .text.ControlDPPTM:00000000 ControlDPPTM
-C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s:225    .text.ControlDPPTM:00000060 $d
-C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s:234    .text.get_current_vdd_voltage:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s:240    .text.get_current_vdd_voltage:00000000 get_current_vdd_voltage
-C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s:266    .text.get_current_vdd_voltage:00000010 $d
-C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s:273    .rodata.SetESLVDDVoltage.str1.4:00000000 $d
-C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s:282    .text.SetESLVDDVoltage:00000000 $t
-C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s:288    .text.SetESLVDDVoltage:00000000 SetESLVDDVoltage
-C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s:680    .text.SetESLVDDVoltage:000001c8 $d
-C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s:743    .data.TargetVDDVoltage:00000000 TargetVDDVoltage
-C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s:707    .data.pid_lastTarget:00000000 pid_lastTarget
-C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s:701    .bss.pid_locked:00000000 pid_locked
-C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s:723    .bss.pid_lastError:00000000 pid_lastError
-C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s:729    .bss.pid_integral:00000000 pid_integral
-C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s:717    .data.pid_dpptm:00000000 pid_dpptm
-C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s:712    .data.pid_baseCode:00000000 pid_baseCode
-C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s:702    .bss.pid_locked:00000000 $d
-C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s:704    .data.pid_lastTarget:00000000 $d
-C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s:720    .bss.pid_lastError:00000000 $d
-C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s:726    .bss.pid_integral:00000000 $d
-C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s:732    .rodata.voltage_code_table:00000000 $d
-C:\Users\Administrator\AppData\Local\Temp\cc3b7agi.s:740    .data.TargetVDDVoltage:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\ccDKPpJJ.s:19     .text.voltage_to_code:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\ccDKPpJJ.s:24     .text.voltage_to_code:00000000 voltage_to_code
+C:\Users\Administrator\AppData\Local\Temp\ccDKPpJJ.s:108    .text.voltage_to_code:00000044 $d
+C:\Users\Administrator\AppData\Local\Temp\ccDKPpJJ.s:735    .rodata.voltage_code_table:00000000 voltage_code_table
+C:\Users\Administrator\AppData\Local\Temp\ccDKPpJJ.s:115    .rodata.ControlDPPTM.str1.4:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\ccDKPpJJ.s:137    .text.ControlDPPTM:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\ccDKPpJJ.s:143    .text.ControlDPPTM:00000000 ControlDPPTM
+C:\Users\Administrator\AppData\Local\Temp\ccDKPpJJ.s:225    .text.ControlDPPTM:00000060 $d
+C:\Users\Administrator\AppData\Local\Temp\ccDKPpJJ.s:234    .text.get_current_vdd_voltage:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\ccDKPpJJ.s:240    .text.get_current_vdd_voltage:00000000 get_current_vdd_voltage
+C:\Users\Administrator\AppData\Local\Temp\ccDKPpJJ.s:266    .text.get_current_vdd_voltage:00000010 $d
+C:\Users\Administrator\AppData\Local\Temp\ccDKPpJJ.s:273    .rodata.SetESLVDDVoltage.str1.4:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\ccDKPpJJ.s:282    .text.SetESLVDDVoltage:00000000 $t
+C:\Users\Administrator\AppData\Local\Temp\ccDKPpJJ.s:288    .text.SetESLVDDVoltage:00000000 SetESLVDDVoltage
+C:\Users\Administrator\AppData\Local\Temp\ccDKPpJJ.s:680    .text.SetESLVDDVoltage:000001c8 $d
+C:\Users\Administrator\AppData\Local\Temp\ccDKPpJJ.s:743    .data.TargetVDDVoltage:00000000 TargetVDDVoltage
+C:\Users\Administrator\AppData\Local\Temp\ccDKPpJJ.s:707    .data.pid_lastTarget:00000000 pid_lastTarget
+C:\Users\Administrator\AppData\Local\Temp\ccDKPpJJ.s:701    .bss.pid_locked:00000000 pid_locked
+C:\Users\Administrator\AppData\Local\Temp\ccDKPpJJ.s:723    .bss.pid_lastError:00000000 pid_lastError
+C:\Users\Administrator\AppData\Local\Temp\ccDKPpJJ.s:729    .bss.pid_integral:00000000 pid_integral
+C:\Users\Administrator\AppData\Local\Temp\ccDKPpJJ.s:717    .data.pid_dpptm:00000000 pid_dpptm
+C:\Users\Administrator\AppData\Local\Temp\ccDKPpJJ.s:712    .data.pid_baseCode:00000000 pid_baseCode
+C:\Users\Administrator\AppData\Local\Temp\ccDKPpJJ.s:702    .bss.pid_locked:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\ccDKPpJJ.s:704    .data.pid_lastTarget:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\ccDKPpJJ.s:720    .bss.pid_lastError:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\ccDKPpJJ.s:726    .bss.pid_integral:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\ccDKPpJJ.s:732    .rodata.voltage_code_table:00000000 $d
+C:\Users\Administrator\AppData\Local\Temp\ccDKPpJJ.s:740    .data.TargetVDDVoltage:00000000 $d
 
 UNDEFINED SYMBOLS
 __aeabi_fcmplt

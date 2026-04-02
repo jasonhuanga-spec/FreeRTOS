@@ -27,7 +27,9 @@ typedef enum {
     TASK_ID_SetESLVDDVoltage = 5, /* ControlDPPTM 任务，值为 5 */ // 每行注释
     TASK_ID_SendVoltagePacket = 6, /* SendVoltagePacket 任务，值为 6 */ // 每行注释
     TASK_ID_ESLCommands = 7, /* ESLCommands 任务，值为 7 */ // 每行注释
-    TASK_ID_SendCurrentPacket = 8 /* SendCurrentPacket 任务，值为 8 */ // 每行注释
+    TASK_ID_SendCurrentPacket = 8, /* SendCurrentPacket 任务，值为 8 */ // 每行注释
+    TASK_ID_ESLReset = 9, /* ESL_RESET 控制任务，值为 9 */ // 每行注释
+    TASK_ID_ESLCheckBusy = 10 /* ESL Busy轮询任务，值为 10 */ // 每行注释
 } TaskID_t; /* 任务 ID 枚举类型定义 */ // 每行注释
 
 /* 应答码枚举：用于上位机和下位机之间的应答表示 */ // 每行注释

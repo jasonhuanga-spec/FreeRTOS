@@ -16,5 +16,7 @@ void ESLtest(void);
 void E52bitRead(uint8_t Address, uint8_t Number);
 void E52bitWrite(uint8_t Address, uint8_t Number, const uint8_t *writeData, uint8_t writeLen);
 void ESLCommands(uint16_t execIndex, uint8_t Address, uint8_t RW, uint8_t Number);
+void SoftwareReset(void);
+uint8_t ESLCheckBusy(uint32_t timeoutMs);
 
 #endif          

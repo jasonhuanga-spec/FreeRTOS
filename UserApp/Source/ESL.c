@@ -176,3 +176,8 @@ void SoftwareReset(void)
 
 	ESL_RESET_Flag = 1; // 设置复位标志，供其他模块检查
 }
+
+uint8_t ESLCheckBusy(uint32_t timeoutMs)
+{
+    return Check_BusyTimeout(timeoutMs);
+}

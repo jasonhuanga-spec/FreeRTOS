@@ -49,6 +49,30 @@ void vHWCIProcessTask(void *pvParameters) // HWCI 任务入口函数
                 switch (localPacket.FunctionCode) // 根据功能码选择处理分支
                 {
                     case FUNCTION_CODE_DataPacket: // 功能码示例：0x02
+                        if (localPacket.ExecIndex == TASK_ID_ESLReset)
+                        {
+                            SoftwareReset();
+                            ReplyPacket(localPacket.ExecIndex, REPLY_OK);
+                            break;
+                        }
+
+                        if (localPacket.ExecIndex == TASK_ID_ESLCheckBusy)
+                        {
+                            uint32_t timeoutMs = 500;
+                            if (localPacket.DataLen >= 1)
+                            {
+                                timeoutMs = (uint32_t)localPacket.Data[0] * 100U;
+                                if (timeoutMs == 0U)
+                                {
+                                    timeoutMs = 500U;
+                                }
+                            }
+
+                            uint8_t ok = ESLCheckBusy(timeoutMs);
+                            ReplyPacket(localPacket.ExecIndex, ok ? REPLY_OK : REPLY_PROTOCOL_ERROR);
+                            break;
+                        }
+
                         if (localPacket.ExecIndex == TASK_ID_ESLCommands)
                         {
                             if (gPendingRevContext.active &&
